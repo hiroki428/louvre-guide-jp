@@ -44,12 +44,13 @@ export function advanceOnRouteAudio(index, navigation, routeIds, workId) {
 }
 
 export function validStoredProgress(index, routes, stored) {
-  if (!stored || stored.version !== 1 || !Number.isFinite(stored.minutes) || !stored.navigation) return null;
+  if (!stored || stored.version !== 2 || !Number.isFinite(stored.minutes) || !stored.navigation) return null;
   const activeRoute = routes.find(route => route.minutes === stored.minutes);
   if (!activeRoute || stored.routeSignature !== activeRoute.ids.join('|')) return null;
   const navigation = stored.navigation;
   if (!index.nodes.has(navigation.currentNodeId)) return null;
   if (!navigation.routeComplete && !index.nodes.has(navigation.destinationNodeId)) return null;
+  if (!Array.isArray(navigation.routeWorkIds) || navigation.routeWorkIds.join('|') !== activeRoute.ids.join('|')) return null;
   if (!Array.isArray(navigation.passedNodeIds) || navigation.passedNodeIds.some(nodeId => !index.nodes.has(nodeId))) return null;
   if (navigation.passedNodeGroups && (!Array.isArray(navigation.passedNodeGroups) || navigation.passedNodeGroups.some(group => !Array.isArray(group) || group.some(nodeId => !index.nodes.has(nodeId))))) return null;
   return {minutes:stored.minutes, navigation:clone(navigation), selected:stored.selected ?? null, floor:stored.floor};

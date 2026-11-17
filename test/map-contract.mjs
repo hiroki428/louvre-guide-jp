@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {floorMapMarkup} from '../src/floor-map.js';
 import {COMMON_BUILDING_OUTLINE, NON_RECTANGULAR_ROOM_NUMBERS, floorPlans, officialRoomNumbers} from '../src/floor-map-data.js';
-import {buildNavigationView, indexNavigationGraph, navigationStateFromRoute} from '../src/navigation.js';
+import {buildNavigationView, indexNavigationGraph, navigationStateForSelection, navigationStateFromRoute} from '../src/navigation.js';
 import {advanceOnRouteAudio} from '../src/route-progress.js';
 
 const works = JSON.parse(await readFile(new URL('../src/works.json', import.meta.url), 'utf8'));
@@ -73,7 +73,13 @@ assert.deepEqual(['317','321','323','328'].map(number => floor0Rooms[number].x),
 
 const firstFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'mona'});
 assert.match(firstFloor, /data-map-work="mona"/, 'verified artwork room marker should render');
+assert.match(firstFloor, /class="artwork-pin"/, 'artwork markers must render beside room numbers');
+assert.match(firstFloor, /class="artwork-pin-core"/, 'artwork markers need a high-contrast center');
 assert.match(firstFloor, /room-node is-selected/, 'selected artwork room should use a non-colour outline state');
+assert.match(firstFloor, /id="route-walkable-mask"/, 'the floor must define a rooms-and-corridors route mask');
+assert.match(firstFloor, /id="corridor-room-mask"/, 'corridor paint must exclude room shapes');
+assert.match(firstFloor, /data-layer="corridors"><g mask="url\(#corridor-room-mask\)"/, 'visible corridors must use the room cutout');
+assert.ok(firstFloor.indexOf('data-layer="rooms"') < firstFloor.indexOf('data-layer="corridors"'), 'wide corridors must render above room fills');
 const warningFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:null, roomNotices:[{floor:1,room:'711',label:'重要情報'}]});
 assert.match(warningFloor, /class="room-alert"/, 'a room-specific warning can render without adding a global map overlay');
 
@@ -88,7 +94,21 @@ assert.match(destinationFloor, /class="route-destination"/, 'next artwork should
 
 const routeIds = ['victory','mona','liberty'];
 const initialProgress = navigationStateFromRoute(navigationIndex, routeIds);
-const arrivedProgress = advanceOnRouteAudio(navigationIndex, initialProgress, routeIds, 'mona').navigation;
+const initialNavigation = buildNavigationView(navigationIndex, initialProgress);
+const entranceFloor = floorMapMarkup({floor:-2, floorLabel:'−2階', works, selectedId:'victory', navigation:initialNavigation});
+assert.match(entranceFloor, /class="route-active"/, 'entrance to first work must be the active route');
+const initialFirstFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'victory', navigation:initialNavigation});
+assert.match(initialFirstFloor, /class="route-planned"/, 'later route legs must remain visible from the start');
+assert.match(initialFirstFloor, /次の目的地/, 'the next destination must be visually identified');
+const selectedSecondNavigation = buildNavigationView(navigationIndex, navigationStateForSelection(navigationIndex, routeIds, 'mona'));
+const selectedSecondFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'mona', navigation:selectedSecondNavigation});
+assert.match(selectedSecondFloor, /mask="url\(#route-walkable-mask\)"/, 'route lines must be clipped to rooms and corridors');
+assert.match(selectedSecondFloor, /区間の開始地点/, 'selected leg must label its previous work as the start');
+assert.match(selectedSecondFloor, /class="route-passed"/, 'legs before the selected work must be dotted');
+assert.match(selectedSecondFloor, /class="route-active"/, 'the selected work leg must be emphasized');
+assert.match(selectedSecondFloor, /class="route-planned"/, 'legs after the selected work must remain subdued');
+const victoryProgress = advanceOnRouteAudio(navigationIndex, initialProgress, routeIds, 'victory').navigation;
+const arrivedProgress = advanceOnRouteAudio(navigationIndex, victoryProgress, routeIds, 'mona').navigation;
 const arrivedNavigation = buildNavigationView(navigationIndex, arrivedProgress);
 const arrivedFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'liberty', navigation:arrivedNavigation});
 assert.match(arrivedFloor, /推定現在地/, 'audio arrival should change the location label');

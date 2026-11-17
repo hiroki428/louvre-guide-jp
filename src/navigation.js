@@ -61,17 +61,44 @@ export function navigationStateFromRoute(graphOrIndex, workIds) {
   const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
   const workNodes = workIds.map(id => index.nodes.get(`work:${id}`)).filter(Boolean);
   const first = workNodes[0];
-  const destination = workNodes[1] ?? first;
-  if (!first || !destination) return {journeyStartNodeId:null, currentNodeId:null, destinationNodeId:null};
+  const entrance = index.nodes.get('entrance:pyramid:fm2');
+  if (!first) return {journeyStartNodeId:null, currentNodeId:null, destinationNodeId:null, routeWorkIds:[]};
+  const start = entrance ?? first;
   return {
-    journeyStartNodeId:first.id,
-    currentNodeId:first.exitNodeId ?? first.id,
-    destinationNodeId:destination.id,
-    passedNodeIds:first.id === (first.exitNodeId ?? first.id) ? [first.id] : [first.id, first.exitNodeId],
-    passedNodeGroups:[first.id === (first.exitNodeId ?? first.id) ? [first.id] : [first.id, first.exitNodeId]],
-    lastConfirmedWorkId:first.workId,
+    journeyStartNodeId:start.id,
+    currentNodeId:start.id,
+    destinationNodeId:first.id,
+    routeWorkIds:workNodes.map(node => node.workId),
+    passedNodeIds:[start.id],
+    passedNodeGroups:[[start.id]],
+    lastConfirmedWorkId:null,
     lastConfirmedMethod:'route-start',
-    routeComplete:workNodes.length < 2
+    routeComplete:false
+  };
+}
+
+export function navigationStateForSelection(graphOrIndex, workIds, selectedWorkId) {
+  const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
+  const base = navigationStateFromRoute(index, workIds);
+  const selectedIndex = workIds.indexOf(selectedWorkId);
+  if (selectedIndex < 0 || !base.currentNodeId) return base;
+
+  const passedNodeGroups = [];
+  let fromId = base.currentNodeId;
+  for (const workId of workIds.slice(0, selectedIndex)) {
+    const path = shortestPath(index, fromId, `work:${workId}`);
+    if (!path) return base;
+    passedNodeGroups.push(path.nodeIds);
+    fromId = `work:${workId}`;
+  }
+  return {
+    ...base,
+    currentNodeId:fromId,
+    destinationNodeId:`work:${selectedWorkId}`,
+    passedNodeIds:passedNodeGroups.flat(),
+    passedNodeGroups,
+    lastConfirmedWorkId:selectedIndex > 0 ? workIds[selectedIndex - 1] : null,
+    lastConfirmedMethod:selectedIndex > 0 ? 'selection' : 'route-start'
   };
 }
 
@@ -88,22 +115,55 @@ function pathFromNodeIds(index, nodeIds) {
   return {nodeIds:[...nodeIds], edges, totalCost};
 }
 
-function floorSegments(index, nodeIds) {
+function edgePoints(index, path, edgeIndex) {
+  const from = index.nodes.get(path.nodeIds[edgeIndex]);
+  const to = index.nodes.get(path.nodeIds[edgeIndex + 1]);
+  if (!from || !to || from.floor !== to.floor) return [];
+  const edge = path.edges[edgeIndex];
+  const via = Array.isArray(edge.via) ? (edge.reversed ? [...edge.via].reverse() : edge.via) : [];
+  return [[from.x, from.y], ...via, [to.x, to.y]];
+}
+
+function floorSegments(index, path) {
   const segments = [];
   let current = null;
-  nodeIds.forEach(id => {
-    const node = index.nodes.get(id);
-    if (!node) return;
-    if (!current || current.floor !== node.floor) {
+  for (let edgeIndex = 0; edgeIndex < path.edges.length; edgeIndex += 1) {
+    const from = index.nodes.get(path.nodeIds[edgeIndex]);
+    const to = index.nodes.get(path.nodeIds[edgeIndex + 1]);
+    if (!from || !to || from.floor !== to.floor) {
       if (current?.points.length > 1) segments.push(current);
-      current = {floor:node.floor, points:[[node.x, node.y]], nodeIds:[id]};
-    } else {
-      current.points.push([node.x, node.y]);
-      current.nodeIds.push(id);
+      current = null;
+      continue;
     }
-  });
+    const points = edgePoints(index, path, edgeIndex);
+    if (!current || current.floor !== from.floor) {
+      if (current?.points.length > 1) segments.push(current);
+      current = {floor:from.floor, points:[], nodeIds:[path.nodeIds[edgeIndex]]};
+    }
+    points.forEach(point => {
+      const previous = current.points.at(-1);
+      if (!previous || previous[0] !== point[0] || previous[1] !== point[1]) current.points.push(point);
+    });
+    current.nodeIds.push(path.nodeIds[edgeIndex + 1]);
+  }
   if (current?.points.length > 1) segments.push(current);
   return segments;
+}
+
+function plannedPaths(index, routeWorkIds, destinationNode) {
+  if (!destinationNode?.workId || !Array.isArray(routeWorkIds)) return [];
+  const destinationIndex = routeWorkIds.indexOf(destinationNode.workId);
+  if (destinationIndex < 0) return [];
+  const paths = [];
+  let fromId = destinationNode.id;
+  for (const workId of routeWorkIds.slice(destinationIndex + 1)) {
+    const toId = `work:${workId}`;
+    const path = shortestPath(index, fromId, toId);
+    if (!path) return [];
+    paths.push(path);
+    fromId = toId;
+  }
+  return paths;
 }
 
 function transitionSteps(index, path) {
@@ -112,24 +172,14 @@ function transitionSteps(index, path) {
   for (let edgeIndex = 0; edgeIndex < path.edges.length; edgeIndex += 1) {
     const edge = path.edges[edgeIndex];
     const from = index.nodes.get(path.nodeIds[edgeIndex]);
-    let to = index.nodes.get(path.nodeIds[edgeIndex + 1]);
+    const to = index.nodes.get(path.nodeIds[edgeIndex + 1]);
     if (!from || !to || from.floor === to.floor) continue;
-    let finalEdgeIndex = edgeIndex;
-    while (finalEdgeIndex + 1 < path.edges.length) {
-      const nextEdge = path.edges[finalEdgeIndex + 1];
-      const nextFrom = index.nodes.get(path.nodeIds[finalEdgeIndex + 1]);
-      const nextTo = index.nodes.get(path.nodeIds[finalEdgeIndex + 2]);
-      if (!nextFrom || !nextTo || nextFrom.floor === nextTo.floor || nextEdge.kind !== edge.kind || nextEdge.facilityId !== edge.facilityId) break;
-      finalEdgeIndex += 1;
-      to = nextTo;
-    }
     const delta = to.floor - from.floor;
     const count = Math.abs(delta);
     const direction = delta > 0 ? '上' : '下';
     const facilityName = from.label || to.label || (edge.kind === 'elevator' ? 'エレベーター' : '階段');
     const message = `${facilityName}で${count}階${direction}へ（${floorLabel(to.floor)}）`;
     transitions.push({kind:edge.kind, facilityName, from, to, message});
-    edgeIndex = finalEdgeIndex;
   }
   return transitions;
 }
@@ -159,30 +209,35 @@ export function buildNavigationView(graphOrIndex, input) {
   const fallbackPassedPath = !storedPassedPaths.length && journeyStartNodeId && currentNode ? shortestPath(index, journeyStartNodeId, currentNodeId) : null;
   const passedPaths = storedPassedPaths.length ? storedPassedPaths : (fallbackPassedPath ? [fallbackPassedPath] : []);
   const passedPath = passedPaths[0] ?? null;
-  const passedSegments = passedPaths.flatMap(path => floorSegments(index, path.nodeIds));
+  const passedSegments = passedPaths.flatMap(path => floorSegments(index, path));
   const passedTransitions = passedPaths.flatMap(path => transitionSteps(index, path));
   if (currentNode && input?.routeComplete) {
     const floors = new Set([currentNode.floor]);
     passedSegments.forEach(segment => floors.add(segment.floor));
     passedTransitions.forEach(transition => { floors.add(transition.from.floor); floors.add(transition.to.floor); });
-    return {available:true, complete:true, currentNode, destinationNode:null, locationMethod:input?.lastConfirmedMethod, passedPath, passedSegments, passedTransitions, remainingSegments:[], transitions:[], routeFloors:[...floors], nextAction:'このルートは完了しました', totalCost:0};
+    return {available:true, complete:true, currentNode, destinationNode:null, locationMethod:input?.lastConfirmedMethod, passedPath, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[...floors], nextAction:'このルートは完了しました', totalCost:0};
   }
   if (!currentNode || !destinationNode) {
-    return {available:false, reason:'現在地または目的地の接続データがありません', passedSegments:[], remainingSegments:[], transitions:[], routeFloors:[]};
+    return {available:false, reason:'現在地または目的地の接続データがありません', passedSegments:[], remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[]};
   }
 
   const remainingPath = shortestPath(index, currentNodeId, destinationNodeId);
   if (!remainingPath) {
-    return {available:false, reason:'この地点間を結ぶ確認済み経路がありません', currentNode, destinationNode, locationMethod:input?.lastConfirmedMethod, passedSegments, passedTransitions, remainingSegments:[], transitions:[], routeFloors:[currentNode.floor]};
+    return {available:false, reason:'この地点間を結ぶ確認済み経路がありません', currentNode, destinationNode, locationMethod:input?.lastConfirmedMethod, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[currentNode.floor]};
   }
 
-  const remainingSegments = floorSegments(index, remainingPath.nodeIds);
+  const remainingSegments = floorSegments(index, remainingPath);
   const transitions = transitionSteps(index, remainingPath);
+  const futurePaths = plannedPaths(index, input?.routeWorkIds, destinationNode);
+  const plannedSegments = futurePaths.flatMap(path => floorSegments(index, path));
+  const plannedTransitions = futurePaths.flatMap(path => transitionSteps(index, path));
   const floors = new Set([currentNode.floor, destinationNode.floor]);
   passedSegments.forEach(segment => floors.add(segment.floor));
   passedTransitions.forEach(transition => { floors.add(transition.from.floor); floors.add(transition.to.floor); });
   remainingSegments.forEach(segment => floors.add(segment.floor));
   transitions.forEach(transition => { floors.add(transition.from.floor); floors.add(transition.to.floor); });
+  plannedSegments.forEach(segment => floors.add(segment.floor));
+  plannedTransitions.forEach(transition => { floors.add(transition.from.floor); floors.add(transition.to.floor); });
   return {
     available:true,
     currentNode,
@@ -193,7 +248,9 @@ export function buildNavigationView(graphOrIndex, input) {
     passedSegments,
     passedTransitions,
     remainingSegments,
+    plannedSegments,
     transitions,
+    plannedTransitions,
     routeFloors:[...floors],
     nextAction:nextAction(index, remainingPath, destinationNode),
     totalCost:remainingPath.totalCost

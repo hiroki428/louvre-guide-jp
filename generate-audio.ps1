@@ -9,7 +9,6 @@ if ($japanese.Count -lt 1) { throw 'Japanese SAPI voice is unavailable.' }
 $voice.Voice = $japanese.Item(0)
 $voice.Rate = -2
 foreach ($work in $works) {
-    if (-not $work.verified) { continue }
     $base = "$($work.title)。$($work.background) $($work.look)"
     $guide1 = 'まず作品全体を眺め、目が自然に向かう場所を探してみましょう。次に、その近くの細部へ視線を移してください。'
     $guide2 = '少し離れて見ると、形や色のまとまりが見えてきます。近づくと、表情や素材の表現に気づけるかもしれません。'
@@ -23,9 +22,11 @@ foreach ($work in $works) {
         60 = "$base $guide1 $guide2 $guide3"
         120 = "$base $guide1 $guide2 $guide3 $guide4 $guide5 $guide6 $($work.background) $($work.look)"
     }
-    foreach ($seconds in @(20,40,60,120)) {
-        $voice.Rate = if ($seconds -eq 20) { 0 } else { -2 }
+    $lengths = if ($work.audioLengths) { @($work.audioLengths) } else { @(20,40,60,120) }
+    foreach ($seconds in $lengths) {
         $path = Join-Path $output "$($work.id)-$seconds.wav"
+        if ((Test-Path -LiteralPath $path) -and (Get-Item -LiteralPath $path).Length -gt 1000) { continue }
+        $voice.Rate = if ($seconds -eq 20) { 0 } else { -2 }
         $stream = New-Object -ComObject SAPI.SpFileStream
         $stream.Open($path, 3, $false)
         $voice.AudioOutputStream = $stream

@@ -20,19 +20,21 @@ function roomMarkup(room, worksByRoom, selectedId) {
   return `<g class="room-node ${selected ? 'is-selected ' : ''}wing-${escapeHtml(room.wing)}" data-room="${escapeHtml(room.number)}" data-room-part="${escapeHtml(room.part ?? 'main')}">${roomShapeMarkup(room)}</g>`;
 }
 
-function roomLabelMarkup(room) {
+function roomLabelMarkup(room, hasArtwork) {
   const {x, y} = roomCenter(room);
   const fontSize = room.width < 38 ? 8 : room.width < 45 ? 9 : 10;
-  return `<text class="room-number" x="${x}" y="${y + fontSize * .34}" style="font-size:${fontSize}px">${escapeHtml(room.number)}</text>`;
+  const labelX = hasArtwork ? x - Math.min(6, room.width * .16) : x;
+  return `<text class="room-number" x="${labelX}" y="${y + fontSize * .34}" style="font-size:${fontSize}px">${escapeHtml(room.number)}</text>`;
 }
 
 function artworkMarkup(room, worksByRoom, selectedId) {
   const center = roomCenter(room);
-  return (worksByRoom.get(room.number) || []).map((work, index) => {
-    const x = center.x + (index - .5) * 10;
+  const roomWorks = worksByRoom.get(room.number) || [];
+  return roomWorks.map((work, index) => {
+    const x = center.x + Math.min(8, room.width * .22) + index * 7;
     const y = center.y;
     const destination = work.id === selectedId;
-    return `<g class="artwork-marker ${destination ? 'is-selected is-destination' : ''}" data-map-work="${escapeHtml(work.id)}" tabindex="0" role="button" aria-label="${destination ? '次の作品、' : ''}${escapeHtml(work.title)}、${escapeHtml(work.room)}室">${destination ? `<circle class="destination-ring" cx="${x}" cy="${y}" r="12"/>` : ''}<circle cx="${x}" cy="${y}" r="6"/><path d="M${x-2.5} ${y}h5M${x} ${y-2.5}v5"/></g>`;
+    return `<g class="artwork-marker ${destination ? 'is-selected is-destination' : ''}" data-map-work="${escapeHtml(work.id)}" tabindex="0" role="button" aria-label="${destination ? '次の作品、' : ''}${escapeHtml(work.title)}、${escapeHtml(work.room)}室">${destination ? `<circle class="destination-ring" cx="${x}" cy="${y}" r="11"/>` : ''}<circle class="artwork-pin" cx="${x}" cy="${y}" r="6"/><circle class="artwork-pin-core" cx="${x}" cy="${y}" r="2.2"/></g>`;
   }).join('');
 }
 
@@ -96,9 +98,10 @@ const polylineMarkup = (segments, floor, className) => segments.filter(segment =
 
 function routeLayerMarkup(floor, navigation) {
   if (!navigation) return '';
+  const planned = polylineMarkup(navigation.plannedSegments ?? [], floor, 'route-planned');
   const passed = polylineMarkup(navigation.passedSegments ?? [], floor, 'route-passed');
-  const remaining = polylineMarkup(navigation.remainingSegments ?? [], floor, 'route-active');
-  const currentLabel = ['audio','manual'].includes(navigation.locationMethod) ? '推定現在地' : '最後に確認した地点';
+  const active = polylineMarkup(navigation.remainingSegments ?? [], floor, 'route-active');
+  const currentLabel = navigation.locationMethod === 'selection' ? '区間の開始地点' : ['audio','manual'].includes(navigation.locationMethod) ? '推定現在地' : '最後に確認した地点';
   const current = navigation.currentNode?.floor === floor ? `<g class="current-location" transform="translate(${navigation.currentNode.x} ${navigation.currentNode.y})"><circle class="current-halo" r="17"/><circle class="current-dot" r="8"/><rect x="-70" y="-43" width="140" height="24" rx="7"/><text x="0" y="-27" text-anchor="middle">${currentLabel}</text></g>` : '';
   const destination = navigation.destinationNode?.floor === floor ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})"><circle class="destination-halo" r="18"/><circle class="destination-dot" r="9"/><rect x="-48" y="24" width="96" height="24" rx="7"/><text x="0" y="40" text-anchor="middle">次の作品</text></g>` : '';
   const transitions = (navigation.transitions ?? []).flatMap(transition => {
@@ -109,8 +112,9 @@ function routeLayerMarkup(floor, navigation) {
     const label = leaving ? transition.message : `${escapeHtml(transition.facilityName)}から到着・経路続行`;
     return [`<g class="floor-transition ${leaving ? 'is-leaving' : 'is-arriving'}" transform="translate(${node.x} ${node.y})"><circle r="18"/><text class="transition-arrow" x="0" y="6" text-anchor="middle">${direction}</text><rect x="24" y="-20" width="250" height="40" rx="8"/><text class="transition-label" x="36" y="5">${escapeHtml(label)}</text></g>`];
   }).join('');
+  const plannedTransitions = (navigation.plannedTransitions ?? []).flatMap(transition => [transition.from, transition.to].filter(node => node.floor === floor).map(node => `<g class="planned-floor-transition" transform="translate(${node.x} ${node.y})"><circle r="10"/><path d="M-4 0h8"/></g>`)).join('');
   const passedTransitions = (navigation.passedTransitions ?? []).flatMap(transition => [transition.from, transition.to].filter(node => node.floor === floor).map(node => `<g class="passed-floor-transition" transform="translate(${node.x} ${node.y})"><circle r="11"/><path d="M-4 0h8"/></g>`)).join('');
-  return `${passed}${passedTransitions}${remaining}${transitions}${current}${destination}`;
+  return `<g class="route-lines" mask="url(#route-walkable-mask)">${planned}${passed}${active}</g>${plannedTransitions}${passedTransitions}${transitions}${current}${destination}`;
 }
 
 export function floorMapMarkup({floor, floorLabel, works, selectedId, navigation, roomNotices=[]}) {
@@ -123,12 +127,12 @@ export function floorMapMarkup({floor, floorLabel, works, selectedId, navigation
   });
   const wings = `<path class="building-outline" d="${plan.outline}"/>`;
   const wingLabels = plan.wings.map(wing => `<text class="wing-label" x="${wing.labelX}" y="${wing.labelY}">${escapeHtml(wing.label)}</text>${wing.range ? `<text class="wing-range" x="${wing.labelX}" y="${wing.labelY + 15}">${escapeHtml(wing.range)}</text>` : ''}`).join('');
-  const corridors = plan.corridors.map(path => `<path d="${path}"/>`).join('');
+  const corridors = `<g mask="url(#corridor-room-mask)">${plan.corridors.map(path => `<path d="${path}"/>`).join('')}</g>`;
   const rooms = plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId)).join('');
   const connections = (plan.connections ?? []).map(item => connectionMarkup(item, plan.rooms)).join('');
   const doors = plan.doors.map(item => `<line x1="${item.x1}" y1="${item.y1}" x2="${item.x2}" y2="${item.y2}"/>`).join('');
   const facilities = plan.facilities.map(facilityIconMarkup).join('');
-  const roomLabels = plan.rooms.map(roomLabelMarkup).join('');
+  const roomLabels = plan.rooms.map(room => roomLabelMarkup(room, worksByRoom.has(room.number))).join('');
   const mapLabels = plan.labels.map(label => `<text class="map-label" x="${label.x}" y="${label.y}" text-anchor="middle">${escapeHtml(label.text)}</text>`).join('');
   const artworks = plan.rooms.map(item => artworkMarkup(item, worksByRoom, selectedId)).join('');
   const alerts = roomNotices.filter(notice => notice.floor === floor).map(notice => {
@@ -139,8 +143,9 @@ export function floorMapMarkup({floor, floorLabel, works, selectedId, navigation
   const routeLayer = routeLayerMarkup(floor, navigation);
   const continuationFloors = (navigation?.routeFloors ?? []).filter(routeFloor => routeFloor !== floor);
   const continuation = continuationFloors.length ? `<span class="map-route-continuation">経路の続き：${continuationFloors.map(floorName).join('・')}</span>` : '';
+  const walkableMask = `<defs><mask id="corridor-room-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="960" height="600"><rect width="960" height="600" fill="white"/><g fill="black">${plan.rooms.map(roomShapeMarkup).join('')}</g></mask><mask id="route-walkable-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="960" height="600"><rect width="960" height="600" fill="black"/><g fill="none" stroke="white" stroke-width="38" stroke-linecap="square" stroke-linejoin="miter">${plan.corridors.map(path => `<path d="${path}"/>`).join('')}</g><g fill="white">${plan.rooms.map(roomShapeMarkup).join('')}</g></mask></defs>`;
 
-  return `<div class="map-heading"><div><span class="map-floor-kicker">表示中の階</span><strong>${escapeHtml(floorLabel)}</strong><span>${escapeHtml(plan.subtitle)}</span>${continuation}</div><div class="map-legend" aria-label="地図の凡例"><span><i class="legend-room"></i>展示室</span><span><i class="legend-connection"></i>部屋間の接続</span><span><i class="legend-current"></i>確認地点</span><span><i class="legend-route"></i>進行経路</span></div></div><svg id="floor-map" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">公式館内マップを基準に、建物輪郭、全部屋番号、通路、部屋間の接続、扉、階段、エレベーター、エスカレーター、主要施設、作品位置を階別に表示。</desc><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${wings}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-connections" data-layer="connections">${connections}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${mapLabels}${roomLabels}<text x="902" y="575" text-anchor="end">上側：リヴォリ通り</text></g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="最短経路">${routeLayer}</g></svg>`;
+  return `<div class="map-heading"><div><span class="map-floor-kicker">表示中の階</span><strong>${escapeHtml(floorLabel)}</strong><span>${escapeHtml(plan.subtitle)}</span>${continuation}</div><div class="map-legend" aria-label="地図の凡例"><span><i class="legend-passed"></i>通過済み</span><span><i class="legend-route"></i>次まで</span><span><i class="legend-planned"></i>予定経路</span><span><i class="legend-current"></i>現在地</span><span><i class="legend-destination"></i>次の目的地</span></div></div><svg id="floor-map" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">公式館内マップを基準に、建物輪郭、全部屋番号、拡大表示した通路、部屋間の接続、扉、階段、エレベーター、エスカレーター、主要施設、作品位置と、歩行可能領域内の経路を階別に表示。</desc>${walkableMask}<rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${wings}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${connections}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${mapLabels}${roomLabels}<text x="902" y="575" text-anchor="end">上側：リヴォリ通り</text></g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までの歩行可能領域内ルート">${routeLayer}</g></svg>`;
 }
 
 function clampView(view) {
