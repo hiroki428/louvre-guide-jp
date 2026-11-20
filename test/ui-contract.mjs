@@ -19,9 +19,9 @@ assert.match(main, /公認サービスではありません/);
 assert.doesNotMatch(main, /map-caution|route-data-note|GPS現在地|GPS不使用/);
 assert.doesNotMatch(main, /state\.floor\s*=\s*navigationView\(\)/, 'only floor buttons may change the displayed floor during route selection');
 assert.doesNotMatch(main, /state\.floor\s*=\s*(candidate|byId\[workId\]|snapshot)/, 'location and progress updates must preserve the displayed floor');
-assert.match(main, />MAP<\/button>/);
-assert.match(main, />AUDIO<\/button>/);
-assert.match(main, />SETTING<\/button>/);
+assert.match(main, />マップ<\/button>/);
+assert.match(main, />プラン一覧<\/button>/);
+assert.match(main, /data-change-course/);
 assert.equal(routes.some(route => route.minutes === 60), false, 'the 60 minute route must not be offered');
 assert.match(css, /\.room-input-row input \{[^}]*min-height:44px/s, 'room input needs a mobile tap target');
 

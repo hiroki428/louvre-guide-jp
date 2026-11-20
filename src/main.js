@@ -4,12 +4,14 @@ import {advanceOnRouteAudio, destinationWorkId, playbackModeFor, validStoredProg
 import {correctLocation, findRoomCandidates} from './location-support.js';
 import {audioLengthsFor, catalogWorks} from './catalog.js';
 
+const bootStarted = performance.now();
+document.querySelector('#app').innerHTML = '<div class="splash"><div class="gallery-arches"></div><h1>ルーブル、はじめての一日</h1><p>美術との出会いを、あなたのペースで。</p></div>';
 const appBase = new URL('../', import.meta.url);
-const [works, routes, sources, navigationGraph] = await Promise.all(['works.json','routes.json','provenance.json','navigation-graph.json'].map(async name => {
+const [works, routes, sources, navigationGraph, artworkImages, imageCredits] = await Promise.all(['works.json','routes.json','provenance.json','navigation-graph.json','artwork-images.json','image-credits.json'].map(async name => {
   const response = await fetch(new URL(name, import.meta.url));
   if (!response.ok) throw new Error(`${name} を読み込めません`);
   return response.json();
-}));
+})).catch(error=>{document.querySelector('#app').innerHTML='<main><h1>読み込みできませんでした</h1><p>通信状態を確認して再読み込みしてください。</p><button onclick="location.reload()">再読み込み</button></main>';throw error;});
 
 const byId = Object.fromEntries(works.map(work => [work.id, work]));
 const floors = [2, 1, 0, -1, -2];
@@ -17,7 +19,7 @@ const floorNames = {2:'2階', 1:'1階', 0:'0階', '-1':'−1階', '-2':'−2階'
 const durations = [20, 40, 60, 120];
 const SESSION_PROGRESS_KEY = 'louvre-route-progress-v2';
 const navigationIndex = indexNavigationGraph(navigationGraph);
-const state = {minutes:90, floor:1, selected:null, duration:40, audioDurations:{}, audioQuery:'', audioSort:'title-asc', playing:null, tab:'home', audio:null, downloaded:new Set(), navigation:null, player:{workId:null,mode:'standalone',sessionId:0,hasStarted:false,arrivalHandled:false}, notice:null, undo:null, processedArrivalEvents:new Set(), support:{open:false,editing:false,room:'',candidates:[],selectedCandidateId:null,error:''}};
+const state = {viewed:new Set(), selectedCourse:null, appPhase:"splash", activeTab:"map", currentStepIndex:0, detailOpen:false, showPlan:false, minutes:90, floor:1, selected:null, duration:40, audioDurations:{}, audioQuery:'', audioSort:'title-asc', playing:null, tab:'home', audio:null, downloaded:new Set(), navigation:null, player:{workId:null,mode:'standalone',sessionId:0,hasStarted:false,arrivalHandled:false}, notice:null, undo:null, processedArrivalEvents:new Set(), support:{open:false,editing:false,room:'',candidates:[],selectedCandidateId:null,error:''}};
 const app = document.querySelector('#app');
 const player = new Audio();
 player.preload = 'none';
@@ -128,7 +130,7 @@ function homeView() {
   const nav = navigationView();
   const destinationId = nav.destinationNode?.workId;
   const first = byId[state.selected] || byId[destinationId] || order()[0];
-  return `<main><div class="update-meta"><small>情報更新日：${esc(sources.checkedAt)}</small><button type="button" data-open-info>詳細</button></div><section class="route-intro"><div class="eyebrow">はじめてのルーブル · 名作巡回</div><h1>時間に合わせた<br>名作ルート</h1><p>作品・音声・移動を含む固定ルートです。時間を選ぶと訪問順が表示されます。</p></section><section class="route-options" aria-label="所要時間"><div class="section-heading"><div><div class="eyebrow">ROUTE</div><h2>見学時間を選ぶ</h2></div></div><div class="route-cards">${routes.map(item => {const minutes=item.ids.length*(item.visit??6)+item.walk+Math.ceil(item.ids.length*state.duration/60)+item.buffer; return `<button class="route-card ${state.minutes===item.minutes?'active':''}" data-route="${item.minutes}"><strong>${item.minutes}<small>分</small></strong><span>${item.ids.length}作品 · 約${minutes}分</span></button>`}).join('')}</div></section><section class="time-estimate"><b>約${planned()}分 · ${route().ids.length}作品</b><span>鑑賞 ${route().ids.length*(route().visit??6)}分 + 移動 ${route().walk}分 + 音声 ${audioDuration()}分 + 余裕 ${route().buffer}分</span></section>${nextDestination()}<section class="map-section"><div class="section-heading"><div><div class="eyebrow">FLOOR PLAN</div><h2>入口から最終作品までのルート</h2></div><span class="map-tag">階別2Dマップ</span></div>${navigationPanel(nav)}<div class="map-mode-tabs" aria-label="地図表示"><span class="active">フロアマップ</span><span aria-disabled="true">全館俯瞰（準備中）</span></div><div class="floor-tabs" aria-label="表示する階">${floors.map(floor => `<button data-floor="${floor}" class="${floor===state.floor?'active':''} ${nav.routeFloors?.includes(floor)?'has-route':''}" aria-pressed="${floor===state.floor}">${floorNames[floor]}${nav.routeFloors?.includes(floor)?'<i aria-hidden="true"></i>':''}</button>`).join('')}</div><div class="map-frame"><div class="map-scroll">${floorMapMarkup({floor:state.floor,floorLabel:floorNames[state.floor],works,selectedId:destinationId,navigation:nav,roomNotices:navigationGraph.roomNotices})}</div><div class="map-controls" aria-label="地図の拡大縮小"><button data-map-action="in" aria-label="地図を拡大">＋</button><output data-map-status aria-live="polite">100%</output><button data-map-action="out" aria-label="地図を縮小">−</button><button data-map-action="reset">全体表示</button></div></div>${movementSupportMarkup()}</section><section class="route-stops"><div class="section-heading"><div><div class="eyebrow">VISIT ORDER</div><h2>${state.minutes}分 · 次の作品を選ぶ</h2></div></div>${routeList()}</section><section class="selected-work">${workDetail(first)}</section></main>`;
+  return `<main><div class="update-meta"><small>情報更新日：${esc(sources.checkedAt)}</small><button type="button" data-open-info>詳細</button></div><section class="route-intro"><div class="eyebrow">はじめてのルーブル · 名作巡回</div><h1>時間に合わせた<br>名作ルート</h1><p>作品・音声・移動を含む固定ルートです。時間を選ぶと訪問順が表示されます。</p></section><section class="route-options" aria-label="所要時間"><div class="section-heading"><div><div class="eyebrow">ROUTE</div><h2>見学時間を選ぶ</h2></div></div><div class="route-cards">${routes.map(item => {const minutes=item.ids.length*(item.visit??6)+item.walk+Math.ceil(item.ids.length*state.duration/60)+item.buffer; return `<button class="route-card ${state.minutes===item.minutes?'active':''}" data-route="${item.minutes}"><strong>${item.minutes}<small>分</small></strong><span>${item.ids.length}作品 · 約${minutes}分</span></button>`}).join('')}</div></section><section class="time-estimate"><b>約${planned()}分 · ${route().ids.length}作品</b><span>鑑賞 ${route().ids.length*(route().visit??6)}分 + 移動 ${route().walk}分 + 音声 ${audioDuration()}分 + 余裕 ${route().buffer}分</span></section>${nextDestination()}<section class="map-section"><div class="section-heading"><div><div class="eyebrow">FLOOR PLAN</div><h2>入口から最終作品までのルート</h2></div></div>${navigationPanel(nav)}<div class="floor-tabs" aria-label="表示する階">${floors.map(floor => `<button data-floor="${floor}" class="${floor===state.floor?'active':''} ${nav.routeFloors?.includes(floor)?'has-route':''}" aria-pressed="${floor===state.floor}">${floorNames[floor]}${nav.routeFloors?.includes(floor)?'<i aria-hidden="true"></i>':''}</button>`).join('')}</div><div class="map-frame"><div class="map-scroll">${floorMapMarkup({floor:state.floor,floorLabel:floorNames[state.floor],works,selectedId:destinationId,navigation:nav,roomNotices:navigationGraph.roomNotices})}</div><div class="map-controls" aria-label="地図の拡大縮小"><button data-map-action="in" aria-label="地図を拡大">＋</button><output data-map-status aria-live="polite">100%</output><button data-map-action="out" aria-label="地図を縮小">−</button><button data-map-action="reset">全体表示</button></div></div>${movementSupportMarkup()}</section><section class="route-stops"><div class="section-heading"><div><div class="eyebrow">VISIT ORDER</div><h2>${state.minutes}分 · 次の作品を選ぶ</h2></div></div>${routeList()}</section><section class="selected-work">${workDetail(first)}</section></main>`;
 }
 function audioRowsMarkup(items) {
   return items.map(work => {
@@ -172,7 +174,8 @@ function clearProgressNotice() {
 }
 
 function selectRouteWork(workId) {
-  state.selected = workId;
+  player.pause(); player.currentTime=0; state.playing=null; state.audio=null; state.player.hasStarted=false; state.currentStepIndex=route().ids.indexOf(workId);
+  state.selected = workId; state.showPlan=false;
   if (route().ids.includes(workId)) state.navigation = navigationStateForSelection(navigationIndex, route().ids, workId);
   else state.navigation = {...state.navigation, destinationNodeId:`work:${workId}`, routeComplete:false};
 }
@@ -203,10 +206,39 @@ function undoArrival() {
   render();
 }
 
+function courseView() {
+ return '<main class="course-screen"><div class="eyebrow">YOUR VISIT</div><h1>美術と過ごす時間を選ぶ</h1><p>今日のペースに合うコースをお選びください。</p><div class="route-cards">'+routes.map(r=>'<button class="route-card" data-course="'+r.minutes+'"><strong>'+r.minutes+'<small>分</small></strong><span>'+r.ids.length+'作品</span></button>').join('')+'</div></main>';
+}
+function currentWork() { return byId[state.selected] && route().ids.includes(state.selected) ? byId[state.selected] : order()[0]; }
+function thumb(work) { const image=artworkImages[work.id];return image ? '<img class="work-thumbnail" src="'+new URL(image.src,appBase).href+'" alt="'+esc(work.title)+'">' : '<span class="work-thumbnail" aria-hidden="true">'+esc(work.title.slice(0,1))+'</span>'; }
+function creditsMarkup() { return '<details class="image-credits"><summary>画像の出典・ライセンス</summary>'+imageCredits.map(c=>'<p>'+esc(c.file)+' · '+esc(c.artist.replace(/<[^>]*>/g,''))+' · '+esc(c.license)+' <a target="_blank" rel="noreferrer" href="https://commons.wikimedia.org/wiki/'+encodeURIComponent(c.file)+'">出典</a></p>').join('')+'</details>'; }
+function mainMapView() {
+ const template=document.createElement('template'); template.innerHTML=homeView();
+ const planButton='<button class="map-plan-toggle" data-plan-toggle>'+ (state.showPlan?'地図に戻る':'プラン一覧を見る')+'</button>';
+ const content=state.showPlan?planView():template.content.querySelector('.map-section').outerHTML;
+ return '<main class="immersive-map">'+planButton+content+'</main>';
+}
+function planView() {
+ return '<main class="plan-screen"><h1>プラン一覧</h1><p>'+state.minutes+'分 · '+order().length+'作品</p>'+order().map((w,i)=>'<button class="plan-item" data-select="'+w.id+'">'+thumb(w)+'<span><strong>'+ (i+1)+'. '+esc(w.title)+'</strong><small>'+esc(workStatus(w))+'</small></span><span>'+ (state.viewed.has(w.id)?'鑑賞済み':w.id===currentWork().id?'目的地':'予定')+'</span></button>').join('')+'</main>';
+}
 function render() {
-  const body = state.tab==='home'?homeView():state.tab==='audio'?audioView():otherView();
-  app.innerHTML = `<header><a class="brand" href="#home" data-tab="home"><span class="mark">L</span><span><b>ルーブル、はじめての一日</b><small>非公式・日本語ガイド</small></span></a></header><nav class="bottom-tabs" aria-label="メインメニュー"><button data-tab="home" class="${state.tab==='home'?'active':''}">MAP</button><button data-tab="audio" class="${state.tab==='audio'?'active':''}">AUDIO</button><button data-tab="other" class="${state.tab==='other'?'active':''}">SETTING</button></nav>${body}${noticeMarkup()}`;
-  wire();
+ if(state.appPhase==='splash') return;
+ if(state.appPhase==='select_time') { app.innerHTML=courseView(); document.querySelectorAll('[data-course]').forEach(b=>b.onclick=()=>{player.pause();state.playing=null;state.audio=null;state.minutes=+b.dataset.course;state.selectedCourse=route();state.viewed.clear();state.navigation=navigationStateFromRoute(navigationIndex,route().ids);state.selected=route().ids[0];state.currentStepIndex=0;state.activeTab='map';state.tab='home';state.showPlan=false;state.appPhase='main';render();}); return; }
+ const work=currentWork(); state.currentStepIndex=route().ids.indexOf(work.id);
+ const body=state.tab==='audio'?audioView():state.tab==='other'?otherView():mainMapView();
+ app.innerHTML='<header class="main-header"><b>ルーブル、はじめての一日</b><button data-change-course>コース変更</button></header><nav class="bottom-tabs"><button data-tab="home" class="'+(state.tab==='home'?'active':'')+'">マップ</button><button data-plan-toggle class="'+(state.showPlan?'active':'')+'">プラン一覧</button><button data-tab="audio" class="'+(state.tab==='audio'?'active':'')+'">音声</button><button data-tab="other" class="'+(state.tab==='other'?'active':'')+'">設定</button></nav>'+body+(state.player.workId?'<aside class="mini-player"><input type="range" min="0" max="1000" value="0" data-seek aria-label="再生位置"><button class="mini-info" data-detail>'+thumb(work)+'<span><strong>'+ (state.currentStepIndex+1)+'/'+order().length+' '+esc(work.title)+'</strong><small>'+esc(workStatus(work))+'</small></span></button><button data-step="-1" aria-label="前の作品" '+(state.currentStepIndex===0?'disabled':'')+'>⏮</button><button data-mini-play aria-label="再生・一時停止">'+(state.playing===work.id?'⏸':'▶')+'</button><button data-step="1" aria-label="次の作品" '+(state.currentStepIndex===order().length-1?'disabled':'')+'>⏭</button><button data-audio-settings>⚙</button></aside>':'')+(state.detailOpen?'<dialog open class="work-sheet"><button data-close-detail>閉じる</button>'+workDetail(work)+creditsMarkup()+'</dialog>':'')+(state.audioSettingsOpen?'<dialog open class="audio-settings"><h2>音声設定</h2><label>再生速度 <select data-playback-rate><option value="0.75">0.75倍</option><option value="1">1倍</option><option value="1.25">1.25倍</option><option value="1.5">1.5倍</option><option value="2">2倍</option></select></label><button data-close-settings>閉じる</button></dialog>':'')+noticeMarkup();
+ wire();
+ document.querySelector('[data-change-course]').onclick=()=>{player.pause();state.playing=null;state.appPhase='select_time';render();};
+ document.querySelector('[data-plan-toggle]')?.addEventListener('click',()=>{state.showPlan=!state.showPlan;render();});
+ document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const i=state.currentStepIndex+Number(b.dataset.step);if(i<0||i>=order().length)return;if(Number(b.dataset.step)>0)state.viewed.add(work.id);selectRouteWork(order()[i].id);render();});
+ document.querySelector('[data-mini-play]')?.addEventListener('click',()=>toggleAudio(work.id,state.audioDurations[work.id]??40));
+ document.querySelector('[data-detail]')?.addEventListener('click',()=>{state.detailOpen=true;render();});
+ document.querySelector('[data-close-detail]')?.addEventListener('click',()=>{state.detailOpen=false;render();});
+ document.querySelector('[data-audio-settings]')?.addEventListener('click',()=>{state.audioSettingsOpen=true;render();});
+ document.querySelector('[data-close-settings]')?.addEventListener('click',()=>{state.audioSettingsOpen=false;render();});
+ document.querySelector('[data-playback-rate]')?.addEventListener('change',e=>player.playbackRate=+e.target.value);
+ const rate=document.querySelector('[data-playback-rate]');if(rate)rate.value=String(player.playbackRate||1);
+ document.querySelector('[data-seek]')?.addEventListener('input',e=>{if(Number.isFinite(player.duration))player.currentTime=player.duration*(+e.target.value/1000);});
 }
 
 async function toggleAudio(id, length) {
@@ -247,7 +279,8 @@ async function toggleAudio(id, length) {
     if (state.player.sessionId !== sessionId) return;
     state.player.hasStarted = true;
     state.playing = id;
-    if (mode === 'route' && !state.player.arrivalHandled) {
+    state.viewed.add(id);
+    if (state.appPhase !== 'main' && mode === 'route' && !state.player.arrivalHandled) {
       state.player.arrivalHandled = true;
       if (handleRouteArrival(id, `playback-${sessionId}:${id}`)) return;
     }
@@ -304,7 +337,7 @@ function refreshAudioList() {
   wireAudioRows();
 }
 function wire() {
-  document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=event=>{event.preventDefault();state.tab=button.dataset.tab;render();window.scrollTo({top:0,behavior:'smooth'});});
+  document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=event=>{event.preventDefault();state.tab=button.dataset.tab;state.showPlan=false;render();window.scrollTo({top:0,behavior:'smooth'});});
   document.querySelectorAll('[data-open-info]').forEach(button=>button.onclick=()=>{state.tab='other';render();window.scrollTo({top:0,behavior:'smooth'});});
   const supportDetails = document.querySelector('.movement-support');
   if (supportDetails) supportDetails.ontoggle=()=>{state.support.open=supportDetails.open;};
@@ -331,5 +364,8 @@ async function loadDownloads() {
   catch { /* offline cache is optional when the browser does not support it */ }
 }
 if('serviceWorker' in navigator) navigator.serviceWorker.register(new URL('sw.js',appBase)).catch(()=>{});
-await loadDownloads();
-render();
+player.addEventListener('timeupdate',()=>{const bar=document.querySelector('.mini-player progress');if(bar)bar.value=Number.isFinite(player.duration)&&player.duration>0?player.currentTime/player.duration:0;});
+await Promise.all([loadDownloads(),new Promise(resolve=>setTimeout(resolve,Math.max(0,2700-(performance.now()-bootStarted))))]);
+document.querySelector('.splash')?.classList.add('leaving');
+await new Promise(resolve=>setTimeout(resolve,300));
+state.appPhase='select_time'; render();
