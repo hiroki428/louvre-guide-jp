@@ -23,13 +23,13 @@ export function findRoomCandidates(index, works, value) {
     });
 }
 
-export function correctLocation(index, navigation, candidateNodeId) {
+export function correctLocation(index, navigation, candidateNodeId, options = {}) {
   const candidate = index.nodes.get(candidateNodeId);
   if (!candidate || candidate.type !== 'room') return {updated:false, reason:'invalid-room', message:'部屋番号を確認してください'};
   if (!navigation?.destinationNodeId || !index.nodes.has(navigation.destinationNodeId)) {
     return {updated:false, reason:'route-unavailable', message:'この地点から経路を作成できません。別の部屋番号を入力してください'};
   }
-  const route = shortestPath(index, candidateNodeId, navigation.destinationNodeId);
+  const route = shortestPath(index, candidateNodeId, navigation.destinationNodeId, options);
   if (!route) return {updated:false, reason:'route-unavailable', message:'この地点から経路を作成できません。別の部屋番号を入力してください'};
   return {
     updated:true,

@@ -10,10 +10,10 @@ export function playbackModeFor(index, navigation, workId) {
   return !navigation?.routeComplete && destinationWorkId(index, navigation) === workId ? 'route' : 'standalone';
 }
 
-export function advanceOnRouteAudio(index, navigation, routeIds, workId) {
+export function advanceOnRouteAudio(index, navigation, routeIds, workId, options = {}) {
   if (playbackModeFor(index, navigation, workId) !== 'route') return {updated:false, reason:'not-next-work', navigation};
   const destinationNodeId = `work:${workId}`;
-  const arrivalPath = shortestPath(index, navigation.currentNodeId, destinationNodeId);
+  const arrivalPath = shortestPath(index, navigation.currentNodeId, destinationNodeId, options);
   if (!arrivalPath) return {updated:false, reason:'route-unavailable', navigation};
 
   const previous = clone(navigation);
@@ -44,8 +44,9 @@ export function advanceOnRouteAudio(index, navigation, routeIds, workId) {
 }
 
 export function validStoredProgress(index, routes, stored) {
-  if (!stored || stored.version !== 2 || !Number.isFinite(stored.minutes) || !stored.navigation) return null;
-  const activeRoute = routes.find(route => route.minutes === stored.minutes);
+  if (!stored || stored.version !== 2 || !stored.navigation) return null;
+  const activeRoute = (stored.routeId ? routes.find(route => route.id === stored.routeId) : null)
+    || (Number.isFinite(stored.minutes) ? routes.find(route => route.kind !== 'theme' && route.minutes === stored.minutes) || routes.find(route => route.minutes === stored.minutes) : null);
   if (!activeRoute || stored.routeSignature !== activeRoute.ids.join('|')) return null;
   const navigation = stored.navigation;
   if (!index.nodes.has(navigation.currentNodeId)) return null;
@@ -53,5 +54,5 @@ export function validStoredProgress(index, routes, stored) {
   if (!Array.isArray(navigation.routeWorkIds) || navigation.routeWorkIds.join('|') !== activeRoute.ids.join('|')) return null;
   if (!Array.isArray(navigation.passedNodeIds) || navigation.passedNodeIds.some(nodeId => !index.nodes.has(nodeId))) return null;
   if (navigation.passedNodeGroups && (!Array.isArray(navigation.passedNodeGroups) || navigation.passedNodeGroups.some(group => !Array.isArray(group) || group.some(nodeId => !index.nodes.has(nodeId))))) return null;
-  return {minutes:stored.minutes, navigation:clone(navigation), selected:stored.selected ?? null, floor:stored.floor};
+  return {routeId:activeRoute.id, minutes:activeRoute.minutes, navigation:clone(navigation), selected:stored.selected ?? null, floor:stored.floor};
 }

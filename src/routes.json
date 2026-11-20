@@ -1,6 +1,79 @@
 [
-  {"minutes":90,"ids":["victory","mona","liberty","clubfoot","venus","dying"],"visit":6,"walk":32,"buffer":10},
-  {"minutes":120,"ids":["scribe","victory","mona","liberty","clubfoot","venus","dying"],"visit":6,"walk":41,"buffer":13},
-  {"minutes":150,"ids":["lacemaker","money","scribe","victory","mona","liberty","clubfoot","venus","dying"],"visit":6,"walk":51,"buffer":18},
-  {"minutes":180,"ids":["lacemaker","money","cheat","bather","scribe","victory","mona","liberty","clubfoot","venus","dying","marly"],"visit":6,"walk":64,"buffer":20}
+  {
+    "id": "preset-90",
+    "minutes": 90,
+    "kind": "time",
+    "label": "90分コース",
+    "subtitle": "超有名8作品を最短動線（0階→1階）で巡る",
+    "ids": ["venus", "dying", "victory", "catalog-0001", "mona", "catalog-0003", "liberty", "catalog-0002"],
+    "visit": 6,
+    "walk": 23,
+    "buffer": 10
+  },
+  {
+    "id": "preset-120",
+    "minutes": 120,
+    "kind": "time",
+    "label": "120分コース",
+    "subtitle": "超有名12作品を往復ゼロ（0階→1階）で鑑賞",
+    "ids": ["venus", "catalog-0005", "dying", "scribe", "victory", "catalog-0001", "catalog-0004", "catalog-0008", "mona", "catalog-0003", "liberty", "catalog-0002"],
+    "visit": 6,
+    "walk": 28,
+    "buffer": 10
+  },
+  {
+    "id": "preset-150",
+    "minutes": 150,
+    "kind": "time",
+    "label": "150分コース",
+    "subtitle": "マップ対応の超有名14作品を最短一筆書きで制覇",
+    "ids": ["catalog-0007", "venus", "catalog-0005", "dying", "lacemaker", "scribe", "victory", "catalog-0001", "catalog-0004", "catalog-0008", "mona", "catalog-0003", "liberty", "catalog-0002"],
+    "visit": 6,
+    "walk": 38,
+    "buffer": 14
+  },
+  {
+    "id": "preset-180",
+    "minutes": 180,
+    "kind": "time",
+    "label": "180分コース",
+    "subtitle": "超有名14作品＋ダ・ヴィンチ＆フェルメール最短巡回",
+    "ids": ["marly", "catalog-0007", "venus", "catalog-0005", "dying", "lacemaker", "catalog-0021", "scribe", "victory", "catalog-0001", "catalog-0004", "catalog-0008", "liberty", "catalog-0002", "mona", "catalog-0003", "catalog-0012", "catalog-0013"],
+    "visit": 5,
+    "walk": 46,
+    "buffer": 20
+  },
+  {
+    "id": "theme-davinci",
+    "kind": "theme",
+    "minutes": 75,
+    "label": "ダ・ヴィンチ＆イタリア名画",
+    "subtitle": "1階ドゥノン翼で完結・7作品",
+    "ids": ["mona", "catalog-0003", "catalog-0012", "catalog-0013", "catalog-0014", "catalog-0018", "catalog-0022"],
+    "visit": 6,
+    "walk": 16,
+    "buffer": 8
+  },
+  {
+    "id": "theme-sculpture",
+    "kind": "theme",
+    "minutes": 80,
+    "label": "名作彫刻めぐり",
+    "subtitle": "マルリーの馬・ミケランジェロ・ヴィーナス・ニケ（−1階→1階）",
+    "ids": ["marly", "catalog-0005", "dying", "catalog-0009", "venus", "victory"],
+    "visit": 6,
+    "walk": 26,
+    "buffer": 10
+  },
+  {
+    "id": "theme-ancient",
+    "kind": "theme",
+    "minutes": 85,
+    "label": "古代文明タイムトラベル",
+    "subtitle": "オリエント・ギリシア・エジプトを0階→1階で巡る・6作品",
+    "ids": ["catalog-0037", "catalog-0007", "venus", "catalog-0011", "catalog-0038", "scribe"],
+    "visit": 6,
+    "walk": 30,
+    "buffer": 10
+  }
 ]

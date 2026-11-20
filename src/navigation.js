@@ -14,7 +14,15 @@ export function indexNavigationGraph(graph) {
   return {nodes, adjacency, graph};
 }
 
-export function shortestPath(graphOrIndex, startId, goalId) {
+function edgeWeight(edge, options) {
+  if (options?.preferElevator) {
+    if (edge.kind === 'stairs') return edge.cost + 10000;
+    if (edge.kind === 'elevator') return Math.max(1, edge.cost * 0.7);
+  }
+  return edge.cost;
+}
+
+export function shortestPath(graphOrIndex, startId, goalId, options = {}) {
   const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
   if (!index.nodes.has(startId) || !index.nodes.has(goalId)) return null;
   if (startId === goalId) return {nodeIds:[startId], edges:[], totalCost:0};
@@ -35,7 +43,7 @@ export function shortestPath(graphOrIndex, startId, goalId) {
     if (current === goalId) break;
     for (const edge of index.adjacency.get(current)) {
       if (edge.available === false || !unvisited.has(edge.to)) continue;
-      const candidate = best + edge.cost;
+      const candidate = best + edgeWeight(edge, options);
       if (candidate < distance.get(edge.to)) {
         distance.set(edge.to, candidate);
         previous.set(edge.to, {nodeId:current, edge});
@@ -54,7 +62,7 @@ export function shortestPath(graphOrIndex, startId, goalId) {
     nodeIds.unshift(step.nodeId);
     cursor = step.nodeId;
   }
-  return {nodeIds, edges, totalCost:distance.get(goalId)};
+  return {nodeIds, edges, totalCost:edges.reduce((sum, e) => sum + e.cost, 0)};
 }
 
 export function navigationStateFromRoute(graphOrIndex, workIds) {
@@ -77,7 +85,7 @@ export function navigationStateFromRoute(graphOrIndex, workIds) {
   };
 }
 
-export function navigationStateForSelection(graphOrIndex, workIds, selectedWorkId) {
+export function navigationStateForSelection(graphOrIndex, workIds, selectedWorkId, options = {}) {
   const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
   const base = navigationStateFromRoute(index, workIds);
   const selectedIndex = workIds.indexOf(selectedWorkId);
@@ -86,7 +94,7 @@ export function navigationStateForSelection(graphOrIndex, workIds, selectedWorkI
   const passedNodeGroups = [];
   let fromId = base.currentNodeId;
   for (const workId of workIds.slice(0, selectedIndex)) {
-    const path = shortestPath(index, fromId, `work:${workId}`);
+    const path = shortestPath(index, fromId, `work:${workId}`, options);
     if (!path) return base;
     passedNodeGroups.push(path.nodeIds);
     fromId = `work:${workId}`;
@@ -150,7 +158,7 @@ function floorSegments(index, path) {
   return segments;
 }
 
-function plannedPaths(index, routeWorkIds, destinationNode) {
+function plannedPaths(index, routeWorkIds, destinationNode, options) {
   if (!destinationNode?.workId || !Array.isArray(routeWorkIds)) return [];
   const destinationIndex = routeWorkIds.indexOf(destinationNode.workId);
   if (destinationIndex < 0) return [];
@@ -158,7 +166,7 @@ function plannedPaths(index, routeWorkIds, destinationNode) {
   let fromId = destinationNode.id;
   for (const workId of routeWorkIds.slice(destinationIndex + 1)) {
     const toId = `work:${workId}`;
-    const path = shortestPath(index, fromId, toId);
+    const path = shortestPath(index, fromId, toId, options);
     if (!path) return [];
     paths.push(path);
     fromId = toId;
@@ -199,14 +207,14 @@ function nextAction(index, path, destination) {
   return `青い実線に沿って${direction}へ進み、${room}を目指してください`;
 }
 
-export function buildNavigationView(graphOrIndex, input) {
+export function buildNavigationView(graphOrIndex, input, options = {}) {
   const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
   const {journeyStartNodeId, currentNodeId, destinationNodeId} = input ?? {};
   const currentNode = index.nodes.get(currentNodeId) ?? null;
   const destinationNode = index.nodes.get(destinationNodeId) ?? null;
   const storedGroups = Array.isArray(input?.passedNodeGroups) ? input.passedNodeGroups : (Array.isArray(input?.passedNodeIds) ? [input.passedNodeIds] : []);
   const storedPassedPaths = storedGroups.map(group => pathFromNodeIds(index, group)).filter(Boolean);
-  const fallbackPassedPath = !storedPassedPaths.length && journeyStartNodeId && currentNode ? shortestPath(index, journeyStartNodeId, currentNodeId) : null;
+  const fallbackPassedPath = !storedPassedPaths.length && journeyStartNodeId && currentNode ? shortestPath(index, journeyStartNodeId, currentNodeId, options) : null;
   const passedPaths = storedPassedPaths.length ? storedPassedPaths : (fallbackPassedPath ? [fallbackPassedPath] : []);
   const passedPath = passedPaths[0] ?? null;
   const passedSegments = passedPaths.flatMap(path => floorSegments(index, path));
@@ -221,14 +229,14 @@ export function buildNavigationView(graphOrIndex, input) {
     return {available:false, reason:'現在地または目的地の接続データがありません', passedSegments:[], remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[]};
   }
 
-  const remainingPath = shortestPath(index, currentNodeId, destinationNodeId);
+  const remainingPath = shortestPath(index, currentNodeId, destinationNodeId, options);
   if (!remainingPath) {
     return {available:false, reason:'この地点間を結ぶ確認済み経路がありません', currentNode, destinationNode, locationMethod:input?.lastConfirmedMethod, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[currentNode.floor]};
   }
 
   const remainingSegments = floorSegments(index, remainingPath);
   const transitions = transitionSteps(index, remainingPath);
-  const futurePaths = plannedPaths(index, input?.routeWorkIds, destinationNode);
+  const futurePaths = plannedPaths(index, input?.routeWorkIds, destinationNode, options);
   const plannedSegments = futurePaths.flatMap(path => floorSegments(index, path));
   const plannedTransitions = futurePaths.flatMap(path => transitionSteps(index, path));
   const floors = new Set([currentNode.floor, destinationNode.floor]);

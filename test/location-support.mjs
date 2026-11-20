@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {buildNavigationView, indexNavigationGraph} from '../src/navigation.js';
+import {buildNavigationView, indexNavigationGraph, shortestPath} from '../src/navigation.js';
 import {advanceOnRouteAudio} from '../src/route-progress.js';
 import {correctLocation, findRoomCandidates, normalizeRoomNumber} from '../src/location-support.js';
 
 const graph = JSON.parse(fs.readFileSync(new URL('../src/navigation-graph.json', import.meta.url)));
 const works = JSON.parse(fs.readFileSync(new URL('../src/works.json', import.meta.url)));
 const index = indexNavigationGraph(graph);
-const base = {journeyStartNodeId:'work:victory', currentNodeId:'work:mona', destinationNodeId:'work:liberty', passedNodeIds:['work:victory','door:f1:703','door:f1:711','work:mona']};
+const victoryToMona = shortestPath(index, 'work:victory', 'work:mona').nodeIds;
+const base = {journeyStartNodeId:'work:victory', currentNodeId:'work:mona', destinationNodeId:'work:liberty', passedNodeIds:victoryToMona};
 
 assert.equal(normalizeRoomNumber(' ７１１室 '), '711');
 assert.deepEqual(findRoomCandidates(index, works, '999'), []);

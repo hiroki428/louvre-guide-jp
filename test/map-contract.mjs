@@ -1,85 +1,52 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {floorMapMarkup} from '../src/floor-map.js';
-import {COMMON_BUILDING_OUTLINE, NON_RECTANGULAR_ROOM_NUMBERS, floorPlans, officialRoomNumbers} from '../src/floor-map-data.js';
+import {floorGeoData} from '../src/floor-map-geo.js';
 import {buildNavigationView, indexNavigationGraph, navigationStateForSelection, navigationStateFromRoute} from '../src/navigation.js';
 import {advanceOnRouteAudio} from '../src/route-progress.js';
 
 const works = JSON.parse(await readFile(new URL('../src/works.json', import.meta.url), 'utf8'));
 const navigationGraph = JSON.parse(await readFile(new URL('../src/navigation-graph.json', import.meta.url), 'utf8'));
 const navigationIndex = indexNavigationGraph(navigationGraph);
-const layers = ['wings', 'corridors', 'rooms', 'connections', 'doors', 'facilities', 'artworks', 'labels', 'alerts', 'route'];
+const layers = ['wings', 'rooms', 'corridors', 'connections', 'doors', 'facilities', 'artworks', 'labels', 'alerts', 'route'];
+
+assert.ok(floorGeoData.footprintPolys.length > 50, 'shared palace footprint polygons must be built from GeoJSON');
 
 for (const floor of [2, 1, 0, -1, -2]) {
+  const plan = floorGeoData.floors[String(floor)];
+  assert.ok(plan, `floor ${floor} GeoJSON plan must exist`);
+  assert.ok(plan.rooms.length > 10, `floor ${floor} must contain real architectural room polygons`);
   const markup = floorMapMarkup({floor, floorLabel:String(floor), works, selectedId:null});
   assert.match(markup, /viewBox="0 0 960 600"/, `floor ${floor} needs a stable viewBox`);
   assert.match(markup, /role="img"/, `floor ${floor} needs an image role`);
   for (const layer of layers) {
     assert.ok(markup.includes(`data-layer="${layer}"`), `floor ${floor} is missing ${layer} layer`);
   }
-  for (const room of officialRoomNumbers[floor]) {
-    assert.ok(markup.includes(`data-room="${room}"`), `floor ${floor} is missing official room ${room}`);
-  }
+  assert.match(markup, /class="palace-footprint"/, `floor ${floor} must render shared palace footprint`);
   assert.doesNotMatch(markup, /route-arrow|marker-end|pin-number/, `floor ${floor} must not render a dummy route`);
   assert.doesNotMatch(markup, /概略|検証用/, `floor ${floor} must not retain legacy schematic copy`);
-  assert.doesNotMatch(markup, /<path class="map-connection/, `floor ${floor} connections must use straight SVG lines only`);
 }
-
-const mapLegend = floorMapMarkup({floor:0, floorLabel:'0階', works, selectedId:null});
-assert.match(mapLegend, /部屋間の接続/, 'the legend must distinguish room connections from the route');
-assert.match(mapLegend, /map-connection wing-sully/, 'wing-coloured room connections must render');
-
-assert.deepEqual([...new Set(Object.values(floorPlans).map(plan => plan.outline))], [COMMON_BUILDING_OUTLINE], 'every floor must use the identical building outline');
-assert.doesNotMatch(COMMON_BUILDING_OUTLINE, /[AaCcQqSsTt]/, 'the shared building outline must contain straight segments only');
-assert.deepEqual(NON_RECTANGULAR_ROOM_NUMBERS, ['135', '338', '536', '830'], 'only the four approved room numbers may use exception geometry');
-
-for (const [floor, plan] of Object.entries(floorPlans)) {
-  for (const mappedRoom of plan.rooms) {
-    if (!NON_RECTANGULAR_ROOM_NUMBERS.includes(mappedRoom.number)) {
-      assert.ok(!mappedRoom.points, `floor ${floor} room ${mappedRoom.number} must be rectangular`);
-    }
-  }
-  for (const item of plan.connections) {
-    assert.ok(!item.points || item.points.every(point => point.length === 2 && point.every(Number.isFinite)), `floor ${floor} connections must be composed of straight segments`);
-  }
-}
-
-for (const floor of [2, 1, 0]) {
-  const sullyRooms = floorPlans[floor].rooms.filter(room => room.wing === 'sully');
-  const sullyConnections = floorPlans[floor].connections.filter(item => item.wing === 'sully');
-  assert.ok(sullyConnections.length >= sullyRooms.length - 1, `floor ${floor} Sully connections must remain continuous`);
-}
-
-assert.equal(floorPlans[2].rooms.filter(room => room.wing === 'denon').length, 0, 'floor 2 Denon wing must remain empty');
-assert.ok(floorPlans[2].wings.some(wing => wing.id === 'denon'), 'floor 2 must label the empty Denon wing inside the shared outline');
-
-const floor2Rooms = Object.fromEntries(floorPlans[2].rooms.map(room => [room.number, room]));
-assert.ok(floor2Rooms['900'].x < floor2Rooms['909'].x && floor2Rooms['900'].y > floor2Rooms['909'].y, 'floor 2 room 900 must remain at the Richelieu-side junction, outside the upper room row');
-assert.deepEqual(['909','912','913','917'].map(number => floor2Rooms[number].y), [160,160,160,160], 'floor 2 upper Sully rooms must remain on the traced straight line');
-assert.deepEqual(['936','944','952','940'].map(number => floor2Rooms[number].y), [240,240,240,240], 'floor 2 lower Sully rooms must remain on the traced straight line');
-assert.ok(floorPlans[2].connections.some(item => item.from === '917' && item.to === '931'), 'floor 2 east bend must follow room 917 to room 931');
-assert.ok(floorPlans[2].connections.some(item => item.from === '931' && item.to === '940'), 'floor 2 east bend must continue from room 931 to room 940');
-assert.ok(floorPlans[0].connections.some(item => item.to === 'corridor:sully-west'), 'floor 0 Sully west closure must use its real corridor, not a direct room link');
-assert.ok(!floorPlans[2].connections.some(item => item.from === '900' && ['909','912','913','917'].includes(item.to)), 'floor 2 room 900 must not be inserted into the outer upper room row');
-assert.ok(!floorPlans[0].connections.some(item => item.from === '338' && item.to === '300'), 'floor 0 rooms separated by a corridor must not be linked directly');
-
-const floor1Rooms = Object.fromEntries(floorPlans[1].rooms.map(room => [room.number, room]));
-assert.deepEqual(['600','601','605','606','617','663'].map(number => floor1Rooms[number].y), [142,142,142,142,142,142], 'floor 1 upper Sully row must be straight');
-assert.deepEqual(['663','661','660','656','652','651'].map(number => floor1Rooms[number].x), [859,859,859,859,859,859], 'floor 1 east Sully row must be straight');
-
-const floor0Rooms = Object.fromEntries(floorPlans[0].rooms.map(room => [room.number, room]));
-assert.deepEqual(['300','305','308','312','316','317'].map(number => floor0Rooms[number].y), [145,145,145,145,145,145], 'floor 0 upper Sully row must be straight');
-assert.deepEqual(['317','321','323','328'].map(number => floor0Rooms[number].x), [862,862,862,862], 'floor 0 east Sully row must be straight');
 
 const firstFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'mona'});
 assert.match(firstFloor, /data-map-work="mona"/, 'verified artwork room marker should render');
-assert.match(firstFloor, /class="artwork-pin"/, 'artwork markers must render beside room numbers');
-assert.match(firstFloor, /class="artwork-pin-core"/, 'artwork markers need a high-contrast center');
+assert.match(firstFloor, /class="artwork-pin\b/, 'artwork markers must render');
+assert.match(firstFloor, /class="artwork-pin-core/, 'artwork markers need a high-contrast center');
+assert.match(firstFloor, /pin-dest/, 'destination pin should use teardrop destination style');
 assert.match(firstFloor, /room-node is-selected/, 'selected artwork room should use a non-colour outline state');
-assert.match(firstFloor, /id="route-walkable-mask"/, 'the floor must define a rooms-and-corridors route mask');
-assert.match(firstFloor, /id="corridor-room-mask"/, 'corridor paint must exclude room shapes');
-assert.match(firstFloor, /data-layer="corridors"><g mask="url\(#corridor-room-mask\)"/, 'visible corridors must use the room cutout');
-assert.ok(firstFloor.indexOf('data-layer="rooms"') < firstFloor.indexOf('data-layer="corridors"'), 'wide corridors must render above room fills');
+
+const viewedFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'mona', routeWorkIds:['victory','mona','liberty'], viewedIds:['victory']});
+assert.match(viewedFloor, /pin-viewed/, 'viewed route stop must render green viewed pin');
+assert.match(viewedFloor, /pin-check/, 'viewed route stop must render checkmark');
+assert.match(viewedFloor, /pin-route/, 'unvisited route stop must render blue route pin');
+
+const wcPickFloor = floorMapMarkup({floor:-2, floorLabel:'−2階', works, selectedId:null, facilityFilter:'wc'});
+assert.match(wcPickFloor, /facility-pick-mode/, 'facility pickup mode should activate on SVG');
+assert.match(wcPickFloor, /pick-wc/, 'toilet pickup mode should highlight WC markers');
+assert.match(wcPickFloor, /is-picked/, 'matching facility markers must be marked as picked');
+
+const cafePickFloor = floorMapMarkup({floor:-2, floorLabel:'−2階', works, selectedId:null, facilityFilter:'cafe'});
+assert.match(cafePickFloor, /pick-cafe/, 'cafe pickup mode should highlight cafe markers');
+
 const warningFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:null, roomNotices:[{floor:1,room:'711',label:'重要情報'}]});
 assert.match(warningFloor, /class="room-alert"/, 'a room-specific warning can render without adding a global map overlay');
 
@@ -100,13 +67,14 @@ assert.match(entranceFloor, /class="route-active"/, 'entrance to first work must
 const initialFirstFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'victory', navigation:initialNavigation});
 assert.match(initialFirstFloor, /class="route-planned"/, 'later route legs must remain visible from the start');
 assert.match(initialFirstFloor, /次の目的地/, 'the next destination must be visually identified');
+
 const selectedSecondNavigation = buildNavigationView(navigationIndex, navigationStateForSelection(navigationIndex, routeIds, 'mona'));
 const selectedSecondFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'mona', navigation:selectedSecondNavigation});
-assert.match(selectedSecondFloor, /mask="url\(#route-walkable-mask\)"/, 'route lines must be clipped to rooms and corridors');
 assert.match(selectedSecondFloor, /区間の開始地点/, 'selected leg must label its previous work as the start');
 assert.match(selectedSecondFloor, /class="route-passed"/, 'legs before the selected work must be dotted');
 assert.match(selectedSecondFloor, /class="route-active"/, 'the selected work leg must be emphasized');
 assert.match(selectedSecondFloor, /class="route-planned"/, 'legs after the selected work must remain subdued');
+
 const victoryProgress = advanceOnRouteAudio(navigationIndex, initialProgress, routeIds, 'victory').navigation;
 const arrivedProgress = advanceOnRouteAudio(navigationIndex, victoryProgress, routeIds, 'mona').navigation;
 const arrivedNavigation = buildNavigationView(navigationIndex, arrivedProgress);

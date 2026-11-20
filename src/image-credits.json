@@ -1,74 +1,320 @@
 [
-    {
-        "artist":  "\u003ca rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/41894148532@N01\"\u003eNeil Turner\u003c/a\u003e from Sowerby Bridge, United Kingdom",
-        "licenseUrl":  "https://creativecommons.org/licenses/by-sa/2.0",
-        "file":  "File:Dying Slave by Michelangelo, Musée de Louvre, 8 May 2013.jpg",
-        "license":  "CC BY-SA 2.0"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Jusepe_de_Ribera\" class=\"extiw\" title=\"w:en:Jusepe de Ribera\"\u003e\u003cspan title=\"Spanish painter (1591–1652)\"\u003eJusepe de Ribera\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:El patizambo, por José de Ribera.jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003ca href=\"//commons.wikimedia.org/wiki/User:Livioandronico2013\" title=\"User:Livioandronico2013\"\u003eLivioandronico2013\u003c/a\u003e",
-        "licenseUrl":  "https://creativecommons.org/licenses/by-sa/4.0",
-        "file":  "File:Front views of the Venus de Milo.jpg",
-        "license":  "CC BY-SA 4.0"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Jean-Auguste-Dominique_Ingres\" class=\"extiw\" title=\"w:en:Jean-Auguste-Dominique Ingres\"\u003e\u003cspan title=\"French painter (1780–1867)\"\u003eJean-Auguste-Dominique Ingres\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:Jean-Auguste-Dominique Ingres - La Baigneuse Valpinçon.jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Johannes_Vermeer\" class=\"extiw\" title=\"w:en:Johannes Vermeer\"\u003e\u003cspan title=\"Dutch painter (1632–1675)\"\u003eJohannes Vermeer\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:Johannes Vermeer - The lacemaker (c.1669-1671).jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Eug%C3%A8ne_Delacroix\" class=\"extiw\" title=\"w:en:Eugène Delacroix\"\u003e\u003cspan title=\"French painter (1798–1863)\"\u003eEugène Delacroix\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:La Liberté guidant le peuple - Eugène Delacroix - Musée du Louvre Peintures RF 129 - après restauration 2024.jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003ca href=\"//commons.wikimedia.org/wiki/User:Shonagon\" title=\"User:Shonagon\"\u003eShonagon\u003c/a\u003e",
-        "licenseUrl":  "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-        "file":  "File:Le Scribe accroupi - Musée du Louvre Antiquités égyptiennes E 3023.jpg",
-        "license":  "CC0"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Georges_de_La_Tour\" class=\"extiw\" title=\"w:en:Georges de La Tour\"\u003e\u003cspan title=\"Lorrain painter (1593–1652)\"\u003eGeorges de La Tour\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:Le Tricheur à l\u0027as de carreau - Georges de La Tour - Musée du Louvre Peintures RF 1972 8.jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Quentin_Matsys\" class=\"extiw\" title=\"w:en:Quentin Matsys\"\u003e\u003cspan title=\"Flemish painter (1466-1530)\"\u003eQuinten Metsys\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:Le prêteur et sa femme - Quentin Metsys - Musée du Louvre Peintures INV 1444 ; MR 821.jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Guillaume_Coustou_the_Elder\" class=\"extiw\" title=\"w:en:Guillaume Coustou the Elder\"\u003e\u003cspan title=\"sculptor from France (1677-1746)\"\u003eGuillaume Coustou the Elder\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  "https://creativecommons.org/licenses/by/2.5",
-        "file":  "File:Marly horse Louvre MR1802.jpg",
-        "license":  "CC BY 2.5"
-    },
-    {
-        "artist":  "\u003cbdi\u003e\u003ca href=\"https://en.wikipedia.org/wiki/en:Leonardo_da_Vinci\" class=\"extiw\" title=\"w:en:Leonardo da Vinci\"\u003e\u003cspan title=\"Italian Renaissance polymath (1452−1519)\"\u003eLeonardo da Vinci\u003c/span\u003e\u003c/a\u003e\u003c/bdi\u003e",
-        "licenseUrl":  null,
-        "file":  "File:Mona Lisa, by Leonardo da Vinci, from C2RMF retouched.jpg",
-        "license":  "Public domain"
-    },
-    {
-        "artist":  "\u003ca href=\"//commons.wikimedia.org/wiki/User:Shonagon\" title=\"User:Shonagon\"\u003eShonagon\u003c/a\u003e",
-        "licenseUrl":  "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-        "file":  "File:Victoire de Samothrace - Musee du Louvre - 20190812.jpg",
-        "license":  "CC0"
-    }
+  {
+    "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/41894148532@N01\">Neil Turner</a> from Sowerby Bridge, United Kingdom",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "File:Dying Slave by Michelangelo, Musée de Louvre, 8 May 2013.jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jusepe_de_Ribera\" class=\"extiw\" title=\"w:en:Jusepe de Ribera\"><span title=\"Spanish painter (1591–1652)\">Jusepe de Ribera</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:El patizambo, por José de Ribera.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Livioandronico2013\" title=\"User:Livioandronico2013\">Livioandronico2013</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "File:Front views of the Venus de Milo.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jean-Auguste-Dominique_Ingres\" class=\"extiw\" title=\"w:en:Jean-Auguste-Dominique Ingres\"><span title=\"French painter (1780–1867)\">Jean-Auguste-Dominique Ingres</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Jean-Auguste-Dominique Ingres - La Baigneuse Valpinçon.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Johannes_Vermeer\" class=\"extiw\" title=\"w:en:Johannes Vermeer\"><span title=\"Dutch painter (1632–1675)\">Johannes Vermeer</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Johannes Vermeer - The lacemaker (c.1669-1671).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Eug%C3%A8ne_Delacroix\" class=\"extiw\" title=\"w:en:Eugène Delacroix\"><span title=\"French painter (1798–1863)\">Eugène Delacroix</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:La Liberté guidant le peuple - Eugène Delacroix - Musée du Louvre Peintures RF 129 - après restauration 2024.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Shonagon\" title=\"User:Shonagon\">Shonagon</a>",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "File:Le Scribe accroupi - Musée du Louvre Antiquités égyptiennes E 3023.jpg",
+    "license": "CC0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Georges_de_La_Tour\" class=\"extiw\" title=\"w:en:Georges de La Tour\"><span title=\"Lorrain painter (1593–1652)\">Georges de La Tour</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Le Tricheur à l'as de carreau - Georges de La Tour - Musée du Louvre Peintures RF 1972 8.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Quentin_Matsys\" class=\"extiw\" title=\"w:en:Quentin Matsys\"><span title=\"Flemish painter (1466-1530)\">Quinten Metsys</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Le prêteur et sa femme - Quentin Metsys - Musée du Louvre Peintures INV 1444 ; MR 821.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Guillaume_Coustou_the_Elder\" class=\"extiw\" title=\"w:en:Guillaume Coustou the Elder\"><span title=\"sculptor from France (1677-1746)\">Guillaume Coustou the Elder</span></a></bdi>",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+    "file": "File:Marly horse Louvre MR1802.jpg",
+    "license": "CC BY 2.5"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Leonardo_da_Vinci\" class=\"extiw\" title=\"w:en:Leonardo da Vinci\"><span title=\"Italian Renaissance polymath (1452−1519)\">Leonardo da Vinci</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Mona Lisa, by Leonardo da Vinci, from C2RMF retouched.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Shonagon\" title=\"User:Shonagon\">Shonagon</a>",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "File:Victoire de Samothrace - Musee du Louvre - 20190812.jpg",
+    "license": "CC0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jacques-Louis_David\" class=\"extiw\" title=\"w:en:Jacques-Louis David\"><span title=\"French painter (1748–1825)\">Jacques-Louis David</span></a></bdi> / <bdi><a href=\"https://en.wikipedia.org/wiki/en:Georges_Rouget\" class=\"extiw\" title=\"w:en:Georges Rouget\"><span title=\"French painter (1783-1869)\">Georges Rouget</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Jacques-Louis David - The Coronation of Napoleon (1805-1807).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Th%C3%A9odore_G%C3%A9ricault\" class=\"extiw\" title=\"w:en:Théodore Géricault\"><span title=\"French painter (1791–1824)\">Théodore Géricault</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:JEAN LOUIS THÉODORE GÉRICAULT - La Balsa de la Medusa (Museo del Louvre, 1818-19).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Maerten_de_Vos\" class=\"extiw\" title=\"w:en:Maerten de Vos\"><span title=\"Flemish painter, draughtsman (1532-1603)\">Maerten de Vos</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Marten de Vos Cana.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jacques-Louis_David\" class=\"extiw\" title=\"w:en:Jacques-Louis David\"><span title=\"French painter (1748–1825)\">Jacques-Louis David</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Le Serment des Horaces - Jacques-Louis David - Musée du Louvre Peintures INV 3692 ; MR 1432.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Jean-Pol_GRANDMONT\" title=\"User:Jean-Pol GRANDMONT\">Jean-Pol GRANDMONT</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "file": "File:0 Psyché ranimée par le baiser de l'Amour - Canova - Louvre 1.JPG",
+    "license": "CC BY 4.0"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Mbzt\" title=\"User:Mbzt\">Mbzt</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "file": "File:P1050763 Louvre code Hammurabi face rwk.JPG",
+    "license": "CC BY 3.0"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:MohammadHuzam\" title=\"User:MohammadHuzam\">MohammadHuzam</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "File:Iraqi Museum.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jean-Auguste-Dominique_Ingres\" class=\"extiw\" title=\"w:en:Jean-Auguste-Dominique Ingres\"><span title=\"French painter (1780–1867)\">Jean-Auguste-Dominique Ingres</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:La grande odalisque - Jean-Auguste Dominique Ingres - Musée du Louvre Peintures RF 1158.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:J%C3%B6rg_Bittner_Unna\" title=\"User:Jörg Bittner Unna\">Jörg Bittner Unna</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "File:'Rebellious Slave' Michelangelo JBU81.jpg",
+    "license": "CC BY-SA 3.0"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Shonagon\" title=\"User:Shonagon\">Shonagon</a>",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "File:Grand sphinx de Tanis - Musée du Louvre Antiquités égyptiennes N 23 ; A 23 ; Salt 3837.jpg",
+    "license": "CC0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Leonardo_da_Vinci\" class=\"extiw\" title=\"w:en:Leonardo da Vinci\"><span title=\"Italian Renaissance polymath (1452−1519)\">Leonardo da Vinci</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Sainte Anne Leonard.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Leonardo_da_Vinci\" class=\"extiw\" title=\"w:en:Leonardo da Vinci\"><span title=\"Italian Renaissance polymath (1452−1519)\">Leonardo da Vinci</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Leonardo Da Vinci - Vergine delle Rocce (Louvre).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Leonardo_da_Vinci\" class=\"extiw\" title=\"w:en:Leonardo da Vinci\"><span title=\"Italian Renaissance polymath (1452−1519)\">Leonardo da Vinci</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Leonardo da Vinci - Saint John the Baptist C2RMF retouched.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Eug%C3%A8ne_Delacroix\" class=\"extiw\" title=\"w:en:Eugène Delacroix\"><span title=\"French painter (1798–1863)\">Eugène Delacroix</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:La Mort de Sardanapale - Eugène Delacroix - Musée du Louvre Peintures RF 2346.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jean-Auguste-Dominique_Ingres\" class=\"extiw\" title=\"w:en:Jean-Auguste-Dominique Ingres\"><span title=\"French painter (1780–1867)\">Jean-Auguste-Dominique Ingres</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Le Bain Turc, by Jean Auguste Dominique Ingres, from C2RMFFXD.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Raphael\" class=\"extiw\" title=\"w:en:Raphael\"><span title=\"Italian painter and architect (1483–1520)\">Raphael</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Baldassare Castiglione, by Raffaello Sanzio, from C2RMF retouched.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Leonardo_da_Vinci\" class=\"extiw\" title=\"w:en:Leonardo da Vinci\"><span title=\"Italian Renaissance polymath (1452−1519)\">Leonardo da Vinci</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:La Belle Ferronière - Google Arts.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Antoine_Watteau\" class=\"extiw\" title=\"w:en:Antoine Watteau\"><span title=\"French painter (1684-1721)\">Jean-Antoine Watteau</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Pierrot - Antoine Watteau - Musée du Louvre Peintures MI 1121 - après restauration 2024.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Antoine_Watteau\" class=\"extiw\" title=\"w:en:Antoine Watteau\"><span title=\"French painter (1684-1721)\">Jean-Antoine Watteau</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:L'Embarquement pour Cythère, by Antoine Watteau, from C2RMF retouched.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Johannes_Vermeer\" class=\"extiw\" title=\"w:en:Johannes Vermeer\"><span title=\"Dutch painter (1632–1675)\">Johannes Vermeer</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Johannes Vermeer - The Astronomer - 1668.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Caravaggio\" class=\"extiw\" title=\"w:en:Caravaggio\"><span title=\"Italian painter (1571–1610)\">Caravaggio</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Death of the Virgin-Caravaggio (1606).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jacques-Louis_David\" class=\"extiw\" title=\"w:en:Jacques-Louis David\"><span title=\"French painter (1748–1825)\">Jacques-Louis David</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:The Intervention of the Sabine Women - David (Louvre INV 3691).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Raphael\" class=\"extiw\" title=\"w:en:Raphael\"><span title=\"Italian painter and architect (1483–1520)\">Raphael</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:La Vierge à l'Enfant avec le petit saint Jean Baptiste - Raphaël - Musée du Louvre Peintures INV 602 ; MR 433.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jan_van_Eyck\" class=\"extiw\" title=\"w:en:Jan van Eyck\"><span title=\"Flemish painter (c.1390–1441)\">Jan van Eyck</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:The Virgin with Chancellor Rolin by Jan van Eyck (Louvre).webp",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Caravaggio\" class=\"extiw\" title=\"w:en:Caravaggio\"><span title=\"Italian painter (1571–1610)\">Caravaggio</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Caravaggio (Michelangelo Merisi) - Good Luck - Google Art Project.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Applejuice&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Applejuice (page does not exist)\">Applejuice</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "File:Ebih-ii en priere.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Sailko\" title=\"User:Sailko\">Sailko</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "File:Sarcophagus of the Spouses from Villa Giulia in Rome.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/User:JackyM59\" title=\"User:JackyM59\">JackyM59</a>",
+    "licenseUrl": null,
+    "file": "File:Arcimboldo - Les saisons - Le printemps - Sans cadre.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Gustave_Moreau\" class=\"extiw\" title=\"w:en:Gustave Moreau\"><span title=\"19th century French Symbolist painter (1826-1898)\">Gustave Moreau</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Gustave Moreau - Étude tête d'Œdipe.JPG",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jacques-Louis_David\" class=\"extiw\" title=\"w:en:Jacques-Louis David\"><span title=\"French painter (1748–1825)\">Jacques-Louis David</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Juliette Récamier, née Bernard - Jacques-Louis David - Musée duLouvre Peintures INV 3708.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<div class=\"fn value\">\n<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/photos/ijansch/\">Ivo Jansch</a></div>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "File:Flanders exposition at the Richelieu wing of the Louvre.jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Andrea_Mantegna\" class=\"extiw\" title=\"w:en:Andrea Mantegna\"><span title=\"Italian Renaissance painter (1431-1506)\">Andrea Mantegna</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Andrea Mantegna 089.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Domenico_Ghirlandaio\" class=\"extiw\" title=\"w:en:Domenico Ghirlandaio\"><span title=\"Italian Renaissance painter from Florence (1448–1494)\">Domenico Ghirlandaio</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Ghirlandaio, Domenico - An Old Man and His Grandson - Louvre - Google Art Project.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/wiki/Giorgione\" title=\"Giorgione\">Giorgione</a> and/or his disciple <a href=\"//commons.wikimedia.org/wiki/Titian\" title=\"Titian\">Titian</a> (who probably finished the painting after Giorgione's death in 1510).",
+    "licenseUrl": null,
+    "file": "File:Le Concert champêtre, by Titian, from C2RMF retouchedFXD.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Gonzaloferjar&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Gonzaloferjar (page does not exist)\">Gonzaloferjar</a>",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "File:Tiziano - Hombre del guante (Louvre).jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Titian\" class=\"extiw\" title=\"w:en:Titian\"><span title=\"Italian painter (c.1490–1576)\">Titian</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:La Vierge au Lapin à la Loupe.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Jean-Honor%C3%A9_Fragonard\" class=\"extiw\" title=\"w:en:Jean-Honoré Fragonard\"><span title=\"French painter (1732–1806)\">Jean-Honoré Fragonard</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Le Verrou - Jean-Honoré Fragonard - Musée du Louvre Peintures RF 1974 2.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<a href=\"https://en.wikipedia.org/wiki/en:Web_Gallery_of_Art\" class=\"extiw\" title=\"w:en:Web Gallery of Art\"><span title=\"virtual art gallery for European fine art created before 1900\">Web Gallery of Art</span></a>:  <span typeof=\"mw:File\"><a href=\"http://www.wga.hu/art/l/la_tour/georges/1/09magdal.jpg\" rel=\"nofollow\"><img src=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Inkscape.svg/20px-Inkscape.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail\" decoding=\"async\" loading=\"lazy\" width=\"20\" height=\"20\" class=\"mw-file-element\" srcset=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Inkscape.svg/40px-Inkscape.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x\" data-file-width=\"60\" data-file-height=\"60\"></a></span> <a rel=\"nofollow\" class=\"external text\" href=\"http://www.wga.hu/art/l/la_tour/georges/1/09magdal.jpg\">Image</a> <span typeof=\"mw:File\"><a href=\"http://www.wga.hu/html/l/la_tour/georges/1/09magdal.html\" rel=\"nofollow\"><img src=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Information_icon.svg/20px-Information_icon.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail\" decoding=\"async\" loading=\"lazy\" width=\"20\" height=\"20\" class=\"mw-file-element\" srcset=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Information_icon.svg/40px-Information_icon.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x\" data-file-width=\"620\" data-file-height=\"620\"></a></span> <a rel=\"nofollow\" class=\"external text\" href=\"http://www.wga.hu/html/l/la_tour/georges/1/09magdal.html\">Info about artwork</a><div style=\"display: none;\">wga QS:P11807,\"l/la_tour/georges/1/09magdal\"</div>",
+    "licenseUrl": null,
+    "file": "File:Georges de La Tour - Magdalen of Night Light - WGA12337.jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "Wikimedia Commons contributor",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "file": "File:Grand salon des appartements Napoléon III (Louvre).jpg",
+    "license": "CC BY-SA 3.0"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Nicolas_Poussin\" class=\"extiw\" title=\"w:en:Nicolas Poussin\"><span title=\"French painter (1594-1665)\">Nicolas Poussin</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Nicolas Poussin - Et in Arcadia ego (première version).jpg",
+    "license": "Public domain"
+  },
+  {
+    "artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Anne-Louis_Girodet_de_Roussy-Trioson\" class=\"extiw\" title=\"w:en:Anne-Louis Girodet de Roussy-Trioson\"><span title=\"French painter (1767-1824)\">Anne-Louis Girodet</span></a></bdi>",
+    "licenseUrl": null,
+    "file": "File:Atala au tombeau - Anne-Louis Girodet - Musée du Louvre Peintures INV 4958, louvre 1.jpg",
+    "license": "Public domain"
+  }
 ]

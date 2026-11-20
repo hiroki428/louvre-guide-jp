@@ -1,62 +1,277 @@
 {
-    "cheat":  {
-                  "original":  "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Le_Tricheur_%C3%A0_l%27as_de_carreau_-_Georges_de_La_Tour_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1972_8.jpg/3840px-Le_Tricheur_%C3%A0_l%27as_de_carreau_-_Georges_de_La_Tour_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1972_8.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail",
-                  "source":  "https://en.wikipedia.org/wiki/The_Card_Sharp_with_the_Ace_of_Diamonds",
-                  "src":  "images/cheat.jpg"
-              },
-    "mona":  {
-                 "original":  "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/3840px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail",
-                 "source":  "https://en.wikipedia.org/wiki/Mona_Lisa",
-                 "src":  "images/mona.jpg"
-             },
-    "clubfoot":  {
-                     "original":  "https://upload.wikimedia.org/wikipedia/commons/a/ad/El_patizambo%2C_por_Jos%C3%A9_de_Ribera.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                     "source":  "https://en.wikipedia.org/wiki/The_Clubfoot",
-                     "src":  "images/clubfoot.jpg"
-                 },
-    "liberty":  {
-                    "original":  "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg/3840px-La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail",
-                    "source":  "https://en.wikipedia.org/wiki/Liberty_Leading_the_People",
-                    "src":  "images/liberty.jpg"
-                },
-    "scribe":  {
-                   "original":  "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Le_Scribe_accroupi_-_Mus%C3%A9e_du_Louvre_Antiquit%C3%A9s_%C3%A9gyptiennes_E_3023.jpg/3840px-Le_Scribe_accroupi_-_Mus%C3%A9e_du_Louvre_Antiquit%C3%A9s_%C3%A9gyptiennes_E_3023.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail",
-                   "source":  "https://en.wikipedia.org/wiki/The_Seated_Scribe",
-                   "src":  "images/scribe.jpg"
-               },
-    "victory":  {
-                    "original":  "https://upload.wikimedia.org/wikipedia/commons/b/bf/Victoire_de_Samothrace_-_Musee_du_Louvre_-_20190812.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                    "source":  "https://en.wikipedia.org/wiki/Winged_Victory_of_Samothrace",
-                    "src":  "images/victory.jpg"
-                },
-    "dying":  {
-                  "original":  "https://upload.wikimedia.org/wikipedia/commons/b/bf/Dying_Slave_by_Michelangelo%2C_Mus%C3%A9e_de_Louvre%2C_8_May_2013.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                  "source":  "https://en.wikipedia.org/wiki/Dying_Slave",
-                  "src":  "images/dying.jpg"
-              },
-    "marly":  {
-                  "original":  "https://upload.wikimedia.org/wikipedia/commons/7/76/Marly_horse_Louvre_MR1802.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                  "source":  "https://en.wikipedia.org/wiki/Marly_Horses",
-                  "src":  "images/marly.jpg"
-              },
-    "lacemaker":  {
-                      "original":  "https://upload.wikimedia.org/wikipedia/commons/0/03/Johannes_Vermeer_-_The_lacemaker_%28c.1669-1671%29.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                      "source":  "https://en.wikipedia.org/wiki/The_Lacemaker_(Vermeer)",
-                      "src":  "images/lacemaker.jpg"
-                  },
-    "money":  {
-                  "original":  "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Le_pr%C3%AAteur_et_sa_femme_-_Quentin_Metsys_-_Mus%C3%A9e_du_Louvre_Peintures_INV_1444_%3B_MR_821.jpg/3840px-Le_pr%C3%AAteur_et_sa_femme_-_Quentin_Metsys_-_Mus%C3%A9e_du_Louvre_Peintures_INV_1444_%3B_MR_821.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail",
-                  "source":  "https://en.wikipedia.org/wiki/The_Money_Changer_and_His_Wife",
-                  "src":  "images/money.jpg"
-              },
-    "bather":  {
-                   "original":  "https://upload.wikimedia.org/wikipedia/commons/4/44/Jean-Auguste-Dominique_Ingres_-_La_Baigneuse_Valpin%C3%A7on.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                   "source":  "https://en.wikipedia.org/wiki/The_Valpin%C3%A7on_Bather",
-                   "src":  "images/bather.jpg"
-               },
-    "venus":  {
-                  "original":  "https://upload.wikimedia.org/wikipedia/commons/c/c2/Front_views_of_the_Venus_de_Milo.jpg?utm_source=en.wikipedia.org\u0026utm_campaign=api\u0026utm_content=thumbnail_unscaled",
-                  "source":  "https://en.wikipedia.org/wiki/Venus_de_Milo",
-                  "src":  "images/venus.jpg"
-              }
+  "cheat": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Le_Tricheur_%C3%A0_l%27as_de_carreau_-_Georges_de_La_Tour_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1972_8.jpg/3840px-Le_Tricheur_%C3%A0_l%27as_de_carreau_-_Georges_de_La_Tour_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1972_8.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Card_Sharp_with_the_Ace_of_Diamonds",
+    "src": "images/cheat.jpg"
+  },
+  "mona": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/3840px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Mona_Lisa",
+    "src": "images/mona.jpg"
+  },
+  "clubfoot": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/a/ad/El_patizambo%2C_por_Jos%C3%A9_de_Ribera.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/The_Clubfoot",
+    "src": "images/clubfoot.jpg"
+  },
+  "liberty": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg/3840px-La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Liberty_Leading_the_People",
+    "src": "images/liberty.jpg"
+  },
+  "scribe": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Le_Scribe_accroupi_-_Mus%C3%A9e_du_Louvre_Antiquit%C3%A9s_%C3%A9gyptiennes_E_3023.jpg/3840px-Le_Scribe_accroupi_-_Mus%C3%A9e_du_Louvre_Antiquit%C3%A9s_%C3%A9gyptiennes_E_3023.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Seated_Scribe",
+    "src": "images/scribe.jpg"
+  },
+  "victory": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Victoire_de_Samothrace_-_Musee_du_Louvre_-_20190812.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Winged_Victory_of_Samothrace",
+    "src": "images/victory.jpg"
+  },
+  "dying": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Dying_Slave_by_Michelangelo%2C_Mus%C3%A9e_de_Louvre%2C_8_May_2013.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Dying_Slave",
+    "src": "images/dying.jpg"
+  },
+  "marly": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/7/76/Marly_horse_Louvre_MR1802.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Marly_Horses",
+    "src": "images/marly.jpg"
+  },
+  "lacemaker": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/0/03/Johannes_Vermeer_-_The_lacemaker_%28c.1669-1671%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/The_Lacemaker_(Vermeer)",
+    "src": "images/lacemaker.jpg"
+  },
+  "money": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Le_pr%C3%AAteur_et_sa_femme_-_Quentin_Metsys_-_Mus%C3%A9e_du_Louvre_Peintures_INV_1444_%3B_MR_821.jpg/3840px-Le_pr%C3%AAteur_et_sa_femme_-_Quentin_Metsys_-_Mus%C3%A9e_du_Louvre_Peintures_INV_1444_%3B_MR_821.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Money_Changer_and_His_Wife",
+    "src": "images/money.jpg"
+  },
+  "bather": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/44/Jean-Auguste-Dominique_Ingres_-_La_Baigneuse_Valpin%C3%A7on.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/The_Valpin%C3%A7on_Bather",
+    "src": "images/bather.jpg"
+  },
+  "venus": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Front_views_of_the_Venus_de_Milo.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Venus_de_Milo",
+    "src": "images/venus.jpg"
+  },
+  "catalog-0001": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Jacques-Louis_David_-_The_Coronation_of_Napoleon_%281805-1807%29.jpg/3840px-Jacques-Louis_David_-_The_Coronation_of_Napoleon_%281805-1807%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Coronation_of_Napoleon",
+    "src": "images/catalog-0001.jpg"
+  },
+  "catalog-0002": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/3840px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Raft_of_the_Medusa",
+    "src": "images/catalog-0002.jpg"
+  },
+  "catalog-0003": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/47/Marten_de_Vos_Cana.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Wedding_at_Cana",
+    "src": "images/catalog-0003.jpg"
+  },
+  "catalog-0004": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Le_Serment_des_Horaces_-_Jacques-Louis_David_-_Mus%C3%A9e_du_Louvre_Peintures_INV_3692_%3B_MR_1432.jpg/3840px-Le_Serment_des_Horaces_-_Jacques-Louis_David_-_Mus%C3%A9e_du_Louvre_Peintures_INV_3692_%3B_MR_1432.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Oath_of_the_Horatii",
+    "src": "images/catalog-0004.jpg"
+  },
+  "catalog-0005": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/e/ef/0_Psych%C3%A9_ranim%C3%A9e_par_le_baiser_de_l%27Amour_-_Canova_-_Louvre_1.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Psyche_Revived_by_Cupid's_Kiss",
+    "src": "images/catalog-0005.jpg"
+  },
+  "catalog-0006": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/6/64/P1050763_Louvre_code_Hammurabi_face_rwk.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Code_of_Hammurabi",
+    "src": "images/catalog-0006.jpg"
+  },
+  "catalog-0007": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Iraqi_Museum.jpg/3840px-Iraqi_Museum.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Lamassu",
+    "src": "images/catalog-0007.jpg"
+  },
+  "catalog-0008": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/La_grande_odalisque_-_Jean-Auguste_Dominique_Ingres_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1158.jpg/3840px-La_grande_odalisque_-_Jean-Auguste_Dominique_Ingres_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1158.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Grande_Odalisque",
+    "src": "images/catalog-0008.jpg"
+  },
+  "catalog-0009": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/6/69/%27Rebellious_Slave%27_Michelangelo_JBU81.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Rebellious_Slave",
+    "src": "images/catalog-0009.jpg"
+  },
+  "catalog-0011": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Grand_sphinx_de_Tanis_-_Mus%C3%A9e_du_Louvre_Antiquit%C3%A9s_%C3%A9gyptiennes_N_23_%3B_A_23_%3B_Salt_3837.jpg/3840px-Grand_sphinx_de_Tanis_-_Mus%C3%A9e_du_Louvre_Antiquit%C3%A9s_%C3%A9gyptiennes_N_23_%3B_A_23_%3B_Salt_3837.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Great_Sphinx_of_Tanis",
+    "src": "images/catalog-0011.jpg"
+  },
+  "catalog-0012": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Sainte_Anne_Leonard.jpg/3840px-Sainte_Anne_Leonard.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Virgin_and_Child_with_Saint_Anne_(Leonardo)",
+    "src": "images/catalog-0012.jpg"
+  },
+  "catalog-0013": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Leonardo_Da_Vinci_-_Vergine_delle_Rocce_%28Louvre%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Virgin_of_the_Rocks",
+    "src": "images/catalog-0013.jpg"
+  },
+  "catalog-0014": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Leonardo_da_Vinci_-_Saint_John_the_Baptist_C2RMF_retouched.jpg/3840px-Leonardo_da_Vinci_-_Saint_John_the_Baptist_C2RMF_retouched.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Saint_John_the_Baptist_(Leonardo)",
+    "src": "images/catalog-0014.jpg"
+  },
+  "catalog-0015": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/La_Mort_de_Sardanapale_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_2346.jpg/3840px-La_Mort_de_Sardanapale_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_2346.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Death_of_Sardanapalus",
+    "src": "images/catalog-0015.jpg"
+  },
+  "catalog-0016": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Le_Bain_Turc%2C_by_Jean_Auguste_Dominique_Ingres%2C_from_C2RMFFXD.jpg/3840px-Le_Bain_Turc%2C_by_Jean_Auguste_Dominique_Ingres%2C_from_C2RMFFXD.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Turkish_Bath",
+    "src": "images/catalog-0016.jpg"
+  },
+  "catalog-0017": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Baldassare_Castiglione%2C_by_Raffaello_Sanzio%2C_from_C2RMF_retouched.jpg/3840px-Baldassare_Castiglione%2C_by_Raffaello_Sanzio%2C_from_C2RMF_retouched.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Portrait_of_Baldassare_Castiglione",
+    "src": "images/catalog-0017.jpg"
+  },
+  "catalog-0018": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/4d/La_Belle_Ferroni%C3%A8re_-_Google_Arts.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/La_Belle_Ferronni%C3%A8re",
+    "src": "images/catalog-0018.jpg"
+  },
+  "catalog-0019": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Pierrot_-_Antoine_Watteau_-_Mus%C3%A9e_du_Louvre_Peintures_MI_1121_-_apr%C3%A8s_restauration_2024.jpg/3840px-Pierrot_-_Antoine_Watteau_-_Mus%C3%A9e_du_Louvre_Peintures_MI_1121_-_apr%C3%A8s_restauration_2024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Pierrot_(Watteau)",
+    "src": "images/catalog-0019.jpg"
+  },
+  "catalog-0020": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/L%27Embarquement_pour_Cyth%C3%A8re%2C_by_Antoine_Watteau%2C_from_C2RMF_retouched.jpg/3840px-L%27Embarquement_pour_Cyth%C3%A8re%2C_by_Antoine_Watteau%2C_from_C2RMF_retouched.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Embarkation_for_Cythera",
+    "src": "images/catalog-0020.jpg"
+  },
+  "catalog-0021": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Johannes_Vermeer_-_The_Astronomer_-_1668.jpg/3840px-Johannes_Vermeer_-_The_Astronomer_-_1668.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Astronomer",
+    "src": "images/catalog-0021.jpg"
+  },
+  "catalog-0022": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Death_of_the_Virgin-Caravaggio_%281606%29.jpg/3840px-Death_of_the_Virgin-Caravaggio_%281606%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Death_of_the_Virgin_(Caravaggio)",
+    "src": "images/catalog-0022.jpg"
+  },
+  "catalog-0026": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/The_Intervention_of_the_Sabine_Women_-_David_%28Louvre_INV_3691%29.jpg/3840px-The_Intervention_of_the_Sabine_Women_-_David_%28Louvre_INV_3691%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Intervention_of_the_Sabine_Women",
+    "src": "images/catalog-0026.jpg"
+  },
+  "catalog-0028": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/La_Vierge_%C3%A0_l%27Enfant_avec_le_petit_saint_Jean_Baptiste_-_Rapha%C3%ABl_-_Mus%C3%A9e_du_Louvre_Peintures_INV_602_%3B_MR_433.jpg/3840px-La_Vierge_%C3%A0_l%27Enfant_avec_le_petit_saint_Jean_Baptiste_-_Rapha%C3%ABl_-_Mus%C3%A9e_du_Louvre_Peintures_INV_602_%3B_MR_433.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/La_belle_jardini%C3%A8re",
+    "src": "images/catalog-0028.jpg"
+  },
+  "catalog-0029": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/2/2c/The_Virgin_with_Chancellor_Rolin_by_Jan_van_Eyck_%28Louvre%29.webp?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Madonna_of_Chancellor_Rolin",
+    "src": "images/catalog-0029.jpg"
+  },
+  "catalog-0031": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Caravaggio_%28Michelangelo_Merisi%29_-_Good_Luck_-_Google_Art_Project.jpg/3840px-Caravaggio_%28Michelangelo_Merisi%29_-_Good_Luck_-_Google_Art_Project.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Fortune_Teller_(Caravaggio)",
+    "src": "images/catalog-0031.jpg"
+  },
+  "catalog-0037": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/8/82/Ebih-ii_en_priere.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Statue_of_Ebih-Il",
+    "src": "images/catalog-0037.jpg"
+  },
+  "catalog-0038": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Sarcophagus_of_the_Spouses_from_Villa_Giulia_in_Rome.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Sarcophagus_of_the_Spouses",
+    "src": "images/catalog-0038.jpg"
+  },
+  "catalog-0041": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/6/68/Arcimboldo_-_Les_saisons_-_Le_printemps_-_Sans_cadre.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/The_Four_Seasons_(Arcimboldo)",
+    "src": "images/catalog-0041.jpg"
+  },
+  "catalog-0042": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/6/68/Arcimboldo_-_Les_saisons_-_Le_printemps_-_Sans_cadre.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/The_Four_Seasons_(Arcimboldo)",
+    "src": "images/catalog-0042.jpg"
+  },
+  "catalog-0044": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/3/36/Gustave_Moreau_-_%C3%89tude_t%C3%AAte_d%27%C5%92dipe.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Oedipus_and_the_Sphinx",
+    "src": "images/catalog-0044.jpg"
+  },
+  "catalog-0045": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Juliette_R%C3%A9camier%2C_n%C3%A9e_Bernard_-_Jacques-Louis_David_-_Mus%C3%A9e_duLouvre_Peintures_INV_3708.jpg/3840px-Juliette_R%C3%A9camier%2C_n%C3%A9e_Bernard_-_Jacques-Louis_David_-_Mus%C3%A9e_duLouvre_Peintures_INV_3708.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Portrait_of_Madame_R%C3%A9camier",
+    "src": "images/catalog-0045.jpg"
+  },
+  "catalog-0049": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Flanders_exposition_at_the_Richelieu_wing_of_the_Louvre.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Marie_de'_Medici_cycle",
+    "src": "images/catalog-0049.jpg"
+  },
+  "catalog-0051": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Andrea_Mantegna_089.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Saint_Sebastian_(Mantegna)",
+    "src": "images/catalog-0051.jpg"
+  },
+  "catalog-0052": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Ghirlandaio%2C_Domenico_-_An_Old_Man_and_His_Grandson_-_Louvre_-_Google_Art_Project.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/An_Old_Man_and_his_Grandson",
+    "src": "images/catalog-0052.jpg"
+  },
+  "catalog-0054": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Le_Concert_champ%C3%AAtre%2C_by_Titian%2C_from_C2RMF_retouchedFXD.jpg/3840px-Le_Concert_champ%C3%AAtre%2C_by_Titian%2C_from_C2RMF_retouchedFXD.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/Pastoral_Concert",
+    "src": "images/catalog-0054.jpg"
+  },
+  "catalog-0055": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/7/73/Tiziano_-_Hombre_del_guante_%28Louvre%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Man_with_a_Glove",
+    "src": "images/catalog-0055.jpg"
+  },
+  "catalog-0056": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/a/a5/La_Vierge_au_Lapin_%C3%A0_la_Loupe.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Madonna_of_the_Rabbit",
+    "src": "images/catalog-0056.jpg"
+  },
+  "catalog-0077": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Le_Verrou_-_Jean-Honor%C3%A9_Fragonard_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1974_2.jpg/3840px-Le_Verrou_-_Jean-Honor%C3%A9_Fragonard_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1974_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://en.wikipedia.org/wiki/The_Bolt_(Fragonard)",
+    "src": "images/catalog-0077.jpg"
+  },
+  "catalog-0079": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Georges_de_La_Tour_-_Magdalen_of_Night_Light_-_WGA12337.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Magdalene_with_the_Smoking_Flame",
+    "src": "images/catalog-0079.jpg"
+  },
+  "catalog-0086": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Flanders_exposition_at_the_Richelieu_wing_of_the_Louvre.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://en.wikipedia.org/wiki/Marie_de'_Medici_cycle",
+    "src": "images/catalog-0086.jpg"
+  },
+  "catalog-0025": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/3/33/Grand_salon_des_appartements_Napol%C3%A9on_III_%28Louvre%29.jpg?utm_source=fr.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://fr.wikipedia.org/wiki/Appartements_Napol%C3%A9on_III",
+    "src": "images/catalog-0025.jpg"
+  },
+  "catalog-0032": {
+    "original": "https://upload.wikimedia.org/wikipedia/commons/4/46/Nicolas_Poussin_-_Et_in_Arcadia_ego_%28premi%C3%A8re_version%29.jpg?utm_source=fr.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "source": "https://fr.wikipedia.org/wiki/Et_in_Arcadia_ego_(Poussin)",
+    "src": "images/catalog-0032.jpg"
+  },
+  "catalog-0043": {
+    "original": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/Atala_au_tombeau_-_Anne-Louis_Girodet_-_Mus%C3%A9e_du_Louvre_Peintures_INV_4958%2C_louvre_1.jpg/3840px-Atala_au_tombeau_-_Anne-Louis_Girodet_-_Mus%C3%A9e_du_Louvre_Peintures_INV_4958%2C_louvre_1.jpg?utm_source=fr.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "source": "https://fr.wikipedia.org/wiki/Atala_au_tombeau",
+    "src": "images/catalog-0043.jpg"
+  }
 }
