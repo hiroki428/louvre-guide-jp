@@ -53,6 +53,7 @@ assert.match(main, /sources\.availability/);
 assert.match(main, /公認サービスではありません/);
 assert.doesNotMatch(main, /map-caution|route-data-note|GPS現在地|GPS不使用/);
 assert.doesNotMatch(main, /単独再生/, 'audio rows must show tier badges instead of 単独再生');
+assert.doesNotMatch(main, /作品タップで解説を読みながら再生できます/, 'verbose audio catalog intro paragraph must stay removed');
 assert.match(main, /label: 'マップ'/);
 assert.match(main, /label: 'プラン一覧'/);
 assert.match(main, /label: '音声一覧'/);

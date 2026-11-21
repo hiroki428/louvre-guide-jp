@@ -22,8 +22,115 @@ for (const floor of [2, 1, 0, -1, -2]) {
   for (const layer of layers) {
     assert.ok(markup.includes(`data-layer="${layer}"`), `floor ${floor} is missing ${layer} layer`);
   }
-  assert.match(markup, /class="palace-footprint"/, `floor ${floor} must render shared palace footprint`);
-  if (floor === 2) assert.doesNotMatch(markup, /ドゥノン翼/, 'floor 2 must not label Denon wing since Denon has no 2nd floor');
+  assert.match(markup, /class="palace-footprint(?:\s|")/, `floor ${floor} must render shared palace footprint`);
+  if (floor === -1) {
+    assert.match(markup, /class="room-number is-uniform-room"/, 'floor -1 must render all room numbers at a uniform legible size');
+    assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor -1 must not mix different room number font sizes');
+    assert.match(markup, /ステュディオ/, 'floor -1 must label the green Studio rest area');
+    assert.match(markup, /休憩エリア/, 'floor -1 must indicate Studio is a rest area');
+    for (const num of ['102', '104', '105', '101', '132', '137', '135', '133', '134', '164', '169', '160', '170', '183', '185', '180', '181', '179', '175', '174']) {
+      assert.ok(markup.includes(`>${num}</text>`), `floor -1 must include uniform room label ${num}`);
+    }
+    const routedM1 = floorMapMarkup({floor: -1, floorLabel: '−1階', works, selectedId: 'marly', routeWorkIds: ['marly'], viewedIds: []});
+    const labelsM1 = [...routedM1.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
+      .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
+    const pinsM1 = [...routedM1.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
+      .map(m => {
+        const k = m[1], x = Number(m[2]), y = Number(m[3]);
+        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
+        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
+        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
+        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+      });
+    assert.ok(pinsM1.length > 0, 'floor -1 must render artwork pins');
+    for (const p of pinsM1) {
+      for (const l of labelsM1) {
+        const hit = !(p.x1 <= l.x0 || p.x0 >= l.x1 || p.y1 <= l.y0 || p.y0 >= l.y1);
+        assert.equal(hit, false, `floor -1 pin (${p.k}) must not overlap room number ${l.num}`);
+      }
+    }
+  }
+  if (floor === 0) {
+    assert.match(markup, /class="room-number is-uniform-room"/, 'floor 0 must render all room numbers at a uniform legible size');
+    assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor 0 must not mix different room number font sizes');
+    assert.match(markup, /is-construction/, 'floor 0 must mark construction rooms 418, 417, 415');
+    assert.match(markup, /工事中/, 'floor 0 must clearly indicate that the yellow zone is under construction');
+    for (const num of ['212', '218', '206', '201', '200', '219', '226', '227', '230', '229', '236', '234', '231', '306', '308', '300', '312', '316', '317', '321', '324', '328', '348', '345', '339', '338', '337', '347', '403', '406', '408', '400', '402', '405', '418', '419', '415', '417', '410', '413']) {
+      assert.ok(markup.includes(`>${num}</text>`), `floor 0 must include uniform room label ${num}`);
+    }
+    const routed0F = floorMapMarkup({floor: 0, floorLabel: '0階', works, selectedId: 'venus', routeWorkIds: ['venus', 'dying'], viewedIds: ['dying']});
+    const labels0 = [...routed0F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
+      .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
+    const pins0 = [...routed0F.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
+      .map(m => {
+        const k = m[1], x = Number(m[2]), y = Number(m[3]);
+        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
+        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
+        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
+        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+      });
+    assert.ok(pins0.length > 0, 'floor 0 must render artwork pins');
+    for (const p of pins0) {
+      for (const l of labels0) {
+        const hit = !(p.x1 <= l.x0 || p.x0 >= l.x1 || p.y1 <= l.y0 || p.y0 >= l.y1);
+        assert.equal(hit, false, `floor 0 pin (${p.k}) must not overlap room number ${l.num}`);
+      }
+    }
+  }
+  if (floor === 1) {
+    assert.match(markup, /class="room-number is-uniform-room"/, 'floor 1 must render all room numbers at a uniform legible size');
+    assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor 1 must not mix different room number font sizes');
+    assert.match(markup, /is-construction/, 'floor 1 must mark construction rooms 564 and 558');
+    assert.match(markup, /工事中/, 'floor 1 must clearly indicate that the yellow zone is under construction');
+    for (const num of ['564', '558', '552', '557', '548', '544', '535', '505', '503', '500', '507', '517', '516', '531', '519', '528', '606', '605', '601', '600', '617', '632', '635', '636', '640', '663', '660', '661', '650', '656', '652', '641', '651', '700', '701', '702', '703', '715', '711', '709', '706', '705', '716', '712', '710', '708', '717', '718', '719', '726', '720', '734', '727']) {
+      assert.ok(markup.includes(`>${num}</text>`), `floor 1 must include uniform room label ${num}`);
+    }
+    const routed1F = floorMapMarkup({floor: 1, floorLabel: '1階', works, selectedId: 'mona', routeWorkIds: ['victory', 'mona', 'liberty', 'scribe'], viewedIds: ['victory']});
+    const labels1 = [...routed1F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
+      .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
+    const pins1 = [...routed1F.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
+      .map(m => {
+        const k = m[1], x = Number(m[2]), y = Number(m[3]);
+        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
+        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
+        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
+        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+      });
+    assert.ok(pins1.length > 0, 'floor 1 must render artwork pins');
+    for (const p of pins1) {
+      for (const l of labels1) {
+        const hit = !(p.x1 <= l.x0 || p.x0 >= l.x1 || p.y1 <= l.y0 || p.y0 >= l.y1);
+        assert.equal(hit, false, `floor 1 pin (${p.k}) must not overlap room number ${l.num}`);
+      }
+    }
+  }
+  if (floor === 2) {
+    assert.doesNotMatch(markup, /ドゥノン翼/, 'floor 2 must not label Denon wing since Denon has no 2nd floor');
+    assert.match(markup, /class="room-number is-uniform-room"/, 'floor 2 must render all room numbers at a uniform legible size');
+    assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor 2 must not mix different room number font sizes');
+    for (const num of ['864', '848', '855', '845', '843', '836', '802', '801', '800', '803', '814', '825', '823', '818', '835', '830', '909', '912', '913', '900', '952', '944', '940', '936', '931', '917', '924']) {
+      assert.ok(markup.includes(`>${num}</text>`), `floor 2 must include uniform room label ${num}`);
+    }
+    // Verify artwork pins NEVER overlap room number bounding boxes on Floor 2
+    const routed2F = floorMapMarkup({floor: 2, floorLabel: '2階', works, selectedId: 'lacemaker', routeWorkIds: ['lacemaker', 'money', 'cheat', 'bather'], viewedIds: ['money']});
+    const labels = [...routed2F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
+      .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
+    const pins = [...routed2F.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
+      .map(m => {
+        const k = m[1], x = Number(m[2]), y = Number(m[3]);
+        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
+        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
+        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
+        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+      });
+    assert.ok(pins.length > 0, 'floor 2 must render artwork pins');
+    for (const p of pins) {
+      for (const l of labels) {
+        const hit = !(p.x1 <= l.x0 || p.x0 >= l.x1 || p.y1 <= l.y0 || p.y0 >= l.y1);
+        assert.equal(hit, false, `floor 2 pin (${p.k}) must not overlap room number ${l.num}`);
+      }
+    }
+  }
   assert.doesNotMatch(markup, /class="map-heading"/, `floor ${floor} must place floor info inside SVG top-left instead of a separate header bar`);
   assert.doesNotMatch(markup, /class="facility-label|class="map-label|class="wing-range/, `floor ${floor} must keep map interior text minimal without cluttering labels`);
   const hudMatch = markup.match(/data-hud-bounds="([0-9.]+),([0-9.]+),([0-9.]+),([0-9.]+)"/);

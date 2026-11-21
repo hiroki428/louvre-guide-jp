@@ -1530,7 +1530,6 @@ function audioTabView(hasMini) {
           <span>音声設定 (${formatRate(state.playbackRate)})</span>
         </button>
       </div>
-      <p>作品タップで解説を読みながら再生できます。評価は <span class="tier-badge tier-gold">超有名</span> <span class="tier-badge tier-silver">有名</span> <span class="tier-badge tier-bronze">傑作</span> の3段階です。</p>
     </section>
     <section class="audio-catalog" aria-label="作品の音声一覧">
       <div class="audio-search-bar">

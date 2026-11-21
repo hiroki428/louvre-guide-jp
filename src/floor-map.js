@@ -20,22 +20,89 @@ function roomMarkup(room, worksByRoom, selectedId, routeWorkSet) {
   const selected = roomWorks.some(work => work.id === selectedId);
   const onRoute = routeWorkSet ? roomWorks.some(work => routeWorkSet.has(work.id)) : false;
   const roomAttr = room.number ? ` data-room="${escapeHtml(room.number)}"` : '';
-  return `<g class="room-node ${selected ? 'is-selected ' : ''}${onRoute ? 'has-route-work ' : ''}wing-${escapeHtml(room.wing)}"${roomAttr}><polygon points="${room.points}"/></g>`;
+  const constructionCls = room.underConstruction ? 'is-construction ' : '';
+  const shape = room.path
+    ? `<path d="${room.path}" fill-rule="evenodd"/>`
+    : `<polygon points="${room.points}"/>`;
+  return `<g class="room-node ${constructionCls}${selected ? 'is-selected ' : ''}${onRoute ? 'has-route-work ' : ''}wing-${escapeHtml(room.wing)}"${roomAttr}>${shape}</g>`;
 }
 
-function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet) {
+function boxesOverlap(a, b, pad = 1.5) {
+  return !(a.x1 + pad <= b.x0 || a.x0 - pad >= b.x1 || a.y1 + pad <= b.y0 || a.y0 - pad >= b.y1);
+}
+
+function overlapArea(a, b) {
+  const ox = Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0));
+  const oy = Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+  return ox * oy;
+}
+
+function markerBoxAt(x, y, kind) {
+  if (kind === 'dest') return {x0: x - 11.5, y0: y - 31.5, x1: x + 11.5, y1: y + 1};
+  if (kind === 'route') return {x0: x - 9.5, y0: y - 26.5, x1: x + 9.5, y1: y + 1};
+  if (kind === 'viewed') return {x0: x - 9.8, y0: y - 16, x1: x + 9.8, y1: y + 4};
+  return {x0: x - 5.2, y0: y - 5.2, x1: x + 5.2, y1: y + 5.2};
+}
+
+function resolveNonOverlappingPinPos(ax, ay, kind, labelBoxes, placedPinBoxes) {
+  const candidates = kind === 'catalog'
+    ? [
+        [0, -11], [15, 0], [-15, 0], [0, 12],
+        [14, -9], [-14, -9], [14, 10], [-14, 10],
+        [19, 0], [-19, 0], [0, -16], [0, 17],
+        [20, -10], [-20, -10], [20, 10], [-20, 10]
+      ]
+    : kind === 'viewed'
+      ? [
+          [0, -13], [17, 4], [-17, 4], [18, -8], [-18, -8],
+          [0, 19], [22, 4], [-22, 4], [22, -10], [-22, -10],
+          [16, 17], [-16, 17], [0, -21], [26, 0], [-26, 0]
+        ]
+      : [
+          [0, -10], [17, 6], [-17, 6], [19, -4], [-19, -4],
+          [22, 8], [-22, 8], [0, -16], [22, -8], [-22, -8],
+          [16, 22], [-16, 22], [26, 4], [-26, 4], [0, 32],
+          [28, -6], [-28, -6], [28, 12], [-28, 12]
+        ];
+
+  let best = {x: ax, y: ay, score: Infinity, box: markerBoxAt(ax, ay, kind)};
+  for (const [dx, dy] of candidates) {
+    const cx = Math.round((ax + dx) * 10) / 10;
+    const cy = Math.round((ay + dy) * 10) / 10;
+    const box = markerBoxAt(cx, cy, kind);
+    let labelPen = 0;
+    for (const lb of labelBoxes) {
+      if (boxesOverlap(box, lb, 1.5)) labelPen += 1000 + overlapArea(box, lb) * 50;
+    }
+    let pinPen = 0;
+    for (const pb of placedPinBoxes) {
+      if (boxesOverlap(box, pb, 0.5)) pinPen += 120 + overlapArea(box, pb) * 8;
+    }
+    const distPen = Math.hypot(dx, dy) * 0.6;
+    const score = labelPen + pinPen + distPen;
+    if (score < best.score) {
+      best = {x: cx, y: cy, score, box};
+      if (labelPen === 0 && pinPen === 0) break;
+    }
+  }
+  return best;
+}
+
+function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet, labelBoxes = []) {
   const routeOrder = new Map();
   if (Array.isArray(routeWorkIds)) {
     routeWorkIds.forEach((id, idx) => routeOrder.set(id, idx + 1));
   }
   const routeSet = routeOrder.size ? new Set(routeWorkIds) : null;
   const parts = [];
+  const placedPinBoxes = [];
   const sortedEntries = [...worksByRoom.entries()].sort(([, a], [, b]) => {
     const aDest = a.some(w => w.id === selectedId) ? 2 : (routeSet && a.some(w => routeSet.has(w.id)) ? 1 : 0);
     const bDest = b.some(w => w.id === selectedId) ? 2 : (routeSet && b.some(w => routeSet.has(w.id)) ? 1 : 0);
-    return aDest - bDest;
+    return bDest - aDest;
   });
 
+  const placedMarkers = [];
   for (const [roomNum, roomWorks] of sortedEntries) {
     const anchor = anchors[roomNum];
     if (!anchor || !roomWorks.length) continue;
@@ -45,8 +112,13 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
     const routeWorksInRoom = routeSet ? roomWorks.filter(w => routeSet.has(w.id)) : roomWorks;
     const allViewed = viewedSet && routeWorksInRoom.length > 0 && routeWorksInRoom.every(w => viewedSet.has(w.id));
     const orderNum = routeOrder.get(primary.id) || (routeWorksInRoom[0] ? routeOrder.get(routeWorksInRoom[0].id) : null);
-    const x = anchor.x;
-    const y = anchor.y;
+    const kind = destination ? 'dest' : (onRoute && allViewed) ? 'viewed' : onRoute ? 'route' : 'catalog';
+    const pos = labelBoxes.length
+      ? resolveNonOverlappingPinPos(anchor.x, anchor.y, kind, labelBoxes, placedPinBoxes)
+      : {x: anchor.x, y: anchor.y, box: markerBoxAt(anchor.x, anchor.y, kind)};
+    placedPinBoxes.push(pos.box);
+    const x = pos.x;
+    const y = pos.y;
     const count = roomWorks.length;
     const idsAttr = roomWorks.map(work => work.id).join(',');
     const extraLabel = count > 1 ? `ほか${count - 1}作品` : '';
@@ -88,11 +160,11 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
     } else {
       shapeMarkup = `
         <circle class="artwork-hit" cx="0" cy="0" r="14"/>
-        <circle class="artwork-pin pin-catalog" cx="0" cy="0" r="6"/>
-        <circle class="artwork-pin-core" cx="0" cy="0" r="2.1"/>
+        <circle class="artwork-pin pin-catalog" cx="0" cy="0" r="5"/>
+        <circle class="artwork-pin-core" cx="0" cy="0" r="1.8"/>
       `;
-      badgeX = 6.5;
-      badgeY = -6.5;
+      badgeX = 5.8;
+      badgeY = -5.8;
     }
 
     const countBadge = count > 1
@@ -106,8 +178,14 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
       allViewed ? 'is-viewed' : ''
     ].filter(Boolean).join(' ');
 
-    parts.push(`<g class="${stateClasses}" transform="translate(${x} ${y})" data-map-work="${escapeHtml(primary.id)}" data-room-works="${escapeHtml(idsAttr)}" tabindex="0" role="button" aria-label="${escapeHtml(ariaLabel)}">${shapeMarkup}${countBadge}</g>`);
+    const zOrder = destination ? 3 : onRoute ? 2 : 1;
+    placedMarkers.push({
+      zOrder,
+      markup: `<g class="${stateClasses}" transform="translate(${x} ${y})" data-pin-kind="${kind}" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(primary.id)}" data-room-works="${escapeHtml(idsAttr)}" tabindex="0" role="button" aria-label="${escapeHtml(ariaLabel)}">${shapeMarkup}${countBadge}</g>`
+    });
   }
+  placedMarkers.sort((a, b) => a.zOrder - b.zOrder);
+  for (const m of placedMarkers) parts.push(m.markup);
   return parts.join('');
 }
 
@@ -199,7 +277,7 @@ function wrapHudText(text, maxChars = 14) {
   return lines;
 }
 
-function mapHudMarkup({floorLabel, continuationFloors}) {
+function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, hasRestArea = false}) {
   const x = 12;
   const y = 12;
   const width = 180;
@@ -225,6 +303,11 @@ function mapHudMarkup({floorLabel, continuationFloors}) {
 
   const col1 = padX;
   const col2 = x + 98;
+  const extraLegend = hasConstruction
+    ? `<rect class="hud-swatch-construction" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">工事中</text>`
+    : hasRestArea
+      ? `<rect class="hud-swatch-rest" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">休憩</text>`
+      : '';
   parts.push(`
     <g class="hud-legend" aria-label="地図の凡例">
       <circle class="hud-dot hud-dot-dest" cx="${col1 + 5}" cy="${cursorY - 3.5}" r="4.8"/>
@@ -239,6 +322,7 @@ function mapHudMarkup({floorLabel, continuationFloors}) {
 
       <circle class="hud-dot hud-dot-viewed" cx="${col1 + 5}" cy="${cursorY + 34.5}" r="4.8"/>
       <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 38}">済</text>
+      ${extraLegend}
     </g>
   `);
   const height = (cursorY + 38 + 12) - y;
@@ -270,8 +354,72 @@ export function floorMapMarkup({
     worksByRoom.get(key).push(work);
   });
 
-  const footprint = floorGeoData.footprintPolys.map(points => `<polygon class="palace-footprint" points="${points}"/>`).join('');
-  const rooms = plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('');
+  let footprint = '';
+  let rooms = '';
+  if (plan.isCustomFloorPlan && plan.customPlan) {
+    const cp = plan.customPlan;
+    const cc = cp.courCarree;
+    const ccCx = Math.round((cc.x + cc.width / 2) * 10) / 10;
+    const ccCy = Math.round((cc.y + cc.height / 2) * 10) / 10;
+    const pyr = cp.pyramid;
+    const ps = pyr.size;
+    const courCarreeDetail = `
+      <g class="custom-cour-carree" aria-hidden="true">
+        <rect class="cour-carree-frame" x="${cc.x}" y="${cc.y}" width="${cc.width}" height="${cc.height}"/>
+        <line class="cour-axis" x1="${cc.x + 8}" y1="${ccCy}" x2="${cc.x + cc.width - 8}" y2="${ccCy}"/>
+        <line class="cour-axis" x1="${ccCx}" y1="${cc.y + 8}" x2="${ccCx}" y2="${cc.y + cc.height - 8}"/>
+        <circle class="cour-fountain" cx="${ccCx}" cy="${ccCy}" r="7.5"/>
+        <circle class="cour-fountain-inner" cx="${ccCx}" cy="${ccCy}" r="2.6"/>
+      </g>`;
+    const pyramidDetail = `
+      <g class="custom-pyramid-emblem" transform="translate(${pyr.cx} ${pyr.cy})" aria-hidden="true">
+        <rect class="pyramid-base" x="${-ps}" y="${-ps}" width="${ps * 2}" height="${ps * 2}" rx="1.5"/>
+        <line class="pyramid-rib" x1="${-ps}" y1="${-ps}" x2="${ps}" y2="${ps}"/>
+        <line class="pyramid-rib" x1="${ps}" y1="${-ps}" x2="${-ps}" y2="${ps}"/>
+        <polygon class="pyramid-facet" points="0,${-ps} ${ps},0 0,${ps} ${-ps},0"/>
+        <circle class="pyramid-apex" cx="0" cy="0" r="2.2"/>
+      </g>`;
+    const underground = cp.undergroundOutline
+      ? `<path class="custom-underground-base" d="${cp.undergroundOutline}"/>`
+      : '';
+    const courtyards = cp.courtyards
+      .map(c => `<polygon class="custom-courtyard" points="${c.points}"/>`)
+      .join('');
+    const serviceHalls = cp.fusedServiceHalls
+      ? `<g class="custom-service-shells" aria-hidden="true">${cp.serviceHalls.map(h => `<polygon class="custom-service-shell" points="${h.points}"/>`).join('')}</g><g class="custom-service-fills">${cp.serviceHalls.map(h => `<polygon class="custom-service-fill" points="${h.points}"/>`).join('')}</g>`
+      : cp.serviceHalls.map(h => `<polygon class="custom-service-hall" points="${h.points}"/>`).join('');
+    const restAreas = (cp.restAreas || [])
+      .map(r => `<g class="custom-rest-area" aria-label="${escapeHtml(`${r.label}（${r.sublabel}）`)}"><polygon class="rest-area-poly" points="${r.points}"/><text class="rest-area-label" x="${r.labelX}" y="${r.labelY - 3}" text-anchor="middle">${escapeHtml(r.label)}</text><text class="rest-area-sub" x="${r.labelX}" y="${r.labelY + 8}" text-anchor="middle">${escapeHtml(r.sublabel)}</text></g>`)
+      .join('');
+    // Unified outer architectural wall shell behind rooms + passages so wings read as one cohesive space
+    const wingShell = [
+      ...cp.passages.map(p => `<polygon class="custom-wing-shell wing-${escapeHtml(p.wing)}" points="${p.points}"/>`),
+      ...plan.rooms.map(r => r.path
+        ? `<path class="custom-wing-shell ${r.underConstruction ? 'is-construction ' : ''}wing-${escapeHtml(r.wing)}" d="${r.path}" fill-rule="evenodd"/>`
+        : `<polygon class="custom-wing-shell ${r.underConstruction ? 'is-construction ' : ''}wing-${escapeHtml(r.wing)}" points="${r.points}"/>`)
+    ].join('');
+    const passages = cp.passages
+      .map(p => `<polygon class="custom-passage wing-${escapeHtml(p.wing)}" points="${p.points}"/>`)
+      .join('');
+    const dividers = (cp.dividers || [])
+      .map(d => `<line class="custom-room-divider" x1="${d.x1}" y1="${d.y1}" x2="${d.x2}" y2="${d.y2}"/>`)
+      .join('');
+    const constructionNotices = (cp.constructionNotices || [])
+      .map(n => `<g class="construction-badge" transform="translate(${n.x} ${n.y})" aria-label="${escapeHtml(n.text)}"><rect x="-38" y="-9.5" width="76" height="19" rx="9.5"/><text x="0" y="3.5" text-anchor="middle">${escapeHtml(n.text)}</text></g>`)
+      .join('');
+    footprint = `
+      <path class="palace-footprint custom-palace-base" d="${cp.footprintPath}" fill-rule="evenodd"/>
+      ${underground}
+      ${courCarreeDetail}
+      ${pyramidDetail}
+      ${courtyards}
+      ${serviceHalls}
+      ${restAreas}`;
+    rooms = `<g class="custom-wing-shells" aria-hidden="true">${wingShell}</g>${passages}${plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('')}<g class="custom-room-dividers" aria-hidden="true">${dividers}</g>${constructionNotices}`;
+  } else {
+    footprint = floorGeoData.footprintPolys.map(points => `<polygon class="palace-footprint" points="${points}"/>`).join('');
+    rooms = plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('');
+  }
   const corridors = plan.corridors.map(item => `<polygon class="geo-corridor" points="${item.points}"/>`).join('');
   const walls = plan.walls.map(points => `<polyline class="geo-wall" points="${points}"/>`).join('');
   const doors = plan.doors.map(([x, y]) => `<circle class="geo-door" cx="${x}" cy="${y}" r="1.8"/>`).join('');
@@ -281,44 +429,58 @@ export function floorMapMarkup({
     return aPick - bPick;
   });
   const facilities = sortedFacilities.map(item => facilityIconMarkup(item, facilityFilter)).join('');
-  const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet);
 
   // Place ONLY the wing names that actually exist on this floor, strictly outside the palace geometry
-  const outerWings = floor === -2
-    ? []
-    : floor === 2
-      ? [
-          {label: 'リシュリュー翼', x: 370, y: 34},
-          {label: 'シュリー翼', x: 740, y: 34}
-        ]
-      : [
-          {label: 'リシュリュー翼', x: 370, y: 34},
-          {label: 'シュリー翼', x: 740, y: 34},
-          {label: 'ドゥノン翼', x: 320, y: 576}
-        ];
-  const wingLabels = outerWings.map(w => `<text class="wing-label" x="${w.x}" y="${w.y}">${escapeHtml(w.label)}</text>`).join('');
+  const outerWings = plan.isCustomFloorPlan && plan.customPlan?.wingHeaders
+    ? plan.customPlan.wingHeaders
+    : floor === -2
+      ? []
+      : floor === 2
+        ? [
+            {label: 'リシュリュー翼', x: 370, y: 34},
+            {label: 'シュリー翼', x: 740, y: 34}
+          ]
+        : [
+            {label: 'リシュリュー翼', x: 370, y: 34},
+            {label: 'シュリー翼', x: 740, y: 34},
+            {label: 'ドゥノン翼', x: 320, y: 576}
+          ];
+  const wingLabels = outerWings.map(w => `<text class="wing-label" x="${w.x}" y="${w.y}" text-anchor="${plan.isCustomFloorPlan ? 'middle' : 'start'}">${escapeHtml(w.label)}</text>`).join('');
 
-  // Show curated room numbers across the floor (prioritizing active/route rooms, with collision guard)
-  const placedRoomLabels = [];
-  const candidateRooms = (plan.roomLabels || []).map(lbl => {
-    const roomWorks = worksByRoom.get(lbl.number) || [];
-    const hasWorks = roomWorks.length > 0;
-    const isSelectedRoom = roomWorks.some(w => w.id === selectedId);
-    const isRouteRoom = routeWorkSet ? roomWorks.some(w => routeWorkSet.has(w.id)) : false;
-    const priority = isSelectedRoom ? 4 : isRouteRoom ? 3 : lbl.priority ? 2 : 1;
-    const yOff = hasWorks ? 14 : 3;
-    return {roomNum: lbl.number, x: lbl.x, y: lbl.y + yOff, priority, emphasize: isSelectedRoom || isRouteRoom || lbl.priority};
-  });
-  candidateRooms.sort((a, b) => b.priority - a.priority);
-  const roomLabels = candidateRooms
-    .filter(item => {
-      const minDist = item.priority >= 3 ? 20 : 24;
-      if (placedRoomLabels.some(([px, py]) => Math.hypot(px - item.x, py - item.y) < minDist)) return false;
-      placedRoomLabels.push([item.x, item.y]);
-      return true;
-    })
-    .map(item => `<text class="room-number ${item.emphasize ? 'is-anchor-room' : ''}" x="${item.x}" y="${item.y}">${escapeHtml(item.roomNum)}</text>`)
-    .join('');
+  // Room numbers FIRST (room numbers have highest priority; artwork pins automatically avoid them!)
+  let roomLabels = '';
+  const roomLabelBoxes = [];
+  if (plan.uniformRoomLabels) {
+    roomLabels = (plan.roomLabels || [])
+      .map(lbl => {
+        const yPos = Math.round((lbl.y + 3.2) * 10) / 10;
+        roomLabelBoxes.push({x0: lbl.x - 11.5, y0: yPos - 8.5, x1: lbl.x + 11.5, y1: yPos + 2});
+        return `<text class="room-number is-uniform-room" data-room-label="${escapeHtml(lbl.number)}" x="${lbl.x}" y="${yPos}">${escapeHtml(lbl.number)}</text>`;
+      })
+      .join('');
+  } else {
+    const placedRoomLabels = [];
+    const candidateRooms = (plan.roomLabels || []).map(lbl => {
+      const roomWorks = worksByRoom.get(lbl.number) || [];
+      const isSelectedRoom = roomWorks.some(w => w.id === selectedId);
+      const isRouteRoom = routeWorkSet ? roomWorks.some(w => routeWorkSet.has(w.id)) : false;
+      const priority = isSelectedRoom ? 4 : isRouteRoom ? 3 : lbl.priority ? 2 : 1;
+      return {roomNum: lbl.number, x: lbl.x, y: Math.round((lbl.y + 3) * 10) / 10, priority, emphasize: isSelectedRoom || isRouteRoom || lbl.priority};
+    });
+    candidateRooms.sort((a, b) => b.priority - a.priority);
+    roomLabels = candidateRooms
+      .filter(item => {
+        const minDist = item.priority >= 3 ? 20 : 24;
+        if (placedRoomLabels.some(([px, py]) => Math.hypot(px - item.x, py - item.y) < minDist)) return false;
+        placedRoomLabels.push([item.x, item.y]);
+        roomLabelBoxes.push({x0: item.x - 11, y0: item.y - 8, x1: item.x + 11, y1: item.y + 2});
+        return true;
+      })
+      .map(item => `<text class="room-number ${item.emphasize ? 'is-anchor-room' : ''}" data-room-label="${escapeHtml(item.roomNum)}" x="${item.x}" y="${item.y}">${escapeHtml(item.roomNum)}</text>`)
+      .join('');
+  }
+
+  const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet, roomLabelBoxes);
 
   const alerts = roomNotices.filter(notice => notice.floor === floor).map(notice => {
     const anchor = plan.roomAnchors?.[String(notice.room)];
@@ -328,10 +490,23 @@ export function floorMapMarkup({
 
   const routeLayer = routeLayerMarkup(floor, navigation);
   const continuationFloors = (navigation?.routeFloors ?? []).filter(routeFloor => routeFloor !== floor);
-  const hud = mapHudMarkup({floorLabel, continuationFloors});
+  const hud = mapHudMarkup({floorLabel, continuationFloors, hasConstruction: Boolean(plan.hasConstruction), hasRestArea: Boolean(plan.hasRestArea)});
   const isFacilityPickMode = facilityFilter === 'wc' || facilityFilter === 'cafe';
 
-  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''}" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">実建築の館内GeoJSONデータをもとに、ルーブル宮殿の展示室、廊下、壁、扉、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs><filter id="pin-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="1.4" flood-color="#122126" flood-opacity="0.32"/></filter><clipPath id="map-hud-clip"><rect x="${hud.rect.x}" y="${hud.rect.y}" width="${hud.rect.width}" height="${hud.rect.height}" rx="12"/></clipPath></defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g>${hud.markup}</svg>`;
+  const svgDefs = `
+    <filter id="pin-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="1.4" flood-color="#122126" flood-opacity="0.32"/></filter>
+    <clipPath id="map-hud-clip"><rect x="${hud.rect.x}" y="${hud.rect.y}" width="${hud.rect.width}" height="${hud.rect.height}" rx="12"/></clipPath>
+    <linearGradient id="palace-stone-grad" gradientUnits="userSpaceOnUse" x1="0" y1="108" x2="0" y2="490"><stop offset="0%" stop-color="#f1ece3"/><stop offset="100%" stop-color="#e8e1d5"/></linearGradient>
+    <linearGradient id="wing-richelieu-grad" gradientUnits="userSpaceOnUse" x1="0" y1="115" x2="0" y2="250"><stop offset="0%" stop-color="#c3a390"/><stop offset="100%" stop-color="#b4927e"/></linearGradient>
+    <linearGradient id="wing-sully-grad" gradientUnits="userSpaceOnUse" x1="0" y1="220" x2="0" y2="380"><stop offset="0%" stop-color="#88b0bc"/><stop offset="100%" stop-color="#769ea9"/></linearGradient>
+    <linearGradient id="wing-denon-grad" gradientUnits="userSpaceOnUse" x1="0" y1="350" x2="0" y2="490"><stop offset="0%" stop-color="#cfa18e"/><stop offset="100%" stop-color="#be8d7a"/></linearGradient>
+    <linearGradient id="studio-rest-grad" gradientUnits="userSpaceOnUse" x1="0" y1="145" x2="0" y2="230"><stop offset="0%" stop-color="#80b896"/><stop offset="100%" stop-color="#68a17e"/></linearGradient>
+    <pattern id="construction-stripe" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#f2cf5b"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#dfb22a" stroke-width="2.6"/>
+    </pattern>`;
+
+  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">ルーブル宮殿の展示室、廊下、壁、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g>${hud.markup}</svg>`;
 }
 
 function clampView(view) {

@@ -50,16 +50,16 @@
       "id": "junction:fm1:core",
       "type": "junction",
       "floor": -1,
-      "x": 525,
-      "y": 325,
+      "x": 562,
+      "y": 299,
       "label": "中央連絡部"
     },
     {
       "id": "stairs:central:fm1",
       "type": "stairs",
       "floor": -1,
-      "x": 536,
-      "y": 326,
+      "x": 562,
+      "y": 299,
       "label": "中央階段",
       "facilityId": "stairs-central"
     },
@@ -67,8 +67,8 @@
       "id": "elevator:central:fm1",
       "type": "elevator",
       "floor": -1,
-      "x": 544,
-      "y": 336,
+      "x": 562,
+      "y": 312,
       "label": "中央エレベーター",
       "facilityId": "elevator-central"
     },
@@ -76,32 +76,32 @@
       "id": "junction:fm1:richelieu",
       "type": "junction",
       "floor": -1,
-      "x": 482,
-      "y": 187,
+      "x": 562,
+      "y": 213,
       "label": "リシュリュー翼連絡部"
     },
     {
       "id": "junction:fm1:denon",
       "type": "junction",
       "floor": -1,
-      "x": 470,
-      "y": 449,
+      "x": 562,
+      "y": 372,
       "label": "ドゥノン翼連絡部"
     },
     {
       "id": "junction:f0:core",
       "type": "junction",
       "floor": 0,
-      "x": 535,
-      "y": 315,
+      "x": 634,
+      "y": 220,
       "label": "中央連絡部"
     },
     {
       "id": "stairs:central:f0",
       "type": "stairs",
       "floor": 0,
-      "x": 536,
-      "y": 326,
+      "x": 634,
+      "y": 220,
       "label": "中央階段",
       "facilityId": "stairs-central"
     },
@@ -109,8 +109,8 @@
       "id": "elevator:central:f0",
       "type": "elevator",
       "floor": 0,
-      "x": 544,
-      "y": 336,
+      "x": 622,
+      "y": 220,
       "label": "中央エレベーター",
       "facilityId": "elevator-central"
     },
@@ -118,40 +118,40 @@
       "id": "junction:f0:richelieu",
       "type": "junction",
       "floor": 0,
-      "x": 535,
-      "y": 168,
+      "x": 678,
+      "y": 206,
       "label": "リシュリュー翼廊下"
     },
     {
       "id": "junction:f0:sully",
       "type": "junction",
       "floor": 0,
-      "x": 666,
-      "y": 345,
+      "x": 796,
+      "y": 312,
       "label": "シュリー翼連絡部"
     },
     {
       "id": "junction:f0:denon",
       "type": "junction",
       "floor": 0,
-      "x": 485,
-      "y": 432,
+      "x": 558,
+      "y": 369,
       "label": "ドゥノン翼廊下"
     },
     {
       "id": "junction:f1:core",
       "type": "junction",
       "floor": 1,
-      "x": 535,
-      "y": 315,
+      "x": 632,
+      "y": 220,
       "label": "中央連絡部"
     },
     {
       "id": "stairs:central:f1",
       "type": "stairs",
       "floor": 1,
-      "x": 536,
-      "y": 326,
+      "x": 632,
+      "y": 220,
       "label": "中央階段",
       "facilityId": "stairs-central"
     },
@@ -159,8 +159,8 @@
       "id": "elevator:central:f1",
       "type": "elevator",
       "floor": 1,
-      "x": 544,
-      "y": 336,
+      "x": 620,
+      "y": 220,
       "label": "中央エレベーター",
       "facilityId": "elevator-central"
     },
@@ -168,56 +168,56 @@
       "id": "junction:f1:richelieu",
       "type": "junction",
       "floor": 1,
-      "x": 482,
-      "y": 187,
+      "x": 589,
+      "y": 208,
       "label": "リシュリュー翼連絡部"
     },
     {
       "id": "junction:f1:sully",
       "type": "junction",
       "floor": 1,
-      "x": 666,
-      "y": 350,
+      "x": 796,
+      "y": 315,
       "label": "シュリー翼連絡部"
     },
     {
       "id": "junction:f1:denon-east",
       "type": "junction",
       "floor": 1,
-      "x": 590,
-      "y": 447,
+      "x": 703,
+      "y": 367,
       "label": "ドゥノン翼東分岐"
     },
     {
       "id": "junction:f1:denon-center",
       "type": "junction",
       "floor": 1,
-      "x": 457,
-      "y": 435,
+      "x": 558,
+      "y": 368,
       "label": "サロン・ドゥノン"
     },
     {
       "id": "junction:f1:grande-galerie",
       "type": "junction",
       "floor": 1,
-      "x": 457,
-      "y": 521,
+      "x": 558,
+      "y": 475,
       "label": "グラン・ギャラリー中央"
     },
     {
       "id": "junction:f2:core",
       "type": "junction",
       "floor": 2,
-      "x": 535,
-      "y": 270,
+      "x": 631,
+      "y": 220,
       "label": "中央連絡部"
     },
     {
       "id": "stairs:central:f2",
       "type": "stairs",
       "floor": 2,
-      "x": 536,
-      "y": 295,
+      "x": 631,
+      "y": 220,
       "label": "中央階段",
       "facilityId": "stairs-central"
     },
@@ -225,8 +225,8 @@
       "id": "elevator:central:f2",
       "type": "elevator",
       "floor": 2,
-      "x": 544,
-      "y": 305,
+      "x": 619,
+      "y": 220,
       "label": "中央エレベーター",
       "facilityId": "elevator-central"
     },
@@ -234,31 +234,31 @@
       "id": "junction:f2:richelieu",
       "type": "junction",
       "floor": 2,
-      "x": 482,
-      "y": 187,
+      "x": 588,
+      "y": 208,
       "label": "リシュリュー翼連絡部"
     },
     {
       "id": "junction:f2:sully-west",
       "type": "junction",
       "floor": 2,
-      "x": 666,
-      "y": 281,
-      "label": "シュリー翼西分岐"
+      "x": 730,
+      "y": 232,
+      "label": "シュリー翼連絡部（830室）"
     },
     {
       "id": "junction:f2:sully-north",
       "type": "junction",
       "floor": 2,
-      "x": 752,
-      "y": 215,
+      "x": 805,
+      "y": 237,
       "label": "シュリー翼北回廊"
     },
     {
       "id": "junction:f2:sully-east",
       "type": "junction",
       "floor": 2,
-      "x": 906,
+      "x": 917,
       "y": 312,
       "label": "シュリー翼東回廊"
     },
@@ -268,8 +268,8 @@
       "room": "227",
       "floor": 0,
       "wing": "Richelieu",
-      "x": 598,
-      "y": 152,
+      "x": 696,
+      "y": 127,
       "label": "227室前"
     },
     {
@@ -278,8 +278,8 @@
       "room": "229",
       "floor": 0,
       "wing": "Richelieu",
-      "x": 564,
-      "y": 152,
+      "x": 704,
+      "y": 158,
       "label": "229室前"
     },
     {
@@ -288,8 +288,8 @@
       "room": "234",
       "floor": 0,
       "wing": "Richelieu",
-      "x": 525,
-      "y": 152,
+      "x": 695,
+      "y": 225,
       "label": "234室前"
     },
     {
@@ -298,8 +298,8 @@
       "room": "338",
       "floor": 0,
       "wing": "Sully",
-      "x": 780,
-      "y": 428,
+      "x": 859,
+      "y": 361,
       "label": "338室前"
     },
     {
@@ -308,8 +308,8 @@
       "room": "344",
       "floor": 0,
       "wing": "Sully",
-      "x": 726,
-      "y": 428,
+      "x": 829,
+      "y": 364,
       "label": "344室前"
     },
     {
@@ -318,8 +318,8 @@
       "room": "345",
       "floor": 0,
       "wing": "Sully",
-      "x": 676,
-      "y": 428,
+      "x": 796,
+      "y": 364,
       "label": "345室前"
     },
     {
@@ -328,8 +328,8 @@
       "room": "348",
       "floor": 0,
       "wing": "Sully",
-      "x": 676,
-      "y": 396,
+      "x": 796,
+      "y": 333,
       "label": "348室前"
     },
     {
@@ -338,8 +338,8 @@
       "room": "403",
       "floor": 0,
       "wing": "Denon",
-      "x": 450,
-      "y": 432,
+      "x": 520,
+      "y": 370,
       "label": "403室前"
     },
     {
@@ -348,8 +348,8 @@
       "room": "501",
       "floor": 1,
       "wing": "Richelieu",
-      "x": 472,
-      "y": 187,
+      "x": 589,
+      "y": 174,
       "label": "501室前"
     },
     {
@@ -358,8 +358,8 @@
       "room": "502",
       "floor": 1,
       "wing": "Richelieu",
-      "x": 472,
-      "y": 162,
+      "x": 589,
+      "y": 164,
       "label": "502室前"
     },
     {
@@ -368,8 +368,8 @@
       "room": "507",
       "floor": 1,
       "wing": "Richelieu",
-      "x": 548,
-      "y": 145,
+      "x": 636,
+      "y": 133,
       "label": "507室前"
     },
     {
@@ -378,8 +378,8 @@
       "room": "544",
       "floor": 1,
       "wing": "Richelieu",
-      "x": 372,
-      "y": 187,
+      "x": 489,
+      "y": 220,
       "label": "544室前"
     },
     {
@@ -388,8 +388,8 @@
       "room": "605",
       "floor": 1,
       "wing": "Sully",
-      "x": 676,
-      "y": 225,
+      "x": 806,
+      "y": 238,
       "label": "605室前"
     },
     {
@@ -398,8 +398,8 @@
       "room": "635",
       "floor": 1,
       "wing": "Sully",
-      "x": 896,
-      "y": 295,
+      "x": 916,
+      "y": 280,
       "label": "635室前"
     },
     {
@@ -408,8 +408,8 @@
       "room": "663",
       "floor": 1,
       "wing": "Sully",
-      "x": 676,
-      "y": 370,
+      "x": 796,
+      "y": 336,
       "label": "663室前"
     },
     {
@@ -418,8 +418,8 @@
       "room": "700",
       "floor": 1,
       "wing": "Denon",
-      "x": 414,
-      "y": 435,
+      "x": 520,
+      "y": 369,
       "label": "700室前"
     },
     {
@@ -428,8 +428,8 @@
       "room": "701",
       "floor": 1,
       "wing": "Denon",
-      "x": 457,
-      "y": 435,
+      "x": 558,
+      "y": 368,
       "label": "701室前"
     },
     {
@@ -438,8 +438,8 @@
       "room": "702",
       "floor": 1,
       "wing": "Denon",
-      "x": 513,
-      "y": 441,
+      "x": 605,
+      "y": 369,
       "label": "702室前"
     },
     {
@@ -448,8 +448,8 @@
       "room": "703",
       "floor": 1,
       "wing": "Denon",
-      "x": 605,
-      "y": 447,
+      "x": 703,
+      "y": 367,
       "label": "703室前"
     },
     {
@@ -458,8 +458,8 @@
       "room": "708",
       "floor": 1,
       "wing": "Denon",
-      "x": 595,
-      "y": 512,
+      "x": 682,
+      "y": 475,
       "label": "708室前"
     },
     {
@@ -468,8 +468,8 @@
       "room": "710",
       "floor": 1,
       "wing": "Denon",
-      "x": 510,
-      "y": 521,
+      "x": 603,
+      "y": 475,
       "label": "710室前"
     },
     {
@@ -478,8 +478,8 @@
       "room": "711",
       "floor": 1,
       "wing": "Denon",
-      "x": 457,
-      "y": 472,
+      "x": 558,
+      "y": 423,
       "label": "711室前"
     },
     {
@@ -488,8 +488,8 @@
       "room": "712",
       "floor": 1,
       "wing": "Denon",
-      "x": 380,
-      "y": 521,
+      "x": 512,
+      "y": 475,
       "label": "712室前"
     },
     {
@@ -498,8 +498,8 @@
       "room": "716",
       "floor": 1,
       "wing": "Denon",
-      "x": 290,
-      "y": 521,
+      "x": 342,
+      "y": 475,
       "label": "716室前"
     },
     {
@@ -508,8 +508,8 @@
       "room": "718",
       "floor": 1,
       "wing": "Denon",
-      "x": 168,
-      "y": 512,
+      "x": 155,
+      "y": 450,
       "label": "718室前"
     },
     {
@@ -518,8 +518,8 @@
       "room": "801",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 472,
-      "y": 176,
+      "x": 588,
+      "y": 171,
       "label": "801室前"
     },
     {
@@ -528,8 +528,8 @@
       "room": "814",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 568,
-      "y": 132,
+      "x": 664,
+      "y": 133,
       "label": "814室前"
     },
     {
@@ -538,8 +538,8 @@
       "room": "818",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 556,
-      "y": 176,
+      "x": 683,
+      "y": 189,
       "label": "818室前"
     },
     {
@@ -548,8 +548,8 @@
       "room": "824",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 587,
-      "y": 132,
+      "x": 680,
+      "y": 133,
       "label": "824室前"
     },
     {
@@ -558,8 +558,8 @@
       "room": "825",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 604,
-      "y": 132,
+      "x": 696,
+      "y": 133,
       "label": "825室前"
     },
     {
@@ -568,8 +568,8 @@
       "room": "837",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 418,
-      "y": 190,
+      "x": 545,
+      "y": 213,
       "label": "837室前"
     },
     {
@@ -578,8 +578,8 @@
       "room": "844",
       "floor": 2,
       "wing": "Richelieu",
-      "x": 360,
-      "y": 176,
+      "x": 492,
+      "y": 182,
       "label": "844室前"
     },
     {
@@ -588,8 +588,8 @@
       "room": "912",
       "floor": 2,
       "wing": "Sully",
-      "x": 752,
-      "y": 215,
+      "x": 805,
+      "y": 237,
       "label": "912室前"
     },
     {
@@ -598,8 +598,8 @@
       "room": "917",
       "floor": 2,
       "wing": "Sully",
-      "x": 846,
-      "y": 215,
+      "x": 915,
+      "y": 264,
       "label": "917室前"
     },
     {
@@ -608,8 +608,8 @@
       "room": "919",
       "floor": 2,
       "wing": "Sully",
-      "x": 906,
-      "y": 252,
+      "x": 915,
+      "y": 282,
       "label": "919室前"
     },
     {
@@ -618,8 +618,8 @@
       "room": "929",
       "floor": 2,
       "wing": "Sully",
-      "x": 906,
-      "y": 375,
+      "x": 915,
+      "y": 350,
       "label": "929室前"
     },
     {
@@ -628,8 +628,8 @@
       "room": "931",
       "floor": 2,
       "wing": "Sully",
-      "x": 895,
-      "y": 416,
+      "x": 893,
+      "y": 365,
       "label": "931室前"
     },
     {
@@ -638,8 +638,8 @@
       "room": "940",
       "floor": 2,
       "wing": "Sully",
-      "x": 785,
-      "y": 428,
+      "x": 831,
+      "y": 365,
       "label": "940室前"
     },
     {
@@ -648,8 +648,8 @@
       "room": "102",
       "floor": -1,
       "wing": "Richelieu",
-      "x": 468,
-      "y": 176,
+      "x": 515,
+      "y": 172,
       "label": "102室前"
     },
     {
@@ -658,8 +658,8 @@
       "room": "105",
       "floor": -1,
       "wing": "Richelieu",
-      "x": 542,
-      "y": 176,
+      "x": 626,
+      "y": 171,
       "label": "105室前"
     },
     {
@@ -668,8 +668,8 @@
       "room": "169",
       "floor": -1,
       "wing": "Denon",
-      "x": 456,
-      "y": 448,
+      "x": 481,
+      "y": 415,
       "label": "169室前"
     },
     {
@@ -678,8 +678,8 @@
       "room": "170",
       "floor": -1,
       "wing": "Denon",
-      "x": 535,
-      "y": 495,
+      "x": 615,
+      "y": 372,
       "label": "170室前"
     },
     {
@@ -688,8 +688,8 @@
       "workId": "mona",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "モナ・リザ",
       "exitNodeId": "door:f1:711"
     },
@@ -699,8 +699,8 @@
       "workId": "venus",
       "room": "345",
       "floor": 0,
-      "x": 681,
-      "y": 442,
+      "x": 795.7,
+      "y": 364.1,
       "label": "ミロのヴィーナス",
       "exitNodeId": "door:f0:345"
     },
@@ -710,8 +710,8 @@
       "workId": "victory",
       "room": "703",
       "floor": 1,
-      "x": 620,
-      "y": 447,
+      "x": 703.1,
+      "y": 366.7,
       "label": "サモトラケのニケ",
       "exitNodeId": "door:f1:703"
     },
@@ -721,8 +721,8 @@
       "workId": "liberty",
       "room": "700",
       "floor": 1,
-      "x": 403,
-      "y": 431,
+      "x": 520.1,
+      "y": 369.4,
       "label": "民衆を導く自由の女神",
       "exitNodeId": "door:f1:700"
     },
@@ -732,8 +732,8 @@
       "workId": "catalog-0001",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "ナポレオン一世の戴冠式",
       "exitNodeId": "door:f1:702"
     },
@@ -743,8 +743,8 @@
       "workId": "catalog-0002",
       "room": "700",
       "floor": 1,
-      "x": 403,
-      "y": 431,
+      "x": 520.1,
+      "y": 369.4,
       "label": "メデューズ号の筏",
       "exitNodeId": "door:f1:700"
     },
@@ -754,8 +754,8 @@
       "workId": "catalog-0003",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "カナの婚礼",
       "exitNodeId": "door:f1:711"
     },
@@ -765,8 +765,8 @@
       "workId": "catalog-0004",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "ホラティウス兄弟の誓い",
       "exitNodeId": "door:f1:702"
     },
@@ -776,8 +776,8 @@
       "workId": "catalog-0005",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "アモルの接吻で蘇るプシュケ",
       "exitNodeId": "door:f0:403"
     },
@@ -787,8 +787,8 @@
       "workId": "catalog-0006",
       "room": "227",
       "floor": 0,
-      "x": 598,
-      "y": 132,
+      "x": 696.4,
+      "y": 127.1,
       "label": "ハンムラビ法典",
       "exitNodeId": "door:f0:227"
     },
@@ -798,8 +798,8 @@
       "workId": "scribe",
       "room": "635",
       "floor": 1,
-      "x": 907,
-      "y": 295,
+      "x": 916,
+      "y": 280.3,
       "label": "書記座像",
       "exitNodeId": "door:f1:635"
     },
@@ -809,8 +809,8 @@
       "workId": "lacemaker",
       "room": "837",
       "floor": 2,
-      "x": 401,
-      "y": 190,
+      "x": 545.1,
+      "y": 213.1,
       "label": "レースを編む女",
       "exitNodeId": "door:f2:837"
     },
@@ -820,8 +820,8 @@
       "workId": "catalog-0007",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "アッシリアの有翼人面牛像",
       "exitNodeId": "door:f0:229"
     },
@@ -831,8 +831,8 @@
       "workId": "dying",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "瀕死の奴隷",
       "exitNodeId": "door:f0:403"
     },
@@ -842,8 +842,8 @@
       "workId": "catalog-0008",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "グランド・オダリスク",
       "exitNodeId": "door:f1:702"
     },
@@ -853,8 +853,8 @@
       "workId": "catalog-0009",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "反抗する奴隷",
       "exitNodeId": "door:f0:403"
     },
@@ -864,8 +864,8 @@
       "workId": "catalog-0011",
       "room": "338",
       "floor": 0,
-      "x": 790,
-      "y": 428,
+      "x": 858.5,
+      "y": 360.9,
       "label": "タニスの大スフィンクス",
       "exitNodeId": "door:f0:338"
     },
@@ -875,8 +875,8 @@
       "workId": "catalog-0012",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "聖アンナと聖母子",
       "exitNodeId": "door:f1:710"
     },
@@ -886,8 +886,8 @@
       "workId": "catalog-0013",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "岩窟の聖母",
       "exitNodeId": "door:f1:710"
     },
@@ -897,8 +897,8 @@
       "workId": "catalog-0014",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "洗礼者聖ヨハネ",
       "exitNodeId": "door:f1:710"
     },
@@ -908,8 +908,8 @@
       "workId": "catalog-0015",
       "room": "700",
       "floor": 1,
-      "x": 403,
-      "y": 431,
+      "x": 520.1,
+      "y": 369.4,
       "label": "サルダナパールの死",
       "exitNodeId": "door:f1:700"
     },
@@ -919,8 +919,8 @@
       "workId": "catalog-0016",
       "room": "940",
       "floor": 2,
-      "x": 770,
-      "y": 428,
+      "x": 830.5,
+      "y": 365.4,
       "label": "トルコ風呂",
       "exitNodeId": "door:f2:940"
     },
@@ -930,8 +930,8 @@
       "workId": "catalog-0017",
       "room": "712",
       "floor": 1,
-      "x": 380,
-      "y": 521,
+      "x": 511.6,
+      "y": 474.5,
       "label": "バルダッサーレ・カスティリオーネの肖像",
       "exitNodeId": "door:f1:712"
     },
@@ -941,8 +941,8 @@
       "workId": "catalog-0019",
       "room": "917",
       "floor": 2,
-      "x": 846,
-      "y": 204,
+      "x": 915.1,
+      "y": 264,
       "label": "ピエロ（ジル）",
       "exitNodeId": "door:f2:917"
     },
@@ -952,8 +952,8 @@
       "workId": "catalog-0020",
       "room": "917",
       "floor": 2,
-      "x": 846,
-      "y": 204,
+      "x": 915.1,
+      "y": 264,
       "label": "シテール島への船出",
       "exitNodeId": "door:f2:917"
     },
@@ -963,8 +963,8 @@
       "workId": "catalog-0021",
       "room": "837",
       "floor": 2,
-      "x": 401,
-      "y": 190,
+      "x": 545.1,
+      "y": 213.1,
       "label": "天文学者",
       "exitNodeId": "door:f2:837"
     },
@@ -974,8 +974,8 @@
       "workId": "catalog-0022",
       "room": "712",
       "floor": 1,
-      "x": 380,
-      "y": 521,
+      "x": 511.6,
+      "y": 474.5,
       "label": "聖母の死",
       "exitNodeId": "door:f1:712"
     },
@@ -985,8 +985,8 @@
       "workId": "catalog-0025",
       "room": "544",
       "floor": 1,
-      "x": 344,
-      "y": 170,
+      "x": 488.9,
+      "y": 219.8,
       "label": "ナポレオン三世の居室",
       "exitNodeId": "door:f1:544"
     },
@@ -996,8 +996,8 @@
       "workId": "catalog-0026",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "サビニの女たち",
       "exitNodeId": "door:f1:702"
     },
@@ -1007,8 +1007,8 @@
       "workId": "catalog-0028",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "美しき女庭師",
       "exitNodeId": "door:f1:710"
     },
@@ -1018,8 +1018,8 @@
       "workId": "catalog-0029",
       "room": "818",
       "floor": 2,
-      "x": 572,
-      "y": 175,
+      "x": 682.6,
+      "y": 189.5,
       "label": "宰相ロランの聖母",
       "exitNodeId": "door:f2:818"
     },
@@ -1029,8 +1029,8 @@
       "workId": "catalog-0031",
       "room": "712",
       "floor": 1,
-      "x": 380,
-      "y": 521,
+      "x": 511.6,
+      "y": 474.5,
       "label": "女占い師",
       "exitNodeId": "door:f1:712"
     },
@@ -1040,8 +1040,8 @@
       "workId": "catalog-0032",
       "room": "825",
       "floor": 2,
-      "x": 604,
-      "y": 116,
+      "x": 696.4,
+      "y": 132.9,
       "label": "アルカディアの牧人たち",
       "exitNodeId": "door:f2:825"
     },
@@ -1051,8 +1051,8 @@
       "workId": "money",
       "room": "814",
       "floor": 2,
-      "x": 568,
-      "y": 114,
+      "x": 663.9,
+      "y": 132.9,
       "label": "両替商とその妻",
       "exitNodeId": "door:f2:814"
     },
@@ -1062,8 +1062,8 @@
       "workId": "marly",
       "room": "102",
       "floor": -1,
-      "x": 461,
-      "y": 162,
+      "x": 514.7,
+      "y": 171.8,
       "label": "マルリーの馬",
       "exitNodeId": "door:fm1:102"
     },
@@ -1073,8 +1073,8 @@
       "workId": "catalog-0037",
       "room": "234",
       "floor": 0,
-      "x": 525,
-      "y": 127,
+      "x": 695.1,
+      "y": 225.1,
       "label": "エビフ・イルの像",
       "exitNodeId": "door:f0:234"
     },
@@ -1084,8 +1084,8 @@
       "workId": "catalog-0038",
       "room": "663",
       "floor": 1,
-      "x": 688,
-      "y": 370,
+      "x": 795.7,
+      "y": 335.6,
       "label": "夫婦の石棺",
       "exitNodeId": "door:f1:663"
     },
@@ -1095,8 +1095,8 @@
       "workId": "catalog-0040",
       "room": "169",
       "floor": -1,
-      "x": 444,
-      "y": 448,
+      "x": 481.3,
+      "y": 414.8,
       "label": "聖マグダラのマリア",
       "exitNodeId": "door:fm1:169"
     },
@@ -1106,8 +1106,8 @@
       "workId": "catalog-0043",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "アタラの埋葬",
       "exitNodeId": "door:f1:702"
     },
@@ -1117,8 +1117,8 @@
       "workId": "catalog-0044",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "スフィンクスの謎を解くオイディプス",
       "exitNodeId": "door:f1:702"
     },
@@ -1128,8 +1128,8 @@
       "workId": "catalog-0045",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "レカミエ夫人の肖像",
       "exitNodeId": "door:f1:702"
     },
@@ -1139,8 +1139,8 @@
       "workId": "catalog-0048",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "アポロンに迎えられるホメロス",
       "exitNodeId": "door:f1:702"
     },
@@ -1150,8 +1150,8 @@
       "workId": "catalog-0049",
       "room": "801",
       "floor": 2,
-      "x": 462,
-      "y": 162,
+      "x": 587.6,
+      "y": 171.2,
       "label": "マリー・ド・メディシスの戴冠",
       "exitNodeId": "door:f2:801"
     },
@@ -1161,8 +1161,8 @@
       "workId": "catalog-0050",
       "room": "825",
       "floor": 2,
-      "x": 604,
-      "y": 116,
+      "x": 696.4,
+      "y": 132.9,
       "label": "四季・春（地上の楽園）",
       "exitNodeId": "door:f2:825"
     },
@@ -1172,8 +1172,8 @@
       "workId": "catalog-0051",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "聖セバスティアヌス",
       "exitNodeId": "door:f1:710"
     },
@@ -1183,8 +1183,8 @@
       "workId": "catalog-0052",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "老人と少年の肖像",
       "exitNodeId": "door:f1:710"
     },
@@ -1194,8 +1194,8 @@
       "workId": "catalog-0053",
       "room": "710",
       "floor": 1,
-      "x": 510,
-      "y": 521,
+      "x": 602.9,
+      "y": 474.5,
       "label": "若い男の肖像（コンドッティエーレ）",
       "exitNodeId": "door:f1:710"
     },
@@ -1205,8 +1205,8 @@
       "workId": "catalog-0055",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "手袋を持つ男",
       "exitNodeId": "door:f1:711"
     },
@@ -1216,8 +1216,8 @@
       "workId": "catalog-0056",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "ウサギの聖母",
       "exitNodeId": "door:f1:711"
     },
@@ -1227,8 +1227,8 @@
       "workId": "catalog-0061",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "ギルガメシュと呼ばれる英雄の浮彫",
       "exitNodeId": "door:f0:229"
     },
@@ -1238,8 +1238,8 @@
       "workId": "catalog-0064",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "ミロのクロトン",
       "exitNodeId": "door:fm1:105"
     },
@@ -1249,8 +1249,8 @@
       "workId": "catalog-0065",
       "room": "102",
       "floor": -1,
-      "x": 461,
-      "y": 162,
+      "x": 514.7,
+      "y": 171.8,
       "label": "ペガサスに乗る名声",
       "exitNodeId": "door:fm1:102"
     },
@@ -1260,8 +1260,8 @@
       "workId": "catalog-0067",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "飛翔するメルクリウス",
       "exitNodeId": "door:f0:403"
     },
@@ -1271,8 +1271,8 @@
       "workId": "catalog-0068",
       "room": "348",
       "floor": 0,
-      "x": 681,
-      "y": 396,
+      "x": 795.7,
+      "y": 332.9,
       "label": "眠るヘルマフロディトス",
       "exitNodeId": "door:f0:348"
     },
@@ -1282,8 +1282,8 @@
       "workId": "catalog-0071",
       "room": "348",
       "floor": 0,
-      "x": 681,
-      "y": 396,
+      "x": 795.7,
+      "y": 332.9,
       "label": "ガビイのディアナ",
       "exitNodeId": "door:f0:348"
     },
@@ -1293,8 +1293,8 @@
       "workId": "catalog-0076",
       "room": "102",
       "floor": -1,
-      "x": 461,
-      "y": 162,
+      "x": 514.7,
+      "y": 171.8,
       "label": "アポロンとダフネ",
       "exitNodeId": "door:fm1:102"
     },
@@ -1304,8 +1304,8 @@
       "workId": "catalog-0077",
       "room": "929",
       "floor": 2,
-      "x": 907,
-      "y": 375,
+      "x": 915.1,
+      "y": 349.8,
       "label": "閂",
       "exitNodeId": "door:f2:929"
     },
@@ -1315,8 +1315,8 @@
       "workId": "catalog-0078",
       "room": "919",
       "floor": 2,
-      "x": 907,
-      "y": 252,
+      "x": 915.1,
+      "y": 282,
       "label": "エイ",
       "exitNodeId": "door:f2:919"
     },
@@ -1326,8 +1326,8 @@
       "workId": "catalog-0079",
       "room": "912",
       "floor": 2,
-      "x": 752,
-      "y": 204,
+      "x": 804.6,
+      "y": 237.1,
       "label": "悔悛するマグダラのマリア",
       "exitNodeId": "door:f2:912"
     },
@@ -1337,8 +1337,8 @@
       "workId": "catalog-0080",
       "room": "919",
       "floor": 2,
-      "x": 907,
-      "y": 252,
+      "x": 915.1,
+      "y": 282,
       "label": "浴後のディアナ",
       "exitNodeId": "door:f2:919"
     },
@@ -1348,8 +1348,8 @@
       "workId": "catalog-0081",
       "room": "844",
       "floor": 2,
-      "x": 338,
-      "y": 157,
+      "x": 492,
+      "y": 182,
       "label": "浴女バテシバ",
       "exitNodeId": "door:f2:844"
     },
@@ -1359,8 +1359,8 @@
       "workId": "catalog-0082",
       "room": "844",
       "floor": 2,
-      "x": 338,
-      "y": 157,
+      "x": 492,
+      "y": 182,
       "label": "イーゼルの前の自画像",
       "exitNodeId": "door:f2:844"
     },
@@ -1370,8 +1370,8 @@
       "workId": "catalog-0083",
       "room": "844",
       "floor": 2,
-      "x": 338,
-      "y": 157,
+      "x": 492,
+      "y": 182,
       "label": "エマオの巡礼者",
       "exitNodeId": "door:f2:844"
     },
@@ -1381,8 +1381,8 @@
       "workId": "catalog-0084",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "マドモワゼル・リヴィエールの肖像",
       "exitNodeId": "door:f1:702"
     },
@@ -1392,8 +1392,8 @@
       "workId": "catalog-0085",
       "room": "801",
       "floor": 2,
-      "x": 462,
-      "y": 162,
+      "x": 587.6,
+      "y": 171.2,
       "label": "マリー・ド・メディシスのマルセイユ到着",
       "exitNodeId": "door:f2:801"
     },
@@ -1403,8 +1403,8 @@
       "workId": "catalog-0086",
       "room": "801",
       "floor": 2,
-      "x": 462,
-      "y": 162,
+      "x": 587.6,
+      "y": 171.2,
       "label": "マリー・ド・メディシスの教育",
       "exitNodeId": "door:f2:801"
     },
@@ -1414,8 +1414,8 @@
       "workId": "catalog-0087",
       "room": "912",
       "floor": 2,
-      "x": 752,
-      "y": 204,
+      "x": 804.6,
+      "y": 237.1,
       "label": "羊飼いの礼拝",
       "exitNodeId": "door:f2:912"
     },
@@ -1425,8 +1425,8 @@
       "workId": "catalog-0089",
       "room": "170",
       "floor": -1,
-      "x": 545,
-      "y": 495,
+      "x": 615.4,
+      "y": 372.2,
       "label": "ケロスの頭部",
       "exitNodeId": "door:fm1:170"
     },
@@ -1436,8 +1436,8 @@
       "workId": "catalog-0090",
       "room": "708",
       "floor": 1,
-      "x": 605,
-      "y": 521,
+      "x": 681.7,
+      "y": 474.5,
       "label": "聖母戴冠",
       "exitNodeId": "door:f1:708"
     },
@@ -1447,8 +1447,8 @@
       "workId": "catalog-0092",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "ティツィアーノの鏡の前の女",
       "exitNodeId": "door:f1:711"
     },
@@ -1458,8 +1458,8 @@
       "workId": "catalog-0094",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "蛇と闘う獅子",
       "exitNodeId": "door:fm1:105"
     },
@@ -1469,8 +1469,8 @@
       "workId": "catalog-0096",
       "room": "501",
       "floor": 1,
-      "x": 461,
-      "y": 173,
+      "x": 589.1,
+      "y": 174,
       "label": "皇帝の勝利を表す象牙板",
       "exitNodeId": "door:f1:501"
     },
@@ -1480,8 +1480,8 @@
       "workId": "catalog-0097",
       "room": "712",
       "floor": 1,
-      "x": 380,
-      "y": 521,
+      "x": 511.6,
+      "y": 474.5,
       "label": "ダヴィデとゴリアテ",
       "exitNodeId": "door:f1:712"
     },
@@ -1491,8 +1491,8 @@
       "workId": "catalog-0098",
       "room": "716",
       "floor": 1,
-      "x": 290,
-      "y": 521,
+      "x": 342.4,
+      "y": 474.5,
       "label": "ヘレネの略奪",
       "exitNodeId": "door:f1:716"
     },
@@ -1502,8 +1502,8 @@
       "workId": "catalog-0099",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "エマオの晩餐",
       "exitNodeId": "door:f1:711"
     },
@@ -1513,8 +1513,8 @@
       "workId": "catalog-0101",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "悪徳に雷を投げるユピテル",
       "exitNodeId": "door:f1:711"
     },
@@ -1524,8 +1524,8 @@
       "workId": "catalog-0102",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "天国（聖母戴冠）",
       "exitNodeId": "door:f1:711"
     },
@@ -1535,8 +1535,8 @@
       "workId": "catalog-0103",
       "room": "711",
       "floor": 1,
-      "x": 457,
-      "y": 487,
+      "x": 557.5,
+      "y": 423.3,
       "label": "磔刑",
       "exitNodeId": "door:f1:711"
     },
@@ -1546,8 +1546,8 @@
       "workId": "catalog-0104",
       "room": "701",
       "floor": 1,
-      "x": 456,
-      "y": 424,
+      "x": 557.5,
+      "y": 368.1,
       "label": "ジョゼフィーヌ皇后の肖像",
       "exitNodeId": "door:f1:701"
     },
@@ -1557,8 +1557,8 @@
       "workId": "catalog-0105",
       "room": "702",
       "floor": 1,
-      "x": 513,
-      "y": 437,
+      "x": 605.1,
+      "y": 369,
       "label": "大洪水",
       "exitNodeId": "door:f1:702"
     },
@@ -1568,8 +1568,8 @@
       "workId": "catalog-0106",
       "room": "700",
       "floor": 1,
-      "x": 403,
-      "y": 431,
+      "x": 520.1,
+      "y": 369.4,
       "label": "フランチェスカとパオロの亡霊",
       "exitNodeId": "door:f1:700"
     },
@@ -1579,8 +1579,8 @@
       "workId": "catalog-0108",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "プシュケを連れ去るメルクリウス",
       "exitNodeId": "door:f0:403"
     },
@@ -1590,8 +1590,8 @@
       "workId": "catalog-0110",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "真実を明かす時",
       "exitNodeId": "door:f0:403"
     },
@@ -1601,8 +1601,8 @@
       "workId": "catalog-0111",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "サソリとニンフ",
       "exitNodeId": "door:f0:403"
     },
@@ -1612,8 +1612,8 @@
       "workId": "catalog-0112",
       "room": "403",
       "floor": 0,
-      "x": 438,
-      "y": 432,
+      "x": 520.1,
+      "y": 369.8,
       "label": "マリア・ドゥリオリ・バルベリーニの胸像",
       "exitNodeId": "door:f0:403"
     },
@@ -1623,8 +1623,8 @@
       "workId": "catalog-0114",
       "room": "102",
       "floor": -1,
-      "x": 461,
-      "y": 162,
+      "x": 514.7,
+      "y": 171.8,
       "label": "レスラーたち",
       "exitNodeId": "door:fm1:102"
     },
@@ -1634,8 +1634,8 @@
       "workId": "catalog-0115",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "蛇に変身したアケローオスと闘うヘラクレス",
       "exitNodeId": "door:fm1:105"
     },
@@ -1645,8 +1645,8 @@
       "workId": "catalog-0116",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "スパルタクス",
       "exitNodeId": "door:fm1:105"
     },
@@ -1656,8 +1656,8 @@
       "workId": "catalog-0117",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "サンダルを結ぶメルクリウス",
       "exitNodeId": "door:fm1:105"
     },
@@ -1667,8 +1667,8 @@
       "workId": "catalog-0118",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "勝利を伝えるマラトンの兵士",
       "exitNodeId": "door:fm1:105"
     },
@@ -1678,8 +1678,8 @@
       "workId": "catalog-0119",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "眠る牧神",
       "exitNodeId": "door:fm1:105"
     },
@@ -1689,8 +1689,8 @@
       "workId": "catalog-0120",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "アンドロメダを救うペルセウス",
       "exitNodeId": "door:fm1:105"
     },
@@ -1700,8 +1700,8 @@
       "workId": "catalog-0121",
       "room": "105",
       "floor": -1,
-      "x": 560,
-      "y": 162,
+      "x": 626.1,
+      "y": 170.7,
       "label": "四人の捕虜",
       "exitNodeId": "door:fm1:105"
     },
@@ -1711,8 +1711,8 @@
       "workId": "catalog-0124",
       "room": "344",
       "floor": 0,
-      "x": 726,
-      "y": 442,
+      "x": 829.1,
+      "y": 364.1,
       "label": "ボルゲーゼのアレス",
       "exitNodeId": "door:f0:344"
     },
@@ -1722,8 +1722,8 @@
       "workId": "catalog-0125",
       "room": "348",
       "floor": 0,
-      "x": 681,
-      "y": 396,
+      "x": 795.7,
+      "y": 332.9,
       "label": "サンダルをほどくヘルメス",
       "exitNodeId": "door:f0:348"
     },
@@ -1733,8 +1733,8 @@
       "workId": "catalog-0127",
       "room": "344",
       "floor": 0,
-      "x": 726,
-      "y": 442,
+      "x": 829.1,
+      "y": 364.1,
       "label": "ヴェッレトリのパラス",
       "exitNodeId": "door:f0:344"
     },
@@ -1744,8 +1744,8 @@
       "workId": "catalog-0135",
       "room": "635",
       "floor": 1,
-      "x": 907,
-      "y": 295,
+      "x": 916,
+      "y": 280.3,
       "label": "ネフェルティアベト王女の石碑",
       "exitNodeId": "door:f1:635"
     },
@@ -1755,8 +1755,8 @@
       "workId": "catalog-0153",
       "room": "502",
       "floor": 1,
-      "x": 462,
-      "y": 151,
+      "x": 589.1,
+      "y": 164,
       "label": "向き合う鳥の水差し",
       "exitNodeId": "door:f1:502"
     },
@@ -1766,8 +1766,8 @@
       "workId": "catalog-0154",
       "room": "507",
       "floor": 1,
-      "x": 559,
-      "y": 125,
+      "x": 636.4,
+      "y": 133.4,
       "label": "アヒルの燭台",
       "exitNodeId": "door:f1:507"
     },
@@ -1777,8 +1777,8 @@
       "workId": "catalog-0159",
       "room": "507",
       "floor": 1,
-      "x": 559,
-      "y": 125,
+      "x": 636.4,
+      "y": 133.4,
       "label": "ポロ競技者の杯",
       "exitNodeId": "door:f1:507"
     },
@@ -1788,8 +1788,8 @@
       "workId": "catalog-0161",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "二人の従者が運ぶ腰掛け",
       "exitNodeId": "door:f0:229"
     },
@@ -1799,8 +1799,8 @@
       "workId": "catalog-0162",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "サルゴン二世と高官",
       "exitNodeId": "door:f0:229"
     },
@@ -1810,8 +1810,8 @@
       "workId": "catalog-0163",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "祝福する有翼の精霊",
       "exitNodeId": "door:f0:229"
     },
@@ -1821,8 +1821,8 @@
       "workId": "catalog-0164",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "王の車輪付き玉座を運ぶ従者",
       "exitNodeId": "door:f0:229"
     },
@@ -1832,8 +1832,8 @@
       "workId": "catalog-0166",
       "room": "229",
       "floor": 0,
-      "x": 564,
-      "y": 132,
+      "x": 704.4,
+      "y": 158.3,
       "label": "レバノン遠征・丸太の荷揚げ",
       "exitNodeId": "door:f0:229"
     },
@@ -1843,8 +1843,8 @@
       "workId": "catalog-0187",
       "room": "605",
       "floor": 1,
-      "x": 678,
-      "y": 208,
+      "x": 805.9,
+      "y": 237.6,
       "label": "スープ入れと受け皿",
       "exitNodeId": "door:f1:605"
     },
@@ -1854,8 +1854,8 @@
       "workId": "cheat",
       "room": "912",
       "floor": 2,
-      "x": 752,
-      "y": 204,
+      "x": 804.6,
+      "y": 237.1,
       "label": "ダイヤのエースを持ついかさま師",
       "exitNodeId": "door:f2:912"
     },
@@ -1865,8 +1865,8 @@
       "workId": "bather",
       "room": "940",
       "floor": 2,
-      "x": 770,
-      "y": 428,
+      "x": 830.5,
+      "y": 365.4,
       "label": "ヴァルパンソンの浴女",
       "exitNodeId": "door:f2:940"
     },
@@ -1876,8 +1876,8 @@
       "workId": "clubfoot",
       "room": "718",
       "floor": 1,
-      "x": 145,
-      "y": 502,
+      "x": 154.5,
+      "y": 450,
       "label": "足の不自由な少年",
       "exitNodeId": "door:f1:718"
     }
@@ -1907,7 +1907,7 @@
     {
       "from": "stairs:central:fm1",
       "to": "junction:fm1:core",
-      "cost": 3,
+      "cost": 2,
       "kind": "corridor",
       "available": true
     },
@@ -1921,16 +1921,16 @@
     {
       "from": "junction:fm1:core",
       "to": "junction:fm1:richelieu",
-      "cost": 16,
+      "cost": 12,
       "kind": "corridor",
       "via": [
         [
-          525,
-          220
+          584,
+          299
         ],
         [
-          482,
-          220
+          562,
+          260
         ]
       ],
       "available": true
@@ -1938,8 +1938,14 @@
     {
       "from": "junction:fm1:richelieu",
       "to": "door:fm1:102",
-      "cost": 4,
+      "cost": 6,
       "kind": "corridor",
+      "via": [
+        [
+          562,
+          172
+        ]
+      ],
       "available": true
     },
     {
@@ -1952,12 +1958,16 @@
     {
       "from": "junction:fm1:core",
       "to": "junction:fm1:denon",
-      "cost": 18,
+      "cost": 12,
       "kind": "corridor",
       "via": [
         [
-          525,
-          449
+          584,
+          299
+        ],
+        [
+          562,
+          336
         ]
       ],
       "available": true
@@ -1965,27 +1975,44 @@
     {
       "from": "junction:fm1:denon",
       "to": "door:fm1:169",
-      "cost": 9,
+      "cost": 10,
       "kind": "corridor",
       "via": [
         [
-          470,
-          505
+          484,
+          372
         ]
       ],
       "available": true
     },
     {
-      "from": "door:fm1:169",
+      "from": "junction:fm1:denon",
       "to": "door:fm1:170",
       "cost": 6,
       "kind": "corridor",
       "available": true
     },
     {
+      "from": "door:fm1:169",
+      "to": "door:fm1:170",
+      "cost": 14,
+      "kind": "corridor",
+      "via": [
+        [
+          484,
+          372
+        ],
+        [
+          562,
+          372
+        ]
+      ],
+      "available": true
+    },
+    {
       "from": "stairs:central:f0",
       "to": "junction:f0:core",
-      "cost": 3,
+      "cost": 2,
       "kind": "corridor",
       "available": true
     },
@@ -1999,19 +2026,32 @@
     {
       "from": "junction:f0:core",
       "to": "junction:f0:richelieu",
-      "cost": 16,
+      "cost": 8,
+      "kind": "corridor",
+      "via": [
+        [
+          658,
+          214
+        ]
+      ],
+      "available": true
+    },
+    {
+      "from": "junction:f0:richelieu",
+      "to": "door:f0:234",
+      "cost": 4,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "junction:f0:richelieu",
       "to": "door:f0:229",
-      "cost": 5,
+      "cost": 8,
       "kind": "corridor",
       "via": [
         [
-          564,
-          168
+          681,
+          158
         ]
       ],
       "available": true
@@ -2024,14 +2064,18 @@
       "available": true
     },
     {
-      "from": "junction:f0:richelieu",
-      "to": "door:f0:234",
-      "cost": 4,
+      "from": "door:f0:234",
+      "to": "junction:f0:sully",
+      "cost": 14,
       "kind": "corridor",
       "via": [
         [
-          525,
-          168
+          731,
+          232
+        ],
+        [
+          796,
+          238
         ]
       ],
       "available": true
@@ -2043,8 +2087,12 @@
       "kind": "corridor",
       "via": [
         [
-          666,
-          315
+          731,
+          232
+        ],
+        [
+          796,
+          238
         ]
       ],
       "available": true
@@ -2052,7 +2100,7 @@
     {
       "from": "junction:f0:sully",
       "to": "door:f0:348",
-      "cost": 6,
+      "cost": 4,
       "kind": "corridor",
       "available": true
     },
@@ -2073,7 +2121,7 @@
     {
       "from": "door:f0:344",
       "to": "door:f0:338",
-      "cost": 7,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
@@ -2084,8 +2132,8 @@
       "kind": "corridor",
       "via": [
         [
-          535,
-          432
+          558,
+          290
         ]
       ],
       "available": true
@@ -2093,19 +2141,27 @@
     {
       "from": "junction:f0:denon",
       "to": "door:f0:403",
-      "cost": 6,
+      "cost": 5,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "junction:f0:denon",
       "to": "door:f0:345",
-      "cost": 22,
+      "cost": 18,
       "kind": "corridor",
       "via": [
         [
-          620,
-          432
+          664,
+          369
+        ],
+        [
+          733,
+          367
+        ],
+        [
+          762,
+          359
         ]
       ],
       "available": true
@@ -2113,7 +2169,7 @@
     {
       "from": "stairs:central:f1",
       "to": "junction:f1:core",
-      "cost": 3,
+      "cost": 2,
       "kind": "corridor",
       "available": true
     },
@@ -2127,12 +2183,12 @@
     {
       "from": "junction:f1:core",
       "to": "junction:f1:richelieu",
-      "cost": 16,
+      "cost": 6,
       "kind": "corridor",
       "via": [
         [
-          535,
-          187
+          610,
+          220
         ]
       ],
       "available": true
@@ -2140,26 +2196,26 @@
     {
       "from": "junction:f1:richelieu",
       "to": "door:f1:501",
-      "cost": 3,
+      "cost": 4,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "door:f1:501",
       "to": "door:f1:502",
-      "cost": 4,
+      "cost": 3,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "door:f1:502",
       "to": "door:f1:507",
-      "cost": 10,
+      "cost": 8,
       "kind": "corridor",
       "via": [
         [
-          515,
-          152
+          589,
+          133
         ]
       ],
       "available": true
@@ -2167,32 +2223,46 @@
     {
       "from": "junction:f1:richelieu",
       "to": "door:f1:544",
-      "cost": 14,
-      "kind": "corridor",
-      "available": true
-    },
-    {
-      "from": "junction:f1:core",
-      "to": "junction:f1:sully",
-      "cost": 15,
+      "cost": 12,
       "kind": "corridor",
       "via": [
         [
-          666,
-          315
+          536,
+          214
         ]
       ],
       "available": true
     },
     {
-      "from": "junction:f1:sully",
+      "from": "junction:f1:core",
       "to": "door:f1:605",
       "cost": 14,
       "kind": "corridor",
       "via": [
         [
-          666,
-          250
+          686,
+          220
+        ],
+        [
+          731,
+          232
+        ],
+        [
+          760,
+          232
+        ]
+      ],
+      "available": true
+    },
+    {
+      "from": "door:f1:605",
+      "to": "junction:f1:sully",
+      "cost": 12,
+      "kind": "corridor",
+      "via": [
+        [
+          796,
+          262
         ]
       ],
       "available": true
@@ -2207,12 +2277,16 @@
     {
       "from": "door:f1:605",
       "to": "door:f1:635",
-      "cost": 20,
+      "cost": 18,
       "kind": "corridor",
       "via": [
         [
-          896,
-          204
+          852,
+          237
+        ],
+        [
+          916,
+          237
         ]
       ],
       "available": true
@@ -2220,16 +2294,37 @@
     {
       "from": "door:f1:663",
       "to": "door:f1:635",
-      "cost": 20,
+      "cost": 18,
       "kind": "corridor",
       "via": [
         [
-          676,
-          434
+          796,
+          367
         ],
         [
-          896,
-          434
+          916,
+          367
+        ]
+      ],
+      "available": true
+    },
+    {
+      "from": "door:f1:663",
+      "to": "junction:f1:denon-east",
+      "cost": 10,
+      "kind": "corridor",
+      "via": [
+        [
+          796,
+          367
+        ],
+        [
+          760,
+          363
+        ],
+        [
+          733,
+          367
         ]
       ],
       "available": true
@@ -2237,12 +2332,16 @@
     {
       "from": "junction:f1:core",
       "to": "junction:f1:denon-east",
-      "cost": 18,
+      "cost": 16,
       "kind": "corridor",
       "via": [
         [
-          590,
-          315
+          664,
+          300
+        ],
+        [
+          664,
+          367
         ]
       ],
       "available": true
@@ -2250,19 +2349,23 @@
     {
       "from": "junction:f1:denon-east",
       "to": "door:f1:703",
-      "cost": 3,
+      "cost": 2,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "door:f1:703",
       "to": "door:f1:708",
-      "cost": 8,
+      "cost": 9,
       "kind": "corridor",
       "via": [
         [
-          605,
-          488
+          707,
+          422
+        ],
+        [
+          707,
+          475
         ]
       ],
       "available": true
@@ -2270,7 +2373,7 @@
     {
       "from": "door:f1:708",
       "to": "door:f1:710",
-      "cost": 10,
+      "cost": 8,
       "kind": "corridor",
       "available": true
     },
@@ -2281,8 +2384,8 @@
       "kind": "corridor",
       "via": [
         [
-          560,
-          444
+          664,
+          367
         ]
       ],
       "available": true
@@ -2290,7 +2393,7 @@
     {
       "from": "door:f1:702",
       "to": "junction:f1:denon-center",
-      "cost": 7,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
@@ -2304,7 +2407,7 @@
     {
       "from": "junction:f1:denon-center",
       "to": "door:f1:700",
-      "cost": 6,
+      "cost": 5,
       "kind": "corridor",
       "available": true
     },
@@ -2318,40 +2421,44 @@
     {
       "from": "door:f1:711",
       "to": "junction:f1:grande-galerie",
-      "cost": 6,
+      "cost": 5,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "junction:f1:grande-galerie",
       "to": "door:f1:710",
-      "cost": 7,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "junction:f1:grande-galerie",
       "to": "door:f1:712",
-      "cost": 9,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "door:f1:712",
       "to": "door:f1:716",
-      "cost": 10,
+      "cost": 12,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "door:f1:716",
       "to": "door:f1:718",
-      "cost": 13,
+      "cost": 14,
       "kind": "corridor",
       "via": [
         [
-          200,
-          521
+          208,
+          475
+        ],
+        [
+          208,
+          450
         ]
       ],
       "available": true
@@ -2359,12 +2466,16 @@
     {
       "from": "door:f1:703",
       "to": "door:f1:663",
-      "cost": 12,
+      "cost": 10,
       "kind": "corridor",
       "via": [
         [
-          676,
-          447
+          733,
+          367
+        ],
+        [
+          796,
+          367
         ]
       ],
       "available": true
@@ -2372,26 +2483,26 @@
     {
       "from": "stairs:central:f2",
       "to": "junction:f2:core",
-      "cost": 4,
+      "cost": 2,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "elevator:central:f2",
       "to": "junction:f2:core",
-      "cost": 4,
+      "cost": 3,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "junction:f2:core",
       "to": "junction:f2:richelieu",
-      "cost": 12,
+      "cost": 6,
       "kind": "corridor",
       "via": [
         [
-          535,
-          187
+          608,
+          220
         ]
       ],
       "available": true
@@ -2399,7 +2510,7 @@
     {
       "from": "junction:f2:richelieu",
       "to": "door:f2:837",
-      "cost": 8,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
@@ -2408,20 +2519,49 @@
       "to": "door:f2:844",
       "cost": 8,
       "kind": "corridor",
+      "via": [
+        [
+          502,
+          213
+        ]
+      ],
       "available": true
     },
     {
       "from": "junction:f2:richelieu",
       "to": "door:f2:801",
-      "cost": 4,
+      "cost": 5,
       "kind": "corridor",
       "available": true
     },
     {
-      "from": "junction:f2:richelieu",
-      "to": "door:f2:818",
+      "from": "door:f2:801",
+      "to": "door:f2:814",
       "cost": 9,
       "kind": "corridor",
+      "via": [
+        [
+          588,
+          133
+        ],
+        [
+          629,
+          133
+        ]
+      ],
+      "available": true
+    },
+    {
+      "from": "junction:f2:core",
+      "to": "door:f2:818",
+      "cost": 7,
+      "kind": "corridor",
+      "via": [
+        [
+          683,
+          220
+        ]
+      ],
       "available": true
     },
     {
@@ -2431,8 +2571,8 @@
       "kind": "corridor",
       "via": [
         [
-          568,
-          176
+          683,
+          152
         ]
       ],
       "available": true
@@ -2440,7 +2580,7 @@
     {
       "from": "door:f2:814",
       "to": "door:f2:824",
-      "cost": 4,
+      "cost": 3,
       "kind": "corridor",
       "available": true
     },
@@ -2452,14 +2592,31 @@
       "available": true
     },
     {
-      "from": "junction:f2:core",
+      "from": "door:f2:825",
       "to": "junction:f2:sully-west",
-      "cost": 16,
+      "cost": 11,
       "kind": "corridor",
       "via": [
         [
-          666,
-          270
+          730,
+          133
+        ]
+      ],
+      "available": true
+    },
+    {
+      "from": "junction:f2:core",
+      "to": "junction:f2:sully-west",
+      "cost": 10,
+      "kind": "corridor",
+      "via": [
+        [
+          685,
+          220
+        ],
+        [
+          685,
+          232
         ]
       ],
       "available": true
@@ -2467,12 +2624,12 @@
     {
       "from": "junction:f2:sully-west",
       "to": "junction:f2:sully-north",
-      "cost": 14,
+      "cost": 8,
       "kind": "corridor",
       "via": [
         [
-          666,
-          215
+          759,
+          232
         ]
       ],
       "available": true
@@ -2487,34 +2644,34 @@
     {
       "from": "door:f2:912",
       "to": "door:f2:917",
-      "cost": 11,
-      "kind": "corridor",
-      "available": true
-    },
-    {
-      "from": "door:f2:917",
-      "to": "door:f2:919",
-      "cost": 7,
+      "cost": 12,
       "kind": "corridor",
       "via": [
         [
-          906,
-          204
+          915,
+          237
         ]
       ],
       "available": true
     },
     {
+      "from": "door:f2:917",
+      "to": "door:f2:919",
+      "cost": 4,
+      "kind": "corridor",
+      "available": true
+    },
+    {
       "from": "door:f2:919",
       "to": "junction:f2:sully-east",
-      "cost": 8,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
     {
       "from": "junction:f2:sully-east",
       "to": "door:f2:929",
-      "cost": 7,
+      "cost": 6,
       "kind": "corridor",
       "available": true
     },
@@ -2523,19 +2680,19 @@
       "to": "door:f2:931",
       "cost": 5,
       "kind": "corridor",
+      "via": [
+        [
+          915,
+          365
+        ]
+      ],
       "available": true
     },
     {
       "from": "door:f2:931",
       "to": "door:f2:940",
-      "cost": 12,
+      "cost": 10,
       "kind": "corridor",
-      "via": [
-        [
-          895,
-          428
-        ]
-      ],
       "available": true
     },
     {
