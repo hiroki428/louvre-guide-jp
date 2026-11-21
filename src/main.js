@@ -14,7 +14,7 @@ import {buildNavigationView, indexNavigationGraph, navigationStateForSelection, 
 import {advanceOnRouteAudio, destinationWorkId, playbackModeFor, validStoredProgress} from './route-progress.js';
 import {correctLocation, findRoomCandidates} from './location-support.js';
 import {audioLengthsFor, catalogWorks, priorityTierFor} from './catalog.js';
-import {activePlanMeta, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, planStopEstimates, removeMyPlanItem, toggleMyPlan} from './my-plan.js';
+import {activePlanMeta, buildTimedRouteWorks, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from './my-plan.js';
 
 const bootStarted = performance.now();
 const STORAGE_KEY = 'louvre-guide-state-v3';
@@ -84,6 +84,13 @@ const clampRate = value => {
   return Math.round(Math.min(2, Math.max(0.5, num)) * 100) / 100;
 };
 
+const maxRoutableCount = works.filter(w => w.locationPrecision === 'room' && navigationIndex.nodes.has(`work:${w.id}`)).length;
+const initialMinutes = routes.some(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes) ? persistedBoot.minutes : 90;
+const initialBounds = timeCourseBounds(initialMinutes, maxRoutableCount);
+const initialCustomTimedIds = Array.isArray(persistedBoot?.customTimedIds)
+  ? persistedBoot.customTimedIds.filter(id => byId[id] && navigationIndex.nodes.has(`work:${id}`))
+  : null;
+
 const state = {
   appPhase: skipSplashImmediate ? 'main' : 'splash',
   hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
@@ -92,7 +99,13 @@ const state = {
   routeId: routes.some(r => r.id === persistedBoot?.routeId)
     ? persistedBoot.routeId
     : (routes.find(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes)?.id ?? routes[0]?.id ?? 'preset-90'),
-  minutes: routes.some(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes) ? persistedBoot.minutes : 90,
+  minutes: initialMinutes,
+  customTimedIds: initialCustomTimedIds?.length ? initialCustomTimedIds : null,
+  customTimedMinutes: initialCustomTimedIds?.length ? (Number(persistedBoot?.customTimedMinutes) || initialMinutes) : null,
+  draftMinutes: initialMinutes,
+  draftCount: initialCustomTimedIds?.length
+    ? Math.max(initialBounds.min, Math.min(initialBounds.max, initialCustomTimedIds.length))
+    : initialBounds.recommended,
   preferElevator: Boolean(persistedBoot?.preferElevator),
   facilityFilter: 'none',
   autoPlayNext: Boolean(persistedBoot?.autoPlayNext),
@@ -105,7 +118,7 @@ const state = {
   detailWorkId: null,
   detailRoomWorks: [],
   audioSettingsOpen: false,
-  duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 40,
+  duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 60,
   playbackRate: clampRate(persistedBoot?.playbackRate ?? 1),
   audioDurations: {},
   audioQuery: '',
@@ -135,14 +148,17 @@ const currentPlan = () => activePlanMeta({
   routes,
   myPlanIds: state.myPlanIds,
   navigationIndex,
-  duration: state.duration
+  duration: state.duration,
+  customTimedIds: state.customTimedIds,
+  customTimedMinutes: state.customTimedMinutes
 });
 const planWorks = () => currentPlan().ids.map(id => byId[id]).filter(Boolean);
 const routableIds = () => currentPlan().routableIds;
 const currentEstimates = () => planStopEstimates(currentPlan(), navigationIndex, navOptions());
 const workStatus = work => formatWorkLocation(work);
 const creatorMeta = work => formatWorkCreatorMeta(work);
-const audioPath = (id, length) => new URL(`audio/${id}-${length}.wav`, appBase).href;
+const audioPath = (id, length) => new URL(`audio/${id}-${length}.mp3`, appBase).href;
+const formatAudioLengthLabel = length => (length === 60 ? '標準 1分' : length === 120 ? '深掘り 2分' : length < 60 ? `${length}秒` : `${length / 60}分`);
 
 function preferredLengthFor(work) {
   const lengths = audioLengthsFor(work);
@@ -160,7 +176,7 @@ function validCustomNavigation(nav, ids) {
 }
 
 function restoreInitialNavigation() {
-  if (state.planMode === 'myplan') {
+  if (state.planMode === 'myplan' || state.customTimedIds?.length) {
     const ids = routableIds();
     if (validCustomNavigation(persistedBoot?.navigation, ids)) {
       state.navigation = persistedBoot.navigation;
@@ -216,6 +232,8 @@ function persistState() {
       planMode: state.planMode,
       routeId: state.routeId,
       minutes: state.minutes,
+      customTimedIds: state.customTimedIds,
+      customTimedMinutes: state.customTimedMinutes,
       preferElevator: state.preferElevator,
       autoPlayNext: state.autoPlayNext,
       largeText: state.largeText,
@@ -521,6 +539,8 @@ function choosePresetCourse(routeIdOrMinutes, {goMap = true, animate = true} = {
     state.planMode = 'preset';
     state.routeId = chosen.id;
     state.minutes = chosen.minutes;
+    state.customTimedIds = null;
+    state.customTimedMinutes = null;
     state.hasChosenCourse = true;
     const ids = routableIds();
     state.navigation = navigationStateFromRoute(navigationIndex, ids);
@@ -546,6 +566,54 @@ function choosePresetCourse(routeIdOrMinutes, {goMap = true, animate = true} = {
       '展示室とフロア構造を照合しています',
       state.preferElevator ? 'エレベーター優先の移動ルートを設計しています' : '上下往復のない最短動線を計算しています',
       '音声ガイドと目安経過時間を準備しています'
+    ],
+    durationMs: 2250
+  }, apply);
+}
+
+function chooseTimedCourse(minutes, count, {goMap = true, animate = true} = {}) {
+  const bounds = timeCourseBounds(minutes, maxRoutableCount);
+  const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
+  const pace = paceSummaryFor(bounds.minutes, safeCount, bounds);
+  const apply = () => {
+    clearProgressNotice();
+    const built = buildTimedRouteWorks(works, navigationIndex, {
+      minutes: bounds.minutes,
+      count: safeCount,
+      preferElevator: state.preferElevator
+    });
+    state.planMode = 'preset';
+    state.routeId = `preset-${built.minutes}`;
+    state.minutes = built.minutes;
+    state.customTimedIds = built.ids;
+    state.customTimedMinutes = built.minutes;
+    state.draftMinutes = built.minutes;
+    state.draftCount = built.count;
+    state.hasChosenCourse = true;
+    const ids = routableIds();
+    state.navigation = navigationStateFromRoute(navigationIndex, ids);
+    state.selected = ids[0] ?? null;
+    if (ids[0] && byId[ids[0]]?.floor != null) {
+      state.floor = byId[ids[0]].floor;
+    }
+    state.appPhase = 'main';
+    if (goMap) state.tab = 'map';
+    persistState();
+    render();
+    window.scrollTo({top: 0});
+  };
+  if (!animate) {
+    apply();
+    return;
+  }
+  runWithRouteLoader({
+    title: `${bounds.minutes}分 · ${safeCount}作品ルートを編成中`,
+    subtitle: `${pace.label}（推奨 ${bounds.recommended}作品 / 限界目安 ${bounds.max}作品）`,
+    modeBadge: state.preferElevator ? 'エレベーター優先' : '最短一筆書き',
+    steps: [
+      `超有名作品から優先して ${safeCount}作品を選出しています`,
+      state.preferElevator ? 'エレベーター優先の移動ルートを設計しています' : '上下往復のない最短一筆書きを探索しています',
+      '各作品の目安経過時間と音声ガイドを準備しています'
     ],
     durationMs: 2250
   }, apply);
@@ -956,6 +1024,7 @@ async function downloadCurrentPlanAudio() {
 async function clearAudioCache() {
   if (!('caches' in window)) return;
   try {
+    await caches.delete('louvre-audio-v2');
     await caches.delete('louvre-audio-v1');
     state.downloaded.clear();
     setNotice('保存済みの音声データを削除しました', false, 3500);
@@ -1007,34 +1076,85 @@ function courseSelectView() {
     ? `<button class="text-back-btn" type="button" data-cancel-course>← 今の画面に戻る</button>`
     : '';
   const isThemeActive = state.hasChosenCourse && state.planMode === 'preset' && themeRoutes.some(r => r.id === state.routeId);
+  const selectedMinutes = state.draftMinutes || 90;
+  const bounds = timeCourseBounds(selectedMinutes, maxRoutableCount);
+  const selectedCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(state.draftCount || bounds.recommended)));
+  const pace = paceSummaryFor(bounds.minutes, selectedCount, bounds);
+  const recPct = bounds.max > bounds.min
+    ? Math.round(((bounds.recommended - bounds.min) / (bounds.max - bounds.min)) * 100)
+    : 50;
+
   return `<main class="course-screen">
     ${returnButton}
     <div class="course-brand-row">
       <img class="course-brand-icon" src="${iconUrl}" alt="${APP_NAME}">
       <div class="eyebrow">YOUR VISIT · ${APP_NAME}</div>
     </div>
-    <h1>美術と過ごす時間を選ぶ</h1>
-    <p class="course-lead">超有名作品から優先して巡れる時間別コース、テーマ別コース、または自由なマイプランをお選びください。</p>
-    <div class="route-pref-bar" role="group" aria-label="移動経路の優先設定">
-      <span class="route-pref-label">移動経路の優先</span>
-      <div class="route-pref-toggle">
-        <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">最短距離</button>
-        <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">エレベーター優先</button>
-      </div>
-    </div>
-    <div class="course-grid">
-      ${timeRoutes.map(item => {
-        const isCurrent = state.hasChosenCourse && state.planMode === 'preset' && state.routeId === item.id;
-        const est = item.ids.length * (item.visit ?? 6) + item.walk + Math.ceil((item.ids.length * state.duration) / 60) + item.buffer;
-        return `<button class="course-card ${isCurrent ? 'active' : ''}" type="button" data-course-id="${esc(item.id)}">
-          <div class="course-card-head">
+    <h1>時間と作品数でルートを作る</h1>
+    <p class="course-lead">滞在時間と巡りたい作品数を選ぶと、超有名作品から優先して館内最短の一筆書きルートを自動編成します。</p>
+
+    <section class="step-block" aria-label="ステップ1 滞在時間を選ぶ">
+      <div class="step-head"><span class="step-num">STEP 1</span><strong>滞在時間を選ぶ</strong></div>
+      <div class="time-pick-grid">
+        ${timeRoutes.map(item => {
+          const itemBounds = timeCourseBounds(item.minutes, maxRoutableCount);
+          const isPicked = selectedMinutes === item.minutes;
+          return `<button class="time-pick-card ${isPicked ? 'active' : ''}" type="button" data-pick-minutes="${item.minutes}" aria-pressed="${isPicked}">
             <strong>${item.minutes}<small>分</small></strong>
-            <span class="course-badge">${item.ids.length}作品 · 約${est}分</span>
+            <span>推奨 ${itemBounds.recommended}作品</span>
+            <small>最大 ${itemBounds.max}作品</small>
+          </button>`;
+        }).join('')}
+      </div>
+    </section>
+
+    <section class="step-block count-picker-card" aria-label="ステップ2 作品数を選ぶ">
+      <div class="step-head count-picker-head">
+        <div>
+          <span class="step-num">STEP 2</span>
+          <strong>巡る作品数を選ぶ（${bounds.minutes}分）</strong>
+        </div>
+        <span class="pace-badge pace-${pace.key}" data-pace-badge>${esc(pace.label)}</span>
+      </div>
+
+      <div class="count-reference-row">
+        <button type="button" class="ref-pill ref-recommended" data-set-recommended="${bounds.recommended}">
+          ★ 推奨：<strong>${bounds.recommended}作品</strong>
+        </button>
+        <span class="ref-pill ref-limit">
+          この時間の限界目安：<strong>最大 ${bounds.max}作品</strong>
+        </span>
+      </div>
+
+      <div class="count-controls-row">
+        <div class="count-slider-col">
+          <input class="count-slider" type="range" min="${bounds.min}" max="${bounds.max}" step="1" value="${selectedCount}" data-count-slider aria-label="作品数スライダー">
+          <div class="count-slider-marks" aria-hidden="true">
+            <span>最小 ${bounds.min}</span>
+            <span class="rec-mark" style="left:${recPct}%">▲ 推奨 ${bounds.recommended}</span>
+            <span>限界 ${bounds.max}</span>
           </div>
-          <p class="course-preview">${esc(item.subtitle || item.ids.slice(0, 3).map(id => byId[id]?.title).filter(Boolean).join('・'))}</p>
-        </button>`;
-      }).join('')}
-    </div>
+        </div>
+        <label class="count-number-box">
+          <input type="number" min="${bounds.min}" max="${bounds.max}" inputmode="numeric" value="${selectedCount}" data-count-input aria-label="作品数を数値で入力">
+          <span>作品</span>
+        </label>
+      </div>
+      <p class="count-pace-detail" data-pace-detail>${esc(pace.detail)}</p>
+
+      <div class="route-pref-bar route-pref-inline" role="group" aria-label="移動経路の優先設定">
+        <span class="route-pref-label">移動経路の優先</span>
+        <div class="route-pref-toggle">
+          <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">最短距離</button>
+          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">エレベーター優先</button>
+        </div>
+      </div>
+
+      <button type="button" class="primary start-timed-route-btn" data-start-timed-route>
+        この条件で最短ルートを作成（${bounds.minutes}分 · <span data-cta-count>${selectedCount}</span>作品） →
+      </button>
+    </section>
+
     ${themeRoutes.length ? `<details class="theme-courses-disclosure" ${isThemeActive ? 'open' : ''}>
       <summary>
         <span>テーマ別コースを見る（${themeRoutes.length}種類）</span>
@@ -1165,33 +1285,27 @@ function mapTabView(hasMini) {
   const plan = currentPlan();
   const nav = navigationView();
   const destinationId = nav.destinationNode?.workId ?? null;
-  const floorWorkCounts = Object.fromEntries(FLOORS.map(f => [f, works.filter(w => w.floor === f && w.locationPrecision === 'room').length]));
+  const floorWorkCounts = Object.fromEntries(FLOORS.map(f => {
+    const anchors = floorGeoData.floors[String(f)]?.roomAnchors || {};
+    return [f, works.filter(w => w.floor === f && w.locationPrecision === 'room' && Boolean(anchors[String(w.room)])).length];
+  }));
   const viewedInPlan = planWorks().filter(w => state.viewed.has(w.id)).length;
   const currentFloorGeo = floorGeoData.floors[String(state.floor)];
   const wcCount = (currentFloorGeo?.facilities || []).filter(item => item.type === 'wc').length;
   const cafeCount = (currentFloorGeo?.facilities || []).filter(item => item.type === 'cafe').length;
+  const emptyOrCompleteNote = !plan.routableIds.length
+    ? `<section class="route-guidance route-empty">
+        <div><span class="guidance-label">マイプラン案内</span><strong>マップ対応作品がまだ選ばれていません</strong></div>
+        <p>「音声一覧」から展示室確認済みの作品を ★ 追加すると、入口からの最短ルートが表示されます。</p>
+        <button class="secondary compact-btn" type="button" data-go-audio-mapped>マップ対応作品を見る（${works.filter(w => w.locationPrecision === 'room').length}作品）</button>
+      </section>`
+    : nav.complete
+      ? `<section class="route-guidance route-complete" aria-label="ルート完了">
+          <p class="next-action"><span>ルート完了！</span>おつかれさまでした。気になる作品があればマップ上のピンや音声一覧から自由に鑑賞できます。</p>
+        </section>`
+      : '';
 
   return `<main class="tab-screen map-screen ${hasMini ? 'has-mini-player' : ''}">
-    <div class="map-toolbar">
-      <div class="map-toolbar-meta">
-        <strong>${esc(plan.label)}</strong>
-        <span>${viewedInPlan} / ${plan.ids.length}作品 鑑賞済み</span>
-      </div>
-      <button type="button" class="pill-action-btn" data-open-plan>プラン一覧を見る ›</button>
-    </div>
-    ${navigationPanel(nav, plan)}
-    ${floorBannerMarkup(nav)}
-    <div class="floor-tabs" role="tablist" aria-label="表示する階">
-      ${FLOORS.map(floor => {
-        const hasRoute = nav.routeFloors?.includes(floor);
-        const count = floorWorkCounts[floor];
-        return `<button type="button" data-floor="${floor}" class="${floor === state.floor ? 'active' : ''} ${hasRoute ? 'has-route' : ''}" aria-pressed="${floor === state.floor}">
-          <span>${FLOOR_NAMES[floor]}</span>
-          ${count ? `<small>${count}作</small>` : ''}
-          ${hasRoute ? '<i aria-hidden="true"></i>' : ''}
-        </button>`;
-      }).join('')}
-    </div>
     <div class="map-frame">
       <div class="map-scroll">
         ${floorMapMarkup({
@@ -1214,6 +1328,20 @@ function mapTabView(hasMini) {
       </div>
     </div>
 
+    <div class="floor-tabs map-floor-tabs-below" role="tablist" aria-label="表示する階">
+      ${FLOORS.map(floor => {
+        const hasRoute = nav.routeFloors?.includes(floor);
+        const count = floorWorkCounts[floor];
+        return `<button type="button" data-floor="${floor}" class="${floor === state.floor ? 'active' : ''} ${hasRoute ? 'has-route' : ''}" aria-pressed="${floor === state.floor}">
+          <span>${FLOOR_NAMES[floor]}</span>
+          ${count ? `<small>${count}作</small>` : ''}
+          ${hasRoute ? '<i aria-hidden="true"></i>' : ''}
+        </button>`;
+      }).join('')}
+    </div>
+
+    ${floorBannerMarkup(nav)}
+
     <div class="map-subbar" aria-label="施設ピックアップと経路モード">
       <div class="map-subtabs" role="tablist" aria-label="施設を強調表示">
         <button type="button" class="${state.facilityFilter === 'none' ? 'active' : ''}" data-facility-filter="none">作品表示</button>
@@ -1225,6 +1353,16 @@ function mapTabView(hasMini) {
         <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">EV優先</button>
       </div>
     </div>
+
+    <div class="map-toolbar map-toolbar-below">
+      <div class="map-toolbar-meta">
+        <strong>${esc(plan.label)}</strong>
+        <span>${viewedInPlan} / ${plan.ids.length}作品 鑑賞済み</span>
+      </div>
+      <button type="button" class="pill-action-btn" data-open-plan>プラン一覧を見る ›</button>
+    </div>
+
+    ${emptyOrCompleteNote}
     ${state.facilityFilter === 'wc' && wcCount === 0 ? '<p class="map-tip">この階にトイレ情報はありません。他の階タブでご確認ください。</p>' : state.facilityFilter === 'cafe' && cafeCount === 0 ? '<p class="map-tip">この階にカフェ情報はありません（−2階・−1階・1階にあります）。</p>' : '<p class="map-tip">ピンをタップすると作品の詳細・音声再生が開きます（数字は回る順番、✓は鑑賞済み）。</p>'}
     ${movementSupportMarkup()}
   </main>`;
@@ -1340,9 +1478,16 @@ function audioRowsMarkup(items) {
     const saved = state.downloaded.has(`${work.id}-${length}`);
     const inMyPlan = myPlanSet.has(work.id);
     const isPlaying = state.playing === work.id;
-    const isMapped = work.locationPrecision === 'room';
+    const isMapped = work.locationPrecision === 'room' || work.locationPrecision === 'area';
+    const locClass = work.locationPrecision === 'off-view'
+      ? 'off-view'
+      : work.locationPrecision === 'loan'
+        ? 'loan'
+        : isMapped
+          ? 'mapped'
+          : '';
     const lengthSelect = lengths.length > 1
-      ? `<select data-audio-length="${esc(work.id)}" aria-label="${esc(work.title)} 音声の長さ">${lengths.map(opt => `<option value="${opt}" ${length === opt ? 'selected' : ''}>${opt < 60 ? `${opt}秒` : `${opt / 60}分`}</option>`).join('')}</select>`
+      ? `<select data-audio-length="${esc(work.id)}" aria-label="${esc(work.title)} 音声の長さ">${lengths.map(opt => `<option value="${opt}" ${length === opt ? 'selected' : ''}>${formatAudioLengthLabel(opt)}</option>`).join('')}</select>`
       : '';
     return `<article class="audio-row ${state.selected === work.id ? 'selected' : ''} ${isPlaying ? 'is-playing' : ''}" id="audio-row-${esc(work.id)}">
       <div class="audio-row-main" data-open-detail="${esc(work.id)}" role="button" tabindex="0">
@@ -1352,7 +1497,7 @@ function audioRowsMarkup(items) {
           <small class="creator-sub">${esc(creatorMeta(work))}</small>
           <div class="audio-row-meta">
             ${priorityBadgeMarkup(work)}
-            <span class="loc-tag ${isMapped ? 'mapped' : ''}">${esc(workStatus(work))}</span>
+            <span class="loc-tag ${locClass}">${esc(workStatus(work))}</span>
             ${saved ? '<span class="download-state saved">保存済</span>' : ''}
           </div>
         </div>
@@ -1487,7 +1632,7 @@ function settingsTabView(hasMini) {
           <small>4段階対応の名作で初期選択される長さ</small>
         </div>
         <div class="rate-chips">
-          ${DEFAULT_DURATIONS.map(d => `<button type="button" class="chip ${state.duration === d ? 'active' : ''}" data-default-duration="${d}">${d < 60 ? `${d}秒` : `${d / 60}分`}</button>`).join('')}
+          ${DEFAULT_DURATIONS.map(d => `<button type="button" class="chip ${state.duration === d ? 'active' : ''}" data-default-duration="${d}">${formatAudioLengthLabel(d)}</button>`).join('')}
         </div>
       </div>
       <div class="setting-row">
@@ -1503,9 +1648,11 @@ function settingsTabView(hasMini) {
       <h2>ご利用前の確認・情報について</h2>
       <ul class="information-list">
         <li><strong>展示位置・開室状況</strong><span>展示室や作品位置、開室状況は変更される可能性があります。当日は館内表示を優先してください。</span></li>
-        <li><strong>情報更新日</strong><span>情報更新日：${esc(sources.checkedAt)}（展示室・年号データ拡充：2026-11-21）</span></li>
-        <li><strong>公式館内案内</strong><a href="${esc(sources.officialMap)}" target="_blank" rel="noreferrer">地図・入口・アクセスを確認 ↗</a></li>
-        <li><strong>公式開室状況</strong><a href="${esc(sources.availability)}" target="_blank" rel="noreferrer">利用可能な展示室を確認 ↗</a></li>
+        <li><strong>情報更新日</strong><span>情報更新日：${esc(sources.checkedAt)}（全200作品を公式収蔵DBと照合済み）</span></li>
+        <li><strong>公式館内マップ</strong><a href="${esc(sources.officialMap)}" target="_blank" rel="noreferrer">インタラクティブ館内マップを見る ↗</a></li>
+        <li><strong>公式 展示室別プラン</strong><a href="${esc(sources.collectionsPlan || 'https://collections.louvre.fr/en/plan')}" target="_blank" rel="noreferrer">展示室ごとの収蔵品を見る ↗</a></li>
+        <li><strong>公式 収蔵品DB</strong><a href="${esc(sources.collections || 'https://collections.louvre.fr/')}" target="_blank" rel="noreferrer">Louvre Collections を開く ↗</a></li>
+        <li><strong>公式開室状況</strong><a href="${esc(sources.availability)}" target="_blank" rel="noreferrer">本日の利用可能な展示室を確認 ↗</a></li>
         <li><strong>サービスについて</strong><span>本サービスはルーブル美術館の公認サービスではありません。</span></li>
       </ul>
     </section>
@@ -1519,6 +1666,20 @@ function settingsTabView(hasMini) {
       </details>
     </section>
   </main>`;
+}
+
+function closeMiniPlayer() {
+  playbackSerial += 1;
+  player.pause();
+  player.currentTime = 0;
+  state.playing = null;
+  state.audio = null;
+  state.audioError = '';
+  state.player = {workId: null, mode: 'standalone', sessionId: playbackSerial, hasStarted: false, arrivalHandled: false};
+  if ('mediaSession' in navigator) {
+    try { navigator.mediaSession.playbackState = 'none'; } catch { /* ignore */ }
+  }
+  render();
 }
 
 function miniPlayerMarkup() {
@@ -1547,6 +1708,8 @@ function miniPlayerMarkup() {
         <button type="button" class="mini-ctrl-btn" data-mini-prev aria-label="1つ前の作品へ戻る" title="前へ戻る" ${!prevId ? 'disabled' : ''}>⏮</button>
         <button type="button" class="mini-play-btn ${isPlaying ? 'active' : ''}" data-mini-play="${esc(work.id)}" aria-label="${isPlaying ? '一時停止' : '再生'}" title="${isPlaying ? '一時停止' : '再生'}">${isPlaying ? '⏸' : '▶'}</button>
         <button type="button" class="mini-ctrl-btn" data-mini-next aria-label="${isLastInPlan ? 'この作品を完了にする' : '現在の作品を完了して次へ進む'}" title="${isLastInPlan ? '完了' : '次へ進む'}" ${!nextId && !isLastInPlan ? 'disabled' : ''}>⏭</button>
+        <span class="mini-divider" aria-hidden="true"></span>
+        <button type="button" class="mini-close-btn" data-mini-close aria-label="プレイヤーを閉じる" title="プレイヤーを閉じる">✕</button>
       </div>
     </div>
   </aside>`;
@@ -1593,7 +1756,7 @@ function audioSettingsModalMarkup() {
         <strong>標準の解説の長さ（複数対応作品）</strong>
       </div>
       <div class="rate-chips">
-        ${DEFAULT_DURATIONS.map(d => `<button type="button" class="chip ${state.duration === d ? 'active' : ''}" data-default-duration="${d}">${d < 60 ? `${d}秒` : `${d / 60}分`}</button>`).join('')}
+        ${DEFAULT_DURATIONS.map(d => `<button type="button" class="chip ${state.duration === d ? 'active' : ''}" data-default-duration="${d}">${formatAudioLengthLabel(d)}</button>`).join('')}
       </div>
     </div>
   </section>`;
@@ -1660,8 +1823,8 @@ function workDetailSheetMarkup() {
         <div class="sheet-audio-top">
           <h3>音声解説</h3>
           ${lengths.length > 1
-            ? `<div class="durations">${lengths.map(opt => `<button type="button" class="chip ${length === opt ? 'active' : ''}" data-detail-duration="${opt}" data-detail-work="${esc(work.id)}">${opt < 60 ? `${opt}秒` : `${opt / 60}分`}</button>`).join('')}</div>`
-            : `<span class="minor">標準ガイド（約40秒）</span>`}
+            ? `<div class="durations">${lengths.map(opt => `<button type="button" class="chip ${length === opt ? 'active' : ''}" data-detail-duration="${opt}" data-detail-work="${esc(work.id)}">${formatAudioLengthLabel(opt)}</button>`).join('')}</div>`
+            : `<span class="minor">解説ガイド（約${lengths[0] === 60 ? '1分' : `${lengths[0]}秒`}）</span>`}
         </div>
         <div class="sheet-seek-wrap">
           <input type="range" min="0" max="1000" value="${ratio}" style="--seek-pct:${pct}%" data-seek data-seek-work="${esc(work.id)}" aria-label="再生位置を調整">
@@ -1760,6 +1923,60 @@ function render() {
 }
 
 function wireCourseSelect() {
+  const syncCountUI = rawValue => {
+    const bounds = timeCourseBounds(state.draftMinutes || 90, maxRoutableCount);
+    const parsed = Math.round(Number(rawValue));
+    if (!Number.isFinite(parsed)) return;
+    const clamped = Math.max(bounds.min, Math.min(bounds.max, parsed));
+    state.draftCount = clamped;
+    const pace = paceSummaryFor(bounds.minutes, clamped, bounds);
+    const slider = document.querySelector('[data-count-slider]');
+    const numInput = document.querySelector('[data-count-input]');
+    const badge = document.querySelector('[data-pace-badge]');
+    const detail = document.querySelector('[data-pace-detail]');
+    const ctaCount = document.querySelector('[data-cta-count]');
+    if (slider && slider.value !== String(clamped)) slider.value = String(clamped);
+    if (numInput && document.activeElement !== numInput) numInput.value = String(clamped);
+    if (badge) {
+      badge.textContent = pace.label;
+      badge.className = `pace-badge pace-${pace.key}`;
+    }
+    if (detail) detail.textContent = pace.detail;
+    if (ctaCount) ctaCount.textContent = String(clamped);
+  };
+
+  document.querySelectorAll('[data-pick-minutes]').forEach(btn => {
+    btn.onclick = () => {
+      const m = Number(btn.dataset.pickMinutes);
+      const bounds = timeCourseBounds(m, maxRoutableCount);
+      state.draftMinutes = bounds.minutes;
+      state.draftCount = bounds.recommended;
+      render();
+    };
+  });
+  document.querySelector('[data-count-slider]')?.addEventListener('input', event => {
+    syncCountUI(event.target.value);
+    const numInput = document.querySelector('[data-count-input]');
+    if (numInput) numInput.value = String(state.draftCount);
+  });
+  const countInput = document.querySelector('[data-count-input]');
+  countInput?.addEventListener('input', event => {
+    if (event.target.value === '') return;
+    syncCountUI(event.target.value);
+  });
+  countInput?.addEventListener('change', event => {
+    syncCountUI(event.target.value);
+    event.target.value = String(state.draftCount);
+  });
+  document.querySelector('[data-set-recommended]')?.addEventListener('click', event => {
+    const rec = Number(event.currentTarget.dataset.setRecommended);
+    syncCountUI(rec);
+    const numInput = document.querySelector('[data-count-input]');
+    if (numInput) numInput.value = String(state.draftCount);
+  });
+  document.querySelector('[data-start-timed-route]')?.addEventListener('click', () => {
+    chooseTimedCourse(state.draftMinutes || 90, state.draftCount, {goMap: true});
+  });
   document.querySelectorAll('[data-course-id]').forEach(btn => {
     btn.onclick = () => choosePresetCourse(btn.dataset.courseId, {goMap: true});
   });
@@ -1832,6 +2049,12 @@ function refreshAudioList() {
 
 function wireMain() {
   document.querySelector('[data-change-course]')?.addEventListener('click', () => {
+    const plan = currentPlan();
+    if (!plan.isCustom && plan.kind === 'time') {
+      const bounds = timeCourseBounds(plan.minutes || state.minutes, maxRoutableCount);
+      state.draftMinutes = bounds.minutes;
+      state.draftCount = Math.max(bounds.min, Math.min(bounds.max, plan.ids.length || bounds.recommended));
+    }
     state.detailWorkId = null;
     state.audioSettingsOpen = false;
     state.appPhase = 'select_time';
@@ -2066,6 +2289,7 @@ function wireMain() {
   });
   document.querySelector('[data-mini-prev]')?.addEventListener('click', () => stepMiniPlayer(-1));
   document.querySelector('[data-mini-next]')?.addEventListener('click', () => stepMiniPlayer(1));
+  document.querySelector('[data-mini-close]')?.addEventListener('click', closeMiniPlayer);
   document.querySelectorAll('[data-seek-delta]').forEach(btn => {
     btn.onclick = () => seekBy(Number(btn.dataset.seekDelta));
   });
@@ -2138,7 +2362,7 @@ function wireMain() {
 async function loadDownloads() {
   if (!('caches' in window)) return;
   try {
-    const cache = await caches.open('louvre-audio-v1');
+    const cache = await caches.open('louvre-audio-v2');
     const requests = await cache.keys();
     const cachedUrls = new Set(requests.map(req => req.url));
     for (const work of works) {

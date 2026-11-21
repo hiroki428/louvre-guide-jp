@@ -1,5 +1,5 @@
-const SHELL = 'louvre-shell-v12';
-const AUDIO = 'louvre-audio-v1';
+const SHELL = 'louvre-shell-v24';
+const AUDIO = 'louvre-audio-v2';
 const IMAGES = 'louvre-images-v1';
 
 const SHELL_ASSETS = [
@@ -41,7 +41,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key.startsWith('louvre-shell-') && key !== SHELL).map(key => caches.delete(key))))
+      .then(keys => Promise.all(keys.filter(key => (key.startsWith('louvre-shell-') && key !== SHELL) || (key.startsWith('louvre-audio-') && key !== AUDIO)).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });

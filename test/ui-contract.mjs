@@ -25,9 +25,17 @@ assert.match(main, /data-prefer-elevator/, 'route priority toggle (shortest vs e
 assert.match(main, /data-toggle-autoplay/, 'continuous playback toggle must exist');
 assert.match(main, /data-set-large-text/, 'text size toggle must exist');
 assert.match(main, /data-clear-search/, 'search clear button must exist');
+assert.match(main, /data-pick-minutes/, 'step 1 time picker must exist');
+assert.match(main, /data-count-slider/, 'step 2 work count slider must exist');
+assert.match(main, /data-count-input/, 'step 2 numeric work count input must exist');
+assert.match(main, /この時間の限界目安/, 'limit guidance for chosen duration must be displayed');
+assert.match(main, /data-start-timed-route/, 'start button for timed custom-count route must exist');
 assert.match(main, /data-optimize-myplan/, 'my-plan shortest-order optimize button must exist');
 assert.match(main, /route-loader-overlay/, 'route designing loading overlay must exist');
 assert.match(css, /\.route-loader-overlay/, 'route designing loading overlay styles must exist');
+const mapTabSection = main.slice(main.indexOf('function mapTabView('), main.indexOf('function planTabView('));
+assert.match(mapTabSection, /<main class="tab-screen map-screen[^"]*">\s*<div class="map-frame">/, 'map-frame must appear at the very top of the Map tab');
+assert.doesNotMatch(mapTabSection, /navigationPanel\(/, 'bulky route-guidance card must not appear in the Map tab');
 assert.match(main, /offline-pill/, 'online/offline status pill must exist');
 assert.match(main, /planStopEstimates/, 'cumulative elapsed time estimates must be wired');
 assert.doesNotMatch(main, /data-focus-destination/, 'auto-zoom button must not be added per user preference');
@@ -54,6 +62,7 @@ assert.match(main, /data-jump-floor/, 'floor jump banner must be available for d
 assert.match(main, /data-mini-prev/, 'Spotify-style player must provide ⏮ previous control');
 assert.match(main, /data-mini-play/, 'Spotify-style player must provide ▶/⏸ toggle');
 assert.match(main, /data-mini-next/, 'Spotify-style player must provide ⏭ next/complete control');
+assert.match(main, /data-mini-close/, 'mini player must provide ✕ close/dismiss button');
 assert.match(main, /data-seek/, 'Spotify-style player must provide interactive seek bar');
 assert.match(main, /data-open-audio-settings/, 'top-right audio settings trigger must exist');
 assert.match(main, /data-rate-slider/, 'audio settings must include playback speed adjustment');

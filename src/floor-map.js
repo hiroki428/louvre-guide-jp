@@ -114,7 +114,7 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
 function facilityIconMarkup(item, facilityFilter) {
   const isPicked = (facilityFilter === 'wc' && item.type === 'wc') || (facilityFilter === 'cafe' && item.type === 'cafe');
   const isDimmed = facilityFilter && facilityFilter !== 'none' && !isPicked;
-  const scale = isPicked ? 1.15 : 0.72;
+  const scale = isPicked ? 1.15 : 0.7;
   const common = `transform="translate(${item.x} ${item.y}) scale(${scale})"`;
   const icons = {
     stairs:`<path d="M-8 7h4V3h4v-4h4v-4h4"/>`,
@@ -130,9 +130,8 @@ function facilityIconMarkup(item, facilityFilter) {
     shop:`<path d="M-8-3h16l-2-5H-6zM-6-3V8H6V-3M-2 8V2h4v6"/>`
   };
   const badgeBg = isPicked ? `<circle class="facility-pick-bg pick-${escapeHtml(item.type)}" r="12"/>` : '';
-  const displayLabel = isPicked ? (item.type === 'wc' ? 'トイレ' : (item.label || 'カフェ')) : (item.type === 'cafe' ? '' : item.label);
-  const label = displayLabel ? `<text class="facility-label ${isPicked ? 'is-picked-label' : ''}" x="${item.x + (isPicked ? 14 : 9)}" y="${item.y + (isPicked ? 3 : -7)}">${escapeHtml(displayLabel)}</text>` : '';
-  return `<g class="facility facility-${escapeHtml(item.type)} ${isPicked ? 'is-picked' : ''} ${isDimmed ? 'is-dimmed' : ''}" ${common} aria-label="${escapeHtml(displayLabel || item.type)}">${badgeBg}${icons[item.type] || '<circle r="5"/>'}</g>${label}`;
+  const ariaLabel = item.type === 'wc' ? 'トイレ' : item.type === 'cafe' ? (item.label || 'カフェ') : (item.label || item.type);
+  return `<g class="facility facility-${escapeHtml(item.type)} ${isPicked ? 'is-picked' : ''} ${isDimmed ? 'is-dimmed' : ''}" ${common} aria-label="${escapeHtml(ariaLabel)}">${badgeBg}${icons[item.type] || '<circle r="5"/>'}</g>`;
 }
 
 const polylineMarkup = (segments, floor, className) => segments
@@ -142,7 +141,6 @@ const polylineMarkup = (segments, floor, className) => segments
 
 function routeLayerMarkup(floor, navigation) {
   if (!navigation) return '';
-  const planned = polylineMarkup(navigation.plannedSegments ?? [], floor, 'route-planned');
   const passed = polylineMarkup(navigation.passedSegments ?? [], floor, 'route-passed');
   const activeCasing = polylineMarkup(navigation.remainingSegments ?? [], floor, 'route-active-casing');
   const active = polylineMarkup(navigation.remainingSegments ?? [], floor, 'route-active');
@@ -151,31 +149,103 @@ function routeLayerMarkup(floor, navigation) {
     : ['audio', 'manual'].includes(navigation.locationMethod)
       ? '推定現在地'
       : '最後に確認した地点';
+  const shortCurrent = navigation.locationMethod === 'selection' ? '開始' : '現在地';
   const current = navigation.currentNode?.floor === floor
-    ? `<g class="current-location" transform="translate(${navigation.currentNode.x} ${navigation.currentNode.y})"><circle class="current-halo" r="14"/><circle class="current-dot" r="6.5"/><rect x="-64" y="-38" width="128" height="21" rx="7"/><text x="0" y="-24" text-anchor="middle">${currentLabel}</text></g>`
+    ? `<g class="current-location" transform="translate(${navigation.currentNode.x} ${navigation.currentNode.y})" aria-label="${currentLabel}"><circle class="current-halo" r="13"/><circle class="current-dot" r="6"/><rect x="-26" y="-32" width="52" height="18" rx="9"/><text x="0" y="-20" text-anchor="middle">${shortCurrent}</text></g>`
     : '';
   const destination = navigation.destinationNode?.floor === floor
-    ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})"><rect x="-44" y="14" width="88" height="21" rx="7"/><text x="0" y="28" text-anchor="middle">次の作品</text></g>`
+    ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})" aria-label="次の作品"></g>`
     : '';
   const transitions = (navigation.transitions ?? []).flatMap(transition => {
     if (transition.from.floor !== floor && transition.to.floor !== floor) return [];
     const leaving = transition.from.floor === floor;
     const node = leaving ? transition.from : transition.to;
     const direction = transition.to.floor > transition.from.floor ? '↑' : '↓';
-    const label = leaving ? transition.message : `${escapeHtml(transition.facilityName)}から到着・経路続行`;
-    return [`<g class="floor-transition ${leaving ? 'is-leaving' : 'is-arriving'}" transform="translate(${node.x} ${node.y})"><circle r="15"/><text class="transition-arrow" x="0" y="5" text-anchor="middle">${direction}</text><rect x="20" y="-18" width="236" height="36" rx="8"/><text class="transition-label" x="30" y="4">${escapeHtml(label)}</text></g>`];
+    const fullLabel = leaving ? transition.message : `${transition.facilityName}から到着・経路続行`;
+    const shortTarget = floorName(transition.to.floor);
+    const kindPrefix = transition.kind === 'elevator' ? 'EV ' : '';
+    const pill = leaving
+      ? `<rect x="16" y="-11" width="76" height="22" rx="11"/><text class="transition-label" x="54" y="3.5" text-anchor="middle">${escapeHtml(`${direction}${kindPrefix}${shortTarget}へ`)}</text>`
+      : '';
+    return [`<g class="floor-transition ${leaving ? 'is-leaving' : 'is-arriving'}" transform="translate(${node.x} ${node.y})" aria-label="${escapeHtml(fullLabel)}"><circle r="12"/><text class="transition-arrow" x="0" y="4.5" text-anchor="middle">${direction}</text>${pill}</g>`];
   }).join('');
-  const plannedTransitions = (navigation.plannedTransitions ?? [])
-    .flatMap(transition => [transition.from, transition.to]
-      .filter(node => node.floor === floor)
-      .map(node => `<g class="planned-floor-transition" transform="translate(${node.x} ${node.y})"><circle r="9"/><path d="M-3.5 0h7"/></g>`))
-    .join('');
   const passedTransitions = (navigation.passedTransitions ?? [])
     .flatMap(transition => [transition.from, transition.to]
       .filter(node => node.floor === floor)
-      .map(node => `<g class="passed-floor-transition" transform="translate(${node.x} ${node.y})"><circle r="10"/><path d="M-3.5 0h7"/></g>`))
+      .map(node => `<g class="passed-floor-transition" transform="translate(${node.x} ${node.y})"><circle r="9"/><path d="M-3 0h6"/></g>`))
     .join('');
-  return `<g class="route-lines">${planned}${passed}${activeCasing}${active}</g>${plannedTransitions}${passedTransitions}${transitions}${current}${destination}`;
+  return `<g class="route-lines">${passed}${activeCasing}${active}</g>${passedTransitions}${transitions}${current}${destination}`;
+}
+
+function wrapHudText(text, maxChars = 14) {
+  const str = String(text ?? '').trim();
+  if (!str) return [];
+  if (str.length <= maxChars) return [str];
+  const lines = [];
+  let rest = str;
+  while (rest.length > maxChars) {
+    let split = -1;
+    for (let i = maxChars; i >= Math.floor(maxChars * 0.5); i -= 1) {
+      if ('・（ '.includes(rest[i])) {
+        split = rest[i] === '（' ? i : i + 1;
+        break;
+      }
+    }
+    if (split <= 0) split = maxChars;
+    lines.push(rest.slice(0, split).trim());
+    rest = rest.slice(split).trim();
+  }
+  if (rest) lines.push(rest);
+  return lines;
+}
+
+function mapHudMarkup({floorLabel, continuationFloors}) {
+  const x = 12;
+  const y = 12;
+  const width = 180;
+  const padX = x + 12;
+  const contText = continuationFloors.length ? `続き：${continuationFloors.map(floorName).join('・')}` : '';
+  const contLines = contText ? wrapHudText(contText, 14) : [];
+
+  let cursorY = y + 36;
+  const parts = [];
+  parts.push(`<text class="hud-floor" x="${padX}" y="${cursorY}">${escapeHtml(floorLabel)}</text>`);
+  cursorY += 16;
+
+  if (contLines.length) {
+    for (const line of contLines) {
+      parts.push(`<text class="hud-continuation" x="${padX}" y="${cursorY}">${escapeHtml(line)}</text>`);
+      cursorY += 14;
+    }
+  }
+
+  cursorY += 2;
+  parts.push(`<line class="hud-divider" x1="${padX}" y1="${cursorY}" x2="${x + width - 12}" y2="${cursorY}"/>`);
+  cursorY += 16;
+
+  const col1 = padX;
+  const col2 = x + 98;
+  parts.push(`
+    <g class="hud-legend" aria-label="地図の凡例">
+      <circle class="hud-dot hud-dot-dest" cx="${col1 + 5}" cy="${cursorY - 3.5}" r="4.8"/>
+      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY}">目的地</text>
+      <line class="hud-line-active" x1="${col2}" y1="${cursorY - 3.5}" x2="${col2 + 16}" y2="${cursorY - 3.5}"/>
+      <text class="hud-legend-text" x="${col2 + 22}" y="${cursorY}">次まで</text>
+
+      <circle class="hud-dot hud-dot-route" cx="${col1 + 5}" cy="${cursorY + 15.5}" r="4.8"/>
+      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 19}">予定</text>
+      <line class="hud-line-passed" x1="${col2}" y1="${cursorY + 15.5}" x2="${col2 + 16}" y2="${cursorY + 15.5}"/>
+      <text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 19}">通過済</text>
+
+      <circle class="hud-dot hud-dot-viewed" cx="${col1 + 5}" cy="${cursorY + 34.5}" r="4.8"/>
+      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 38}">済</text>
+    </g>
+  `);
+  const height = (cursorY + 38 + 12) - y;
+  return {
+    rect: {x, y, width, height},
+    markup: `<g class="map-hud" data-hud-bounds="${x},${y},${width},${height}"><rect class="hud-card" x="${x}" y="${y}" width="${width}" height="${height}" rx="12"/><g clip-path="url(#map-hud-clip)">${parts.join('')}</g></g>`
+  };
 }
 
 export function floorMapMarkup({
@@ -212,13 +282,43 @@ export function floorMapMarkup({
   });
   const facilities = sortedFacilities.map(item => facilityIconMarkup(item, facilityFilter)).join('');
   const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet);
-  const wingLabels = plan.wings.map(wing => `<text class="wing-label" x="${wing.labelX}" y="${wing.labelY}">${escapeHtml(wing.label)}</text>${wing.range ? `<text class="wing-range" x="${wing.labelX}" y="${wing.labelY + 13}">${escapeHtml(wing.range)}</text>` : ''}`).join('');
-  const mapLabels = plan.labels.map(label => `<text class="map-label" x="${label.x}" y="${label.y}" text-anchor="middle">${escapeHtml(label.text)}</text>`).join('');
-  const roomLabels = plan.roomLabels.map(lbl => {
-    const hasWorks = worksByRoom.has(lbl.number);
-    const yOff = hasWorks ? 16 : 3;
-    return `<text class="room-number ${lbl.priority ? 'is-anchor-room' : ''}" x="${lbl.x}" y="${lbl.y + yOff}">${escapeHtml(lbl.number)}</text>`;
-  }).join('');
+
+  // Place ONLY the wing names that actually exist on this floor, strictly outside the palace geometry
+  const outerWings = floor === -2
+    ? []
+    : floor === 2
+      ? [
+          {label: 'リシュリュー翼', x: 370, y: 34},
+          {label: 'シュリー翼', x: 740, y: 34}
+        ]
+      : [
+          {label: 'リシュリュー翼', x: 370, y: 34},
+          {label: 'シュリー翼', x: 740, y: 34},
+          {label: 'ドゥノン翼', x: 320, y: 576}
+        ];
+  const wingLabels = outerWings.map(w => `<text class="wing-label" x="${w.x}" y="${w.y}">${escapeHtml(w.label)}</text>`).join('');
+
+  // Show curated room numbers across the floor (prioritizing active/route rooms, with collision guard)
+  const placedRoomLabels = [];
+  const candidateRooms = (plan.roomLabels || []).map(lbl => {
+    const roomWorks = worksByRoom.get(lbl.number) || [];
+    const hasWorks = roomWorks.length > 0;
+    const isSelectedRoom = roomWorks.some(w => w.id === selectedId);
+    const isRouteRoom = routeWorkSet ? roomWorks.some(w => routeWorkSet.has(w.id)) : false;
+    const priority = isSelectedRoom ? 4 : isRouteRoom ? 3 : lbl.priority ? 2 : 1;
+    const yOff = hasWorks ? 14 : 3;
+    return {roomNum: lbl.number, x: lbl.x, y: lbl.y + yOff, priority, emphasize: isSelectedRoom || isRouteRoom || lbl.priority};
+  });
+  candidateRooms.sort((a, b) => b.priority - a.priority);
+  const roomLabels = candidateRooms
+    .filter(item => {
+      const minDist = item.priority >= 3 ? 20 : 24;
+      if (placedRoomLabels.some(([px, py]) => Math.hypot(px - item.x, py - item.y) < minDist)) return false;
+      placedRoomLabels.push([item.x, item.y]);
+      return true;
+    })
+    .map(item => `<text class="room-number ${item.emphasize ? 'is-anchor-room' : ''}" x="${item.x}" y="${item.y}">${escapeHtml(item.roomNum)}</text>`)
+    .join('');
 
   const alerts = roomNotices.filter(notice => notice.floor === floor).map(notice => {
     const anchor = plan.roomAnchors?.[String(notice.room)];
@@ -228,10 +328,10 @@ export function floorMapMarkup({
 
   const routeLayer = routeLayerMarkup(floor, navigation);
   const continuationFloors = (navigation?.routeFloors ?? []).filter(routeFloor => routeFloor !== floor);
-  const continuation = continuationFloors.length ? `<span class="map-route-continuation">経路の続き：${continuationFloors.map(floorName).join('・')}</span>` : '';
+  const hud = mapHudMarkup({floorLabel, continuationFloors});
   const isFacilityPickMode = facilityFilter === 'wc' || facilityFilter === 'cafe';
 
-  return `<div class="map-heading"><div><span class="map-floor-kicker">表示中の階</span><strong>${escapeHtml(floorLabel)}</strong><span>${escapeHtml(plan.subtitle)}</span>${continuation}</div><div class="map-legend" aria-label="地図の凡例"><span><i class="legend-destination"></i>目的地</span><span><i class="legend-route-pin"></i>予定</span><span><i class="legend-viewed-pin"></i>済</span><span><i class="legend-route"></i>次まで</span><span><i class="legend-passed"></i>通過済</span></div></div><svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''}" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">実建築の館内GeoJSONデータをもとに、ルーブル宮殿の展示室、廊下、壁、扉、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs><filter id="pin-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="1.4" flood-color="#122126" flood-opacity="0.32"/></filter></defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${mapLabels}${roomLabels}<text x="932" y="586" text-anchor="end">上側：リヴォリ通り</text></g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g></svg>`;
+  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''}" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">実建築の館内GeoJSONデータをもとに、ルーブル宮殿の展示室、廊下、壁、扉、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs><filter id="pin-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.8" stdDeviation="1.4" flood-color="#122126" flood-opacity="0.32"/></filter><clipPath id="map-hud-clip"><rect x="${hud.rect.x}" y="${hud.rect.y}" width="${hud.rect.width}" height="${hud.rect.height}" rx="12"/></clipPath></defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g>${hud.markup}</svg>`;
 }
 
 function clampView(view) {

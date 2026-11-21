@@ -94,25 +94,39 @@ function simplifyRing(pts) {
   return out;
 }
 
-function extractRoomNumber(props) {
+const FLOOR_ROOM_RANGE = {
+  '-1': [100, 199],
+  '0': [200, 499],
+  '1': [500, 799],
+  '2': [800, 999]
+};
+
+function isValidRoomForFloor(roomNum, floor) {
+  const band = FLOOR_ROOM_RANGE[String(floor)];
+  if (!band) return false;
+  const n = Number(roomNum);
+  return Number.isFinite(n) && n >= band[0] && n <= band[1];
+}
+
+function extractRoomNumber(props, floor) {
   const candidates = [props.ref, props.alt_name, props.name];
   for (const text of candidates) {
     if (!text) continue;
     const str = String(text);
     if (/^(E|N|INV|MR|RF)\s+\d+/i.test(str)) continue;
     const exact = str.match(/^(?:Salle\s*)?([1-9]\d{2})(?:\b|;)/i);
-    if (exact) return exact[1];
+    if (exact && isValidRoomForFloor(exact[1], floor)) return exact[1];
     const salle = str.match(/Salle\s+([1-9]\d{2})\b/i);
-    if (salle) return salle[1];
+    if (salle && isValidRoomForFloor(salle[1], floor)) return salle[1];
   }
-  if (/Daru,\s*néoclassicisme/i.test(props.name || '')) return '702';
-  if (/Vénus de Milo/i.test(props.name || '')) return '345';
-  if (/Salle des États/i.test(props.name || '')) return '711';
-  if (/Mollien,\s*romantisme/i.test(props.name || '')) return '700';
-  if (/Grande Galerie/i.test(props.name || '')) return '710';
-  if (/Salvator Rosa/i.test(props.name || '')) return '718';
-  if (/Salon théâtre|Grande Salle à manger/i.test(props.name || '')) return '544';
-  if (/Cour du Sphinx/i.test(props.name || '')) return '338';
+  if (floor === 1 && /Daru,\s*néoclassicisme/i.test(props.name || '')) return '702';
+  if (floor === 0 && /Vénus de Milo/i.test(props.name || '')) return '345';
+  if (floor === 1 && /Salle des États/i.test(props.name || '')) return '711';
+  if (floor === 1 && /Mollien,\s*romantisme/i.test(props.name || '')) return '700';
+  if (floor === 1 && /Grande Galerie/i.test(props.name || '')) return '710';
+  if (floor === 1 && /Salvator Rosa/i.test(props.name || '')) return '718';
+  if (floor === 1 && /Salon théâtre|Grande Salle à manger/i.test(props.name || '')) return '544';
+  if (floor === 0 && /Cour du Sphinx/i.test(props.name || '')) return '338';
   return null;
 }
 
@@ -152,38 +166,120 @@ function classifyFacility(props) {
 const ROOM_ANCHORS = {
   '-1': {
     '102': {x: 461, y: 162, wing: 'richelieu', name: 'マルリーの中庭'},
-    '169': {x: 510, y: 522, wing: 'denon', name: '彫刻展示室'}
+    '105': {x: 560, y: 162, wing: 'richelieu', name: 'ピュジェの中庭'},
+    '169': {x: 444, y: 448, wing: 'denon', name: '彫刻展示室'},
+    '170': {x: 545, y: 495, wing: 'denon', name: '先古典期ギリシア'}
   },
   '0': {
+    '227': {x: 598, y: 132, wing: 'richelieu', name: 'ハンムラビ法典の間'},
     '229': {x: 564, y: 132, wing: 'richelieu', name: 'コルサバードの中庭'},
     '234': {x: 525, y: 127, wing: 'richelieu', name: 'メソポタミア'},
-    '338': {x: 687, y: 377, wing: 'sully', name: 'スフィンクスの地下室'},
+    '338': {x: 790, y: 428, wing: 'sully', name: 'スフィンクスの地下室'},
+    '344': {x: 726, y: 442, wing: 'sully', name: 'ギリシア古典彫刻'},
     '345': {x: 681, y: 442, wing: 'sully', name: 'ミロのヴィーナスの間'},
+    '348': {x: 681, y: 396, wing: 'sully', name: 'カリアティードの間'},
     '403': {x: 438, y: 432, wing: 'denon', name: 'ミケランジェロ・ギャラリー'}
   },
   '1': {
+    '501': {x: 461, y: 173, wing: 'richelieu', name: 'シャルルマーニュの間'},
+    '502': {x: 462, y: 151, wing: 'richelieu', name: 'シュジェールの間'},
+    '507': {x: 559, y: 125, wing: 'richelieu', name: 'マクシミリアンの狩猟ギャラリー'},
     '544': {x: 344, y: 170, wing: 'richelieu', name: 'ナポレオン三世の居室'},
-    '635': {x: 824, y: 418, wing: 'sully', name: '古代エジプト美術'},
+    '605': {x: 678, y: 208, wing: 'sully', name: '18世紀装飾美術'},
+    '635': {x: 907, y: 295, wing: 'sully', name: '古代エジプト美術'},
     '663': {x: 688, y: 370, wing: 'sully', name: 'ブロンズの間'},
     '700': {x: 403, y: 431, wing: 'denon', name: 'モリアン室'},
+    '701': {x: 456, y: 424, wing: 'denon', name: 'ドゥノン室'},
     '702': {x: 513, y: 437, wing: 'denon', name: 'ダリュ室'},
     '703': {x: 620, y: 447, wing: 'denon', name: 'ダリュの階段踊り場'},
+    '708': {x: 605, y: 521, wing: 'denon', name: 'サロン・カレ'},
     '710': {x: 510, y: 521, wing: 'denon', name: 'グラン・ギャラリー東'},
     '711': {x: 457, y: 487, wing: 'denon', name: '諸国の間'},
     '712': {x: 380, y: 521, wing: 'denon', name: 'グラン・ギャラリー中央'},
+    '716': {x: 290, y: 521, wing: 'denon', name: 'グラン・ギャラリー西'},
     '718': {x: 145, y: 502, wing: 'denon', name: 'スペイン絵画'}
   },
   '2': {
     '801': {x: 462, y: 162, wing: 'richelieu', name: 'メディシス・ギャラリー'},
     '814': {x: 568, y: 114, wing: 'richelieu', name: '北方ルネサンス'},
     '818': {x: 572, y: 175, wing: 'richelieu', name: 'フランドル絵画'},
+    '824': {x: 587, y: 118, wing: 'richelieu', name: 'フォンテーヌブロー派'},
     '825': {x: 604, y: 116, wing: 'richelieu', name: 'プッサンの間'},
     '837': {x: 401, y: 190, wing: 'richelieu', name: 'フェルメールの間'},
+    '844': {x: 338, y: 157, wing: 'richelieu', name: 'レンブラントの間'},
     '912': {x: 752, y: 204, wing: 'sully', name: '17世紀フランス絵画'},
     '917': {x: 846, y: 204, wing: 'sully', name: '18世紀フランス絵画'},
-    '931': {x: 883, y: 420, wing: 'sully', name: 'ロココ絵画'},
-    '940': {x: 770, y: 419, wing: 'sully', name: 'アングルの間'}
+    '919': {x: 907, y: 252, wing: 'sully', name: 'ルイ15世時代の絵画'},
+    '929': {x: 907, y: 375, wing: 'sully', name: 'フラゴナールの間'},
+    '931': {x: 895, y: 428, wing: 'sully', name: 'ロココ絵画'},
+    '940': {x: 770, y: 428, wing: 'sully', name: 'アングルの間'}
   }
+};
+
+// Official Louvre floor-map landmark room numbers so every wing is easy to orient
+const OFFICIAL_ROOM_LABELS = {
+  '-1': [
+    {number: '101', x: 460, y: 196},
+    {number: '130', x: 676, y: 312},
+    {number: '132', x: 718, y: 344},
+    {number: '133', x: 776, y: 346},
+    {number: '135', x: 742, y: 368},
+    {number: '160', x: 432, y: 438},
+    {number: '185', x: 562, y: 466}
+  ],
+  '0': [
+    {number: '200', x: 462, y: 196},
+    {number: '201', x: 462, y: 162},
+    {number: '212', x: 376, y: 132},
+    {number: '218', x: 405, y: 112},
+    {number: '230', x: 622, y: 168},
+    {number: '236', x: 564, y: 202},
+    {number: '300', x: 678, y: 208},
+    {number: '308', x: 734, y: 204},
+    {number: '316', x: 842, y: 204},
+    {number: '321', x: 907, y: 274},
+    {number: '328', x: 907, y: 378},
+    {number: '337', x: 858, y: 432},
+    {number: '400', x: 404, y: 432},
+    {number: '405', x: 460, y: 478},
+    {number: '406', x: 520, y: 434},
+    {number: '410', x: 618, y: 452},
+    {number: '419', x: 598, y: 492},
+    {number: '427', x: 112, y: 498}
+  ],
+  '1': [
+    {number: '500', x: 462, y: 196},
+    {number: '517', x: 582, y: 120},
+    {number: '531', x: 540, y: 200},
+    {number: '535', x: 422, y: 200},
+    {number: '548', x: 344, y: 136},
+    {number: '552', x: 382, y: 108},
+    {number: '600', x: 678, y: 300},
+    {number: '617', x: 762, y: 202},
+    {number: '632', x: 866, y: 202},
+    {number: '640', x: 907, y: 374},
+    {number: '651', x: 868, y: 434},
+    {number: '656', x: 786, y: 434},
+    {number: '660', x: 724, y: 434},
+    {number: '705', x: 634, y: 498},
+    {number: '709', x: 566, y: 486},
+    {number: '715', x: 342, y: 486}
+  ],
+  '2': [
+    {number: '800', x: 462, y: 196},
+    {number: '802', x: 462, y: 112},
+    {number: '822', x: 540, y: 114},
+    {number: '835', x: 530, y: 196},
+    {number: '848', x: 368, y: 112},
+    {number: '864', x: 318, y: 90},
+    {number: '900', x: 676, y: 308},
+    {number: '902', x: 676, y: 256},
+    {number: '909', x: 678, y: 204},
+    {number: '924', x: 907, y: 316},
+    {number: '936', x: 834, y: 428},
+    {number: '944', x: 716, y: 428},
+    {number: '952', x: 676, y: 374}
+  ]
 };
 
 // Build shared palace footprint base from major polygons across floors 0, 1, 2
@@ -242,11 +338,12 @@ for (const floor of FLOORS) {
       }
 
       const pointsStr = pts.map(p => `${p[0]},${p[1]}`).join(' ');
-      if (pr.indoor === 'corridor') {
+      const isMedievalLouvreGallery = floor === -1 && cx >= 680 && cx <= 810 && cy >= 300 && cy <= 415;
+      if (pr.indoor === 'corridor' && !isMedievalLouvreGallery) {
         corridors.push({points: pointsStr, cx, cy, area: Math.round(area)});
       } else {
-        const number = extractRoomNumber(pr);
-        const wing = inferWing(floor, number, [cx, cy]);
+        const number = extractRoomNumber(pr, floor);
+        const wing = isMedievalLouvreGallery ? 'sully' : inferWing(floor, number, [cx, cy]);
         rooms.push({
           points: pointsStr,
           number: number || '',
@@ -294,15 +391,25 @@ for (const floor of FLOORS) {
   // Deduplicate room labels so numbers stay crisp & legible
   const placedLabels = [];
   const roomLabels = [];
+  const seenLabelNums = new Set();
   const anchors = ROOM_ANCHORS[String(floor)] || {};
   for (const [num, info] of Object.entries(anchors)) {
+    seenLabelNums.add(num);
     placedLabels.push([info.x, info.y]);
     roomLabels.push({number: num, x: info.x, y: info.y, priority: true});
   }
-  const numberedPolys = rooms.filter(r => r.number && !anchors[r.number]).sort((a, b) => b.area - a.area);
+  for (const item of OFFICIAL_ROOM_LABELS[String(floor)] || []) {
+    if (seenLabelNums.has(item.number)) continue;
+    if (placedLabels.some(([px, py]) => Math.hypot(px - item.x, py - item.y) < 22)) continue;
+    seenLabelNums.add(item.number);
+    placedLabels.push([item.x, item.y]);
+    roomLabels.push({number: item.number, x: item.x, y: item.y, priority: false});
+  }
+  const numberedPolys = rooms.filter(r => r.number && !seenLabelNums.has(r.number)).sort((a, b) => b.area - a.area);
   for (const r of numberedPolys) {
     if (r.area < 120) continue;
-    if (placedLabels.some(([px, py]) => Math.hypot(px - r.cx, py - r.cy) < 22)) continue;
+    if (placedLabels.some(([px, py]) => Math.hypot(px - r.cx, py - r.cy) < 26)) continue;
+    seenLabelNums.add(r.number);
     placedLabels.push([r.cx, r.cy]);
     roomLabels.push({number: r.number, x: Math.round(r.cx), y: Math.round(r.cy), priority: false});
   }
@@ -342,6 +449,75 @@ for (const floor of FLOORS) {
     roomLabels,
     roomAnchors: anchors
   };
+}
+
+// Backfill OSM-missing gallery room polygons from sibling floors strictly inside
+// official Louvre public gallery extents (verified against official Louvre floor maps).
+const BACKFILL_RULES = {
+  '2': {
+    sources: ['1', '0'],
+    minDist: 10,
+    // Official Floor 2 Sully loop (rooms 900–952); Denon & far-west Richelieu have NO 2F galleries
+    match: (cx, cy) => cx >= 652 && cy >= 170 && cy <= 455
+  },
+  '1': {
+    sources: ['2', '0'],
+    minDist: 16,
+    // Official Floor 1 Richelieu (500–564), Sully (600–663), and Denon West (717–734)
+    match: (cx, cy) =>
+      (cx >= 225 && cx <= 648 && cy >= 65 && cy <= 220) ||
+      (cx >= 652 && cy >= 170 && cy <= 455) ||
+      (cx >= 100 && cx <= 210 && cy >= 475 && cy <= 545)
+  },
+  '0': {
+    sources: ['1', '2'],
+    minDist: 16,
+    // Official Floor 0 Richelieu (200–236), Sully (300–348), Denon central/east (400–419)
+    match: (cx, cy) =>
+      (cx >= 340 && cx <= 648 && cy >= 100 && cy <= 220) ||
+      (cx >= 652 && cy >= 170 && cy <= 455) ||
+      (cx >= 380 && cx <= 648 && cy >= 405 && cy <= 465) ||
+      (cx >= 440 && cx <= 490 && cy >= 455 && cy <= 510)
+  },
+  '-1': {
+    sources: ['0', '1', '-2'],
+    minDist: 14,
+    // Official Floor -1 Cour Puget (104–105) & Denon (160–187 incl. Cour Visconti Islamic Art)
+    match: (cx, cy) =>
+      (cx >= 505 && cx <= 605 && cy >= 120 && cy <= 215) ||
+      (cx >= 390 && cx <= 485 && cy >= 415 && cy <= 465) ||
+      (cx >= 475 && cx <= 620 && cy >= 420 && cy <= 535)
+  }
+};
+
+const nativeRoomsByFloor = Object.fromEntries(
+  FLOORS.map(f => [String(f), [...floorsOutput[String(f)].rooms]])
+);
+
+for (const [floorKey, rule] of Object.entries(BACKFILL_RULES)) {
+  const target = floorsOutput[floorKey];
+  const floorNum = Number(floorKey);
+  const existingCenters = target.rooms.map(r => [r.cx, r.cy]);
+  const added = [];
+  for (const srcKey of rule.sources) {
+    for (const r of nativeRoomsByFloor[srcKey] || []) {
+      if (r.area < 45) continue;
+      if (!rule.match(r.cx, r.cy)) continue;
+      if (existingCenters.some(([ex, ey]) => Math.hypot(ex - r.cx, ey - r.cy) < (rule.minDist ?? 16))) continue;
+      existingCenters.push([r.cx, r.cy]);
+      added.push({
+        points: r.points,
+        number: '',
+        wing: inferWing(floorNum, null, [r.cx, r.cy]),
+        cx: r.cx,
+        cy: r.cy,
+        area: r.area,
+        name: ''
+      });
+    }
+  }
+  // Prepend backfilled polygons underneath native OSM floor rooms
+  target.rooms = [...added, ...target.rooms];
 }
 
 const geoData = {
@@ -400,43 +576,59 @@ const nodes = [
   {id: 'junction:f2:richelieu', type: 'junction', floor: 2, x: 482, y: 187, label: 'リシュリュー翼連絡部'},
   {id: 'junction:f2:sully-west', type: 'junction', floor: 2, x: 666, y: 281, label: 'シュリー翼西分岐'},
   {id: 'junction:f2:sully-north', type: 'junction', floor: 2, x: 752, y: 215, label: 'シュリー翼北回廊'},
-  {id: 'junction:f2:sully-east', type: 'junction', floor: 2, x: 883, y: 312, label: 'シュリー翼東回廊'}
+  {id: 'junction:f2:sully-east', type: 'junction', floor: 2, x: 906, y: 312, label: 'シュリー翼東回廊'}
 ];
 
 const DOOR_POSITIONS = {
   '-1': {
     '102': {x: 468, y: 176},
-    '169': {x: 495, y: 505}
+    '105': {x: 542, y: 176},
+    '169': {x: 456, y: 448},
+    '170': {x: 535, y: 495}
   },
   '0': {
+    '227': {x: 598, y: 152},
     '229': {x: 564, y: 152},
     '234': {x: 525, y: 152},
-    '338': {x: 676, y: 377},
+    '338': {x: 780, y: 428},
+    '344': {x: 726, y: 428},
     '345': {x: 676, y: 428},
+    '348': {x: 676, y: 396},
     '403': {x: 450, y: 432}
   },
   '1': {
+    '501': {x: 472, y: 187},
+    '502': {x: 472, y: 162},
+    '507': {x: 548, y: 145},
     '544': {x: 372, y: 187},
-    '635': {x: 785, y: 418},
+    '605': {x: 676, y: 225},
+    '635': {x: 896, y: 295},
     '663': {x: 676, y: 370},
     '700': {x: 414, y: 435},
+    '701': {x: 457, y: 435},
     '702': {x: 513, y: 441},
     '703': {x: 605, y: 447},
+    '708': {x: 595, y: 512},
     '710': {x: 510, y: 521},
     '711': {x: 457, y: 472},
     '712': {x: 380, y: 521},
+    '716': {x: 290, y: 521},
     '718': {x: 168, y: 512}
   },
   '2': {
     '801': {x: 472, y: 176},
     '814': {x: 568, y: 132},
     '818': {x: 556, y: 176},
+    '824': {x: 587, y: 132},
     '825': {x: 604, y: 132},
     '837': {x: 418, y: 190},
+    '844': {x: 360, y: 176},
     '912': {x: 752, y: 215},
     '917': {x: 846, y: 215},
-    '931': {x: 883, y: 405},
-    '940': {x: 785, y: 419}
+    '919': {x: 906, y: 252},
+    '929': {x: 906, y: 375},
+    '931': {x: 895, y: 416},
+    '940': {x: 785, y: 428}
   }
 };
 
@@ -451,18 +643,23 @@ const edges = [
   {from: 'elevator:central:fm1', to: 'junction:fm1:core', cost: 3, kind: 'corridor', available: true},
   {from: 'junction:fm1:core', to: 'junction:fm1:richelieu', cost: 16, kind: 'corridor', via: [[525, 220], [482, 220]], available: true},
   {from: 'junction:fm1:richelieu', to: 'door:fm1:102', cost: 4, kind: 'corridor', available: true},
+  {from: 'door:fm1:102', to: 'door:fm1:105', cost: 9, kind: 'corridor', available: true},
   {from: 'junction:fm1:core', to: 'junction:fm1:denon', cost: 18, kind: 'corridor', via: [[525, 449]], available: true},
   {from: 'junction:fm1:denon', to: 'door:fm1:169', cost: 9, kind: 'corridor', via: [[470, 505]], available: true},
+  {from: 'door:fm1:169', to: 'door:fm1:170', cost: 6, kind: 'corridor', available: true},
 
   // Floor 0
   {from: 'stairs:central:f0', to: 'junction:f0:core', cost: 3, kind: 'corridor', available: true},
   {from: 'elevator:central:f0', to: 'junction:f0:core', cost: 3, kind: 'corridor', available: true},
   {from: 'junction:f0:core', to: 'junction:f0:richelieu', cost: 16, kind: 'corridor', available: true},
   {from: 'junction:f0:richelieu', to: 'door:f0:229', cost: 5, kind: 'corridor', via: [[564, 168]], available: true},
+  {from: 'door:f0:229', to: 'door:f0:227', cost: 5, kind: 'corridor', available: true},
   {from: 'junction:f0:richelieu', to: 'door:f0:234', cost: 4, kind: 'corridor', via: [[525, 168]], available: true},
   {from: 'junction:f0:core', to: 'junction:f0:sully', cost: 16, kind: 'corridor', via: [[666, 315]], available: true},
-  {from: 'junction:f0:sully', to: 'door:f0:338', cost: 5, kind: 'corridor', available: true},
-  {from: 'door:f0:338', to: 'door:f0:345', cost: 8, kind: 'corridor', available: true},
+  {from: 'junction:f0:sully', to: 'door:f0:348', cost: 6, kind: 'corridor', available: true},
+  {from: 'door:f0:348', to: 'door:f0:345', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f0:345', to: 'door:f0:344', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f0:344', to: 'door:f0:338', cost: 7, kind: 'corridor', available: true},
   {from: 'junction:f0:core', to: 'junction:f0:denon', cost: 16, kind: 'corridor', via: [[535, 432]], available: true},
   {from: 'junction:f0:denon', to: 'door:f0:403', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:f0:denon', to: 'door:f0:345', cost: 22, kind: 'corridor', via: [[620, 432]], available: true},
@@ -471,20 +668,29 @@ const edges = [
   {from: 'stairs:central:f1', to: 'junction:f1:core', cost: 3, kind: 'corridor', available: true},
   {from: 'elevator:central:f1', to: 'junction:f1:core', cost: 3, kind: 'corridor', available: true},
   {from: 'junction:f1:core', to: 'junction:f1:richelieu', cost: 16, kind: 'corridor', via: [[535, 187]], available: true},
+  {from: 'junction:f1:richelieu', to: 'door:f1:501', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:501', to: 'door:f1:502', cost: 4, kind: 'corridor', available: true},
+  {from: 'door:f1:502', to: 'door:f1:507', cost: 10, kind: 'corridor', via: [[515, 152]], available: true},
   {from: 'junction:f1:richelieu', to: 'door:f1:544', cost: 14, kind: 'corridor', available: true},
   {from: 'junction:f1:core', to: 'junction:f1:sully', cost: 15, kind: 'corridor', via: [[666, 315]], available: true},
+  {from: 'junction:f1:sully', to: 'door:f1:605', cost: 14, kind: 'corridor', via: [[666, 250]], available: true},
   {from: 'junction:f1:sully', to: 'door:f1:663', cost: 4, kind: 'corridor', available: true},
-  {from: 'door:f1:663', to: 'door:f1:635', cost: 15, kind: 'corridor', via: [[676, 418]], available: true},
+  {from: 'door:f1:605', to: 'door:f1:635', cost: 20, kind: 'corridor', via: [[896, 204]], available: true},
+  {from: 'door:f1:663', to: 'door:f1:635', cost: 20, kind: 'corridor', via: [[676, 434], [896, 434]], available: true},
   {from: 'junction:f1:core', to: 'junction:f1:denon-east', cost: 18, kind: 'corridor', via: [[590, 315]], available: true},
   {from: 'junction:f1:denon-east', to: 'door:f1:703', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:703', to: 'door:f1:708', cost: 8, kind: 'corridor', via: [[605, 488]], available: true},
+  {from: 'door:f1:708', to: 'door:f1:710', cost: 10, kind: 'corridor', available: true},
   {from: 'door:f1:703', to: 'door:f1:702', cost: 10, kind: 'corridor', via: [[560, 444]], available: true},
   {from: 'door:f1:702', to: 'junction:f1:denon-center', cost: 7, kind: 'corridor', available: true},
+  {from: 'junction:f1:denon-center', to: 'door:f1:701', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f1:denon-center', to: 'door:f1:700', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:f1:denon-center', to: 'door:f1:711', cost: 5, kind: 'corridor', available: true},
   {from: 'door:f1:711', to: 'junction:f1:grande-galerie', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:f1:grande-galerie', to: 'door:f1:710', cost: 7, kind: 'corridor', available: true},
   {from: 'junction:f1:grande-galerie', to: 'door:f1:712', cost: 9, kind: 'corridor', available: true},
-  {from: 'door:f1:712', to: 'door:f1:718', cost: 22, kind: 'corridor', via: [[200, 521]], available: true},
+  {from: 'door:f1:712', to: 'door:f1:716', cost: 10, kind: 'corridor', available: true},
+  {from: 'door:f1:716', to: 'door:f1:718', cost: 13, kind: 'corridor', via: [[200, 521]], available: true},
   {from: 'door:f1:703', to: 'door:f1:663', cost: 12, kind: 'corridor', via: [[676, 447]], available: true},
 
   // Floor 2
@@ -492,17 +698,21 @@ const edges = [
   {from: 'elevator:central:f2', to: 'junction:f2:core', cost: 4, kind: 'corridor', available: true},
   {from: 'junction:f2:core', to: 'junction:f2:richelieu', cost: 12, kind: 'corridor', via: [[535, 187]], available: true},
   {from: 'junction:f2:richelieu', to: 'door:f2:837', cost: 8, kind: 'corridor', available: true},
+  {from: 'door:f2:837', to: 'door:f2:844', cost: 8, kind: 'corridor', available: true},
   {from: 'junction:f2:richelieu', to: 'door:f2:801', cost: 4, kind: 'corridor', available: true},
   {from: 'junction:f2:richelieu', to: 'door:f2:818', cost: 9, kind: 'corridor', available: true},
   {from: 'door:f2:818', to: 'door:f2:814', cost: 7, kind: 'corridor', via: [[568, 176]], available: true},
-  {from: 'door:f2:814', to: 'door:f2:825', cost: 6, kind: 'corridor', available: true},
+  {from: 'door:f2:814', to: 'door:f2:824', cost: 4, kind: 'corridor', available: true},
+  {from: 'door:f2:824', to: 'door:f2:825', cost: 3, kind: 'corridor', available: true},
   {from: 'junction:f2:core', to: 'junction:f2:sully-west', cost: 16, kind: 'corridor', via: [[666, 270]], available: true},
   {from: 'junction:f2:sully-west', to: 'junction:f2:sully-north', cost: 14, kind: 'corridor', via: [[666, 215]], available: true},
   {from: 'junction:f2:sully-north', to: 'door:f2:912', cost: 2, kind: 'corridor', available: true},
   {from: 'door:f2:912', to: 'door:f2:917', cost: 11, kind: 'corridor', available: true},
-  {from: 'door:f2:917', to: 'junction:f2:sully-east', cost: 14, kind: 'corridor', via: [[883, 215]], available: true},
-  {from: 'junction:f2:sully-east', to: 'door:f2:931', cost: 11, kind: 'corridor', available: true},
-  {from: 'door:f2:931', to: 'door:f2:940', cost: 12, kind: 'corridor', via: [[883, 419]], available: true},
+  {from: 'door:f2:917', to: 'door:f2:919', cost: 7, kind: 'corridor', via: [[906, 204]], available: true},
+  {from: 'door:f2:919', to: 'junction:f2:sully-east', cost: 8, kind: 'corridor', available: true},
+  {from: 'junction:f2:sully-east', to: 'door:f2:929', cost: 7, kind: 'corridor', available: true},
+  {from: 'door:f2:929', to: 'door:f2:931', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f2:931', to: 'door:f2:940', cost: 12, kind: 'corridor', via: [[895, 428]], available: true},
 
   // Vertical connections (stairs & elevator across all 5 floors)
   {from: 'stairs:central:fm2', to: 'stairs:central:fm1', cost: 18, kind: 'stairs', facilityId: 'stairs-central', available: true},

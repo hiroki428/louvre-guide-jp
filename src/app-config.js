@@ -16,7 +16,7 @@ export const WING_NAMES = Object.freeze({
   Denon: 'ドゥノン'
 });
 export const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 1.75, 2];
-export const DEFAULT_DURATIONS = [20, 40, 60, 120];
+export const DEFAULT_DURATIONS = [60, 120];
 
 export function formatWing(wing) {
   if (!wing) return '';
@@ -27,6 +27,9 @@ export function formatWorkLocation(work) {
   if (!work) return '';
   if (work.locationPrecision === 'room' && work.room != null && work.floor != null) {
     return `${FLOOR_NAMES[work.floor] ?? `${work.floor}階`} · ${formatWing(work.wing)} · ${work.room}室`;
+  }
+  if (work.locationLabel) {
+    return work.locationLabel;
   }
   return '展示室：確認中';
 }

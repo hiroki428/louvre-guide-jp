@@ -1,7 +1,9 @@
 {
-  "checkedAt":"2026-11-11",
-  "floorPlan":"https://api-www.louvre.fr/sites/default/files/2024-06/Web%20-%20JA%20%20LOUVRE_PlanG%20-%2004-2024.pdf",
-  "availability":"https://www.louvre.fr/en/visit/list-of-available-galleries",
-  "officialMap":"https://www.louvre.fr/en/visit/map-entrances-directions",
-  "disclaimer":"展示室番号と階は公式資料を確認。図の形・通路・作品の室内ピン位置は未検証の模式表現です。開室や展示位置は当日公式情報と現地案内を確認してください。"
+  "checkedAt": "2026-11-21",
+  "collections": "https://collections.louvre.fr/",
+  "collectionsPlan": "https://collections.louvre.fr/en/plan",
+  "floorPlan": "https://www.louvre.fr/plan-map-musee-du-louvre",
+  "availability": "https://www.louvre.fr/en/visit/list-of-available-galleries",
+  "officialMap": "https://www.louvre.fr/plan-map-musee-du-louvre",
+  "disclaimer": "全200作品の展示室番号・非展示・他館貸出状況はルーブル美術館公式収蔵データベース（collections.louvre.fr）および公式館内ガイドを照合して更新しています。開室状況や展示位置は当日の館内案内・公式情報を優先してご確認ください。"
 }

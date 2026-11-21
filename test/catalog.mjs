@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {audioLengthsFor, catalogWorks, priorityTierFor} from '../src/catalog.js';
+import {formatWorkLocation} from '../src/app-config.js';
 
 const works = JSON.parse(fs.readFileSync(new URL('../src/works.json', import.meta.url), 'utf8'));
 assert.equal(works.length, 200, 'deduplicated catalog should contain 200 unique works');
@@ -13,8 +14,11 @@ assert.ok(works.every(work => Boolean(work.author) && Boolean(work.year)), 'all 
 assert.equal(works.find(work => work.title === 'モナ・リザ').id, 'mona');
 assert.equal(works.find(work => work.title === 'ナポレオン一世の戴冠式').locationPrecision, 'room');
 assert.equal(works.find(work => work.title === 'ナポレオン一世の戴冠式').room, '702');
-assert.ok(works.filter(work => work.locationPrecision === 'room').length >= 58, 'deduplicated catalog should have at least 58 room-verified works');
-assert.deepEqual(audioLengthsFor(works.find(work => work.title === 'ナポレオン一世の戴冠式')), [40]);
+assert.ok(works.filter(work => work.locationPrecision === 'room').length >= 155, 'official Louvre DB verification should resolve at least 155 room-verified works');
+assert.equal(works.filter(work => formatWorkLocation(work) === '展示室：確認中').length, 0, 'no works should remain unverified after official Louvre DB check');
+assert.match(formatWorkLocation(works.find(w => w.id === 'catalog-0023')), /貸出中/, 'loaned works must show loan status');
+assert.match(formatWorkLocation(works.find(w => w.id === 'catalog-0010')), /非展示/, 'off-view works must show off-view status');
+assert.deepEqual(audioLengthsFor(works.find(work => work.title === 'ナポレオン一世の戴冠式')), [60, 120]);
 
 assert.deepEqual(priorityTierFor(works.find(w => w.id === 'mona')), {key: 'gold', label: '超有名', rank: 1});
 assert.deepEqual(priorityTierFor(works.find(w => w.id === 'catalog-0009')), {key: 'silver', label: '有名', rank: 2});
@@ -48,12 +52,15 @@ for (const sort of ['room-asc', 'room-desc']) {
 }
 assert.notEqual(catalogWorks(works, {sort:'title-asc'})[0].id, catalogWorks(works, {sort:'title-desc'})[0].id);
 for (const work of works) for (const length of audioLengthsFor(work)) {
-  const path = new URL(`../public/audio/${work.id}-${length}.wav`, import.meta.url);
+  const path = new URL(`../public/audio/${work.id}-${length}.mp3`, import.meta.url);
   assert.ok(fs.existsSync(path), `missing audio: ${work.id}-${length}`);
-  const header = Buffer.alloc(12);
+  const stat = fs.statSync(path);
+  assert.ok(stat.size >= 1500, `audio file too small: ${work.id}-${length}`);
+  const header = Buffer.alloc(3);
   const file = fs.openSync(path, 'r');
-  try { fs.readSync(file, header, 0, 12, 0); } finally { fs.closeSync(file); }
-  assert.equal(header.toString('ascii', 0, 4), 'RIFF', `invalid audio: ${work.id}-${length}`);
-  assert.equal(header.toString('ascii', 8, 12), 'WAVE', `invalid audio: ${work.id}-${length}`);
+  try { fs.readSync(file, header, 0, 3, 0); } finally { fs.closeSync(file); }
+  const isId3 = header.toString('ascii', 0, 3) === 'ID3';
+  const isMpegSync = header[0] === 0xFF && (header[1] & 0xE0) === 0xE0;
+  assert.ok(isId3 || isMpegSync, `invalid MP3 audio: ${work.id}-${length}`);
 }
 console.log('audio catalog: passed');

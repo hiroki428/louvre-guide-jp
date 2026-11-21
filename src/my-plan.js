@@ -1,4 +1,60 @@
 import {shortestPath} from './navigation.js';
+import {priorityTierFor} from './catalog.js';
+
+const TIME_COURSE_BOUNDS = Object.freeze({
+  90: {min: 3, recommended: 8, max: 14},
+  120: {min: 3, recommended: 12, max: 20},
+  150: {min: 3, recommended: 15, max: 26},
+  180: {min: 3, recommended: 18, max: 32}
+});
+
+export function timeCourseBounds(minutes, maxRoutable = 100) {
+  const m = Number(minutes) || 90;
+  const preset = TIME_COURSE_BOUNDS[m];
+  const min = preset ? preset.min : 3;
+  const rawRec = preset ? preset.recommended : Math.max(min, Math.round(m / 10));
+  const rawMax = preset ? preset.max : Math.max(rawRec + 4, Math.round(m / 5.8));
+  const cap = Math.max(min, Number(maxRoutable) || rawMax);
+  const max = Math.min(rawMax, cap);
+  const recommended = Math.min(rawRec, max);
+  return {minutes: m, min, recommended, max};
+}
+
+export function paceSummaryFor(minutes, count, bounds = timeCourseBounds(minutes)) {
+  const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
+  const perWork = Math.round((minutes / safeCount) * 10) / 10;
+  if (safeCount <= Math.max(bounds.min, bounds.recommended - 2)) {
+    return {key: 'relaxed', label: 'ゆったり鑑賞', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・じっくり楽しめます`};
+  }
+  if (safeCount <= bounds.recommended + 1) {
+    return {key: 'recommended', label: '推奨バランス', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・無理のない標準ペース`};
+  }
+  if (safeCount < bounds.max) {
+    return {key: 'brisk', label: 'テンポ重視', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・やや早足で多く巡ります`};
+  }
+  return {key: 'limit', label: 'この時間の限界目安', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・上限目安の駆け足ペースです`};
+}
+
+export function buildTimedRouteWorks(works, navigationIndex, {minutes = 90, count, preferElevator = false} = {}) {
+  const routablePool = (Array.isArray(works) ? works : [])
+    .filter(w => w && w.locationPrecision === 'room' && navigationIndex?.nodes?.has(`work:${w.id}`))
+    .sort((a, b) => {
+      const rankDiff = priorityTierFor(a).rank - priorityTierFor(b).rank;
+      if (rankDiff !== 0) return rankDiff;
+      return (a.catalogRank ?? 9999) - (b.catalogRank ?? 9999);
+    });
+  const bounds = timeCourseBounds(minutes, routablePool.length);
+  const clamped = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
+  const pickedIds = routablePool.slice(0, clamped).map(w => w.id);
+  const optimized = optimizeWorkOrder(navigationIndex, pickedIds, {preferElevator});
+  return {
+    minutes: bounds.minutes,
+    count: clamped,
+    bounds,
+    pace: paceSummaryFor(bounds.minutes, clamped, bounds),
+    ids: optimized.ids
+  };
+}
 
 export function toggleMyPlan(ids, workId) {
   const list = Array.isArray(ids) ? [...ids] : [];
@@ -233,7 +289,7 @@ export function planStopEstimates(plan, navigationIndex, {preferElevator = false
   return result;
 }
 
-export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40}) {
+export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null}) {
   if (planMode === 'myplan') {
     const ids = Array.isArray(myPlanIds) ? myPlanIds : [];
     const routableIds = routableWorkIds(navigationIndex, ids);
@@ -262,6 +318,31 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
     || routes.find(item => item.kind !== 'theme' && item.minutes === minutes)
     || routes.find(item => item.minutes === minutes)
     || routes[0];
+  if (route?.kind !== 'theme' && Array.isArray(customTimedIds) && customTimedIds.length) {
+    const targetMinutes = Number(customTimedMinutes || minutes || route?.minutes || 90);
+    const bounds = timeCourseBounds(targetMinutes, 120);
+    const pace = paceSummaryFor(targetMinutes, customTimedIds.length, bounds);
+    const audioMinutes = Math.ceil((customTimedIds.length * duration) / 60);
+    const bufferMinutes = Math.max(6, Math.round(targetMinutes * 0.08));
+    const walkMinutes = Math.min(Math.round(targetMinutes * 0.34), Math.max(14, Math.round(customTimedIds.length * 2.4)));
+    const visitMinutes = Math.max(customTimedIds.length * 2, targetMinutes - walkMinutes - audioMinutes - bufferMinutes);
+    return {
+      mode: 'preset',
+      id: `preset-${targetMinutes}`,
+      kind: 'time',
+      label: `${targetMinutes}分コース（${customTimedIds.length}作品）`,
+      subtitle: `${pace.label} · 超有名優先・最短一筆書き`,
+      minutes: targetMinutes,
+      ids: customTimedIds,
+      routableIds: routableWorkIds(navigationIndex, customTimedIds),
+      visitMinutes,
+      walkMinutes,
+      audioMinutes,
+      bufferMinutes,
+      estimatedMinutes: visitMinutes + walkMinutes + audioMinutes + bufferMinutes,
+      isCustom: false
+    };
+  }
   const ids = route ? route.ids : [];
   const visitPerWork = route?.visit ?? 6;
   const visitMinutes = ids.length * visitPerWork;

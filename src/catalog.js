@@ -1,7 +1,7 @@
 const japanese = new Intl.Collator('ja', {numeric:true, sensitivity:'base'});
 
 export function audioLengthsFor(work) {
-  return Array.isArray(work?.audioLengths) && work.audioLengths.length ? work.audioLengths : [20, 40, 60, 120];
+  return Array.isArray(work?.audioLengths) && work.audioLengths.length ? work.audioLengths : [60];
 }
 
 export function priorityTierFor(work) {

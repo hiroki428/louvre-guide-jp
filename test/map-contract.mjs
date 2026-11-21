@@ -23,6 +23,19 @@ for (const floor of [2, 1, 0, -1, -2]) {
     assert.ok(markup.includes(`data-layer="${layer}"`), `floor ${floor} is missing ${layer} layer`);
   }
   assert.match(markup, /class="palace-footprint"/, `floor ${floor} must render shared palace footprint`);
+  if (floor === 2) assert.doesNotMatch(markup, /ドゥノン翼/, 'floor 2 must not label Denon wing since Denon has no 2nd floor');
+  assert.doesNotMatch(markup, /class="map-heading"/, `floor ${floor} must place floor info inside SVG top-left instead of a separate header bar`);
+  assert.doesNotMatch(markup, /class="facility-label|class="map-label|class="wing-range/, `floor ${floor} must keep map interior text minimal without cluttering labels`);
+  const hudMatch = markup.match(/data-hud-bounds="([0-9.]+),([0-9.]+),([0-9.]+),([0-9.]+)"/);
+  assert.ok(hudMatch, `floor ${floor} must render top-left SVG map HUD`);
+  const [hx, hy, hw, hh] = hudMatch.slice(1).map(Number);
+  assert.ok(hx + hw <= 202 && hy + hh <= 440, `floor ${floor} HUD (${hx},${hy},${hw}x${hh}) must stay inside the empty top-left void`);
+  for (const poly of floorGeoData.footprintPolys) {
+    for (const pt of poly.split(' ')) {
+      const [px, py] = pt.split(',').map(Number);
+      assert.equal(px >= hx && px <= hx + hw && py >= hy && py <= hy + hh, false, `floor ${floor} HUD must never overlap palace geometry`);
+    }
+  }
   assert.doesNotMatch(markup, /route-arrow|marker-end|pin-number/, `floor ${floor} must not render a dummy route`);
   assert.doesNotMatch(markup, /概略|検証用/, `floor ${floor} must not retain legacy schematic copy`);
 }
@@ -65,7 +78,7 @@ const initialNavigation = buildNavigationView(navigationIndex, initialProgress);
 const entranceFloor = floorMapMarkup({floor:-2, floorLabel:'−2階', works, selectedId:'victory', navigation:initialNavigation});
 assert.match(entranceFloor, /class="route-active"/, 'entrance to first work must be the active route');
 const initialFirstFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:'victory', navigation:initialNavigation});
-assert.match(initialFirstFloor, /class="route-planned"/, 'later route legs must remain visible from the start');
+assert.doesNotMatch(initialFirstFloor, /class="route-planned"/, 'future pale-blue route lines must not clutter the map');
 assert.match(initialFirstFloor, /次の目的地/, 'the next destination must be visually identified');
 
 const selectedSecondNavigation = buildNavigationView(navigationIndex, navigationStateForSelection(navigationIndex, routeIds, 'mona'));
@@ -73,7 +86,7 @@ const selectedSecondFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, s
 assert.match(selectedSecondFloor, /区間の開始地点/, 'selected leg must label its previous work as the start');
 assert.match(selectedSecondFloor, /class="route-passed"/, 'legs before the selected work must be dotted');
 assert.match(selectedSecondFloor, /class="route-active"/, 'the selected work leg must be emphasized');
-assert.match(selectedSecondFloor, /class="route-planned"/, 'legs after the selected work must remain subdued');
+assert.doesNotMatch(selectedSecondFloor, /class="route-planned"/, 'legs after the selected work must not draw pale-blue lines');
 
 const victoryProgress = advanceOnRouteAudio(navigationIndex, initialProgress, routeIds, 'victory').navigation;
 const arrivedProgress = advanceOnRouteAudio(navigationIndex, victoryProgress, routeIds, 'mona').navigation;
