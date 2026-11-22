@@ -650,13 +650,10 @@ function buildCustomFloor2Plan() {
     makeDivider(723, 47, 756, 47),   // 814-825 / 823
     makeDivider(723, 79, 756, 79),   // 823 / 818
     makeDivider(723, 104, 756, 104), // 818 / 835
-    // Sully shared walls
+    // Sully shared walls (unnumbered adjacent same-color blocks merge as one continuous room)
     makeDivider(909, 132, 909, 157), // 912 | 913
-    makeDivider(949, 132, 949, 157), // 913 | north corridor
-    makeDivider(982, 132, 982, 157), // north corridor | NE corner
-    makeDivider(988, 162, 1014, 162),// NE corner / 917
+    makeDivider(949, 132, 949, 157), // 913 | east-NE gallery
     makeDivider(988, 199, 1014, 199),// 917 / 924
-    makeDivider(988, 259, 1014, 259),// 924 / 929
     makeDivider(845, 277, 886, 277), // 952 / 944
     makeDivider(886, 277, 886, 301)  // 944 | 940
   ];
@@ -704,8 +701,7 @@ function buildCustomFloor2Plan() {
     ['936', 943.5, 283],
     ['931', 976, 289],
     ['917', 1000.5, 180.5],
-    ['924', 1003, 229],
-    ['929', 1000.5, 271.5]
+    ['924', 1003, 229]
   ];
 
   const roomLabels = uniformLabelSpec.map(([number, x, y]) => {
@@ -713,18 +709,39 @@ function buildCustomFloor2Plan() {
     return {number, x: sx, y: sy, priority: Boolean(ROOM_ANCHORS['2'][number]), uniform: true};
   });
 
-  // Key Floor 2 facilities aligned to official 2F map & PPT geometry
+  // Exact Floor 2 interior facilities extracted from the user's 2F facility PPT map:
+  // Orange dots = WC (5), Purple dots = Elevator (5), Green triple chevrons = Stairs Down (7), Frog = Escalator (1)
   const facList = [
-    {type: 'elevator', pt: p(576, 70), label: ''},
-    {type: 'stairs', pt: p(682, 126), label: ''},
-    {type: 'elevator', pt: p(668, 126), label: ''},
-    {type: 'wc', pt: p(633, 146), label: ''},
-    {type: 'wc', pt: p(808, 152), label: ''},
-    {type: 'elevator', pt: p(826, 152), label: ''},
-    {type: 'elevator', pt: p(904, 174), label: ''},
-    {type: 'wc', pt: p(952, 252), label: ''},
-    {type: 'elevator', pt: p(876, 312), label: ''}
-  ].map(f => ({type: f.type, x: Math.round(f.pt[0]), y: Math.round(f.pt[1]), label: f.label}));
+    // Toilets (WC)
+    {id: '2f-wc-800-west', type: 'wc', pt: p(611, 113.5), label: 'トイレ'},
+    {id: '2f-wc-richelieu-east', type: 'wc', pt: p(786, 109), label: 'トイレ'},
+    {id: '2f-wc-sully-ne', type: 'wc', pt: p(962, 150), label: 'トイレ'},
+    {id: '2f-wc-924-south', type: 'wc', pt: p(997, 246), label: 'トイレ'},
+    {id: '2f-wc-940-east', type: 'wc', pt: p(921, 287), label: 'トイレ'},
+    // Elevators (EV)
+    {id: '2f-ev-richelieu-nw', linkId: 'ev-richelieu-nw', type: 'elevator', pt: p(603, 35.5), label: 'エレベーター'},
+    {id: '2f-ev-richelieu-center', linkId: 'ev-richelieu-center', type: 'elevator', pt: p(650, 109), label: 'エレベーター'},
+    {id: '2f-ev-sully-north', linkId: 'ev-sully-north', type: 'elevator', pt: p(913, 129), label: 'エレベーター'},
+    {id: '2f-ev-sully-west', linkId: 'ev-sully-west', type: 'elevator', pt: p(851, 178), label: 'エレベーター'},
+    {id: '2f-ev-sully-sw', linkId: 'ev-sully-sw', type: 'elevator', pt: p(883, 296), label: 'エレベーター'},
+    // Escalator (Frog icon in Richelieu central grey hall)
+    {id: '2f-esc-richelieu-center', linkId: 'escalator-richelieu-center', type: 'escalator', pt: p(682, 125.5), label: 'エスカレーター'},
+    // Downward Stairs (Green triple chevrons — 2F is top floor)
+    {id: '2f-sd-855-802', linkId: 'stairs-richelieu-nw', type: 'stairs-down', pt: p(611, 23), label: '下り階段'},
+    {id: '2f-sd-912-913', linkId: 'stairs-sully-n-west', type: 'stairs-down', pt: p(906, 145), label: '下り階段'},
+    {id: '2f-sd-913-east', linkId: 'stairs-sully-n-east', type: 'stairs-down', pt: p(949, 141), label: '下り階段'},
+    {id: '2f-sd-sully-ne', linkId: 'stairs-sully-ne', type: 'stairs-down', pt: p(983, 144), label: '下り階段'},
+    {id: '2f-sd-900-north', linkId: 'stairs-sully-west-n', type: 'stairs-down', pt: p(866, 190), label: '下り階段'},
+    {id: '2f-sd-900-south', linkId: 'stairs-sully-west-s', type: 'stairs-down', pt: p(866, 226), label: '下り階段'},
+    {id: '2f-sd-sully-se', linkId: 'stairs-sully-se', type: 'stairs-down', pt: p(998, 278), label: '下り階段'}
+  ].map(f => ({
+    id: f.id,
+    ...(f.linkId ? {linkId: f.linkId} : {}),
+    type: f.type,
+    x: round1(f.pt[0]),
+    y: round1(f.pt[1]),
+    label: f.label
+  }));
 
   return {
     subtitle: FLOOR_SUBTITLES[2],
@@ -989,7 +1006,7 @@ function buildCustomFloor1Plan() {
     ['557', 585.5, 25],
     ['548', 526.5, 74],
     ['544', 522, 125.5],
-    ['535', 575.5, 118.5],
+    ['535', 556, 118.5],
     ['505', 634.5, 30],
     ['503', 634.5, 71],
     ['500', 634.5, 112.5],
@@ -1005,7 +1022,7 @@ function buildCustomFloor1Plan() {
     ['601', 866.5, 173],
     ['600', 866.5, 209],
     ['617', 930, 145],
-    ['632', 969.5, 145],
+    ['632', 966, 145],
     ['633', 1001.5, 170.5],
     ['635', 1001.5, 195],
     ['636', 1003, 224.5],
@@ -1036,7 +1053,7 @@ function buildCustomFloor1Plan() {
     ['718', 146.5, 384],
     ['719', 84.5, 384],
     ['726', 127, 354.5],
-    ['720', 165, 354.5],
+    ['720', 159, 354.5],
     ['734', 127, 414],
     ['727', 165.5, 414]
   ];
@@ -1046,19 +1063,57 @@ function buildCustomFloor1Plan() {
     return {number, x: sx, y: sy, priority: Boolean(ROOM_ANCHORS['1'][number]), uniform: true};
   });
 
+  // Exact Floor 1 interior facilities extracted from the user's 1F facility PPT map:
+  // Orange dots = WC (6 open; closed 564 WC omitted per user decision),
+  // Purple dots = Elevator (10), Frog = Escalator (1),
+  // Green triple chevrons = Stairs Down (6) + Sully SE bidirectional Stairs Both (1),
+  // Yellow triple chevrons = Stairs Up (1), Black triple chevrons = Same-floor / inter-floor stairs (5)
   const facList = [
-    {type: 'stairs', pt: p(682, 126), label: ''},
-    {type: 'elevator', pt: p(668, 126), label: ''},
-    {type: 'wc', pt: p(634, 152), label: ''},
-    {type: 'cafe', pt: p(518, 286), label: 'カフェ'},
-    {type: 'stairs', pt: p(518, 300), label: ''},
-    {type: 'stairs', pt: p(718, 290), label: ''},
-    {type: 'elevator', pt: p(562, 352), label: ''},
-    {type: 'elevator', pt: p(652, 352), label: ''},
-    {type: 'wc', pt: p(952, 252), label: ''},
-    {type: 'elevator', pt: p(1005, 146), label: ''},
-    {type: 'stairs', pt: p(1005, 288), label: ''}
-  ].map(f => ({type: f.type, x: Math.round(f.pt[0]), y: Math.round(f.pt[1]), label: f.label}));
+    // Toilets (WC — 6 open; 564 under-construction toilet hidden)
+    {id: '1f-wc-500-south', type: 'wc', pt: p(620, 141), label: 'トイレ'},
+    {id: '1f-wc-519-south', type: 'wc', pt: p(789, 110), label: 'トイレ'},
+    {id: '1f-wc-636-west', type: 'wc', pt: p(989, 215), label: 'トイレ'},
+    {id: '1f-wc-650-east', type: 'wc', pt: p(931, 277.5), label: 'トイレ'},
+    {id: '1f-wc-715-south', type: 'wc', pt: p(514, 388), label: 'トイレ'},
+    {id: '1f-wc-720-se', type: 'wc', pt: p(176, 359), label: 'トイレ'},
+    // Elevators (EV — 10; 5 linked to 2F+0F, 5 linked to 0F only [do not stop on 2F])
+    {id: '1f-ev-richelieu-nw', linkId: 'ev-richelieu-nw', type: 'elevator', pt: p(604, 35.5), label: 'エレベーター'},
+    {id: '1f-ev-richelieu-center', linkId: 'ev-richelieu-center', type: 'elevator', pt: p(652, 109), label: 'エレベーター'},
+    {id: '1f-ev-sully-north', linkId: 'ev-sully-north', type: 'elevator', pt: p(913, 129), label: 'エレベーター'},
+    {id: '1f-ev-sully-ne', linkId: 'ev-sully-ne', type: 'elevator', pt: p(985, 134), label: 'エレベーター'},
+    {id: '1f-ev-sully-west', linkId: 'ev-sully-west', type: 'elevator', pt: p(851, 178.5), label: 'エレベーター'},
+    {id: '1f-ev-sully-sw', linkId: 'ev-sully-sw', type: 'elevator', pt: p(895, 279), label: 'エレベーター'},
+    {id: '1f-ev-denon-715', linkId: 'ev-denon-west', type: 'elevator', pt: p(513, 315), label: 'エレベーター'},
+    {id: '1f-ev-denon-701-w', linkId: 'ev-denon-center-w', type: 'elevator', pt: p(591, 312.5), label: 'エレベーター'},
+    {id: '1f-ev-denon-701-e', linkId: 'ev-denon-center-e', type: 'elevator', pt: p(607, 312.5), label: 'エレベーター'},
+    {id: '1f-ev-denon-719', linkId: 'ev-denon-farwest', type: 'elevator', pt: p(104, 388.5), label: 'エレベーター'},
+    // Escalator (Frog icon in Richelieu central grey hall — 1)
+    {id: '1f-esc-richelieu-center', linkId: 'escalator-richelieu-center', type: 'escalator', pt: p(683, 125.5), label: 'エスカレーター'},
+    // Downward Stairs (Green triple chevrons — 5 downward-only, all linked to 0F)
+    {id: '1f-sd-531-east', linkId: 'stairs-richelieu-se', type: 'stairs-down', pt: p(767, 141.5), label: '下り階段'},
+    {id: '1f-sd-sully-ne', linkId: 'stairs-sully-ne-lower', type: 'stairs-down', pt: p(1007, 157.5), label: '下り階段'},
+    {id: '1f-sd-denon-west', linkId: 'stairs-denon-west', type: 'stairs-down', pt: p(518, 298), label: '下り階段'},
+    {id: '1f-sd-daru', linkId: 'stairs-daru', type: 'stairs-down', pt: p(717, 296), label: '下り階段'},
+    {id: '1f-sd-denon-farwest', linkId: 'stairs-denon-farwest', type: 'stairs-down', pt: p(97, 404), label: '下り階段'},
+    // Bidirectional Up/Down Stairs (Black triple chevrons = up & down [5] + Sully SE [1] = 6)
+    {id: '1f-sb-sully-se', linkId: 'stairs-sully-se', type: 'stairs-both', pt: p(998, 285), label: '上下階段'},
+    {id: '1f-st-557-505', linkId: 'stairs-richelieu-nw', type: 'stairs-both', pt: p(613, 23), label: '上下階段'},
+    {id: '1f-st-605-617', linkId: 'stairs-sully-n-west', type: 'stairs-both', pt: p(907, 146), label: '上下階段'},
+    {id: '1f-st-617-632', linkId: 'stairs-sully-n-east', type: 'stairs-both', pt: p(950, 145), label: '上下階段'},
+    {id: '1f-st-601-600', linkId: 'stairs-sully-west-n', type: 'stairs-both', pt: p(865, 188.5), label: '上下階段'},
+    {id: '1f-st-600-663', linkId: 'stairs-sully-west-s', type: 'stairs-both', pt: p(867, 228), label: '上下階段'},
+    // Upward Stairs (Yellow triple chevrons — 1)
+    {id: '1f-su-sully-ne', linkId: 'stairs-sully-ne', type: 'stairs-up', pt: p(983, 149.5), label: '上り階段'},
+    // Same-floor inter-room stairs (1: 535 only per user decision)
+    {id: '1f-st-535', type: 'stairs', pt: p(582, 121), label: '同階階段'}
+  ].map(f => ({
+    id: f.id,
+    ...(f.linkId ? {linkId: f.linkId} : {}),
+    type: f.type,
+    x: round1(f.pt[0]),
+    y: round1(f.pt[1]),
+    label: f.label
+  }));
 
   return {
     subtitle: FLOOR_SUBTITLES[1],
@@ -1182,14 +1237,14 @@ function buildCustomFloor0Plan() {
     {points: polyStr(r231Pts), number: '231', wing: 'richelieu', cx: c231x, cy: c231y, area: 640, name: '231室'},
 
     // Sully Wing (300-348)
-    makeRectRoom(815, 130, 838, 149, 'sully', '306'),
+    makeRectRoom(815, 130, 838, 149, 'sully', '305'),
     makeRectRoom(846, 133, 906, 158, 'sully', '308'),
     makeRectRoom(846, 158, 887, 184, 'sully', '300'),
     makeRectRoom(910, 125, 950, 165, 'sully', '312'),
     makeRectRoom(954, 133, 989, 157, 'sully', '316'),
     makeRectRoom(989, 163, 1014, 178, 'sully', '317'),
     makeRectRoom(989, 178, 1014, 201, 'sully', '321'),
-    makeRectRoom(984, 206, 1019, 229, 'sully', '324'),
+    makeRectRoom(984, 206, 1019, 229, 'sully', '327'),
     makeRectRoom(989, 235, 1014, 271, 'sully', '328'),
     makeRectRoom(846, 234, 887, 271, 'sully', '348'),
     makeRectRoom(846, 271, 887, 304, 'sully', '345'),
@@ -1210,6 +1265,11 @@ function buildCustomFloor0Plan() {
     makeRectRoom(785, 309, 808, 404, 'denon', '410'),
     makeRectRoom(785, 404, 808, 424, 'denon', '413'),
 
+    // Denon Wing — Far-west Pavillon des Sessions (424, 422, 427)
+    makeRectRoom(146, 343, 216, 378, 'denon', '424'),
+    makeRectRoom(146, 384, 216, 423, 'denon', '422'),
+    makeRectRoom(216, 403, 264, 423, 'denon', '427'),
+
     // Denon Wing — Under construction (工事中: 418, 417, 415)
     makeRectRoom(690, 309, 710, 401, 'denon', '418', {underConstruction: true}),
     makeRectRoom(690, 401, 785, 424, 'denon', '417', {underConstruction: true}),
@@ -1217,6 +1277,9 @@ function buildCustomFloor0Plan() {
   ];
 
   const passages = [
+    // Denon far-west connectors between 424 and 422 framing central lightwell
+    {wing: 'denon', points: polyStr(rectPts(146, 376, 163, 386))},
+    {wing: 'denon', points: polyStr(rectPts(200, 376, 216, 386))},
     // Richelieu
     {wing: 'richelieu', points: polyStr(rectPts(579, 38, 588, 47))},
     {wing: 'richelieu', points: polyStr(rectPts(538, 45, 547, 51))},
@@ -1276,7 +1339,8 @@ function buildCustomFloor0Plan() {
     // Denon
     makeDivider(509, 333, 539, 333), // 400 / 402
     makeDivider(690, 401, 710, 401), // 418 / 417
-    makeDivider(785, 404, 808, 404)  // 410 / 413
+    makeDivider(785, 404, 808, 404), // 410 / 413
+    makeDivider(216, 403, 216, 423)  // 422 | 427
   ];
 
   const courtyards = [
@@ -1285,6 +1349,15 @@ function buildCustomFloor0Plan() {
   ];
 
   // Unified medium-grey stair / facility halls (IDENTICAL cool-grey across ALL wings!)
+  const denonFarWestWestBar = [
+    [43, 368], [51, 368], [51, 388], [63, 388], [63, 368], [106, 368], [106, 392],
+    [82, 392], [82, 423], [63, 423], [63, 395], [51, 395], [51, 423], [43, 423]
+  ].map(([x, y]) => p(x, y));
+  const denonFarWestEastHall = [
+    [106, 342], [140, 342], [140, 373], [146, 373], [146, 381], [140, 381],
+    [140, 423], [85, 423], [85, 394], [106, 394], [106, 408], [125, 408],
+    [125, 381], [106, 381], [106, 373], [125, 373], [125, 350], [106, 350]
+  ].map(([x, y]) => p(x, y));
   const serviceHalls = [
     {points: polyStr(rectPts(658, 105, 712, 147)), number: '', name: 'リシュリュー中央階段'},
     {points: polyStr(rectPts(846, 184, 887, 234)), number: '', name: 'シュリー西階段・連絡部'},
@@ -1292,7 +1365,9 @@ function buildCustomFloor0Plan() {
     {points: polyStr(rectPts(989, 272, 1022, 305)), number: '', name: 'シュリー南東階段'},
     {points: polyStr(rectPts(502, 274, 534, 311)), number: '', name: 'ドゥノン西階段'},
     {points: polyStr(rectPts(579, 275, 620, 315)), number: '', name: 'ドゥノン中央階段'},
-    {points: polyStr(rectPts(690, 275, 745, 305)), number: '', name: 'ダリュ階段'}
+    {points: polyStr(rectPts(690, 275, 745, 305)), number: '', name: 'ダリュ階段'},
+    {points: polyStr(denonFarWestWestBar), number: '', name: 'ドゥノン西端設備'},
+    {points: polyStr(denonFarWestEastHall), number: '', name: 'ドゥノン西端階段・エレベーター'}
   ];
 
   const [ccX0, ccY0] = p(890, 168);
@@ -1313,17 +1388,16 @@ function buildCustomFloor0Plan() {
     ['230', 793.5, 22],
     ['229', 764, 56.5],
     ['236', 734, 110],
-    ['234', 753.5, 132.5],
     ['231', 793.5, 139.5],
     // Sully
-    ['306', 826.5, 139.5],
+    ['305', 826.5, 139.5],
     ['308', 876, 145.5],
     ['300', 866.5, 171],
     ['312', 930, 145],
-    ['316', 971.5, 145],
+    ['316', 968, 145],
     ['317', 1001.5, 170.5],
     ['321', 1001.5, 190],
-    ['324', 1001.5, 217.5],
+    ['327', 1004, 218],
     ['328', 1001.5, 253],
     ['348', 866.5, 252.5],
     ['345', 866.5, 287.5],
@@ -1331,11 +1405,11 @@ function buildCustomFloor0Plan() {
     ['338', 937, 284],
     ['337', 970.5, 287.5],
     ['347', 829, 281.5],
-    // Denon (incl. construction 418, 417, 415)
+    // Denon (incl. Pavillon des Sessions 424, 422, 427 & construction 418, 417, 415)
     ['403', 557, 294],
     ['406', 652.5, 292.5],
     ['408', 796.5, 290.5],
-    ['400', 524, 322],
+    ['400', 527, 324],
     ['402', 524, 362.5],
     ['405', 599, 353.5],
     ['418', 700, 355],
@@ -1343,7 +1417,10 @@ function buildCustomFloor0Plan() {
     ['415', 772, 352.5],
     ['417', 737.5, 412.5],
     ['410', 796.5, 356.5],
-    ['413', 796.5, 414]
+    ['413', 796.5, 414],
+    ['424', 181, 360],
+    ['422', 181, 404],
+    ['427', 240, 413]
   ];
 
   const roomLabels = uniformLabelSpec.map(([number, x, y]) => {
@@ -1351,16 +1428,68 @@ function buildCustomFloor0Plan() {
     return {number, x: sx, y: sy, priority: Boolean(ROOM_ANCHORS['0'][number]), uniform: true};
   });
 
+  // Exact Floor 0 interior facilities extracted from the user's 0F facility PPT map:
+  // Orange dots = WC (3), Purple dots = Elevator (13 open; 418 under-construction EV hidden),
+  // Yellow triple chevrons = Stairs Up (9), Green triple chevrons = Stairs Down (7),
+  // Black triple chevrons = Same-floor stairs (8 open; 418/417 under-construction stairs hidden)
   const facList = [
-    {type: 'stairs', pt: p(685, 126), label: ''},
-    {type: 'elevator', pt: p(671, 126), label: ''},
-    {type: 'stairs', pt: p(518, 292), label: ''},
-    {type: 'elevator', pt: p(599, 295), label: ''},
-    {type: 'stairs', pt: p(718, 290), label: ''},
-    {type: 'elevator', pt: p(1005, 146), label: ''},
-    {type: 'stairs', pt: p(1005, 288), label: ''},
-    {type: 'wc', pt: p(952, 252), label: ''}
-  ].map(f => ({type: f.type, x: Math.round(f.pt[0]), y: Math.round(f.pt[1]), label: f.label}));
+    // Toilets (WC — 3)
+    {id: '0f-wc-231-north', type: 'wc', pt: p(793, 121), label: 'トイレ'},
+    {id: '0f-wc-312-nw', type: 'wc', pt: p(921, 134), label: 'トイレ'},
+    {id: '0f-wc-sully-se', type: 'wc', pt: p(998, 301), label: 'トイレ'},
+    // Elevators (EV — 13 open; 10 linked to 1F, 3 are 0F-and-below only)
+    {id: '0f-ev-richelieu-nw', linkId: 'ev-richelieu-nw', type: 'elevator', pt: p(604, 35.5), label: 'エレベーター'},
+    {id: '0f-ev-richelieu-center', linkId: 'ev-richelieu-center', type: 'elevator', pt: p(652, 107.5), label: 'エレベーター'},
+    {id: '0f-ev-sully-north', linkId: 'ev-sully-north', type: 'elevator', pt: p(913, 121), label: 'エレベーター'},
+    {id: '0f-ev-sully-ne', linkId: 'ev-sully-ne', type: 'elevator', pt: p(985, 132), label: 'エレベーター'},
+    {id: '0f-ev-sully-west', linkId: 'ev-sully-west', type: 'elevator', pt: p(851, 178.5), label: 'エレベーター'},
+    {id: '0f-ev-324-nw', type: 'elevator', pt: p(989, 209), label: 'エレベーター'},
+    {id: '0f-ev-324-sw', linkId: 'ev-sully-se', type: 'elevator', pt: p(989, 229), label: 'エレベーター'},
+    {id: '0f-ev-sully-sw', linkId: 'ev-sully-sw', type: 'elevator', pt: p(894, 276), label: 'エレベーター'},
+    {id: '0f-ev-337-west', type: 'elevator', pt: p(954, 295), label: 'エレベーター'},
+    {id: '0f-ev-denon-west', linkId: 'ev-denon-west', type: 'elevator', pt: p(513, 315), label: 'エレベーター'},
+    {id: '0f-ev-denon-center-nw', linkId: 'ev-denon-center-nw', type: 'elevator', pt: p(586, 279), label: 'エレベーター'},
+    {id: '0f-ev-denon-center-ne', linkId: 'ev-denon-center-ne', type: 'elevator', pt: p(613, 279), label: 'エレベーター'},
+    {id: '0f-ev-denon-center-w', linkId: 'ev-denon-center-w', type: 'elevator', pt: p(585, 313), label: 'エレベーター'},
+    {id: '0f-ev-denon-center-e', linkId: 'ev-denon-center-e', type: 'elevator', pt: p(615, 313), label: 'エレベーター'},
+    {id: '0f-ev-denon-farwest', linkId: 'ev-denon-farwest', type: 'elevator', pt: p(104, 395), label: 'エレベーター'},
+    // Escalator (Richelieu central grey hall — spans -1F <-> 0F <-> 1F <-> 2F per user confirmation)
+    {id: '0f-esc-richelieu-center', linkId: 'escalator-richelieu-center', type: 'escalator', pt: p(683, 125.5), label: 'エスカレーター'},
+    // Upward-only Stairs (5, all linked to 1F)
+    {id: '0f-su-218-east', linkId: 'stairs-richelieu-nw', type: 'stairs-up', pt: p(614, 23), label: '上り階段'},
+    {id: '0f-su-sully-ne', linkId: 'stairs-sully-ne-lower', type: 'stairs-up', pt: p(1007, 158), label: '上り階段'},
+    {id: '0f-su-sully-se', linkId: 'stairs-sully-se', type: 'stairs-up', pt: p(998, 286), label: '上り階段'},
+    {id: '0f-su-daru-east', linkId: 'stairs-daru', type: 'stairs-up', pt: p(744, 290), label: '上り階段'},
+    {id: '0f-su-denon-farwest', linkId: 'stairs-denon-farwest', type: 'stairs-up', pt: p(91, 407), label: '上り階段'},
+    // Downward Stairs (Green triple chevrons — 7; 321-327 & 327-328 destination unknown per user)
+    {id: '0f-sd-321-324', type: 'stairs-down', pt: p(1005, 202), label: '下り階段'},
+    {id: '0f-sd-324-328', type: 'stairs-down', pt: p(1005, 232), label: '下り階段'},
+    {id: '0f-sd-339-338', linkId: 'stairs-sully-338', type: 'stairs-down', pt: p(922, 284), label: '下り階段'},
+    {id: '0f-sd-338-337', linkId: 'stairs-sully-338', type: 'stairs-down', pt: p(956, 279), label: '下り階段'},
+    {id: '0f-sd-405-north', linkId: 'stairs-denon-405-n', type: 'stairs-down', pt: p(600, 313), label: '下り階段'},
+    {id: '0f-sd-402-south', linkId: 'stairs-denon-402-s', type: 'stairs-down', pt: p(528, 386), label: '下り階段'},
+    {id: '0f-sd-405-south', linkId: 'stairs-denon-405-s', type: 'stairs-down', pt: p(601, 384), label: '下り階段'},
+    // Bidirectional Up/Down Stairs (8 black + 4 verified -1F<->0F<->1F bidirectional = 12 open)
+    {id: '0f-su-234', linkId: 'stairs-richelieu-se', type: 'stairs-both', pt: p(754, 138), label: '上下階段'},
+    {id: '0f-su-sully-west-n', linkId: 'stairs-sully-west-n', type: 'stairs-both', pt: p(865, 188), label: '上下階段'},
+    {id: '0f-su-sully-west-s', linkId: 'stairs-sully-west-s', type: 'stairs-both', pt: p(867, 228), label: '上下階段'},
+    {id: '0f-su-daru-west', linkId: 'stairs-daru', type: 'stairs-both', pt: p(688, 293), label: '上下階段'},
+    {id: '0f-st-212-inner-n', linkId: 'stairs-richelieu-102-n', type: 'stairs-both', pt: p(542, 49), label: '上下階段'},
+    {id: '0f-st-206-inner-s', linkId: 'stairs-richelieu-102-s', type: 'stairs-both', pt: p(542, 94), label: '上下階段'},
+    {id: '0f-st-308-312', linkId: 'stairs-sully-n-west', type: 'stairs-both', pt: p(906, 148), label: '上下階段'},
+    {id: '0f-st-312-316', linkId: 'stairs-sully-n-east', type: 'stairs-both', pt: p(951, 145), label: '上下階段'},
+    {id: '0f-st-316-ne', linkId: 'stairs-sully-ne-lower', type: 'stairs-both', pt: p(984, 148), label: '上下階段'},
+    {id: '0f-st-denon-west', linkId: 'stairs-denon-west', type: 'stairs-both', pt: p(518, 299), label: '上下階段'},
+    {id: '0f-st-403-center', linkId: 'stairs-denon-403-e', type: 'stairs-both', pt: p(580, 295), label: '上下階段'},
+    {id: '0f-st-center-406', linkId: 'stairs-denon-406-w', type: 'stairs-both', pt: p(619, 294), label: '上下階段'}
+  ].map(f => ({
+    id: f.id,
+    ...(f.linkId ? {linkId: f.linkId} : {}),
+    type: f.type,
+    x: round1(f.pt[0]),
+    y: round1(f.pt[1]),
+    label: f.label
+  }));
 
   return {
     subtitle: FLOOR_SUBTITLES[0],
@@ -1387,7 +1516,7 @@ function buildCustomFloor0Plan() {
     wings: [
       {id: 'richelieu', label: 'リシュリュー翼', range: '200–236室', labelX: round1(X0 + 628 * S), labelY: 92},
       {id: 'sully', label: 'シュリー翼', range: '300–348室', labelX: round1(X0 + 918 * S), labelY: 202},
-      {id: 'denon', label: 'ドゥノン翼', range: '400–419室', labelX: round1(X0 + 520 * S), labelY: 514}
+      {id: 'denon', label: 'ドゥノン翼', range: '400–427室', labelX: round1(X0 + 520 * S), labelY: 514}
     ],
     labels: [],
     rooms,
@@ -1480,6 +1609,10 @@ function buildCustomFloorM1Plan() {
     makeRectRoom(640, 56, 712, 110, 'richelieu', '105'),
     makeRectRoom(527, 131, 575, 161, 'richelieu', '101'),
 
+    // Sully Wing — Hall Napoléon East Galleries (131 north, 130 south)
+    makeRectRoom(723, 211, 824, 243, 'sully', '131'),
+    makeRectRoom(723, 264, 824, 295, 'sully', '130'),
+
     // Sully Wing — Medieval Louvre (132, 137, 135 ring, 133, 134)
     makeRectRoom(885, 244, 975, 267, 'sully', '132'),
     makeRectRoom(897, 267, 915, 318, 'sully', '137'),
@@ -1495,11 +1628,12 @@ function buildCustomFloorM1Plan() {
     makeRectRoom(692, 321, 711, 362, 'denon', ''),
     makeRectRoom(577, 382, 631, 438, 'denon', '183'),
     makeRectRoom(636, 382, 685, 425, 'denon', '185'),
-    makeRectRoom(647, 425, 685, 435, 'denon', '180'),
-    makeRectRoom(616, 439, 673, 452, 'denon', '181'),
-    makeRectRoom(673, 439, 699, 452, 'denon', '179'),
-    makeRectRoom(699, 368, 711, 446, 'denon', '175'),
-    makeRectRoom(716, 386, 739, 403, 'denon', '174')
+    // Denon Wing — Under construction (工事中: 180, 181, 179, 175, 174)
+    makeRectRoom(647, 425, 685, 435, 'denon', '180', {underConstruction: true}),
+    makeRectRoom(616, 439, 673, 452, 'denon', '181', {underConstruction: true}),
+    makeRectRoom(673, 439, 699, 452, 'denon', '179', {underConstruction: true}),
+    makeRectRoom(699, 368, 711, 446, 'denon', '175', {underConstruction: true}),
+    makeRectRoom(716, 386, 739, 403, 'denon', '174', {underConstruction: true})
   ];
 
   const passages = [
@@ -1517,11 +1651,11 @@ function buildCustomFloorM1Plan() {
     {wing: 'denon', points: polyStr(rectPts(568, 340, 577, 354))},
     {wing: 'denon', points: polyStr(rectPts(630, 341, 642, 353))},
     {wing: 'denon', points: polyStr(rectPts(685, 340, 694, 354))},
-    {wing: 'denon', points: polyStr(rectPts(703, 360, 709, 370))},
+    {wing: 'denon', points: polyStr(rectPts(703, 360, 709, 370)), underConstruction: true},
     {wing: 'denon', points: polyStr(rectPts(649, 374, 655, 384))},
     {wing: 'denon', points: polyStr(rectPts(672, 374, 678, 384))},
     {wing: 'denon', points: polyStr(rectPts(629, 390, 638, 396))},
-    {wing: 'denon', points: polyStr(rectPts(663, 433, 669, 441))}
+    {wing: 'denon', points: polyStr(rectPts(663, 433, 669, 441)), underConstruction: true}
   ];
 
   const makeDivider = (x1, y1, x2, y2) => {
@@ -1574,6 +1708,7 @@ function buildCustomFloorM1Plan() {
   const [ccX0, ccY0] = p(890, 199);
   const [ccX1, ccY1] = p(982, 307);
   const [pyrCx, pyrCy] = p(600, 253);
+  const [conX, conY] = p(668, 474);
 
   // Uniform-size room numbers covering EVERY numbered room from the user's -1F PPT map
   const uniformLabelSpec = [
@@ -1582,15 +1717,17 @@ function buildCustomFloorM1Plan() {
     ['104', 606.5, 85],
     ['105', 676, 83],
     ['101', 551, 146],
-    // Sully (Medieval Louvre)
-    ['132', 906, 255.5],
+    // Sully (Hall Napoléon East + Medieval Louvre)
+    ['131', 773.5, 227],
+    ['130', 773.5, 279.5],
+    ['132', 936, 255.5],
     ['137', 906, 293],
     ['135', 944, 293],
     ['133', 985, 260],
     ['134', 1012.5, 283],
     // Denon
     ['164', 517, 350.5],
-    ['169', 513.5, 406.5],
+    ['169', 513.5, 417],
     ['160', 550.5, 350.5],
     ['170', 663.5, 350],
     ['183', 604, 410],
@@ -1607,20 +1744,66 @@ function buildCustomFloorM1Plan() {
     return {number, x: sx, y: sy, priority: Boolean(ROOM_ANCHORS['-1'][number]), uniform: true};
   });
 
+  // Exact Floor -1 interior facilities extracted from the user's -1F facility PPT map:
+  // Orange dots = WC (5 open; 179 construction WC hidden),
+  // Purple dots = Elevator (11 open; 180/181/179/175 construction EVs hidden),
+  // Frog = Escalator (1), Green triple chevrons = Stairs Down (3),
+  // Yellow triple chevrons = Stairs Up (12), Black triple chevrons = Same-floor stairs (2 open; 175-174 construction hidden)
   const facList = [
-    {type: 'escalator', pt: p(604, 175), label: ''},
-    {type: 'stairs', pt: p(658, 136), label: ''},
-    {type: 'elevator', pt: p(604, 348), label: ''},
-    {type: 'stairs', pt: p(874, 254), label: ''},
-    {type: 'wc', pt: p(552, 224), label: ''},
-    {type: 'wc', pt: p(552, 282), label: ''},
-    {type: 'cafe', pt: p(760, 224), label: 'カフェ'}
-  ].map(f => ({type: f.type, x: Math.round(f.pt[0]), y: Math.round(f.pt[1]), label: f.label}));
+    // Toilets (WC — 5 open)
+    {id: 'm1-wc-102-n', type: 'wc', pt: p(551, 58), label: 'トイレ'},
+    {id: 'm1-wc-pyramid-n', type: 'wc', pt: p(584, 200), label: 'トイレ'},
+    {id: 'm1-wc-pyramid-s', type: 'wc', pt: p(583, 276), label: 'トイレ'},
+    {id: 'm1-wc-sully-n', type: 'wc', pt: p(902, 209), label: 'トイレ'},
+    {id: 'm1-wc-134-s', type: 'wc', pt: p(1019, 300), label: 'トイレ'},
+    // Elevators (EV — 11 open; 132/137 destination unknown, central bridge is -2F<->-1F only)
+    {id: 'm1-ev-102-ne', linkId: 'ev-richelieu-nw', type: 'elevator', pt: p(568, 59), label: 'エレベーター'},
+    {id: 'm1-ev-richelieu-center', linkId: 'ev-richelieu-center', type: 'elevator', pt: p(644, 121), label: 'エレベーター'},
+    {id: 'm1-ev-sully-n', linkId: 'ev-sully-west', type: 'elevator', pt: p(886, 197), label: 'エレベーター'},
+    {id: 'm1-ev-central-bridge', type: 'elevator', pt: p(714, 250), label: 'エレベーター'},
+    {id: 'm1-ev-132-137', type: 'elevator', pt: p(911, 265), label: 'エレベーター'},
+    {id: 'm1-ev-134-s', linkId: 'ev-sully-se', type: 'elevator', pt: p(1004, 310), label: 'エレベーター'},
+    {id: 'm1-ev-denon-vest-nw', linkId: 'ev-denon-center-nw', type: 'elevator', pt: p(579, 331), label: 'エレベーター'},
+    {id: 'm1-ev-denon-vest-ne', linkId: 'ev-denon-center-ne', type: 'elevator', pt: p(628, 332), label: 'エレベーター'},
+    {id: 'm1-ev-denon-west', linkId: 'ev-denon-west', type: 'elevator', pt: p(506, 381), label: 'エレベーター'},
+    {id: 'm1-ev-denon-center-w', linkId: 'ev-denon-center-w', type: 'elevator', pt: p(581, 370), label: 'エレベーター'},
+    {id: 'm1-ev-denon-center-e', linkId: 'ev-denon-center-e', type: 'elevator', pt: p(628, 372), label: 'エレベーター'},
+    // Escalator (Frog icon in Richelieu central grey hall — 1, spans -1F <-> 0F <-> 1F <-> 2F)
+    {id: 'm1-esc-richelieu-center', linkId: 'escalator-richelieu-center', type: 'escalator', pt: p(658, 138), label: 'エスカレーター'},
+    // Downward Stairs (Green triple chevrons — 3 around Hall Napoléon pyramid concourse)
+    {id: 'm1-sd-pyramid-n', type: 'stairs-down', pt: p(600, 218), label: '下り階段'},
+    {id: 'm1-sd-pyramid-e', type: 'stairs-down', pt: p(629, 249), label: '下り階段'},
+    {id: 'm1-sd-pyramid-s', type: 'stairs-down', pt: p(601, 275), label: '下り階段'},
+    // Upward Stairs (Yellow triple chevrons — 12; 105-w destination unknown per user)
+    {id: 'm1-su-102-nw', linkId: 'stairs-richelieu-102-n', type: 'stairs-up', pt: p(528, 63), label: '上り階段'},
+    {id: 'm1-su-102-sw', linkId: 'stairs-richelieu-102-s', type: 'stairs-up', pt: p(530, 107), label: '上り階段'},
+    {id: 'm1-su-105-w', type: 'stairs-up', pt: p(649, 89), label: '上り階段'},
+    {id: 'm1-su-studio-e', linkId: 'stairs-richelieu-se', type: 'stairs-up', pt: p(763, 141), label: '上り階段'},
+    {id: 'm1-su-sully-wn', linkId: 'stairs-sully-west-n', type: 'stairs-up', pt: p(875, 232), label: '上り階段'},
+    {id: 'm1-su-sully-ws', linkId: 'stairs-sully-west-s', type: 'stairs-up', pt: p(875, 270), label: '上り階段'},
+    {id: 'm1-su-133-s', linkId: 'stairs-sully-338', type: 'stairs-up', pt: p(985, 292), label: '上り階段'},
+    {id: 'm1-su-164-w', linkId: 'stairs-denon-west', type: 'stairs-up', pt: p(504, 332), label: '上り階段'},
+    {id: 'm1-su-170-e', linkId: 'stairs-daru', type: 'stairs-up', pt: p(712, 343), label: '上り階段'},
+    {id: 'm1-su-169-mid', linkId: 'stairs-denon-402-s', type: 'stairs-up', pt: p(517, 396), label: '上り階段'},
+    {id: 'm1-su-183-n', linkId: 'stairs-denon-405-n', type: 'stairs-up', pt: p(601, 387), label: '上り階段'},
+    {id: 'm1-su-183-s', linkId: 'stairs-denon-405-s', type: 'stairs-up', pt: p(605, 445), label: '上り階段'},
+    // Bidirectional Up/Down Stairs (Black triple chevrons = up & down — 2 open)
+    {id: 'm1-st-160-vest', linkId: 'stairs-denon-403-e', type: 'stairs-both', pt: p(572, 348), label: '上下階段'},
+    {id: 'm1-st-vest-170', linkId: 'stairs-denon-406-w', type: 'stairs-both', pt: p(635, 348), label: '上下階段'}
+  ].map(f => ({
+    id: f.id,
+    ...(f.linkId ? {linkId: f.linkId} : {}),
+    type: f.type,
+    x: round1(f.pt[0]),
+    y: round1(f.pt[1]),
+    label: f.label
+  }));
 
   return {
     subtitle: FLOOR_SUBTITLES['-1'],
     isCustomFloorPlan: true,
     uniformRoomLabels: true,
+    hasConstruction: true,
     hasRestArea: true,
     customPlan: {
       footprintPath,
@@ -1633,6 +1816,9 @@ function buildCustomFloorM1Plan() {
       serviceHalls: concoursePolys,
       fusedServiceHalls: true,
       restAreas,
+      constructionNotices: [
+        {x: conX, y: conY, text: '工事中（閉鎖）'}
+      ],
       wingHeaders: [
         {label: 'リシュリュー翼', x: round1(X0 + 628 * Sx), y: 92},
         {label: 'シュリー翼', x: round1(X0 + 918 * Sx), y: 202},
@@ -1641,7 +1827,7 @@ function buildCustomFloorM1Plan() {
     },
     wings: [
       {id: 'richelieu', label: 'リシュリュー翼', range: '101–105室', labelX: round1(X0 + 628 * Sx), labelY: 92},
-      {id: 'sully', label: 'シュリー翼', range: '132–137室', labelX: round1(X0 + 918 * Sx), labelY: 202},
+      {id: 'sully', label: 'シュリー翼', range: '130–137室', labelX: round1(X0 + 918 * Sx), labelY: 202},
       {id: 'denon', label: 'ドゥノン翼', range: '160–185室', labelX: round1(X0 + 520 * Sx), labelY: 514}
     ],
     labels: [],
@@ -1657,14 +1843,501 @@ function buildCustomFloorM1Plan() {
 
 floorsOutput['-1'] = buildCustomFloorM1Plan();
 
+// Build custom exact Floor -2 architectural plan from the user's PPT map (1024x506 -> exact same 960x600 palace frame!)
+function buildCustomFloorM2Plan() {
+  const Sx = 912 / 1024;
+  const Sy = (428 / 505) * Sx;
+  const X0 = 24;
+  const Y0 = 108;
+  const p = (x, y) => [round1(X0 + x * Sx), round1(Y0 + y * Sy)];
+  const polyStr = pts => pts.map(([x, y]) => `${x},${y}`).join(' ');
+  const rectPts = (x0, y0, x1, y1) => [p(x0, y0), p(x1, y0), p(x1, y1), p(x0, y1)];
+  const pathOf = pts => `M ${pts.map(([x, y]) => `${x} ${y}`).join(' L ')} Z`;
+  const circlePts = (cx, cy, rx, ry, steps = 28) => Array.from({length: steps}, (_, i) => {
+    const a = (Math.PI * 2 * i) / steps;
+    return p(cx + Math.cos(a) * rx, cy + Math.sin(a) * ry);
+  });
+
+  // Exact same palace outer silhouette as Floors -1, 0, 1, 2
+  const outerOutline = [
+    [220, 0], [810, 0], [810, 144], [1023, 144], [1023, 361], [810, 361],
+    [810, 505], [0, 505], [0, 433], [99, 433], [99, 397], [222, 397],
+    [222, 433], [498, 433], [498, 319], [839, 319], [839, 187], [497, 187],
+    [497, 72], [220, 72]
+  ].map(([x, y]) => p(x, y));
+
+  const courCarreeHole = [
+    [890, 199], [982, 199], [982, 307], [890, 307]
+  ].map(([x, y]) => p(x, y));
+
+  const footprintPath = `${pathOf(outerOutline)} ${pathOf(courCarreeHole)}`;
+
+  // Underground Carrousel diamond + central Hall Napoléon reception hall + East Exhibition annex frame
+  const hallOutline = pathOf([
+    [205, 243], [228, 243], [275, 198], [275, 172], [295, 172], [295, 198],
+    [338, 250], [527, 250], [527, 212], [533, 212], [533, 199], [571, 199],
+    [571, 212], [604, 212], [617, 197], [633, 212], [657, 212], [657, 236],
+    [676, 253], [711, 253], [711, 278], [664, 278], [657, 285], [657, 305],
+    [640, 305], [633, 312], [633, 331], [606, 331], [606, 317], [593, 305],
+    [571, 305], [571, 312], [533, 312], [533, 305], [527, 305], [527, 268],
+    [338, 268], [295, 308], [295, 334], [275, 334], [275, 308], [228, 263],
+    [205, 263]
+  ].map(([x, y]) => p(x, y)));
+
+  const annexFrame = pathOf(rectPts(699, 187, 839, 319));
+  const undergroundOutline = `${annexFrame} ${hallOutline}`;
+
+  // Unified cool-grey Hall Napoléon service/facility blocks (ticket, bookstore, cloakroom, auditorium, WC, group reception)
+  const northService = [
+    [490, 165], [699, 165], [699, 237], [657, 237], [657, 212], [633, 212],
+    [617, 197], [604, 212], [571, 212], [571, 199], [533, 199], [533, 212],
+    [527, 212], [527, 237], [490, 237]
+  ].map(([x, y]) => p(x, y));
+
+  const westSouthService = [
+    [349, 268], [417, 268], [417, 299], [443, 299], [443, 329], [349, 329]
+  ].map(([x, y]) => p(x, y));
+
+  const swSemicircle = [
+    p(547, 305),
+    ...Array.from({length: 19}, (_, i) => {
+      const a = (Math.PI * i) / 18;
+      return p(509 + Math.cos(a) * 38, 312 + Math.sin(a) * 39);
+    }),
+    p(471, 305)
+  ];
+
+  const serviceHalls = [
+    rectPts(348, 240, 413, 250),
+    westSouthService,
+    northService,
+    rectPts(465, 305, 533, 340),
+    swSemicircle,
+    rectPts(556, 305, 598, 330),
+    rectPts(596, 331, 636, 348),
+    rectPts(635, 305, 659, 347),
+    rectPts(658, 278, 710, 294),
+    rectPts(658, 285, 682, 317),
+    circlePts(670, 315, 13, 12, 24)
+  ].map(pts => ({points: polyStr(pts)}));
+
+  // Light-blue Temporary Exhibition Space (企画展 — Hall Napoléon) with exact central diamond-corridor cutout
+  const exhNorth = [
+    [711, 213], [830, 213], [830, 255], [806, 255], [793, 245], [806, 245],
+    [806, 234], [766, 234], [766, 245], [778, 245], [766, 255], [711, 255]
+  ].map(([x, y]) => p(x, y));
+
+  const exhSouth = [
+    [711, 261], [766, 261], [778, 270], [766, 270], [766, 281], [806, 281],
+    [806, 270], [793, 270], [806, 261], [830, 261], [830, 303], [711, 303]
+  ].map(([x, y]) => p(x, y));
+
+  const [exhLabelX, exhLabelY] = p(739, 234);
+  const [exhSubX, exhSubY] = p(739, 282);
+  const exhibitionAreas = [
+    {points: polyStr(exhNorth)},
+    {points: polyStr(exhSouth)}
+  ];
+  const exhibitionLabels = [
+    {x: exhLabelX, y: exhLabelY, label: '企画展', sublabel: '特別展示'}
+  ];
+
+  const [ccX0, ccY0] = p(890, 199);
+  const [ccX1, ccY1] = p(982, 307);
+  const [pyrCx, pyrCy] = p(594, 258);
+
+  const rooms = [
+    {points: polyStr(exhNorth), number: '', wing: 'central', cx: exhLabelX, cy: exhLabelY, area: 1400, name: '企画展（北）', isExhibition: true},
+    {points: polyStr(exhSouth), number: '', wing: 'central', cx: exhSubX, cy: exhSubY, area: 1400, name: '企画展（南）', isExhibition: true}
+  ];
+
+  // Legacy facilities cleared — will be populated from the user's verified -2F facility map
+  const facList = [];
+
+  return {
+    subtitle: FLOOR_SUBTITLES['-2'],
+    isCustomFloorPlan: true,
+    uniformRoomLabels: true,
+    hasExhibition: true,
+    customPlan: {
+      footprintPath,
+      undergroundOutline,
+      courCarree: {x: ccX0, y: ccY0, width: round1(ccX1 - ccX0), height: round1(ccY1 - ccY0)},
+      pyramid: {cx: pyrCx, cy: pyrCy, size: 19},
+      passages: [],
+      dividers: [],
+      courtyards: [],
+      serviceHalls,
+      fusedServiceHalls: true,
+      exhibitionAreas,
+      exhibitionLabels,
+      wingHeaders: []
+    },
+    wings: [
+      {id: 'central', label: 'Hall Napoléon（ピラミッド中央入口）', range: '受付・チケット・企画展', labelX: 445, labelY: 208}
+    ],
+    labels: [],
+    rooms,
+    corridors: [],
+    walls: [],
+    doors: [],
+    facilities: facList,
+    roomLabels: [],
+    roomAnchors: {}
+  };
+}
+
+floorsOutput['-2'] = buildCustomFloorM2Plan();
+
+// Verified vertical facility correspondences across floors -1F <-> 0F <-> 1F <-> 2F (13 EV + 1 Escalator + 20 Stairs = 34 shafts)
+const verticalLinks = [
+  // Elevators (13 shafts)
+  {
+    id: 'ev-richelieu-nw',
+    kind: 'elevator',
+    label: 'リシュリュー北西エレベーター（102室↔218室↔557室↔855室）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-102-ne'},
+      {floor: 0, facilityId: '0f-ev-richelieu-nw'},
+      {floor: 1, facilityId: '1f-ev-richelieu-nw'},
+      {floor: 2, facilityId: '2f-ev-richelieu-nw'}
+    ]
+  },
+  {
+    id: 'ev-richelieu-center',
+    kind: 'elevator',
+    label: 'リシュリュー中央エレベーター（-1F中央↔0F中央↔500室↔800室）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-richelieu-center'},
+      {floor: 0, facilityId: '0f-ev-richelieu-center'},
+      {floor: 1, facilityId: '1f-ev-richelieu-center'},
+      {floor: 2, facilityId: '2f-ev-richelieu-center'}
+    ]
+  },
+  {
+    id: 'ev-sully-north',
+    kind: 'elevator',
+    label: 'シュリー北エレベーター（312室↔617室↔913室）',
+    stops: [
+      {floor: 0, facilityId: '0f-ev-sully-north'},
+      {floor: 1, facilityId: '1f-ev-sully-north'},
+      {floor: 2, facilityId: '2f-ev-sully-north'}
+    ]
+  },
+  {
+    id: 'ev-sully-west',
+    kind: 'elevator',
+    label: 'シュリー西エレベーター（-1F北灰↔300室↔601室↔902室）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-sully-n'},
+      {floor: 0, facilityId: '0f-ev-sully-west'},
+      {floor: 1, facilityId: '1f-ev-sully-west'},
+      {floor: 2, facilityId: '2f-ev-sully-west'}
+    ]
+  },
+  {
+    id: 'ev-sully-sw',
+    kind: 'elevator',
+    label: 'シュリー南西エレベーター（339室↔650室↔944/940室）',
+    stops: [
+      {floor: 0, facilityId: '0f-ev-sully-sw'},
+      {floor: 1, facilityId: '1f-ev-sully-sw'},
+      {floor: 2, facilityId: '2f-ev-sully-sw'}
+    ]
+  },
+  {
+    id: 'ev-sully-ne',
+    kind: 'elevator',
+    label: 'シュリー北東エレベーター（316室北東↔632室北東）',
+    stops: [
+      {floor: 0, facilityId: '0f-ev-sully-ne'},
+      {floor: 1, facilityId: '1f-ev-sully-ne'}
+    ]
+  },
+  {
+    id: 'ev-sully-se',
+    kind: 'elevator',
+    label: 'シュリー東・南東エレベーター（134室南↔0F327-328間）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-134-s'},
+      {floor: 0, facilityId: '0f-ev-324-sw'}
+    ]
+  },
+  {
+    id: 'ev-denon-west',
+    kind: 'elevator',
+    label: 'ドゥノン西エレベーター（169室北西↔400室北西↔715室北西）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-denon-west'},
+      {floor: 0, facilityId: '0f-ev-denon-west'},
+      {floor: 1, facilityId: '1f-ev-denon-715'}
+    ]
+  },
+  {
+    id: 'ev-denon-center-nw',
+    kind: 'elevator',
+    label: 'ドゥノン中央・北西エレベーター（-1F広間北西↔0F403-406間北西）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-denon-vest-nw'},
+      {floor: 0, facilityId: '0f-ev-denon-center-nw'}
+    ]
+  },
+  {
+    id: 'ev-denon-center-ne',
+    kind: 'elevator',
+    label: 'ドゥノン中央・北東エレベーター（-1F広間北東↔0F403-406間北東）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-denon-vest-ne'},
+      {floor: 0, facilityId: '0f-ev-denon-center-ne'}
+    ]
+  },
+  {
+    id: 'ev-denon-center-w',
+    kind: 'elevator',
+    label: 'ドゥノン中央・西エレベーター（-1F広間南西↔405室北西↔701/711室西）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-denon-center-w'},
+      {floor: 0, facilityId: '0f-ev-denon-center-w'},
+      {floor: 1, facilityId: '1f-ev-denon-701-w'}
+    ]
+  },
+  {
+    id: 'ev-denon-center-e',
+    kind: 'elevator',
+    label: 'ドゥノン中央・東エレベーター（-1F広間南東↔405室北東↔701/711室東）',
+    stops: [
+      {floor: -1, facilityId: 'm1-ev-denon-center-e'},
+      {floor: 0, facilityId: '0f-ev-denon-center-e'},
+      {floor: 1, facilityId: '1f-ev-denon-701-e'}
+    ]
+  },
+  {
+    id: 'ev-denon-farwest',
+    kind: 'elevator',
+    label: 'ドゥノン西端エレベーター（0F西端↔719/718室南）',
+    stops: [
+      {floor: 0, facilityId: '0f-ev-denon-farwest'},
+      {floor: 1, facilityId: '1f-ev-denon-719'}
+    ]
+  },
+  // Escalator (-1F <-> 0F <-> 1F <-> 2F)
+  {
+    id: 'escalator-richelieu-center',
+    kind: 'escalator',
+    label: 'リシュリュー中央エスカレーター（-1F↔0F↔1F↔2F）',
+    stops: [
+      {floor: -1, facilityId: 'm1-esc-richelieu-center'},
+      {floor: 0, facilityId: '0f-esc-richelieu-center'},
+      {floor: 1, facilityId: '1f-esc-richelieu-center'},
+      {floor: 2, facilityId: '2f-esc-richelieu-center'}
+    ]
+  },
+  // Stairs (20 shafts across -1F, 0F, 1F, 2F)
+  {
+    id: 'stairs-richelieu-nw',
+    kind: 'stairs',
+    label: 'リシュリュー北西階段（218室東↔557–505間↔855–802間）',
+    stops: [
+      {floor: 0, facilityId: '0f-su-218-east'},
+      {floor: 1, facilityId: '1f-st-557-505'},
+      {floor: 2, facilityId: '2f-sd-855-802'}
+    ]
+  },
+  {
+    id: 'stairs-richelieu-102-n',
+    kind: 'stairs',
+    label: 'リシュリュー西・北階段（102室北西↔0F218下北）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-102-nw'},
+      {floor: 0, facilityId: '0f-st-212-inner-n'}
+    ]
+  },
+  {
+    id: 'stairs-richelieu-102-s',
+    kind: 'stairs',
+    label: 'リシュリュー西・南階段（102室南西↔0F218下南）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-102-sw'},
+      {floor: 0, facilityId: '0f-st-206-inner-s'}
+    ]
+  },
+  {
+    id: 'stairs-richelieu-se',
+    kind: 'stairs',
+    label: 'リシュリュー南東階段（ステュディオ東↔236右↔531東）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-studio-e'},
+      {floor: 0, facilityId: '0f-su-234'},
+      {floor: 1, facilityId: '1f-sd-531-east'}
+    ]
+  },
+  {
+    id: 'stairs-sully-n-west',
+    kind: 'stairs',
+    label: 'シュリー北西階段（308–312間↔605–617間↔912–913間）',
+    stops: [
+      {floor: 0, facilityId: '0f-st-308-312'},
+      {floor: 1, facilityId: '1f-st-605-617'},
+      {floor: 2, facilityId: '2f-sd-912-913'}
+    ]
+  },
+  {
+    id: 'stairs-sully-n-east',
+    kind: 'stairs',
+    label: 'シュリー北中央階段（312–316間↔617–632間↔913室東）',
+    stops: [
+      {floor: 0, facilityId: '0f-st-312-316'},
+      {floor: 1, facilityId: '1f-st-617-632'},
+      {floor: 2, facilityId: '2f-sd-913-east'}
+    ]
+  },
+  {
+    id: 'stairs-sully-ne',
+    kind: 'stairs',
+    label: 'シュリー北東階段（632室東↔913室東奥）',
+    stops: [
+      {floor: 1, facilityId: '1f-su-sully-ne'},
+      {floor: 2, facilityId: '2f-sd-sully-ne'}
+    ]
+  },
+  {
+    id: 'stairs-sully-ne-lower',
+    kind: 'stairs',
+    label: 'シュリー北東下層階段（0F北東・316東↔1F北東）',
+    stops: [
+      {floor: 0, facilityId: '0f-su-sully-ne'},
+      {floor: 0, facilityId: '0f-st-316-ne'},
+      {floor: 1, facilityId: '1f-sd-sully-ne'}
+    ]
+  },
+  {
+    id: 'stairs-sully-west-n',
+    kind: 'stairs',
+    label: 'シュリー西・北階段（-1F西灰北↔0F西灰北↔601–600間↔900室北）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-sully-wn'},
+      {floor: 0, facilityId: '0f-su-sully-west-n'},
+      {floor: 1, facilityId: '1f-st-601-600'},
+      {floor: 2, facilityId: '2f-sd-900-north'}
+    ]
+  },
+  {
+    id: 'stairs-sully-west-s',
+    kind: 'stairs',
+    label: 'シュリー西・南階段（-1F西灰南↔0F西灰南↔600–663間↔900室南）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-sully-ws'},
+      {floor: 0, facilityId: '0f-su-sully-west-s'},
+      {floor: 1, facilityId: '1f-st-600-663'},
+      {floor: 2, facilityId: '2f-sd-900-south'}
+    ]
+  },
+  {
+    id: 'stairs-sully-se',
+    kind: 'stairs',
+    label: 'シュリー南東階段（0F南東↔1F南東↔931/929室南東）',
+    stops: [
+      {floor: 0, facilityId: '0f-su-sully-se'},
+      {floor: 1, facilityId: '1f-sb-sully-se'},
+      {floor: 2, facilityId: '2f-sd-sully-se'}
+    ]
+  },
+  {
+    id: 'stairs-sully-338',
+    kind: 'stairs',
+    label: 'シュリー338室階段（133室南↔338室［339側・337側］）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-133-s'},
+      {floor: 0, facilityId: '0f-sd-339-338'},
+      {floor: 0, facilityId: '0f-sd-338-337'}
+    ]
+  },
+  {
+    id: 'stairs-daru',
+    kind: 'stairs',
+    label: 'ダリュ階段（170室東↔0Fダリュ西・東↔1Fダリュ踊り場）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-170-e'},
+      {floor: 0, facilityId: '0f-su-daru-west'},
+      {floor: 0, facilityId: '0f-su-daru-east'},
+      {floor: 1, facilityId: '1f-sd-daru'}
+    ]
+  },
+  {
+    id: 'stairs-denon-west',
+    kind: 'stairs',
+    label: 'ドゥノン西階段（164室西↔0Fドゥノン西↔1Fドゥノン西）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-164-w'},
+      {floor: 0, facilityId: '0f-st-denon-west'},
+      {floor: 1, facilityId: '1f-sd-denon-west'}
+    ]
+  },
+  {
+    id: 'stairs-denon-403-e',
+    kind: 'stairs',
+    label: 'ドゥノン403東階段（160–広間↔403室東）',
+    stops: [
+      {floor: -1, facilityId: 'm1-st-160-vest'},
+      {floor: 0, facilityId: '0f-st-403-center'}
+    ]
+  },
+  {
+    id: 'stairs-denon-406-w',
+    kind: 'stairs',
+    label: 'ドゥノン406西階段（広間–170↔406室西）',
+    stops: [
+      {floor: -1, facilityId: 'm1-st-vest-170'},
+      {floor: 0, facilityId: '0f-st-center-406'}
+    ]
+  },
+  {
+    id: 'stairs-denon-402-s',
+    kind: 'stairs',
+    label: 'ドゥノン南西階段（169室内↔402室南）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-169-mid'},
+      {floor: 0, facilityId: '0f-sd-402-south'}
+    ]
+  },
+  {
+    id: 'stairs-denon-405-n',
+    kind: 'stairs',
+    label: 'ドゥノン中央・北階段（183室北↔405室北）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-183-n'},
+      {floor: 0, facilityId: '0f-sd-405-north'}
+    ]
+  },
+  {
+    id: 'stairs-denon-405-s',
+    kind: 'stairs',
+    label: 'ドゥノン中央・南階段（183室南↔405室南）',
+    stops: [
+      {floor: -1, facilityId: 'm1-su-183-s'},
+      {floor: 0, facilityId: '0f-sd-405-south'}
+    ]
+  },
+  {
+    id: 'stairs-denon-farwest',
+    kind: 'stairs',
+    label: 'ドゥノン西端階段（0F西端↔1F西端）',
+    stops: [
+      {floor: 0, facilityId: '0f-su-denon-farwest'},
+      {floor: 1, facilityId: '1f-sd-denon-farwest'}
+    ]
+  }
+];
+
 const geoData = {
   meta: {
     source: 'OpenStreetMap Louvre indoor GeoJSON (floors -2 to 2)',
     viewBox: {x: 0, y: 0, width: VIEW_W, height: VIEW_H},
     rotationDeg: 19.631,
-    generatedAt: '2026-11-20'
+    generatedAt: '2026-11-22'
   },
   footprintPolys,
+  verticalLinks,
   floors: floorsOutput
 };
 
@@ -1675,31 +2348,107 @@ const works = JSON.parse(fs.readFileSync(worksPath, 'utf8'));
 const floorTag = f => (f < 0 ? `fm${Math.abs(f)}` : `f${f}`);
 
 const nodes = [
-  // Floor -2 (Hall Napoléon, real OSM coordinates)
-  {id: 'entrance:pyramid:fm2', type: 'entrance', floor: -2, x: 441, y: 307, label: 'ピラミッド中央入口'},
-  {id: 'junction:fm2:core', type: 'junction', floor: -2, x: 495, y: 322, label: 'ナポレオン・ホール中央'},
-  {id: 'stairs:central:fm2', type: 'stairs', floor: -2, x: 536, y: 326, label: '中央階段', facilityId: 'stairs-central'},
-  {id: 'elevator:central:fm2', type: 'elevator', floor: -2, x: 544, y: 336, label: '中央エレベーター', facilityId: 'elevator-central'},
+  // Floor -2 (aligned to user's exact -2F Hall Napoléon PPT coordinates)
+  {id: 'entrance:pyramid:fm2', type: 'entrance', floor: -2, x: 544, y: 303, label: 'ピラミッド中央入口'},
+  {id: 'junction:fm2:core', type: 'junction', floor: -2, x: 562, y: 303, label: 'ナポレオン・ホール中央'},
+  {id: 'stairs:central:fm2', type: 'stairs', floor: -2, x: 571, y: 303, label: '中央階段', facilityId: 'stairs-central'},
+  {id: 'elevator:central:fm2', type: 'elevator', floor: -2, x: 583, y: 313, label: '中央エレベーター', facilityId: 'elevator-central'},
 
-  // Floor -1 (aligned to user's exact -1F PPT architectural coordinates)
+  // Floor -1 (aligned to user's exact -1F PPT architectural coordinates & all confirmed -1F-0F shafts)
   {id: 'junction:fm1:core', type: 'junction', floor: -1, x: 562, y: 299, label: '中央連絡部'},
   {id: 'stairs:central:fm1', type: 'stairs', floor: -1, x: 562, y: 299, label: '中央階段', facilityId: 'stairs-central'},
-  {id: 'elevator:central:fm1', type: 'elevator', floor: -1, x: 562, y: 312, label: '中央エレベーター', facilityId: 'elevator-central'},
+  {id: 'elevator:central:fm1', type: 'elevator', floor: -1, x: 597.6, y: 199.3, label: 'リシュリュー中央エレベーター', facilityId: 'ev-richelieu-center'},
+  {id: 'elevator:richelieu-nw:fm1', type: 'elevator', floor: -1, x: 529.9, y: 152.5, label: 'リシュリュー北西エレベーター', facilityId: 'ev-richelieu-nw'},
+  {id: 'elevator:sully-west:fm1', type: 'elevator', floor: -1, x: 813.1, y: 256.7, label: 'シュリー西エレベーター', facilityId: 'ev-sully-west'},
+  {id: 'elevator:sully-se:fm1', type: 'elevator', floor: -1, x: 918.2, y: 342.0, label: 'シュリー東・南東エレベーター', facilityId: 'ev-sully-se'},
+  {id: 'escalator:richelieu-center:fm1', type: 'escalator', floor: -1, x: 610.0, y: 212.1, label: 'リシュリュー中央エスカレーター', facilityId: 'escalator-richelieu-center'},
+  {id: 'stairs:richelieu-102-n:fm1', type: 'stairs', floor: -1, x: 494.2, y: 155.5, label: 'リシュリュー西・北階段', facilityId: 'stairs-richelieu-102-n'},
+  {id: 'stairs:richelieu-102-s:fm1', type: 'stairs', floor: -1, x: 496.0, y: 188.7, label: 'リシュリュー西・南階段', facilityId: 'stairs-richelieu-102-s'},
+  {id: 'stairs:richelieu-se:fm1', type: 'stairs', floor: -1, x: 703.5, y: 214.4, label: 'リシュリュー南東階段', facilityId: 'stairs-richelieu-se'},
+  {id: 'stairs:sully-west-n:fm1', type: 'stairs', floor: -1, x: 803.3, y: 283.1, label: 'シュリー西・北階段', facilityId: 'stairs-sully-west-n'},
+  {id: 'stairs:sully-west-s:fm1', type: 'stairs', floor: -1, x: 803.3, y: 311.8, label: 'シュリー西・南階段', facilityId: 'stairs-sully-west-s'},
+  {id: 'stairs:sully-338:fm1', type: 'stairs', floor: -1, x: 901.3, y: 328.4, label: 'シュリー338室階段', facilityId: 'stairs-sully-338'},
+  {id: 'elevator:denon-west:fm1', type: 'elevator', floor: -1, x: 474.7, y: 395.6, label: 'ドゥノン西エレベーター', facilityId: 'ev-denon-west'},
+  {id: 'elevator:denon-center-nw:fm1', type: 'elevator', floor: -1, x: 539.7, y: 357.8, label: 'ドゥノン中央・北西エレベーター', facilityId: 'ev-denon-center-nw'},
+  {id: 'elevator:denon-center-ne:fm1', type: 'elevator', floor: -1, x: 583.3, y: 358.6, label: 'ドゥノン中央・北東エレベーター', facilityId: 'ev-denon-center-ne'},
+  {id: 'elevator:denon-center-w:fm1', type: 'elevator', floor: -1, x: 541.5, y: 387.3, label: 'ドゥノン中央・西エレベーター', facilityId: 'ev-denon-center-w'},
+  {id: 'elevator:denon-center-e:fm1', type: 'elevator', floor: -1, x: 583.3, y: 388.8, label: 'ドゥノン中央・東エレベーター', facilityId: 'ev-denon-center-e'},
+  {id: 'stairs:denon-west:fm1', type: 'stairs', floor: -1, x: 472.9, y: 358.6, label: 'ドゥノン西階段', facilityId: 'stairs-denon-west'},
+  {id: 'stairs:denon-403-e:fm1', type: 'stairs', floor: -1, x: 533.4, y: 370.7, label: 'ドゥノン403東階段', facilityId: 'stairs-denon-403-e'},
+  {id: 'stairs:denon-406-w:fm1', type: 'stairs', floor: -1, x: 589.6, y: 370.7, label: 'ドゥノン406西階段', facilityId: 'stairs-denon-406-w'},
+  {id: 'stairs:daru:fm1', type: 'stairs', floor: -1, x: 658.1, y: 366.9, label: 'ダリュ階段', facilityId: 'stairs-daru'},
+  {id: 'stairs:denon-402-s:fm1', type: 'stairs', floor: -1, x: 484.5, y: 406.9, label: 'ドゥノン南西階段', facilityId: 'stairs-denon-402-s'},
+  {id: 'stairs:denon-405-n:fm1', type: 'stairs', floor: -1, x: 559.3, y: 400.1, label: 'ドゥノン中央・北階段', facilityId: 'stairs-denon-405-n'},
+  {id: 'stairs:denon-405-s:fm1', type: 'stairs', floor: -1, x: 562.8, y: 443.9, label: 'ドゥノン中央・南階段', facilityId: 'stairs-denon-405-s'},
   {id: 'junction:fm1:richelieu', type: 'junction', floor: -1, x: 562, y: 213, label: 'リシュリュー翼連絡部'},
+  {id: 'junction:fm1:sully', type: 'junction', floor: -1, x: 803, y: 299, label: 'シュリー翼連絡部'},
   {id: 'junction:fm1:denon', type: 'junction', floor: -1, x: 562, y: 372, label: 'ドゥノン翼連絡部'},
 
-  // Floor 0 (aligned to user's exact 0F PPT architectural coordinates)
+  // Floor 0 (aligned to user's exact 0F PPT architectural coordinates & all confirmed -1F-0F-1F vertical shafts)
   {id: 'junction:f0:core', type: 'junction', floor: 0, x: 634, y: 220, label: '中央連絡部'},
-  {id: 'stairs:central:f0', type: 'stairs', floor: 0, x: 634, y: 220, label: '中央階段', facilityId: 'stairs-central'},
-  {id: 'elevator:central:f0', type: 'elevator', floor: 0, x: 622, y: 220, label: '中央エレベーター', facilityId: 'elevator-central'},
+  {id: 'elevator:central:f0', type: 'elevator', floor: 0, x: 604.7, y: 203.7, label: 'リシュリュー中央エレベーター', facilityId: 'ev-richelieu-center'},
+  {id: 'escalator:richelieu-center:f0', type: 'escalator', floor: 0, x: 632.3, y: 219.8, label: 'リシュリュー中央エスカレーター', facilityId: 'escalator-richelieu-center'},
+  {id: 'stairs:richelieu-102-n:f0', type: 'stairs', floor: 0, x: 506.7, y: 151.6, label: 'リシュリュー西・北階段', facilityId: 'stairs-richelieu-102-n'},
+  {id: 'stairs:richelieu-102-s:f0', type: 'stairs', floor: 0, x: 506.7, y: 191.7, label: 'リシュリュー西・南階段', facilityId: 'stairs-richelieu-102-s'},
+  {id: 'elevator:richelieu-nw:f0', type: 'elevator', floor: 0, x: 561.9, y: 139.6, label: 'リシュリュー北西エレベーター', facilityId: 'ev-richelieu-nw'},
+  {id: 'elevator:sully-north:f0', type: 'elevator', floor: 0, x: 837.1, y: 215.8, label: 'シュリー北エレベーター', facilityId: 'ev-sully-north'},
+  {id: 'elevator:sully-ne:f0', type: 'elevator', floor: 0, x: 901.3, y: 225.6, label: 'シュリー北東エレベーター', facilityId: 'ev-sully-ne'},
+  {id: 'elevator:sully-west:f0', type: 'elevator', floor: 0, x: 781.9, y: 267.0, label: 'シュリー西エレベーター', facilityId: 'ev-sully-west'},
+  {id: 'elevator:sully-sw:f0', type: 'elevator', floor: 0, x: 820.2, y: 353.8, label: 'シュリー南西エレベーター', facilityId: 'ev-sully-sw'},
+  {id: 'elevator:sully-se:f0', type: 'elevator', floor: 0, x: 904.8, y: 311.9, label: 'シュリー東・南東エレベーター', facilityId: 'ev-sully-se'},
+  {id: 'elevator:denon-west:f0', type: 'elevator', floor: 0, x: 480.9, y: 388.5, label: 'ドゥノン西エレベーター', facilityId: 'ev-denon-west'},
+  {id: 'elevator:denon-center-nw:f0', type: 'elevator', floor: 0, x: 545.9, y: 356.5, label: 'ドゥノン中央・北西エレベーター', facilityId: 'ev-denon-center-nw'},
+  {id: 'elevator:denon-center-ne:f0', type: 'elevator', floor: 0, x: 569.9, y: 356.5, label: 'ドゥノン中央・北東エレベーター', facilityId: 'ev-denon-center-ne'},
+  {id: 'elevator:denon-center-w:f0', type: 'elevator', floor: 0, x: 545.0, y: 386.8, label: 'ドゥノン中央・西エレベーター', facilityId: 'ev-denon-center-w'},
+  {id: 'elevator:denon-center-e:f0', type: 'elevator', floor: 0, x: 571.7, y: 386.8, label: 'ドゥノン中央・東エレベーター', facilityId: 'ev-denon-center-e'},
+  {id: 'elevator:denon-farwest:f0', type: 'elevator', floor: 0, x: 116.6, y: 459.8, label: 'ドゥノン西端エレベーター', facilityId: 'ev-denon-farwest'},
+  {id: 'stairs:richelieu-nw:f0', type: 'stairs', floor: 0, x: 570.8, y: 128.5, label: 'リシュリュー北西階段', facilityId: 'stairs-richelieu-nw'},
+  {id: 'stairs:richelieu-se:f0', type: 'stairs', floor: 0, x: 695.5, y: 230.9, label: 'リシュリュー南東階段', facilityId: 'stairs-richelieu-se'},
+  {id: 'stairs:sully-n-west:f0', type: 'stairs', floor: 0, x: 830.9, y: 239.8, label: 'シュリー北西階段', facilityId: 'stairs-sully-n-west'},
+  {id: 'stairs:sully-n-east:f0', type: 'stairs', floor: 0, x: 871.0, y: 237.1, label: 'シュリー北中央階段', facilityId: 'stairs-sully-n-east'},
+  {id: 'stairs:sully-ne-lower:f0', type: 'stairs', floor: 0, x: 920.9, y: 248.7, label: 'シュリー北東下層階段', facilityId: 'stairs-sully-ne-lower'},
+  {id: 'stairs:sully-west-n:f0', type: 'stairs', floor: 0, x: 794.4, y: 275.4, label: 'シュリー西・北階段', facilityId: 'stairs-sully-west-n'},
+  {id: 'stairs:sully-west-s:f0', type: 'stairs', floor: 0, x: 796.2, y: 311.1, label: 'シュリー西・南階段', facilityId: 'stairs-sully-west-s'},
+  {id: 'stairs:sully-se:f0', type: 'stairs', floor: 0, x: 912.8, y: 362.7, label: 'シュリー南東階段', facilityId: 'stairs-sully-se'},
+  {id: 'stairs:sully-338:f0', type: 'stairs', floor: 0, x: 859.0, y: 361.0, label: 'シュリー338室階段', facilityId: 'stairs-sully-338'},
+  {id: 'stairs:daru-west:f0', type: 'stairs', floor: 0, x: 636.8, y: 369.0, label: 'ダリュ階段（西）', facilityId: 'stairs-daru'},
+  {id: 'stairs:daru-east:f0', type: 'stairs', floor: 0, x: 686.6, y: 366.3, label: 'ダリュ階段（東）', facilityId: 'stairs-daru'},
+  {id: 'stairs:denon-west:f0', type: 'stairs', floor: 0, x: 485.3, y: 374.3, label: 'ドゥノン西階段', facilityId: 'stairs-denon-west'},
+  {id: 'stairs:denon-403-e:f0', type: 'stairs', floor: 0, x: 540.6, y: 370.7, label: 'ドゥノン403東階段', facilityId: 'stairs-denon-403-e'},
+  {id: 'stairs:denon-406-w:f0', type: 'stairs', floor: 0, x: 575.3, y: 369.8, label: 'ドゥノン406西階段', facilityId: 'stairs-denon-406-w'},
+  {id: 'stairs:denon-402-s:f0', type: 'stairs', floor: 0, x: 494.2, y: 451.8, label: 'ドゥノン南西階段', facilityId: 'stairs-denon-402-s'},
+  {id: 'stairs:denon-405-n:f0', type: 'stairs', floor: 0, x: 558.4, y: 386.8, label: 'ドゥノン中央・北階段', facilityId: 'stairs-denon-405-n'},
+  {id: 'stairs:denon-405-s:f0', type: 'stairs', floor: 0, x: 559.3, y: 450.0, label: 'ドゥノン中央・南階段', facilityId: 'stairs-denon-405-s'},
+  {id: 'stairs:denon-farwest:f0', type: 'stairs', floor: 0, x: 105.0, y: 470.5, label: 'ドゥノン西端階段', facilityId: 'stairs-denon-farwest'},
   {id: 'junction:f0:richelieu', type: 'junction', floor: 0, x: 678, y: 206, label: 'リシュリュー翼廊下'},
   {id: 'junction:f0:sully', type: 'junction', floor: 0, x: 796, y: 312, label: 'シュリー翼連絡部'},
   {id: 'junction:f0:denon', type: 'junction', floor: 0, x: 558, y: 369, label: 'ドゥノン翼廊下'},
 
-  // Floor 1 (aligned to user's exact 1F PPT architectural coordinates)
+  // Floor 1 (aligned to user's exact 1F PPT architectural coordinates & verified 0F-1F-2F vertical shafts)
   {id: 'junction:f1:core', type: 'junction', floor: 1, x: 632, y: 220, label: '中央連絡部'},
-  {id: 'stairs:central:f1', type: 'stairs', floor: 1, x: 632, y: 220, label: '中央階段', facilityId: 'stairs-central'},
-  {id: 'elevator:central:f1', type: 'elevator', floor: 1, x: 620, y: 220, label: '中央エレベーター', facilityId: 'elevator-central'},
+  {id: 'elevator:central:f1', type: 'elevator', floor: 1, x: 604.7, y: 205.1, label: 'リシュリュー中央エレベーター', facilityId: 'ev-richelieu-center'},
+  {id: 'escalator:richelieu-center:f1', type: 'escalator', floor: 1, x: 632.3, y: 219.8, label: 'リシュリュー中央エスカレーター', facilityId: 'escalator-richelieu-center'},
+  {id: 'elevator:richelieu-nw:f1', type: 'elevator', floor: 1, x: 561.9, y: 139.6, label: 'リシュリュー北西エレベーター', facilityId: 'ev-richelieu-nw'},
+  {id: 'elevator:sully-north:f1', type: 'elevator', floor: 1, x: 837.1, y: 222.9, label: 'シュリー北エレベーター', facilityId: 'ev-sully-north'},
+  {id: 'elevator:sully-ne:f1', type: 'elevator', floor: 1, x: 901.3, y: 227.3, label: 'シュリー北東エレベーター', facilityId: 'ev-sully-ne'},
+  {id: 'elevator:sully-west:f1', type: 'elevator', floor: 1, x: 781.9, y: 267.0, label: 'シュリー西エレベーター', facilityId: 'ev-sully-west'},
+  {id: 'elevator:sully-sw:f1', type: 'elevator', floor: 1, x: 821.1, y: 356.5, label: 'シュリー南西エレベーター', facilityId: 'ev-sully-sw'},
+  {id: 'elevator:denon-west:f1', type: 'elevator', floor: 1, x: 480.9, y: 388.5, label: 'ドゥノン西エレベーター', facilityId: 'ev-denon-west'},
+  {id: 'elevator:denon-center-w:f1', type: 'elevator', floor: 1, x: 550.4, y: 386.3, label: 'ドゥノン中央・西エレベーター', facilityId: 'ev-denon-center-w'},
+  {id: 'elevator:denon-center-e:f1', type: 'elevator', floor: 1, x: 564.6, y: 386.3, label: 'ドゥノン中央・東エレベーター', facilityId: 'ev-denon-center-e'},
+  {id: 'elevator:denon-farwest:f1', type: 'elevator', floor: 1, x: 116.6, y: 454.0, label: 'ドゥノン西端エレベーター', facilityId: 'ev-denon-farwest'},
+  {id: 'stairs:richelieu-nw:f1', type: 'stairs', floor: 1, x: 569.9, y: 128.5, label: 'リシュリュー北西階段', facilityId: 'stairs-richelieu-nw'},
+  {id: 'stairs:richelieu-se:f1', type: 'stairs', floor: 1, x: 707.1, y: 234.0, label: 'リシュリュー南東階段', facilityId: 'stairs-richelieu-se'},
+  {id: 'stairs:sully-n-west:f1', type: 'stairs', floor: 1, x: 831.8, y: 238.0, label: 'シュリー北西階段', facilityId: 'stairs-sully-n-west'},
+  {id: 'stairs:sully-n-east:f1', type: 'stairs', floor: 1, x: 870.1, y: 237.1, label: 'シュリー北中央階段', facilityId: 'stairs-sully-n-east'},
+  {id: 'stairs:sully-ne:f1', type: 'stairs', floor: 1, x: 899.5, y: 241.1, label: 'シュリー北東階段', facilityId: 'stairs-sully-ne'},
+  {id: 'stairs:sully-ne-lower:f1', type: 'stairs', floor: 1, x: 920.9, y: 248.3, label: 'シュリー北東下層階段', facilityId: 'stairs-sully-ne-lower'},
+  {id: 'stairs:sully-west-n:f1', type: 'stairs', floor: 1, x: 794.4, y: 275.9, label: 'シュリー西・北階段', facilityId: 'stairs-sully-west-n'},
+  {id: 'stairs:sully-west-s:f1', type: 'stairs', floor: 1, x: 796.2, y: 311.1, label: 'シュリー西・南階段', facilityId: 'stairs-sully-west-s'},
+  {id: 'stairs:sully-se:f1', type: 'stairs', floor: 1, x: 912.8, y: 361.8, label: 'シュリー南東階段', facilityId: 'stairs-sully-se'},
+  {id: 'stairs:daru:f1', type: 'stairs', floor: 1, x: 662.6, y: 371.6, label: 'ダリュ階段', facilityId: 'stairs-daru'},
+  {id: 'stairs:denon-west:f1', type: 'stairs', floor: 1, x: 485.3, y: 373.4, label: 'ドゥノン西階段', facilityId: 'stairs-denon-west'},
+  {id: 'stairs:denon-farwest:f1', type: 'stairs', floor: 1, x: 110.4, y: 467.8, label: 'ドゥノン西端階段', facilityId: 'stairs-denon-farwest'},
   {id: 'junction:f1:richelieu', type: 'junction', floor: 1, x: 589, y: 208, label: 'リシュリュー翼連絡部'},
   {id: 'junction:f1:sully', type: 'junction', floor: 1, x: 796, y: 315, label: 'シュリー翼連絡部'},
   {id: 'junction:f1:denon-east', type: 'junction', floor: 1, x: 703, y: 367, label: 'ドゥノン翼東分岐'},
@@ -1708,8 +2457,19 @@ const nodes = [
 
   // Floor 2 (aligned to user's exact 2F PPT architectural coordinates)
   {id: 'junction:f2:core', type: 'junction', floor: 2, x: 631, y: 220, label: '中央連絡部'},
-  {id: 'stairs:central:f2', type: 'stairs', floor: 2, x: 631, y: 220, label: '中央階段', facilityId: 'stairs-central'},
-  {id: 'elevator:central:f2', type: 'elevator', floor: 2, x: 619, y: 220, label: '中央エレベーター', facilityId: 'elevator-central'},
+  {id: 'elevator:central:f2', type: 'elevator', floor: 2, x: 602.9, y: 205.1, label: 'リシュリュー中央エレベーター', facilityId: 'ev-richelieu-center'},
+  {id: 'escalator:richelieu-center:f2', type: 'escalator', floor: 2, x: 631.4, y: 219.8, label: 'リシュリュー中央エスカレーター', facilityId: 'escalator-richelieu-center'},
+  {id: 'elevator:richelieu-nw:f2', type: 'elevator', floor: 2, x: 561.0, y: 139.6, label: 'リシュリュー北西エレベーター', facilityId: 'ev-richelieu-nw'},
+  {id: 'elevator:sully-north:f2', type: 'elevator', floor: 2, x: 837.1, y: 222.9, label: 'シュリー北エレベーター', facilityId: 'ev-sully-north'},
+  {id: 'elevator:sully-west:f2', type: 'elevator', floor: 2, x: 781.9, y: 266.5, label: 'シュリー西エレベーター', facilityId: 'ev-sully-west'},
+  {id: 'elevator:sully-sw:f2', type: 'elevator', floor: 2, x: 810.4, y: 371.6, label: 'シュリー南西エレベーター', facilityId: 'ev-sully-sw'},
+  {id: 'stairs:richelieu-nw:f2', type: 'stairs', floor: 2, x: 568.2, y: 128.5, label: 'リシュリュー北西階段', facilityId: 'stairs-richelieu-nw'},
+  {id: 'stairs:sully-n-west:f2', type: 'stairs', floor: 2, x: 830.9, y: 237.1, label: 'シュリー北西階段', facilityId: 'stairs-sully-n-west'},
+  {id: 'stairs:sully-n-east:f2', type: 'stairs', floor: 2, x: 869.2, y: 233.6, label: 'シュリー北中央階段', facilityId: 'stairs-sully-n-east'},
+  {id: 'stairs:sully-ne:f2', type: 'stairs', floor: 2, x: 899.5, y: 236.2, label: 'シュリー北東階段', facilityId: 'stairs-sully-ne'},
+  {id: 'stairs:sully-west-n:f2', type: 'stairs', floor: 2, x: 795.3, y: 277.2, label: 'シュリー西・北階段', facilityId: 'stairs-sully-west-n'},
+  {id: 'stairs:sully-west-s:f2', type: 'stairs', floor: 2, x: 795.3, y: 309.3, label: 'シュリー西・南階段', facilityId: 'stairs-sully-west-s'},
+  {id: 'stairs:sully-se:f2', type: 'stairs', floor: 2, x: 912.8, y: 355.6, label: 'シュリー南東階段', facilityId: 'stairs-sully-se'},
   {id: 'junction:f2:richelieu', type: 'junction', floor: 2, x: 588, y: 208, label: 'リシュリュー翼連絡部'},
   {id: 'junction:f2:sully-west', type: 'junction', floor: 2, x: 730, y: 232, label: 'シュリー翼連絡部（830室）'},
   {id: 'junction:f2:sully-north', type: 'junction', floor: 2, x: 805, y: 237, label: 'シュリー翼北回廊'},
@@ -1775,71 +2535,166 @@ const edges = [
   {from: 'junction:fm2:core', to: 'stairs:central:fm2', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:fm2:core', to: 'elevator:central:fm2', cost: 7, kind: 'corridor', available: true},
 
-  // Floor -1 (walks cleanly through Hall Napoléon Y-concourse & -1F rooms)
+  // Floor -1 (walks cleanly through Hall Napoléon Y-concourse & all confirmed -1F-0F facilities)
   {from: 'stairs:central:fm1', to: 'junction:fm1:core', cost: 2, kind: 'corridor', available: true},
-  {from: 'elevator:central:fm1', to: 'junction:fm1:core', cost: 3, kind: 'corridor', available: true},
+  {from: 'elevator:central:fm1', to: 'junction:fm1:richelieu', cost: 4, kind: 'corridor', available: true},
+  {from: 'escalator:richelieu-center:fm1', to: 'junction:fm1:richelieu', cost: 4, kind: 'corridor', available: true},
+  {from: 'escalator:richelieu-center:fm1', to: 'stairs:richelieu-se:fm1', cost: 9, kind: 'corridor', available: true},
   {from: 'junction:fm1:core', to: 'junction:fm1:richelieu', cost: 12, kind: 'corridor', via: [[584, 299], [562, 260]], available: true},
   {from: 'junction:fm1:richelieu', to: 'door:fm1:102', cost: 6, kind: 'corridor', via: [[562, 172]], available: true},
+  {from: 'door:fm1:102', to: 'elevator:richelieu-nw:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:fm1:102', to: 'stairs:richelieu-102-n:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:fm1:102', to: 'stairs:richelieu-102-s:fm1', cost: 3, kind: 'corridor', available: true},
   {from: 'door:fm1:102', to: 'door:fm1:105', cost: 9, kind: 'corridor', available: true},
+  {from: 'junction:fm1:core', to: 'junction:fm1:sully', cost: 16, kind: 'corridor', available: true},
+  {from: 'junction:fm1:sully', to: 'stairs:sully-west-n:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:sully', to: 'stairs:sully-west-s:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'stairs:sully-west-n:fm1', to: 'elevator:sully-west:fm1', cost: 4, kind: 'corridor', available: true},
+  {from: 'junction:fm1:sully', to: 'stairs:sully-338:fm1', cost: 12, kind: 'corridor', via: [[855, 299]], available: true},
+  {from: 'stairs:sully-338:fm1', to: 'elevator:sully-se:fm1', cost: 4, kind: 'corridor', available: true},
   {from: 'junction:fm1:core', to: 'junction:fm1:denon', cost: 12, kind: 'corridor', via: [[584, 299], [562, 336]], available: true},
+  {from: 'junction:fm1:denon', to: 'elevator:denon-center-nw:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:denon', to: 'elevator:denon-center-ne:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:denon', to: 'elevator:denon-center-w:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:denon', to: 'elevator:denon-center-e:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:denon', to: 'stairs:denon-403-e:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:denon', to: 'stairs:denon-406-w:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:fm1:denon', to: 'stairs:denon-405-n:fm1', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:denon-405-n:fm1', to: 'stairs:denon-405-s:fm1', cost: 5, kind: 'corridor', available: true},
   {from: 'junction:fm1:denon', to: 'door:fm1:169', cost: 10, kind: 'corridor', via: [[484, 372]], available: true},
+  {from: 'door:fm1:169', to: 'elevator:denon-west:fm1', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:fm1:169', to: 'stairs:denon-west:fm1', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:fm1:169', to: 'stairs:denon-402-s:fm1', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:fm1:denon', to: 'door:fm1:170', cost: 6, kind: 'corridor', available: true},
+  {from: 'door:fm1:170', to: 'stairs:daru:fm1', cost: 5, kind: 'corridor', available: true},
   {from: 'door:fm1:169', to: 'door:fm1:170', cost: 14, kind: 'corridor', via: [[484, 372], [562, 372]], available: true},
 
-  // Floor 0 (walks cleanly through the 0F PPT rooms & doorways)
-  {from: 'stairs:central:f0', to: 'junction:f0:core', cost: 2, kind: 'corridor', available: true},
+  // Floor 0 (walks cleanly through the 0F PPT rooms, doorways & all verified -1F-0F-1F facilities)
   {from: 'elevator:central:f0', to: 'junction:f0:core', cost: 3, kind: 'corridor', available: true},
+  {from: 'escalator:richelieu-center:f0', to: 'junction:f0:core', cost: 1, kind: 'corridor', available: true},
+  {from: 'stairs:richelieu-102-n:f0', to: 'stairs:richelieu-102-s:f0', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:richelieu-102-s:f0', to: 'junction:f0:core', cost: 13, kind: 'corridor', via: [[550, 214]], available: true},
+  {from: 'stairs:richelieu-102-n:f0', to: 'stairs:richelieu-nw:f0', cost: 7, kind: 'corridor', via: [[540, 130]], available: true},
   {from: 'junction:f0:core', to: 'junction:f0:richelieu', cost: 8, kind: 'corridor', via: [[658, 214]], available: true},
+  {from: 'junction:f0:core', to: 'elevator:richelieu-nw:f0', cost: 14, kind: 'corridor', via: [[600, 140]], available: true},
+  {from: 'junction:f0:core', to: 'stairs:richelieu-nw:f0', cost: 14, kind: 'corridor', via: [[600, 130]], available: true},
   {from: 'junction:f0:richelieu', to: 'door:f0:234', cost: 4, kind: 'corridor', available: true},
+  {from: 'door:f0:234', to: 'stairs:richelieu-se:f0', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f0:richelieu', to: 'door:f0:229', cost: 8, kind: 'corridor', via: [[681, 158]], available: true},
   {from: 'door:f0:229', to: 'door:f0:227', cost: 5, kind: 'corridor', available: true},
   {from: 'door:f0:234', to: 'junction:f0:sully', cost: 14, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  {from: 'door:f0:234', to: 'elevator:sully-west:f0', cost: 10, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  {from: 'door:f0:234', to: 'stairs:sully-west-n:f0', cost: 10, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  {from: 'door:f0:234', to: 'stairs:sully-n-west:f0', cost: 12, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  {from: 'stairs:sully-n-west:f0', to: 'elevator:sully-north:f0', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-west:f0', to: 'stairs:sully-n-east:f0', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-east:f0', to: 'elevator:sully-ne:f0', cost: 4, kind: 'corridor', available: true},
+  {from: 'elevator:sully-ne:f0', to: 'stairs:sully-ne-lower:f0', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:sully-ne-lower:f0', to: 'elevator:sully-se:f0', cost: 8, kind: 'corridor', via: [[915, 280]], available: true},
+  {from: 'elevator:sully-se:f0', to: 'stairs:sully-se:f0', cost: 8, kind: 'corridor', via: [[915, 335]], available: true},
+  {from: 'stairs:sully-west-n:f0', to: 'stairs:sully-west-s:f0', cost: 4, kind: 'corridor', available: true},
+  {from: 'elevator:sully-west:f0', to: 'junction:f0:sully', cost: 6, kind: 'corridor', via: [[796, 290]], available: true},
+  {from: 'stairs:sully-west-s:f0', to: 'junction:f0:sully', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f0:core', to: 'junction:f0:sully', cost: 16, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
   {from: 'junction:f0:sully', to: 'door:f0:348', cost: 4, kind: 'corridor', available: true},
   {from: 'door:f0:348', to: 'door:f0:345', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f0:345', to: 'elevator:sully-sw:f0', cost: 4, kind: 'corridor', available: true},
+  {from: 'elevator:sully-sw:f0', to: 'door:f0:344', cost: 3, kind: 'corridor', available: true},
   {from: 'door:f0:345', to: 'door:f0:344', cost: 5, kind: 'corridor', available: true},
   {from: 'door:f0:344', to: 'door:f0:338', cost: 6, kind: 'corridor', available: true},
+  {from: 'door:f0:338', to: 'stairs:sully-338:f0', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f0:338', to: 'stairs:sully-se:f0', cost: 8, kind: 'corridor', via: [[890, 364]], available: true},
   {from: 'junction:f0:core', to: 'junction:f0:denon', cost: 16, kind: 'corridor', via: [[558, 290]], available: true},
   {from: 'junction:f0:denon', to: 'door:f0:403', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f0:403', to: 'stairs:denon-west:f0', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:denon-west:f0', to: 'elevator:denon-west:f0', cost: 2, kind: 'corridor', available: true},
+  {from: 'elevator:denon-west:f0', to: 'stairs:denon-402-s:f0', cost: 8, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'stairs:denon-403-e:f0', cost: 2, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'stairs:denon-406-w:f0', cost: 2, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'elevator:denon-center-nw:f0', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'elevator:denon-center-ne:f0', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'elevator:denon-center-w:f0', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'elevator:denon-center-e:f0', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'stairs:denon-405-n:f0', cost: 3, kind: 'corridor', available: true},
+  {from: 'stairs:denon-405-n:f0', to: 'stairs:denon-405-s:f0', cost: 7, kind: 'corridor', available: true},
+  {from: 'junction:f0:denon', to: 'stairs:daru-west:f0', cost: 9, kind: 'corridor', available: true},
+  {from: 'stairs:daru-west:f0', to: 'stairs:daru-east:f0', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:daru-east:f0', to: 'door:f0:345', cost: 11, kind: 'corridor', via: [[733, 367], [762, 359]], available: true},
   {from: 'junction:f0:denon', to: 'door:f0:345', cost: 18, kind: 'corridor', via: [[664, 369], [733, 367], [762, 359]], available: true},
+  {from: 'elevator:denon-farwest:f0', to: 'stairs:denon-farwest:f0', cost: 2, kind: 'corridor', available: true},
 
-  // Floor 1 (walks cleanly through the 1F PPT rooms & doorways)
-  {from: 'stairs:central:f1', to: 'junction:f1:core', cost: 2, kind: 'corridor', available: true},
+  // Floor 1 (walks cleanly through the 1F PPT rooms, doorways & verified 0F-1F-2F facilities)
+  {from: 'escalator:richelieu-center:f1', to: 'junction:f1:core', cost: 1, kind: 'corridor', available: true},
   {from: 'elevator:central:f1', to: 'junction:f1:core', cost: 3, kind: 'corridor', available: true},
+  {from: 'elevator:central:f1', to: 'junction:f1:richelieu', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f1:core', to: 'junction:f1:richelieu', cost: 6, kind: 'corridor', via: [[610, 220]], available: true},
+  {from: 'junction:f1:core', to: 'stairs:richelieu-se:f1', cost: 8, kind: 'corridor', via: [[686, 220]], available: true},
+  {from: 'stairs:richelieu-se:f1', to: 'door:f1:605', cost: 8, kind: 'corridor', via: [[731, 232], [760, 232]], available: true},
   {from: 'junction:f1:richelieu', to: 'door:f1:501', cost: 4, kind: 'corridor', available: true},
   {from: 'door:f1:501', to: 'door:f1:502', cost: 3, kind: 'corridor', available: true},
   {from: 'door:f1:502', to: 'door:f1:507', cost: 8, kind: 'corridor', via: [[589, 133]], available: true},
+  {from: 'door:f1:502', to: 'elevator:richelieu-nw:f1', cost: 5, kind: 'corridor', via: [[589, 133]], available: true},
+  {from: 'door:f1:502', to: 'stairs:richelieu-nw:f1', cost: 5, kind: 'corridor', via: [[589, 133]], available: true},
+  {from: 'door:f1:507', to: 'stairs:richelieu-nw:f1', cost: 6, kind: 'corridor', via: [[589, 133]], available: true},
   {from: 'junction:f1:richelieu', to: 'door:f1:544', cost: 12, kind: 'corridor', via: [[536, 214]], available: true},
   {from: 'junction:f1:core', to: 'door:f1:605', cost: 14, kind: 'corridor', via: [[686, 220], [731, 232], [760, 232]], available: true},
   {from: 'door:f1:605', to: 'junction:f1:sully', cost: 12, kind: 'corridor', via: [[796, 262]], available: true},
+  {from: 'door:f1:605', to: 'elevator:sully-west:f1', cost: 5, kind: 'corridor', via: [[796, 262]], available: true},
+  {from: 'door:f1:605', to: 'stairs:sully-west-n:f1', cost: 5, kind: 'corridor', via: [[796, 262]], available: true},
+  {from: 'stairs:sully-west-n:f1', to: 'stairs:sully-west-s:f1', cost: 4, kind: 'corridor', available: true},
+  {from: 'elevator:sully-west:f1', to: 'junction:f1:sully', cost: 6, kind: 'corridor', via: [[796, 290]], available: true},
+  {from: 'stairs:sully-west-s:f1', to: 'junction:f1:sully', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f1:sully', to: 'door:f1:663', cost: 4, kind: 'corridor', available: true},
+  {from: 'door:f1:605', to: 'stairs:sully-n-west:f1', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-west:f1', to: 'elevator:sully-north:f1', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-west:f1', to: 'stairs:sully-n-east:f1', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-east:f1', to: 'stairs:sully-ne:f1', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:sully-ne:f1', to: 'elevator:sully-ne:f1', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:sully-ne:f1', to: 'stairs:sully-ne-lower:f1', cost: 3, kind: 'corridor', available: true},
+  {from: 'stairs:sully-ne-lower:f1', to: 'door:f1:635', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:sully-ne:f1', to: 'door:f1:635', cost: 6, kind: 'corridor', via: [[916, 241]], available: true},
   {from: 'door:f1:605', to: 'door:f1:635', cost: 18, kind: 'corridor', via: [[852, 237], [916, 237]], available: true},
+  {from: 'door:f1:635', to: 'stairs:sully-se:f1', cost: 9, kind: 'corridor', via: [[916, 362]], available: true},
+  {from: 'stairs:sully-se:f1', to: 'elevator:sully-sw:f1', cost: 10, kind: 'corridor', via: [[870, 362]], available: true},
+  {from: 'elevator:sully-sw:f1', to: 'door:f1:663', cost: 5, kind: 'corridor', via: [[796, 362]], available: true},
   {from: 'door:f1:663', to: 'door:f1:635', cost: 18, kind: 'corridor', via: [[796, 367], [916, 367]], available: true},
   {from: 'door:f1:663', to: 'junction:f1:denon-east', cost: 10, kind: 'corridor', via: [[796, 367], [760, 363], [733, 367]], available: true},
   {from: 'junction:f1:core', to: 'junction:f1:denon-east', cost: 16, kind: 'corridor', via: [[664, 300], [664, 367]], available: true},
   {from: 'junction:f1:denon-east', to: 'door:f1:703', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:703', to: 'stairs:daru:f1', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:daru:f1', to: 'door:f1:702', cost: 6, kind: 'corridor', available: true},
   {from: 'door:f1:703', to: 'door:f1:708', cost: 9, kind: 'corridor', via: [[707, 422], [707, 475]], available: true},
   {from: 'door:f1:708', to: 'door:f1:710', cost: 8, kind: 'corridor', available: true},
   {from: 'door:f1:703', to: 'door:f1:702', cost: 10, kind: 'corridor', via: [[664, 367]], available: true},
   {from: 'door:f1:702', to: 'junction:f1:denon-center', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:f1:denon-center', to: 'door:f1:701', cost: 2, kind: 'corridor', available: true},
+  {from: 'junction:f1:denon-center', to: 'elevator:denon-center-w:f1', cost: 3, kind: 'corridor', available: true},
+  {from: 'junction:f1:denon-center', to: 'elevator:denon-center-e:f1', cost: 3, kind: 'corridor', available: true},
   {from: 'junction:f1:denon-center', to: 'door:f1:700', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f1:700', to: 'stairs:denon-west:f1', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:denon-west:f1', to: 'elevator:denon-west:f1', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f1:denon-center', to: 'door:f1:711', cost: 5, kind: 'corridor', available: true},
   {from: 'door:f1:711', to: 'junction:f1:grande-galerie', cost: 5, kind: 'corridor', available: true},
   {from: 'junction:f1:grande-galerie', to: 'door:f1:710', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:f1:grande-galerie', to: 'door:f1:712', cost: 6, kind: 'corridor', available: true},
   {from: 'door:f1:712', to: 'door:f1:716', cost: 12, kind: 'corridor', available: true},
   {from: 'door:f1:716', to: 'door:f1:718', cost: 14, kind: 'corridor', via: [[208, 475], [208, 450]], available: true},
+  {from: 'door:f1:718', to: 'elevator:denon-farwest:f1', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f1:718', to: 'stairs:denon-farwest:f1', cost: 6, kind: 'corridor', via: [[117, 454]], available: true},
   {from: 'door:f1:703', to: 'door:f1:663', cost: 10, kind: 'corridor', via: [[733, 367], [796, 367]], available: true},
 
-  // Floor 2 (walks cleanly through the 2F PPT rooms & doorways)
-  {from: 'stairs:central:f2', to: 'junction:f2:core', cost: 2, kind: 'corridor', available: true},
+  // Floor 2 (walks cleanly through the 2F PPT rooms, doorways & verified 1F-2F facilities)
+  {from: 'escalator:richelieu-center:f2', to: 'junction:f2:core', cost: 1, kind: 'corridor', available: true},
   {from: 'elevator:central:f2', to: 'junction:f2:core', cost: 3, kind: 'corridor', available: true},
+  {from: 'elevator:central:f2', to: 'junction:f2:richelieu', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f2:core', to: 'junction:f2:richelieu', cost: 6, kind: 'corridor', via: [[608, 220]], available: true},
   {from: 'junction:f2:richelieu', to: 'door:f2:837', cost: 6, kind: 'corridor', available: true},
   {from: 'door:f2:837', to: 'door:f2:844', cost: 8, kind: 'corridor', via: [[502, 213]], available: true},
+  {from: 'door:f2:844', to: 'elevator:richelieu-nw:f2', cost: 8, kind: 'corridor', via: [[502, 133]], available: true},
+  {from: 'door:f2:844', to: 'stairs:richelieu-nw:f2', cost: 8, kind: 'corridor', via: [[502, 133]], available: true},
   {from: 'junction:f2:richelieu', to: 'door:f2:801', cost: 5, kind: 'corridor', available: true},
+  {from: 'door:f2:801', to: 'elevator:richelieu-nw:f2', cost: 5, kind: 'corridor', via: [[588, 133]], available: true},
+  {from: 'door:f2:801', to: 'stairs:richelieu-nw:f2', cost: 5, kind: 'corridor', via: [[588, 133]], available: true},
   {from: 'door:f2:801', to: 'door:f2:814', cost: 9, kind: 'corridor', via: [[588, 133], [629, 133]], available: true},
   {from: 'junction:f2:core', to: 'door:f2:818', cost: 7, kind: 'corridor', via: [[683, 220]], available: true},
   {from: 'door:f2:818', to: 'door:f2:814', cost: 7, kind: 'corridor', via: [[683, 152]], available: true},
@@ -1849,22 +2704,94 @@ const edges = [
   {from: 'junction:f2:core', to: 'junction:f2:sully-west', cost: 10, kind: 'corridor', via: [[685, 220], [685, 232]], available: true},
   {from: 'junction:f2:sully-west', to: 'junction:f2:sully-north', cost: 8, kind: 'corridor', via: [[759, 232]], available: true},
   {from: 'junction:f2:sully-north', to: 'door:f2:912', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f2:912', to: 'elevator:sully-west:f2', cost: 5, kind: 'corridor', via: [[796, 262]], available: true},
+  {from: 'door:f2:912', to: 'stairs:sully-west-n:f2', cost: 5, kind: 'corridor', via: [[796, 262]], available: true},
+  {from: 'stairs:sully-west-n:f2', to: 'stairs:sully-west-s:f2', cost: 4, kind: 'corridor', available: true},
+  {from: 'elevator:sully-west:f2', to: 'stairs:sully-west-s:f2', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:sully-west-s:f2', to: 'elevator:sully-sw:f2', cost: 8, kind: 'corridor', via: [[796, 365]], available: true},
+  {from: 'elevator:sully-sw:f2', to: 'door:f2:940', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f2:912', to: 'stairs:sully-n-west:f2', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-west:f2', to: 'elevator:sully-north:f2', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-west:f2', to: 'stairs:sully-n-east:f2', cost: 5, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-east:f2', to: 'stairs:sully-ne:f2', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:sully-ne:f2', to: 'door:f2:917', cost: 5, kind: 'corridor', via: [[915, 237]], available: true},
   {from: 'door:f2:912', to: 'door:f2:917', cost: 12, kind: 'corridor', via: [[915, 237]], available: true},
   {from: 'door:f2:917', to: 'door:f2:919', cost: 4, kind: 'corridor', available: true},
   {from: 'door:f2:919', to: 'junction:f2:sully-east', cost: 6, kind: 'corridor', available: true},
   {from: 'junction:f2:sully-east', to: 'door:f2:929', cost: 6, kind: 'corridor', available: true},
+  {from: 'door:f2:929', to: 'stairs:sully-se:f2', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:sully-se:f2', to: 'door:f2:931', cost: 4, kind: 'corridor', via: [[915, 365]], available: true},
   {from: 'door:f2:929', to: 'door:f2:931', cost: 5, kind: 'corridor', via: [[915, 365]], available: true},
   {from: 'door:f2:931', to: 'door:f2:940', cost: 10, kind: 'corridor', available: true},
 
-  // Vertical connections (stairs & elevator across all 5 floors)
+  // Vertical connections (-2F..-1F interim central shafts + verified -1F <-> 0F <-> 1F <-> 2F shafts)
   {from: 'stairs:central:fm2', to: 'stairs:central:fm1', cost: 18, kind: 'stairs', facilityId: 'stairs-central', available: true},
-  {from: 'stairs:central:fm1', to: 'stairs:central:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-central', available: true},
-  {from: 'stairs:central:f0', to: 'stairs:central:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-central', available: true},
-  {from: 'stairs:central:f1', to: 'stairs:central:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-central', available: true},
   {from: 'elevator:central:fm2', to: 'elevator:central:fm1', cost: 22, kind: 'elevator', facilityId: 'elevator-central', available: true},
-  {from: 'elevator:central:fm1', to: 'elevator:central:f0', cost: 22, kind: 'elevator', facilityId: 'elevator-central', available: true},
-  {from: 'elevator:central:f0', to: 'elevator:central:f1', cost: 22, kind: 'elevator', facilityId: 'elevator-central', available: true},
-  {from: 'elevator:central:f1', to: 'elevator:central:f2', cost: 22, kind: 'elevator', facilityId: 'elevator-central', available: true}
+
+  // Verified -1F <-> 0F vertical connections (9 EV + 1 Escalator + 13 Stairs)
+  {from: 'elevator:richelieu-nw:fm1', to: 'elevator:richelieu-nw:f0', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-nw', available: true},
+  {from: 'elevator:central:fm1', to: 'elevator:central:f0', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-center', available: true},
+  {from: 'elevator:sully-west:fm1', to: 'elevator:sully-west:f0', cost: 22, kind: 'elevator', facilityId: 'ev-sully-west', available: true},
+  {from: 'elevator:sully-se:fm1', to: 'elevator:sully-se:f0', cost: 22, kind: 'elevator', facilityId: 'ev-sully-se', available: true},
+  {from: 'elevator:denon-west:fm1', to: 'elevator:denon-west:f0', cost: 22, kind: 'elevator', facilityId: 'ev-denon-west', available: true},
+  {from: 'elevator:denon-center-nw:fm1', to: 'elevator:denon-center-nw:f0', cost: 22, kind: 'elevator', facilityId: 'ev-denon-center-nw', available: true},
+  {from: 'elevator:denon-center-ne:fm1', to: 'elevator:denon-center-ne:f0', cost: 22, kind: 'elevator', facilityId: 'ev-denon-center-ne', available: true},
+  {from: 'elevator:denon-center-w:fm1', to: 'elevator:denon-center-w:f0', cost: 22, kind: 'elevator', facilityId: 'ev-denon-center-w', available: true},
+  {from: 'elevator:denon-center-e:fm1', to: 'elevator:denon-center-e:f0', cost: 22, kind: 'elevator', facilityId: 'ev-denon-center-e', available: true},
+  {from: 'escalator:richelieu-center:fm1', to: 'escalator:richelieu-center:f0', cost: 16, kind: 'escalator', facilityId: 'escalator-richelieu-center', available: true},
+  {from: 'stairs:richelieu-102-n:fm1', to: 'stairs:richelieu-102-n:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-richelieu-102-n', available: true},
+  {from: 'stairs:richelieu-102-s:fm1', to: 'stairs:richelieu-102-s:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-richelieu-102-s', available: true},
+  {from: 'stairs:richelieu-se:fm1', to: 'stairs:richelieu-se:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-richelieu-se', available: true},
+  {from: 'stairs:sully-west-n:fm1', to: 'stairs:sully-west-n:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-west-n', available: true},
+  {from: 'stairs:sully-west-s:fm1', to: 'stairs:sully-west-s:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-west-s', available: true},
+  {from: 'stairs:sully-338:fm1', to: 'stairs:sully-338:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-338', available: true},
+  {from: 'stairs:daru:fm1', to: 'stairs:daru-west:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-daru', available: true},
+  {from: 'stairs:denon-west:fm1', to: 'stairs:denon-west:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-west', available: true},
+  {from: 'stairs:denon-403-e:fm1', to: 'stairs:denon-403-e:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-403-e', available: true},
+  {from: 'stairs:denon-406-w:fm1', to: 'stairs:denon-406-w:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-406-w', available: true},
+  {from: 'stairs:denon-402-s:fm1', to: 'stairs:denon-402-s:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-402-s', available: true},
+  {from: 'stairs:denon-405-n:fm1', to: 'stairs:denon-405-n:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-405-n', available: true},
+  {from: 'stairs:denon-405-s:fm1', to: 'stairs:denon-405-s:f0', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-405-s', available: true},
+
+  // Verified 0F <-> 1F vertical connections (10 EV + 1 Escalator + 12 stair edges across 11 stair shafts)
+  {from: 'escalator:richelieu-center:f0', to: 'escalator:richelieu-center:f1', cost: 16, kind: 'escalator', facilityId: 'escalator-richelieu-center', available: true},
+  {from: 'stairs:sully-n-west:f0', to: 'stairs:sully-n-west:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-n-west', available: true},
+  {from: 'stairs:sully-n-east:f0', to: 'stairs:sully-n-east:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-n-east', available: true},
+  {from: 'elevator:richelieu-nw:f0', to: 'elevator:richelieu-nw:f1', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-nw', available: true},
+  {from: 'elevator:central:f0', to: 'elevator:central:f1', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-center', available: true},
+  {from: 'elevator:sully-north:f0', to: 'elevator:sully-north:f1', cost: 22, kind: 'elevator', facilityId: 'ev-sully-north', available: true},
+  {from: 'elevator:sully-ne:f0', to: 'elevator:sully-ne:f1', cost: 22, kind: 'elevator', facilityId: 'ev-sully-ne', available: true},
+  {from: 'elevator:sully-west:f0', to: 'elevator:sully-west:f1', cost: 22, kind: 'elevator', facilityId: 'ev-sully-west', available: true},
+  {from: 'elevator:sully-sw:f0', to: 'elevator:sully-sw:f1', cost: 22, kind: 'elevator', facilityId: 'ev-sully-sw', available: true},
+  {from: 'elevator:denon-west:f0', to: 'elevator:denon-west:f1', cost: 22, kind: 'elevator', facilityId: 'ev-denon-west', available: true},
+  {from: 'elevator:denon-center-w:f0', to: 'elevator:denon-center-w:f1', cost: 22, kind: 'elevator', facilityId: 'ev-denon-center-w', available: true},
+  {from: 'elevator:denon-center-e:f0', to: 'elevator:denon-center-e:f1', cost: 22, kind: 'elevator', facilityId: 'ev-denon-center-e', available: true},
+  {from: 'elevator:denon-farwest:f0', to: 'elevator:denon-farwest:f1', cost: 22, kind: 'elevator', facilityId: 'ev-denon-farwest', available: true},
+  {from: 'stairs:richelieu-nw:f0', to: 'stairs:richelieu-nw:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-richelieu-nw', available: true},
+  {from: 'stairs:richelieu-se:f0', to: 'stairs:richelieu-se:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-richelieu-se', available: true},
+  {from: 'stairs:sully-ne-lower:f0', to: 'stairs:sully-ne-lower:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-ne-lower', available: true},
+  {from: 'stairs:sully-west-n:f0', to: 'stairs:sully-west-n:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-west-n', available: true},
+  {from: 'stairs:sully-west-s:f0', to: 'stairs:sully-west-s:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-west-s', available: true},
+  {from: 'stairs:sully-se:f0', to: 'stairs:sully-se:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-se', available: true},
+  {from: 'stairs:daru-west:f0', to: 'stairs:daru:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-daru', available: true},
+  {from: 'stairs:daru-east:f0', to: 'stairs:daru:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-daru', available: true},
+  {from: 'stairs:denon-west:f0', to: 'stairs:denon-west:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-west', available: true},
+  {from: 'stairs:denon-farwest:f0', to: 'stairs:denon-farwest:f1', cost: 18, kind: 'stairs', facilityId: 'stairs-denon-farwest', available: true},
+
+  // Verified 1F <-> 2F vertical connections (5 EV + 1 Escalator + 7 Stairs)
+  {from: 'elevator:richelieu-nw:f1', to: 'elevator:richelieu-nw:f2', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-nw', available: true},
+  {from: 'elevator:central:f1', to: 'elevator:central:f2', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-center', available: true},
+  {from: 'elevator:sully-north:f1', to: 'elevator:sully-north:f2', cost: 22, kind: 'elevator', facilityId: 'ev-sully-north', available: true},
+  {from: 'elevator:sully-west:f1', to: 'elevator:sully-west:f2', cost: 22, kind: 'elevator', facilityId: 'ev-sully-west', available: true},
+  {from: 'elevator:sully-sw:f1', to: 'elevator:sully-sw:f2', cost: 22, kind: 'elevator', facilityId: 'ev-sully-sw', available: true},
+  {from: 'escalator:richelieu-center:f1', to: 'escalator:richelieu-center:f2', cost: 16, kind: 'escalator', facilityId: 'escalator-richelieu-center', available: true},
+  {from: 'stairs:richelieu-nw:f1', to: 'stairs:richelieu-nw:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-richelieu-nw', available: true},
+  {from: 'stairs:sully-n-west:f1', to: 'stairs:sully-n-west:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-n-west', available: true},
+  {from: 'stairs:sully-n-east:f1', to: 'stairs:sully-n-east:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-n-east', available: true},
+  {from: 'stairs:sully-ne:f1', to: 'stairs:sully-ne:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-ne', available: true},
+  {from: 'stairs:sully-west-n:f1', to: 'stairs:sully-west-n:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-west-n', available: true},
+  {from: 'stairs:sully-west-s:f1', to: 'stairs:sully-west-s:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-west-s', available: true},
+  {from: 'stairs:sully-se:f1', to: 'stairs:sully-se:f2', cost: 18, kind: 'stairs', facilityId: 'stairs-sully-se', available: true}
 ];
 
 // Add room door nodes

@@ -15,7 +15,7 @@ assert.ok(floorGeoData.footprintPolys.length > 50, 'shared palace footprint poly
 for (const floor of [2, 1, 0, -1, -2]) {
   const plan = floorGeoData.floors[String(floor)];
   assert.ok(plan, `floor ${floor} GeoJSON plan must exist`);
-  assert.ok(plan.rooms.length > 10, `floor ${floor} must contain real architectural room polygons`);
+  assert.ok(floor === -2 ? plan.rooms.length >= 2 : plan.rooms.length > 10, `floor ${floor} must contain real architectural room polygons`);
   const markup = floorMapMarkup({floor, floorLabel:String(floor), works, selectedId:null});
   assert.match(markup, /viewBox="0 0 960 600"/, `floor ${floor} needs a stable viewBox`);
   assert.match(markup, /role="img"/, `floor ${floor} needs an image role`);
@@ -23,14 +23,26 @@ for (const floor of [2, 1, 0, -1, -2]) {
     assert.ok(markup.includes(`data-layer="${layer}"`), `floor ${floor} is missing ${layer} layer`);
   }
   assert.match(markup, /class="palace-footprint(?:\s|")/, `floor ${floor} must render shared palace footprint`);
+  if (floor === -2) {
+    assert.match(markup, /is-exhibition/, 'floor -2 must render the light-blue temporary exhibition space');
+    assert.match(markup, /企画展/, 'floor -2 must clearly label the light-blue space as 企画展');
+  }
   if (floor === -1) {
     assert.match(markup, /class="room-number is-uniform-room"/, 'floor -1 must render all room numbers at a uniform legible size');
     assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor -1 must not mix different room number font sizes');
     assert.match(markup, /ステュディオ/, 'floor -1 must label the green Studio rest area');
     assert.match(markup, /休憩エリア/, 'floor -1 must indicate Studio is a rest area');
-    for (const num of ['102', '104', '105', '101', '132', '137', '135', '133', '134', '164', '169', '160', '170', '183', '185', '180', '181', '179', '175', '174']) {
+    assert.match(markup, /is-construction/, 'floor -1 must mark construction rooms 180, 181, 179, 175, 174');
+    assert.match(markup, /工事中/, 'floor -1 must indicate that the yellow zone is under construction');
+    for (const num of ['102', '104', '105', '101', '130', '131', '132', '137', '135', '133', '134', '164', '169', '160', '170', '183', '185', '180', '181', '179', '175', '174']) {
       assert.ok(markup.includes(`>${num}</text>`), `floor -1 must include uniform room label ${num}`);
     }
+    assert.equal((markup.match(/data-facility-type="wc"/g) || []).length, 5, 'floor -1 must render all 5 open verified toilets');
+    assert.equal((markup.match(/data-facility-type="elevator"/g) || []).length, 11, 'floor -1 must render all 11 open verified elevators');
+    assert.equal((markup.match(/data-facility-type="escalator"/g) || []).length, 1, 'floor -1 must render the verified escalator');
+    assert.equal((markup.match(/data-facility-type="stairs-down"/g) || []).length, 3, 'floor -1 must render all 3 downward stairs around pyramid');
+    assert.equal((markup.match(/data-facility-type="stairs-up"/g) || []).length, 12, 'floor -1 must render all 12 upward stairs');
+    assert.equal((markup.match(/data-facility-type="stairs-both"/g) || []).length, 2, 'floor -1 must render all 2 open bidirectional stairs');
     const routedM1 = floorMapMarkup({floor: -1, floorLabel: '−1階', works, selectedId: 'marly', routeWorkIds: ['marly'], viewedIds: []});
     const labelsM1 = [...routedM1.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
       .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
@@ -55,9 +67,19 @@ for (const floor of [2, 1, 0, -1, -2]) {
     assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor 0 must not mix different room number font sizes');
     assert.match(markup, /is-construction/, 'floor 0 must mark construction rooms 418, 417, 415');
     assert.match(markup, /工事中/, 'floor 0 must clearly indicate that the yellow zone is under construction');
-    for (const num of ['212', '218', '206', '201', '200', '219', '226', '227', '230', '229', '236', '234', '231', '306', '308', '300', '312', '316', '317', '321', '324', '328', '348', '345', '339', '338', '337', '347', '403', '406', '408', '400', '402', '405', '418', '419', '415', '417', '410', '413']) {
+    for (const num of ['212', '218', '206', '201', '200', '219', '226', '227', '230', '229', '236', '231', '305', '308', '300', '312', '316', '317', '321', '327', '328', '348', '345', '339', '338', '337', '347', '403', '406', '408', '400', '402', '405', '418', '419', '415', '417', '410', '413', '424', '422', '427']) {
       assert.ok(markup.includes(`>${num}</text>`), `floor 0 must include uniform room label ${num}`);
     }
+    assert.equal((markup.match(/data-facility-type="wc"/g) || []).length, 3, 'floor 0 must render all 3 verified toilets');
+    assert.equal((markup.match(/data-facility-type="elevator"/g) || []).length, 15, 'floor 0 must render all 15 open verified elevators');
+    assert.equal((markup.match(/data-facility-type="escalator"/g) || []).length, 1, 'floor 0 must render the Richelieu central escalator');
+    assert.equal((markup.match(/data-facility-type="stairs-up"/g) || []).length, 5, 'floor 0 must render all 5 upward-only stairs');
+    assert.equal((markup.match(/data-facility-type="stairs-down"/g) || []).length, 7, 'floor 0 must render all 7 verified downward stairs');
+    assert.equal((markup.match(/data-facility-type="stairs-both"/g) || []).length, 12, 'floor 0 must render all 12 open bidirectional stairs');
+    assert.match(markup, /上り階段/, 'floor 0 HUD must label upward stairs');
+    assert.match(markup, /下り階段/, 'floor 0 HUD must label downward stairs');
+    assert.match(markup, /上下階段/, 'floor 0 HUD must label bidirectional stairs');
+    assert.match(markup, /エスカレーター/, 'floor 0 HUD must label escalator');
     const routed0F = floorMapMarkup({floor: 0, floorLabel: '0階', works, selectedId: 'venus', routeWorkIds: ['venus', 'dying'], viewedIds: ['dying']});
     const labels0 = [...routed0F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
       .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
@@ -85,6 +107,19 @@ for (const floor of [2, 1, 0, -1, -2]) {
     for (const num of ['564', '558', '552', '557', '548', '544', '535', '505', '503', '500', '507', '517', '516', '531', '519', '528', '606', '605', '601', '600', '617', '632', '635', '636', '640', '663', '660', '661', '650', '656', '652', '641', '651', '700', '701', '702', '703', '715', '711', '709', '706', '705', '716', '712', '710', '708', '717', '718', '719', '726', '720', '734', '727']) {
       assert.ok(markup.includes(`>${num}</text>`), `floor 1 must include uniform room label ${num}`);
     }
+    assert.equal((markup.match(/data-facility-type="wc"/g) || []).length, 6, 'floor 1 must render all 6 open verified toilets (excluding under-construction 564)');
+    assert.equal((markup.match(/data-facility-type="elevator"/g) || []).length, 10, 'floor 1 must render all 10 verified elevators');
+    assert.equal((markup.match(/data-facility-type="escalator"/g) || []).length, 1, 'floor 1 must render the verified escalator');
+    assert.equal((markup.match(/data-facility-type="stairs-down"/g) || []).length, 5, 'floor 1 must render all 5 downward-only stairs');
+    assert.equal((markup.match(/data-facility-type="stairs-up"/g) || []).length, 1, 'floor 1 must render the verified upward stairs');
+    assert.equal((markup.match(/data-facility-type="stairs-both"/g) || []).length, 6, 'floor 1 must render all 6 bidirectional stairs (5 black + Sully SE)');
+    assert.equal((markup.match(/data-facility-type="stairs"/g) || []).length, 1, 'floor 1 must render the 1 same-floor inter-room stair (535)');
+    assert.match(markup, /下り階段/, 'floor 1 HUD must label downward stairs');
+    assert.match(markup, /上り階段/, 'floor 1 HUD must label upward stairs');
+    assert.match(markup, /上下階段/, 'floor 1 HUD must label bidirectional stairs');
+    assert.match(markup, /同階階段/, 'floor 1 HUD must label same-floor stairs');
+    assert.match(markup, /エスカレーター/, 'floor 1 HUD must label escalator');
+    assert.equal(floorGeoData.verticalLinks?.length, 34, 'all 34 verified -1F-0F-1F-2F vertical links (13 EV + 1 escalator + 20 stairs) must be recorded');
     const routed1F = floorMapMarkup({floor: 1, floorLabel: '1階', works, selectedId: 'mona', routeWorkIds: ['victory', 'mona', 'liberty', 'scribe'], viewedIds: ['victory']});
     const labels1 = [...routed1F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
       .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));
@@ -108,9 +143,15 @@ for (const floor of [2, 1, 0, -1, -2]) {
     assert.doesNotMatch(markup, /ドゥノン翼/, 'floor 2 must not label Denon wing since Denon has no 2nd floor');
     assert.match(markup, /class="room-number is-uniform-room"/, 'floor 2 must render all room numbers at a uniform legible size');
     assert.doesNotMatch(markup, /class="room-number is-anchor-room"/, 'floor 2 must not mix different room number font sizes');
-    for (const num of ['864', '848', '855', '845', '843', '836', '802', '801', '800', '803', '814', '825', '823', '818', '835', '830', '909', '912', '913', '900', '952', '944', '940', '936', '931', '917', '924']) {
+    for (const num of ['864', '848', '855', '845', '843', '836', '802', '801', '800', '803', '814', '825', '823', '818', '835', '830', '909', '912', '913', '902', '900', '952', '944', '940', '936', '931', '917', '924']) {
       assert.ok(markup.includes(`>${num}</text>`), `floor 2 must include uniform room label ${num}`);
     }
+    assert.equal((markup.match(/data-facility-type="wc"/g) || []).length, 5, 'floor 2 must render all 5 verified toilets');
+    assert.equal((markup.match(/data-facility-type="elevator"/g) || []).length, 5, 'floor 2 must render all 5 verified elevators');
+    assert.equal((markup.match(/data-facility-type="stairs-down"/g) || []).length, 7, 'floor 2 must render all 7 verified downward stairs');
+    assert.equal((markup.match(/data-facility-type="escalator"/g) || []).length, 1, 'floor 2 must render the verified escalator');
+    assert.match(markup, /下り階段/, 'floor 2 HUD must label downward stairs');
+    assert.match(markup, /エスカレーター/, 'floor 2 HUD must label escalator');
     // Verify artwork pins NEVER overlap room number bounding boxes on Floor 2
     const routed2F = floorMapMarkup({floor: 2, floorLabel: '2階', works, selectedId: 'lacemaker', routeWorkIds: ['lacemaker', 'money', 'cheat', 'bather'], viewedIds: ['money']});
     const labels = [...routed2F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
@@ -159,13 +200,13 @@ assert.match(viewedFloor, /pin-viewed/, 'viewed route stop must render green vie
 assert.match(viewedFloor, /pin-check/, 'viewed route stop must render checkmark');
 assert.match(viewedFloor, /pin-route/, 'unvisited route stop must render blue route pin');
 
-const wcPickFloor = floorMapMarkup({floor:-2, floorLabel:'−2階', works, selectedId:null, facilityFilter:'wc'});
+const wcPickFloor = floorMapMarkup({floor:2, floorLabel:'2階', works, selectedId:null, facilityFilter:'wc'});
 assert.match(wcPickFloor, /facility-pick-mode/, 'facility pickup mode should activate on SVG');
 assert.match(wcPickFloor, /pick-wc/, 'toilet pickup mode should highlight WC markers');
 assert.match(wcPickFloor, /is-picked/, 'matching facility markers must be marked as picked');
 
-const cafePickFloor = floorMapMarkup({floor:-2, floorLabel:'−2階', works, selectedId:null, facilityFilter:'cafe'});
-assert.match(cafePickFloor, /pick-cafe/, 'cafe pickup mode should highlight cafe markers');
+const cafePickFloor = floorMapMarkup({floor:2, floorLabel:'2階', works, selectedId:null, facilityFilter:'cafe'});
+assert.match(cafePickFloor, /facility-pick-mode/, 'cafe pickup mode should activate on SVG');
 
 const warningFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:null, roomNotices:[{floor:1,room:'711',label:'重要情報'}]});
 assert.match(warningFloor, /class="room-alert"/, 'a room-specific warning can render without adding a global map overlay');

@@ -16,7 +16,7 @@ export function indexNavigationGraph(graph) {
 
 function edgeWeight(edge, options) {
   if (options?.preferElevator) {
-    if (edge.kind === 'stairs') return edge.cost + 10000;
+    if (edge.kind === 'stairs' || edge.kind === 'escalator') return edge.cost + 10000;
     if (edge.kind === 'elevator') return Math.max(1, edge.cost * 0.7);
   }
   return edge.cost;
@@ -185,7 +185,7 @@ function transitionSteps(index, path) {
     const delta = to.floor - from.floor;
     const count = Math.abs(delta);
     const direction = delta > 0 ? '上' : '下';
-    const facilityName = from.label || to.label || (edge.kind === 'elevator' ? 'エレベーター' : '階段');
+    const facilityName = from.label || to.label || (edge.kind === 'elevator' ? 'エレベーター' : edge.kind === 'escalator' ? 'エスカレーター' : '階段');
     const message = `${facilityName}で${count}階${direction}へ（${floorLabel(to.floor)}）`;
     transitions.push({kind:edge.kind, facilityName, from, to, message});
   }

@@ -21,10 +21,11 @@ function roomMarkup(room, worksByRoom, selectedId, routeWorkSet) {
   const onRoute = routeWorkSet ? roomWorks.some(work => routeWorkSet.has(work.id)) : false;
   const roomAttr = room.number ? ` data-room="${escapeHtml(room.number)}"` : '';
   const constructionCls = room.underConstruction ? 'is-construction ' : '';
+  const exhibitionCls = room.isExhibition ? 'is-exhibition ' : '';
   const shape = room.path
     ? `<path d="${room.path}" fill-rule="evenodd"/>`
     : `<polygon points="${room.points}"/>`;
-  return `<g class="room-node ${constructionCls}${selected ? 'is-selected ' : ''}${onRoute ? 'has-route-work ' : ''}wing-${escapeHtml(room.wing)}"${roomAttr}>${shape}</g>`;
+  return `<g class="room-node ${constructionCls}${exhibitionCls}${selected ? 'is-selected ' : ''}${onRoute ? 'has-route-work ' : ''}wing-${escapeHtml(room.wing)}"${roomAttr}>${shape}</g>`;
 }
 
 function boxesOverlap(a, b, pad = 1.5) {
@@ -192,24 +193,32 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
 function facilityIconMarkup(item, facilityFilter) {
   const isPicked = (facilityFilter === 'wc' && item.type === 'wc') || (facilityFilter === 'cafe' && item.type === 'cafe');
   const isDimmed = facilityFilter && facilityFilter !== 'none' && !isPicked;
-  const scale = isPicked ? 1.15 : 0.7;
+  const scale = isPicked ? 1.42 : 1;
   const common = `transform="translate(${item.x} ${item.y}) scale(${scale})"`;
-  const icons = {
-    stairs:`<path d="M-8 7h4V3h4v-4h4v-4h4"/>`,
-    elevator:`<rect x="-7" y="-8" width="14" height="16" rx="1"/><path d="M0-5v10M-3-2l3-3 3 3M-3 2l3 3 3-3"/>`,
-    escalator:`<path d="M-8 6h4l8-12h4M-7-6h4l8 12h3"/>`,
-    wc:`<path d="M-5-7a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-3 15V-1h6v9M5-7a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM2 8l1-9h4l1 9"/>`,
-    cafe:`<path d="M-7-3h10v6a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4v-6Zm10 1h2a2 2 0 0 1 0 4h-2M-8 9h14"/>`,
-    information:`<circle r="8"/><path d="M0-3v7M0-6h.01"/>`,
-    ticket:`<path d="M-8-5h16v10H-8zM-3-5v10"/>`,
-    cloak:`<path d="M-7 7V-5h14V7M-3-5v-3h6v3"/>`,
-    friends:`<path d="M-5-6a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM-10 8c0-5 10-5 10 0M5-4a2.5 2.5 0 1 0 0 5M1 8c0-4 8-4 8 0"/>`,
-    auditorium:`<path d="M-8 7h16M-6 4h12M-4 1h8M-2-2h4"/>`,
-    shop:`<path d="M-8-3h16l-2-5H-6zM-6-3V8H6V-3M-2 8V2h4v6"/>`
+  const glyphs = {
+    wc: `<circle class="fac-glyph-fill" cx="-2.1" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M-2.1 -0.8v3.9M-3.3 0.7h2.4"/><circle class="fac-glyph-fill" cx="2.1" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M2.1 -0.8l-1.3 2.7h2.6l-1.3-2.7M2.1 1.9v1.3"/>`,
+    stairs: `<path class="fac-glyph-stroke" d="M-3.6 3.1h2.2V1h2.2v-2.1h2.2V-3.1h1"/>`,
+    'stairs-down': `<path class="fac-glyph-stroke" d="M-3.5 -2.6h1.9v1.9h1.9v1.9h1.9v1.9h1.3M-3.2 0.2l2.4 2.4M-0.8 0.8v1.8h-1.8"/>`,
+    'stairs-up': `<path class="fac-glyph-stroke" d="M-3.5 3.1h1.9V1.2h1.9V-0.7h1.9V-2.6h1.3M-3.2 -0.2l2.4 -2.4M-2.6 -2.6h1.8v1.8"/>`,
+    'stairs-both': `<path class="fac-glyph-stroke" d="M-3.6 3.0h2.0V1.1h2.0V-0.8h2.0V-2.7h1.2M-2.8 -0.6l2.0 -2.0M-2.4 -2.6h1.6v1.6M2.8 0.8l-2.0 2.0M2.4 2.8h-1.6v-1.6"/>`,
+    escalator: `<path class="fac-glyph-stroke" d="M-3.6 2.7h1.6l3.8-4.8h1.8M-3.6 2.7a1.1 1.1 0 0 1 0-2.2h1.1l3.6-4.5h2.5a1.1 1.1 0 0 1 0 2.2"/>`,
+    elevator: `<path class="fac-glyph-stroke" d="M-1.7 2.8v-5.2M-3.3 -0.9l1.6-1.7 1.6 1.7M1.7 -2.8v5.2M0.1 0.9l1.6 1.7 1.6-1.7"/>`,
+    cafe: `<path class="fac-glyph-stroke" d="M-3.2-1.8h4.8v2.8a2.2 2.2 0 0 1-2.2 2.2h-.4a2.2 2.2 0 0 1-2.2-2.2v-2.8Zm4.8.5h1.1a1.1 1.1 0 0 1 0 2.2h-1.1"/>`
   };
-  const badgeBg = isPicked ? `<circle class="facility-pick-bg pick-${escapeHtml(item.type)}" r="12"/>` : '';
-  const ariaLabel = item.type === 'wc' ? 'トイレ' : item.type === 'cafe' ? (item.label || 'カフェ') : (item.label || item.type);
-  return `<g class="facility facility-${escapeHtml(item.type)} ${isPicked ? 'is-picked' : ''} ${isDimmed ? 'is-dimmed' : ''}" ${common} aria-label="${escapeHtml(ariaLabel)}">${badgeBg}${icons[item.type] || '<circle r="5"/>'}</g>`;
+  const pickRing = isPicked ? `<circle class="facility-pick-bg pick-${escapeHtml(item.type)}" r="8.6"/>` : '';
+  const labels = {
+    wc: 'トイレ',
+    elevator: 'エレベーター',
+    stairs: '同階階段',
+    'stairs-down': '下り階段',
+    'stairs-up': '上り階段',
+    'stairs-both': '上下階段',
+    escalator: 'エスカレーター',
+    cafe: item.label || 'カフェ'
+  };
+  const ariaLabel = labels[item.type] || item.label || item.type;
+  const linkAttr = item.linkId ? ` data-vertical-link="${escapeHtml(item.linkId)}"` : '';
+  return `<g class="facility facility-badge facility-${escapeHtml(item.type)} ${isPicked ? 'is-picked' : ''} ${isDimmed ? 'is-dimmed' : ''}" ${common} data-facility-type="${escapeHtml(item.type)}"${linkAttr} aria-label="${escapeHtml(ariaLabel)}">${pickRing}<circle class="fac-badge-bg fac-bg-${escapeHtml(item.type)}" r="6.3"/>${glyphs[item.type] || '<circle class="fac-glyph-fill" r="2"/>'}</g>`;
 }
 
 const polylineMarkup = (segments, floor, className) => segments
@@ -277,7 +286,7 @@ function wrapHudText(text, maxChars = 14) {
   return lines;
 }
 
-function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, hasRestArea = false}) {
+function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, hasRestArea = false, hasExhibition = false, facilityTypes = []}) {
   const x = 12;
   const y = 12;
   const width = 180;
@@ -303,11 +312,45 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
 
   const col1 = padX;
   const col2 = x + 98;
-  const extraLegend = hasConstruction
-    ? `<rect class="hud-swatch-construction" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">工事中</text>`
-    : hasRestArea
-      ? `<rect class="hud-swatch-rest" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">休憩</text>`
-      : '';
+  const extraItems = [];
+  if (hasConstruction) extraItems.push({cls: 'hud-swatch-construction', label: '工事中'});
+  if (hasRestArea) extraItems.push({cls: 'hud-swatch-rest', label: '休憩'});
+  if (hasExhibition) extraItems.push({cls: 'hud-swatch-exhibition', label: '企画展'});
+  const extraRight = extraItems[0]
+    ? `<rect class="${extraItems[0].cls}" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">${extraItems[0].label}</text>`
+    : '';
+  const extraRow = extraItems[1]
+    ? `<rect class="${extraItems[1].cls}" x="${col1}" y="${cursorY + 48}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col1 + 22}" y="${cursorY + 57}">${extraItems[1].label}</text>`
+    : '';
+  let bottomY = cursorY + (extraItems.length > 1 ? 57 : 38);
+
+  const facLegendSpecs = [
+    {type: 'wc', cls: 'hud-fac-wc', label: 'トイレ'},
+    {type: 'elevator', cls: 'hud-fac-elevator', label: 'EV'},
+    {type: 'escalator', cls: 'hud-fac-escalator', label: 'エスカレーター'},
+    {type: 'stairs-down', cls: 'hud-fac-stairs-down', label: '下り階段'},
+    {type: 'stairs-up', cls: 'hud-fac-stairs-up', label: '上り階段'},
+    {type: 'stairs-both', cls: 'hud-fac-stairs-both', label: '上下階段'},
+    {type: 'stairs', cls: 'hud-fac-stairs', label: '同階階段'},
+    {type: 'cafe', cls: 'hud-fac-cafe', label: 'カフェ'}
+  ].filter(spec => facilityTypes.includes(spec.type));
+
+  let facRow = '';
+  if (facLegendSpecs.length) {
+    const divY = bottomY + 8;
+    const cols = [col1, col2];
+    const itemsSvg = facLegendSpecs.map((spec, idx) => {
+      const r = Math.floor(idx / 2);
+      const c = idx % 2;
+      const fx = cols[c];
+      const ry = divY + 15 + r * 17;
+      return `<circle class="hud-dot ${spec.cls}" cx="${fx + 4.5}" cy="${ry - 3.5}" r="4.5"/><text class="hud-legend-text" x="${fx + 12}" y="${ry}">${spec.label}</text>`;
+    }).join('');
+    const numRows = Math.ceil(facLegendSpecs.length / 2);
+    facRow = `<line class="hud-divider" x1="${padX}" y1="${divY}" x2="${x + width - 12}" y2="${divY}"/>${itemsSvg}`;
+    bottomY = divY + 15 + (numRows - 1) * 17;
+  }
+
   parts.push(`
     <g class="hud-legend" aria-label="地図の凡例">
       <circle class="hud-dot hud-dot-dest" cx="${col1 + 5}" cy="${cursorY - 3.5}" r="4.8"/>
@@ -322,10 +365,12 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
 
       <circle class="hud-dot hud-dot-viewed" cx="${col1 + 5}" cy="${cursorY + 34.5}" r="4.8"/>
       <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 38}">済</text>
-      ${extraLegend}
+      ${extraRight}
+      ${extraRow}
+      ${facRow}
     </g>
   `);
-  const height = (cursorY + 38 + 12) - y;
+  const height = (bottomY + 12) - y;
   return {
     rect: {x, y, width, height},
     markup: `<g class="map-hud" data-hud-bounds="${x},${y},${width},${height}"><rect class="hud-card" x="${x}" y="${y}" width="${width}" height="${height}" rx="12"/><g clip-path="url(#map-hud-clip)">${parts.join('')}</g></g>`
@@ -393,19 +438,25 @@ export function floorMapMarkup({
       .join('');
     // Unified outer architectural wall shell behind rooms + passages so wings read as one cohesive space
     const wingShell = [
-      ...cp.passages.map(p => `<polygon class="custom-wing-shell wing-${escapeHtml(p.wing)}" points="${p.points}"/>`),
-      ...plan.rooms.map(r => r.path
-        ? `<path class="custom-wing-shell ${r.underConstruction ? 'is-construction ' : ''}wing-${escapeHtml(r.wing)}" d="${r.path}" fill-rule="evenodd"/>`
-        : `<polygon class="custom-wing-shell ${r.underConstruction ? 'is-construction ' : ''}wing-${escapeHtml(r.wing)}" points="${r.points}"/>`)
+      ...cp.passages.map(p => `<polygon class="custom-wing-shell ${p.underConstruction ? 'is-construction ' : ''}wing-${escapeHtml(p.wing)}" points="${p.points}"/>`),
+      ...plan.rooms.map(r => {
+        const cls = `custom-wing-shell ${r.underConstruction ? 'is-construction ' : ''}${r.isExhibition ? 'is-exhibition ' : ''}wing-${escapeHtml(r.wing)}`;
+        return r.path
+          ? `<path class="${cls}" d="${r.path}" fill-rule="evenodd"/>`
+          : `<polygon class="${cls}" points="${r.points}"/>`;
+      })
     ].join('');
     const passages = cp.passages
-      .map(p => `<polygon class="custom-passage wing-${escapeHtml(p.wing)}" points="${p.points}"/>`)
+      .map(p => `<polygon class="custom-passage ${p.underConstruction ? 'is-construction ' : ''}wing-${escapeHtml(p.wing)}" points="${p.points}"/>`)
       .join('');
     const dividers = (cp.dividers || [])
       .map(d => `<line class="custom-room-divider" x1="${d.x1}" y1="${d.y1}" x2="${d.x2}" y2="${d.y2}"/>`)
       .join('');
     const constructionNotices = (cp.constructionNotices || [])
       .map(n => `<g class="construction-badge" transform="translate(${n.x} ${n.y})" aria-label="${escapeHtml(n.text)}"><rect x="-38" y="-9.5" width="76" height="19" rx="9.5"/><text x="0" y="3.5" text-anchor="middle">${escapeHtml(n.text)}</text></g>`)
+      .join('');
+    const exhibitionLabels = (cp.exhibitionLabels || [])
+      .map(e => `<g class="exhibition-label-group" aria-label="${escapeHtml(e.label)}"><text class="exhibition-label" x="${e.x}" y="${e.y - 2}" text-anchor="middle">${escapeHtml(e.label)}</text>${e.sublabel ? `<text class="exhibition-sub" x="${e.x}" y="${e.y + 9}" text-anchor="middle">${escapeHtml(e.sublabel)}</text>` : ''}</g>`)
       .join('');
     footprint = `
       <path class="palace-footprint custom-palace-base" d="${cp.footprintPath}" fill-rule="evenodd"/>
@@ -415,7 +466,7 @@ export function floorMapMarkup({
       ${courtyards}
       ${serviceHalls}
       ${restAreas}`;
-    rooms = `<g class="custom-wing-shells" aria-hidden="true">${wingShell}</g>${passages}${plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('')}<g class="custom-room-dividers" aria-hidden="true">${dividers}</g>${constructionNotices}`;
+    rooms = `<g class="custom-wing-shells" aria-hidden="true">${wingShell}</g>${passages}${plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('')}<g class="custom-room-dividers" aria-hidden="true">${dividers}</g>${constructionNotices}${exhibitionLabels}`;
   } else {
     footprint = floorGeoData.footprintPolys.map(points => `<polygon class="palace-footprint" points="${points}"/>`).join('');
     rooms = plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('');
@@ -490,7 +541,15 @@ export function floorMapMarkup({
 
   const routeLayer = routeLayerMarkup(floor, navigation);
   const continuationFloors = (navigation?.routeFloors ?? []).filter(routeFloor => routeFloor !== floor);
-  const hud = mapHudMarkup({floorLabel, continuationFloors, hasConstruction: Boolean(plan.hasConstruction), hasRestArea: Boolean(plan.hasRestArea)});
+  const facilityTypes = [...new Set(plan.facilities.map(f => f.type))];
+  const hud = mapHudMarkup({
+    floorLabel,
+    continuationFloors,
+    hasConstruction: Boolean(plan.hasConstruction),
+    hasRestArea: Boolean(plan.hasRestArea),
+    hasExhibition: Boolean(plan.hasExhibition),
+    facilityTypes
+  });
   const isFacilityPickMode = facilityFilter === 'wc' || facilityFilter === 'cafe';
 
   const svgDefs = `
@@ -501,6 +560,8 @@ export function floorMapMarkup({
     <linearGradient id="wing-sully-grad" gradientUnits="userSpaceOnUse" x1="0" y1="220" x2="0" y2="380"><stop offset="0%" stop-color="#88b0bc"/><stop offset="100%" stop-color="#769ea9"/></linearGradient>
     <linearGradient id="wing-denon-grad" gradientUnits="userSpaceOnUse" x1="0" y1="350" x2="0" y2="490"><stop offset="0%" stop-color="#cfa18e"/><stop offset="100%" stop-color="#be8d7a"/></linearGradient>
     <linearGradient id="studio-rest-grad" gradientUnits="userSpaceOnUse" x1="0" y1="145" x2="0" y2="230"><stop offset="0%" stop-color="#80b896"/><stop offset="100%" stop-color="#68a17e"/></linearGradient>
+    <linearGradient id="exhibition-hall-grad" gradientUnits="userSpaceOnUse" x1="0" y1="265" x2="0" y2="340"><stop offset="0%" stop-color="#6fbbe0"/><stop offset="100%" stop-color="#52a1c9"/></linearGradient>
+    <linearGradient id="stairs-both-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="50%" stop-color="#2563a8"/><stop offset="50%" stop-color="#2c8a56"/></linearGradient>
     <pattern id="construction-stripe" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
       <rect width="7" height="7" fill="#f2cf5b"/>
       <line x1="0" y1="0" x2="0" y2="7" stroke="#dfb22a" stroke-width="2.6"/>

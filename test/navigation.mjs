@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {floorGeoData} from '../src/floor-map-geo.js';
 import {buildNavigationView, indexNavigationGraph, navigationStateForSelection, navigationStateFromRoute, shortestPath} from '../src/navigation.js';
 
 const graph = JSON.parse(await readFile(new URL('../src/navigation-graph.json', import.meta.url), 'utf8'));
@@ -36,8 +37,22 @@ const threeFloorMove = buildNavigationView(index, {
   destinationNodeId:'work:marly'
 });
 assert.equal(threeFloorMove.transitions.length, 3);
-assert.ok(threeFloorMove.transitions.every(transition => transition.kind === 'stairs'));
+assert.ok(threeFloorMove.transitions.every(transition => ['stairs', 'escalator', 'elevator'].includes(transition.kind)));
 assert.deepEqual(new Set(threeFloorMove.routeFloors), new Set([2, 1, 0, -1]));
+
+// Verified 1F <-> 2F local correspondence routing (Sully 635 <-> 917 uses Sully NE stairs directly, not Richelieu)
+const sully1to2 = shortestPath(index, 'door:f1:635', 'door:f2:917');
+assert.ok(sully1to2 && sully1to2.edges.some(e => e.facilityId === 'stairs-sully-ne'), 'Sully 635 to 917 should use Sully NE stairs');
+const sully1to2Elev = shortestPath(index, 'door:f1:635', 'door:f2:917', {preferElevator: true});
+assert.ok(sully1to2Elev && sully1to2Elev.edges.some(e => e.kind === 'elevator') && sully1to2Elev.edges.every(e => e.kind !== 'stairs' && e.kind !== 'escalator'), 'preferElevator between 1F and 2F must use an elevator and avoid stairs/escalator');
+
+// Verified 0F <-> 1F local correspondence routing (Daru 703 -> Venus 345 uses Daru stairs; Denon 700 -> 403 uses Denon West stairs)
+const daru1to0 = shortestPath(index, 'door:f1:703', 'door:f0:345');
+assert.ok(daru1to0 && daru1to0.edges.some(e => e.facilityId === 'stairs-daru'), '703 to 345 should descend via Daru staircase');
+const denonWest1to0 = shortestPath(index, 'door:f1:700', 'door:f0:403');
+assert.ok(denonWest1to0 && denonWest1to0.edges.some(e => e.facilityId === 'stairs-denon-west'), '700 to 403 should descend via Denon West stairs');
+const denonWest1to0Elev = shortestPath(index, 'door:f1:700', 'door:f0:403', {preferElevator: true});
+assert.ok(denonWest1to0Elev && denonWest1to0Elev.edges.some(e => e.facilityId === 'ev-denon-west'), 'preferElevator 700 to 403 should use Denon West elevator');
 
 const routeState = navigationStateFromRoute(index, ['victory', 'mona', 'venus']);
 assert.deepEqual(routeState, {
@@ -148,10 +163,17 @@ for (const route of routes) {
   }
 }
 
+const verifiedLinkIds = new Set((floorGeoData.verticalLinks || []).map(link => link.id));
 for (const edge of graph.edges) {
   const from = index.nodes.get(edge.from);
   const to = index.nodes.get(edge.to);
-  if (from.floor !== to.floor) assert.ok(['stairs','elevator','escalator'].includes(edge.kind), `${edge.from} to ${edge.to} must use a floor facility`);
+  if (from.floor !== to.floor) {
+    assert.ok(['stairs','elevator','escalator'].includes(edge.kind), `${edge.from} to ${edge.to} must use a floor facility`);
+    const isInterimM2 = Math.min(from.floor, to.floor) === -2;
+    if (!isInterimM2) {
+      assert.ok(verifiedLinkIds.has(edge.facilityId), `${edge.from} to ${edge.to} (${edge.facilityId}) must be a verified verticalLink — never route through unverified/unknown-destination facilities`);
+    }
+  }
   if (edge.kind === 'corridor' && Array.isArray(edge.via)) assert.ok(edge.via.every(point => point.length === 2 && point.every(Number.isFinite)), `${edge.from} corridor waypoints must be valid`);
 }
 
