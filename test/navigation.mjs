@@ -169,10 +169,7 @@ for (const edge of graph.edges) {
   const to = index.nodes.get(edge.to);
   if (from.floor !== to.floor) {
     assert.ok(['stairs','elevator','escalator'].includes(edge.kind), `${edge.from} to ${edge.to} must use a floor facility`);
-    const isInterimM2 = Math.min(from.floor, to.floor) === -2;
-    if (!isInterimM2) {
-      assert.ok(verifiedLinkIds.has(edge.facilityId), `${edge.from} to ${edge.to} (${edge.facilityId}) must be a verified verticalLink — never route through unverified/unknown-destination facilities`);
-    }
+    assert.ok(verifiedLinkIds.has(edge.facilityId), `${edge.from} to ${edge.to} (${edge.facilityId}) must be a verified verticalLink — never route through unverified/unknown-destination facilities`);
   }
   if (edge.kind === 'corridor' && Array.isArray(edge.via)) assert.ok(edge.via.every(point => point.length === 2 && point.every(Number.isFinite)), `${edge.from} corridor waypoints must be valid`);
 }

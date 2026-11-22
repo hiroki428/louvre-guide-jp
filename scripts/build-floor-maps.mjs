@@ -1760,7 +1760,7 @@ function buildCustomFloorM1Plan() {
     {id: 'm1-ev-102-ne', linkId: 'ev-richelieu-nw', type: 'elevator', pt: p(568, 59), label: 'エレベーター'},
     {id: 'm1-ev-richelieu-center', linkId: 'ev-richelieu-center', type: 'elevator', pt: p(644, 121), label: 'エレベーター'},
     {id: 'm1-ev-sully-n', linkId: 'ev-sully-west', type: 'elevator', pt: p(886, 197), label: 'エレベーター'},
-    {id: 'm1-ev-central-bridge', type: 'elevator', pt: p(714, 250), label: 'エレベーター'},
+    {id: 'm1-ev-central-bridge', linkId: 'ev-hall-napoleon-east', type: 'elevator', pt: p(714, 250), label: 'エレベーター'},
     {id: 'm1-ev-132-137', type: 'elevator', pt: p(911, 265), label: 'エレベーター'},
     {id: 'm1-ev-134-s', linkId: 'ev-sully-se', type: 'elevator', pt: p(1004, 310), label: 'エレベーター'},
     {id: 'm1-ev-denon-vest-nw', linkId: 'ev-denon-center-nw', type: 'elevator', pt: p(579, 331), label: 'エレベーター'},
@@ -1770,10 +1770,10 @@ function buildCustomFloorM1Plan() {
     {id: 'm1-ev-denon-center-e', linkId: 'ev-denon-center-e', type: 'elevator', pt: p(628, 372), label: 'エレベーター'},
     // Escalator (Frog icon in Richelieu central grey hall — 1, spans -1F <-> 0F <-> 1F <-> 2F)
     {id: 'm1-esc-richelieu-center', linkId: 'escalator-richelieu-center', type: 'escalator', pt: p(658, 138), label: 'エスカレーター'},
-    // Downward Stairs (Green triple chevrons — 3 around Hall Napoléon pyramid concourse)
-    {id: 'm1-sd-pyramid-n', type: 'stairs-down', pt: p(600, 218), label: '下り階段'},
-    {id: 'm1-sd-pyramid-e', type: 'stairs-down', pt: p(629, 249), label: '下り階段'},
-    {id: 'm1-sd-pyramid-s', type: 'stairs-down', pt: p(601, 275), label: '下り階段'},
+    // Downward Stairs (Green triple chevrons — 3 around Hall Napoléon pyramid concourse, all linked to -2F)
+    {id: 'm1-sd-pyramid-n', linkId: 'stairs-pyramid-n', type: 'stairs-down', pt: p(600, 218), label: '下り階段'},
+    {id: 'm1-sd-pyramid-e', linkId: 'stairs-pyramid-e', type: 'stairs-down', pt: p(629, 249), label: '下り階段'},
+    {id: 'm1-sd-pyramid-s', linkId: 'stairs-pyramid-s', type: 'stairs-down', pt: p(601, 275), label: '下り階段'},
     // Upward Stairs (Yellow triple chevrons — 12; 105-w destination unknown per user)
     {id: 'm1-su-102-nw', linkId: 'stairs-richelieu-102-n', type: 'stairs-up', pt: p(528, 63), label: '上り階段'},
     {id: 'm1-su-102-sw', linkId: 'stairs-richelieu-102-s', type: 'stairs-up', pt: p(530, 107), label: '上り階段'},
@@ -1951,8 +1951,39 @@ function buildCustomFloorM2Plan() {
     {points: polyStr(exhSouth), number: '', wing: 'central', cx: exhSubX, cy: exhSubY, area: 1400, name: '企画展（南）', isExhibition: true}
   ];
 
-  // Legacy facilities cleared — will be populated from the user's verified -2F facility map
-  const facList = [];
+  // Exact Floor -2 interior facilities extracted from the user's -2F facility PPT map:
+  // Orange dots = WC (2), Purple dots = Elevator (2), Yellow triple chevrons = Stairs Up (3),
+  // Red dot = Information (1), T = Ticket (1), S = Shop (1), M = Metro (1), P = Parking (1)
+  const facList = [
+    // Toilets (WC — 2)
+    {id: 'm2-wc-north', type: 'wc', pt: p(647, 216), label: 'トイレ'},
+    {id: 'm2-wc-south', type: 'wc', pt: p(643, 299), label: 'トイレ'},
+    // Elevators (EV — 2; exhibition-sw linked to -1F central bridge, pyramid-center pending confirmation)
+    {id: 'm2-ev-pyramid-center', type: 'elevator', pt: p(616, 261), label: 'エレベーター'},
+    {id: 'm2-ev-exhibition-sw', linkId: 'ev-hall-napoleon-east', type: 'elevator', pt: p(711, 311), label: 'エレベーター'},
+    // Upward Stairs (Yellow triple chevrons — 3 around Hall Napoléon, all linked to -1F)
+    {id: 'm2-su-pyramid-n', linkId: 'stairs-pyramid-n', type: 'stairs-up', pt: p(617, 211), label: '上り階段'},
+    {id: 'm2-su-pyramid-e', linkId: 'stairs-pyramid-e', type: 'stairs-up', pt: p(661, 262), label: '上り階段'},
+    {id: 'm2-su-pyramid-s', linkId: 'stairs-pyramid-s', type: 'stairs-up', pt: p(620, 322), label: '上り階段'},
+    // Hall Napoléon & Carrousel visitor facilities (Red=案内所, T=チケット, S=ショップ, M=メトロ, P=パーキング)
+    {id: 'm2-info', type: 'information', pt: p(516, 171), label: '案内所'},
+    {id: 'm2-ticket', type: 'ticket', pt: p(486, 320), label: 'チケット売り場'},
+    {id: 'm2-shop', type: 'shop', pt: p(386, 298), label: 'ショップ'},
+    {id: 'm2-metro', type: 'metro', pt: p(285, 158), label: 'メトロ'},
+    {id: 'm2-parking', type: 'parking', pt: p(190, 253), label: 'パーキング'}
+  ].map(f => ({
+    id: f.id,
+    ...(f.linkId ? {linkId: f.linkId} : {}),
+    type: f.type,
+    x: round1(f.pt[0]),
+    y: round1(f.pt[1]),
+    label: f.label
+  }));
+
+  const [exitX, exitY] = p(285, 253);
+  const hallLabels = [
+    {x: exitX, y: exitY, text: '出口'}
+  ];
 
   return {
     subtitle: FLOOR_SUBTITLES['-2'],
@@ -1971,6 +2002,7 @@ function buildCustomFloorM2Plan() {
       fusedServiceHalls: true,
       exhibitionAreas,
       exhibitionLabels,
+      hallLabels,
       wingHeaders: []
     },
     wings: [
@@ -1989,9 +2021,18 @@ function buildCustomFloorM2Plan() {
 
 floorsOutput['-2'] = buildCustomFloorM2Plan();
 
-// Verified vertical facility correspondences across floors -1F <-> 0F <-> 1F <-> 2F (13 EV + 1 Escalator + 20 Stairs = 34 shafts)
+// Verified vertical facility correspondences across ALL 5 floors (-2F <-> -1F <-> 0F <-> 1F <-> 2F: 14 EV + 1 Escalator + 23 Stairs = 38 shafts)
 const verticalLinks = [
-  // Elevators (13 shafts)
+  // Elevators (14 shafts)
+  {
+    id: 'ev-hall-napoleon-east',
+    kind: 'elevator',
+    label: 'ナポレオン・ホール東エレベーター（-2F企画展南西↔-1F中央東通路）',
+    stops: [
+      {floor: -2, facilityId: 'm2-ev-exhibition-sw'},
+      {floor: -1, facilityId: 'm1-ev-central-bridge'}
+    ]
+  },
   {
     id: 'ev-richelieu-nw',
     kind: 'elevator',
@@ -2326,6 +2367,34 @@ const verticalLinks = [
       {floor: 0, facilityId: '0f-su-denon-farwest'},
       {floor: 1, facilityId: '1f-sd-denon-farwest'}
     ]
+  },
+  // Stairs spanning -2F <-> -1F (3 Hall Napoléon pyramid stairs)
+  {
+    id: 'stairs-pyramid-n',
+    kind: 'stairs',
+    label: 'ピラミッド北階段（-2F北↔-1F北）',
+    stops: [
+      {floor: -2, facilityId: 'm2-su-pyramid-n'},
+      {floor: -1, facilityId: 'm1-sd-pyramid-n'}
+    ]
+  },
+  {
+    id: 'stairs-pyramid-e',
+    kind: 'stairs',
+    label: 'ピラミッド東階段（-2F東↔-1F東）',
+    stops: [
+      {floor: -2, facilityId: 'm2-su-pyramid-e'},
+      {floor: -1, facilityId: 'm1-sd-pyramid-e'}
+    ]
+  },
+  {
+    id: 'stairs-pyramid-s',
+    kind: 'stairs',
+    label: 'ピラミッド南階段（-2F南↔-1F南）',
+    stops: [
+      {floor: -2, facilityId: 'm2-su-pyramid-s'},
+      {floor: -1, facilityId: 'm1-sd-pyramid-s'}
+    ]
   }
 ];
 
@@ -2348,15 +2417,20 @@ const works = JSON.parse(fs.readFileSync(worksPath, 'utf8'));
 const floorTag = f => (f < 0 ? `fm${Math.abs(f)}` : `f${f}`);
 
 const nodes = [
-  // Floor -2 (aligned to user's exact -2F Hall Napoléon PPT coordinates)
+  // Floor -2 (aligned to user's exact -2F Hall Napoléon PPT coordinates & verified -2F-to--1F shafts)
   {id: 'entrance:pyramid:fm2', type: 'entrance', floor: -2, x: 544, y: 303, label: 'ピラミッド中央入口'},
   {id: 'junction:fm2:core', type: 'junction', floor: -2, x: 562, y: 303, label: 'ナポレオン・ホール中央'},
-  {id: 'stairs:central:fm2', type: 'stairs', floor: -2, x: 571, y: 303, label: '中央階段', facilityId: 'stairs-central'},
-  {id: 'elevator:central:fm2', type: 'elevator', floor: -2, x: 583, y: 313, label: '中央エレベーター', facilityId: 'elevator-central'},
+  {id: 'stairs:pyramid-n:fm2', type: 'stairs', floor: -2, x: 573.5, y: 267.3, label: 'ピラミッド北階段', facilityId: 'stairs-pyramid-n'},
+  {id: 'stairs:pyramid-e:fm2', type: 'stairs', floor: -2, x: 612.7, y: 305.8, label: 'ピラミッド東階段', facilityId: 'stairs-pyramid-e'},
+  {id: 'stairs:pyramid-s:fm2', type: 'stairs', floor: -2, x: 576.2, y: 351.1, label: 'ピラミッド南階段', facilityId: 'stairs-pyramid-s'},
+  {id: 'elevator:hall-napoleon-east:fm2', type: 'elevator', floor: -2, x: 657.2, y: 342.8, label: 'ナポレオン・ホール東エレベーター', facilityId: 'ev-hall-napoleon-east'},
 
-  // Floor -1 (aligned to user's exact -1F PPT architectural coordinates & all confirmed -1F-0F shafts)
+  // Floor -1 (aligned to user's exact -1F PPT architectural coordinates & all confirmed -2F--1F-0F shafts)
   {id: 'junction:fm1:core', type: 'junction', floor: -1, x: 562, y: 299, label: '中央連絡部'},
-  {id: 'stairs:central:fm1', type: 'stairs', floor: -1, x: 562, y: 299, label: '中央階段', facilityId: 'stairs-central'},
+  {id: 'stairs:pyramid-n:fm1', type: 'stairs', floor: -1, x: 558.4, y: 272.6, label: 'ピラミッド北階段', facilityId: 'stairs-pyramid-n'},
+  {id: 'stairs:pyramid-e:fm1', type: 'stairs', floor: -1, x: 584.2, y: 296.0, label: 'ピラミッド東階段', facilityId: 'stairs-pyramid-e'},
+  {id: 'stairs:pyramid-s:fm1', type: 'stairs', floor: -1, x: 559.3, y: 315.6, label: 'ピラミッド南階段', facilityId: 'stairs-pyramid-s'},
+  {id: 'elevator:hall-napoleon-east:fm1', type: 'elevator', floor: -1, x: 659.9, y: 296.7, label: 'ナポレオン・ホール東エレベーター', facilityId: 'ev-hall-napoleon-east'},
   {id: 'elevator:central:fm1', type: 'elevator', floor: -1, x: 597.6, y: 199.3, label: 'リシュリュー中央エレベーター', facilityId: 'ev-richelieu-center'},
   {id: 'elevator:richelieu-nw:fm1', type: 'elevator', floor: -1, x: 529.9, y: 152.5, label: 'リシュリュー北西エレベーター', facilityId: 'ev-richelieu-nw'},
   {id: 'elevator:sully-west:fm1', type: 'elevator', floor: -1, x: 813.1, y: 256.7, label: 'シュリー西エレベーター', facilityId: 'ev-sully-west'},
@@ -2530,13 +2604,21 @@ const DOOR_POSITIONS = {
 };
 
 const edges = [
-  // Floor -2
+  // Floor -2 (verified Hall Napoléon stairs & elevator)
   {from: 'entrance:pyramid:fm2', to: 'junction:fm2:core', cost: 8, kind: 'corridor', available: true},
-  {from: 'junction:fm2:core', to: 'stairs:central:fm2', cost: 6, kind: 'corridor', available: true},
-  {from: 'junction:fm2:core', to: 'elevator:central:fm2', cost: 7, kind: 'corridor', available: true},
+  {from: 'junction:fm2:core', to: 'stairs:pyramid-n:fm2', cost: 6, kind: 'corridor', available: true},
+  {from: 'junction:fm2:core', to: 'stairs:pyramid-e:fm2', cost: 6, kind: 'corridor', available: true},
+  {from: 'junction:fm2:core', to: 'stairs:pyramid-s:fm2', cost: 6, kind: 'corridor', available: true},
+  {from: 'junction:fm2:core', to: 'elevator:hall-napoleon-east:fm2', cost: 10, kind: 'corridor', via: [[620, 325]], available: true},
 
-  // Floor -1 (walks cleanly through Hall Napoléon Y-concourse & all confirmed -1F-0F facilities)
-  {from: 'stairs:central:fm1', to: 'junction:fm1:core', cost: 2, kind: 'corridor', available: true},
+  // Floor -1 (walks cleanly through Hall Napoléon Y-concourse & all confirmed -2F--1F-0F facilities)
+  {from: 'stairs:pyramid-n:fm1', to: 'junction:fm1:richelieu', cost: 7, kind: 'corridor', available: true},
+  {from: 'stairs:pyramid-n:fm1', to: 'junction:fm1:core', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:pyramid-e:fm1', to: 'junction:fm1:core', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:pyramid-e:fm1', to: 'elevator:hall-napoleon-east:fm1', cost: 6, kind: 'corridor', available: true},
+  {from: 'elevator:hall-napoleon-east:fm1', to: 'junction:fm1:sully', cost: 11, kind: 'corridor', available: true},
+  {from: 'stairs:pyramid-s:fm1', to: 'junction:fm1:core', cost: 4, kind: 'corridor', available: true},
+  {from: 'stairs:pyramid-s:fm1', to: 'junction:fm1:denon', cost: 7, kind: 'corridor', available: true},
   {from: 'elevator:central:fm1', to: 'junction:fm1:richelieu', cost: 4, kind: 'corridor', available: true},
   {from: 'escalator:richelieu-center:fm1', to: 'junction:fm1:richelieu', cost: 4, kind: 'corridor', available: true},
   {from: 'escalator:richelieu-center:fm1', to: 'stairs:richelieu-se:fm1', cost: 9, kind: 'corridor', available: true},
@@ -2724,9 +2806,11 @@ const edges = [
   {from: 'door:f2:929', to: 'door:f2:931', cost: 5, kind: 'corridor', via: [[915, 365]], available: true},
   {from: 'door:f2:931', to: 'door:f2:940', cost: 10, kind: 'corridor', available: true},
 
-  // Vertical connections (-2F..-1F interim central shafts + verified -1F <-> 0F <-> 1F <-> 2F shafts)
-  {from: 'stairs:central:fm2', to: 'stairs:central:fm1', cost: 18, kind: 'stairs', facilityId: 'stairs-central', available: true},
-  {from: 'elevator:central:fm2', to: 'elevator:central:fm1', cost: 22, kind: 'elevator', facilityId: 'elevator-central', available: true},
+  // Verified -2F <-> -1F vertical connections (3 Pyramid Stairs + 1 Hall Napoléon East Elevator)
+  {from: 'stairs:pyramid-n:fm2', to: 'stairs:pyramid-n:fm1', cost: 18, kind: 'stairs', facilityId: 'stairs-pyramid-n', available: true},
+  {from: 'stairs:pyramid-e:fm2', to: 'stairs:pyramid-e:fm1', cost: 18, kind: 'stairs', facilityId: 'stairs-pyramid-e', available: true},
+  {from: 'stairs:pyramid-s:fm2', to: 'stairs:pyramid-s:fm1', cost: 18, kind: 'stairs', facilityId: 'stairs-pyramid-s', available: true},
+  {from: 'elevator:hall-napoleon-east:fm2', to: 'elevator:hall-napoleon-east:fm1', cost: 22, kind: 'elevator', facilityId: 'ev-hall-napoleon-east', available: true},
 
   // Verified -1F <-> 0F vertical connections (9 EV + 1 Escalator + 13 Stairs)
   {from: 'elevator:richelieu-nw:fm1', to: 'elevator:richelieu-nw:f0', cost: 22, kind: 'elevator', facilityId: 'ev-richelieu-nw', available: true},

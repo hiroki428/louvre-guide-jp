@@ -203,6 +203,11 @@ function facilityIconMarkup(item, facilityFilter) {
     'stairs-both': `<path class="fac-glyph-stroke" d="M-3.6 3.0h2.0V1.1h2.0V-0.8h2.0V-2.7h1.2M-2.8 -0.6l2.0 -2.0M-2.4 -2.6h1.6v1.6M2.8 0.8l-2.0 2.0M2.4 2.8h-1.6v-1.6"/>`,
     escalator: `<path class="fac-glyph-stroke" d="M-3.6 2.7h1.6l3.8-4.8h1.8M-3.6 2.7a1.1 1.1 0 0 1 0-2.2h1.1l3.6-4.5h2.5a1.1 1.1 0 0 1 0 2.2"/>`,
     elevator: `<path class="fac-glyph-stroke" d="M-1.7 2.8v-5.2M-3.3 -0.9l1.6-1.7 1.6 1.7M1.7 -2.8v5.2M0.1 0.9l1.6 1.7 1.6-1.7"/>`,
+    information: `<circle class="fac-glyph-fill" cx="0" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M0 -0.4v3.4M-1.2 3h2.4"/>`,
+    ticket: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">T</text>`,
+    shop: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">S</text>`,
+    metro: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">M</text>`,
+    parking: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">P</text>`,
     cafe: `<path class="fac-glyph-stroke" d="M-3.2-1.8h4.8v2.8a2.2 2.2 0 0 1-2.2 2.2h-.4a2.2 2.2 0 0 1-2.2-2.2v-2.8Zm4.8.5h1.1a1.1 1.1 0 0 1 0 2.2h-1.1"/>`
   };
   const pickRing = isPicked ? `<circle class="facility-pick-bg pick-${escapeHtml(item.type)}" r="8.6"/>` : '';
@@ -214,6 +219,11 @@ function facilityIconMarkup(item, facilityFilter) {
     'stairs-up': '上り階段',
     'stairs-both': '上下階段',
     escalator: 'エスカレーター',
+    information: '案内所',
+    ticket: 'チケット売り場',
+    shop: 'ショップ',
+    metro: 'メトロ',
+    parking: 'パーキング',
     cafe: item.label || 'カフェ'
   };
   const ariaLabel = labels[item.type] || item.label || item.type;
@@ -332,6 +342,11 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
     {type: 'stairs-up', cls: 'hud-fac-stairs-up', label: '上り階段'},
     {type: 'stairs-both', cls: 'hud-fac-stairs-both', label: '上下階段'},
     {type: 'stairs', cls: 'hud-fac-stairs', label: '同階階段'},
+    {type: 'information', cls: 'hud-fac-information', label: '案内所'},
+    {type: 'ticket', cls: 'hud-fac-ticket', label: 'チケット'},
+    {type: 'shop', cls: 'hud-fac-shop', label: 'ショップ'},
+    {type: 'metro', cls: 'hud-fac-metro', label: 'メトロ'},
+    {type: 'parking', cls: 'hud-fac-parking', label: 'パーキング'},
     {type: 'cafe', cls: 'hud-fac-cafe', label: 'カフェ'}
   ].filter(spec => facilityTypes.includes(spec.type));
 
@@ -458,6 +473,9 @@ export function floorMapMarkup({
     const exhibitionLabels = (cp.exhibitionLabels || [])
       .map(e => `<g class="exhibition-label-group" aria-label="${escapeHtml(e.label)}"><text class="exhibition-label" x="${e.x}" y="${e.y - 2}" text-anchor="middle">${escapeHtml(e.label)}</text>${e.sublabel ? `<text class="exhibition-sub" x="${e.x}" y="${e.y + 9}" text-anchor="middle">${escapeHtml(e.sublabel)}</text>` : ''}</g>`)
       .join('');
+    const hallLabels = (cp.hallLabels || [])
+      .map(h => `<text class="hall-landmark-label" x="${h.x}" y="${h.y + 3}" text-anchor="middle">${escapeHtml(h.text)}</text>`)
+      .join('');
     footprint = `
       <path class="palace-footprint custom-palace-base" d="${cp.footprintPath}" fill-rule="evenodd"/>
       ${underground}
@@ -466,7 +484,7 @@ export function floorMapMarkup({
       ${courtyards}
       ${serviceHalls}
       ${restAreas}`;
-    rooms = `<g class="custom-wing-shells" aria-hidden="true">${wingShell}</g>${passages}${plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('')}<g class="custom-room-dividers" aria-hidden="true">${dividers}</g>${constructionNotices}${exhibitionLabels}`;
+    rooms = `<g class="custom-wing-shells" aria-hidden="true">${wingShell}</g>${passages}${plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('')}<g class="custom-room-dividers" aria-hidden="true">${dividers}</g>${constructionNotices}${exhibitionLabels}${hallLabels}`;
   } else {
     footprint = floorGeoData.footprintPolys.map(points => `<polygon class="palace-footprint" points="${points}"/>`).join('');
     rooms = plan.rooms.map(item => roomMarkup(item, worksByRoom, selectedId, routeWorkSet)).join('');

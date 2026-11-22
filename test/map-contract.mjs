@@ -26,6 +26,15 @@ for (const floor of [2, 1, 0, -1, -2]) {
   if (floor === -2) {
     assert.match(markup, /is-exhibition/, 'floor -2 must render the light-blue temporary exhibition space');
     assert.match(markup, /企画展/, 'floor -2 must clearly label the light-blue space as 企画展');
+    assert.match(markup, /出口/, 'floor -2 must label the Carrousel exit hall');
+    assert.equal((markup.match(/data-facility-type="wc"/g) || []).length, 2, 'floor -2 must render both verified toilets');
+    assert.equal((markup.match(/data-facility-type="elevator"/g) || []).length, 2, 'floor -2 must render both verified elevators');
+    assert.equal((markup.match(/data-facility-type="stairs-up"/g) || []).length, 3, 'floor -2 must render all 3 pyramid upward stairs');
+    assert.equal((markup.match(/data-facility-type="information"/g) || []).length, 1, 'floor -2 must render the red information desk');
+    assert.equal((markup.match(/data-facility-type="ticket"/g) || []).length, 1, 'floor -2 must render the ticket office (T)');
+    assert.equal((markup.match(/data-facility-type="shop"/g) || []).length, 1, 'floor -2 must render the shop (S)');
+    assert.equal((markup.match(/data-facility-type="metro"/g) || []).length, 1, 'floor -2 must render the metro access (M)');
+    assert.equal((markup.match(/data-facility-type="parking"/g) || []).length, 1, 'floor -2 must render the parking access (P)');
   }
   if (floor === -1) {
     assert.match(markup, /class="room-number is-uniform-room"/, 'floor -1 must render all room numbers at a uniform legible size');
@@ -119,7 +128,7 @@ for (const floor of [2, 1, 0, -1, -2]) {
     assert.match(markup, /上下階段/, 'floor 1 HUD must label bidirectional stairs');
     assert.match(markup, /同階階段/, 'floor 1 HUD must label same-floor stairs');
     assert.match(markup, /エスカレーター/, 'floor 1 HUD must label escalator');
-    assert.equal(floorGeoData.verticalLinks?.length, 34, 'all 34 verified -1F-0F-1F-2F vertical links (13 EV + 1 escalator + 20 stairs) must be recorded');
+    assert.equal(floorGeoData.verticalLinks?.length, 38, 'all 38 verified -2F..2F vertical links (14 EV + 1 escalator + 23 stairs) must be recorded');
     const routed1F = floorMapMarkup({floor: 1, floorLabel: '1階', works, selectedId: 'mona', routeWorkIds: ['victory', 'mona', 'liberty', 'scribe'], viewedIds: ['victory']});
     const labels1 = [...routed1F.matchAll(/data-room-label="([^"]+)" x="([0-9.]+)" y="([0-9.]+)"/g)]
       .map(m => ({num: m[1], x0: Number(m[2]) - 11, y0: Number(m[3]) - 8, x1: Number(m[2]) + 11, y1: Number(m[3]) + 2}));

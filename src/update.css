@@ -1071,9 +1071,16 @@
 .facility-badge .fac-bg-stairs-up { fill: #2563a8; }
 .facility-badge .fac-bg-stairs-both { fill: url(#stairs-both-grad); }
 .facility-badge .fac-bg-escalator { fill: #1c7c8c; }
+.facility-badge .fac-bg-information { fill: #d63638; }
+.facility-badge .fac-bg-ticket { fill: #b87a14; }
+.facility-badge .fac-bg-shop { fill: #9e4b6c; }
+.facility-badge .fac-bg-metro { fill: #1e4d8c; }
+.facility-badge .fac-bg-parking { fill: #356596; }
 .facility-badge .fac-bg-cafe { fill: #8c5432; }
 .facility-badge .fac-glyph-stroke { fill: none; stroke: #fffdf9; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .facility-badge .fac-glyph-fill { fill: #fffdf9; stroke: none; }
+.facility-badge .fac-glyph-letter { fill: #fffdf9; font: 800 7.6px 'Noto Sans JP', sans-serif; pointer-events: none; }
+.hall-landmark-label { fill: #4c463f; font: 700 9px 'Noto Sans JP', sans-serif; pointer-events: none; paint-order: stroke; stroke: rgb(255 253 250 / 90%); stroke-width: 2.4px; }
 .facility.is-dimmed { opacity: .16; }
 .facility.is-picked .facility-pick-bg { fill: none; stroke-width: 2.2; vector-effect: non-scaling-stroke; filter: url(#pin-shadow); }
 .facility.is-picked .facility-pick-bg.pick-wc { stroke: #df7a20; fill: rgb(223 122 32 / 22%); }
@@ -1085,6 +1092,11 @@
 .hud-dot.hud-fac-stairs-both { fill: url(#stairs-both-grad); }
 .hud-dot.hud-fac-escalator { fill: #1c7c8c; }
 .hud-dot.hud-fac-elevator { fill: #7550a8; }
+.hud-dot.hud-fac-information { fill: #d63638; }
+.hud-dot.hud-fac-ticket { fill: #b87a14; }
+.hud-dot.hud-fac-shop { fill: #9e4b6c; }
+.hud-dot.hud-fac-metro { fill: #1e4d8c; }
+.hud-dot.hud-fac-parking { fill: #356596; }
 .hud-dot.hud-fac-cafe { fill: #8c5432; }
 .layer-labels > text { fill: var(--color-muted); font: 500 9px 'Noto Sans JP', sans-serif; }
 .layer-labels .wing-label { fill: var(--color-ink); font-size: 13px; font-weight: 700; }
