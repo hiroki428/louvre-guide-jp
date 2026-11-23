@@ -1,4 +1,4 @@
-const SHELL = 'louvre-shell-v45';
+const SHELL = 'louvre-shell-v46';
 const AUDIO = 'louvre-audio-v2';
 const IMAGES = 'louvre-images-v1';
 
@@ -12,6 +12,18 @@ const SHELL_ASSETS = [
   './src/app-config.js',
   './src/my-plan.js',
   './src/main.js',
+  './src/app/state.js',
+  './src/app/ui-helpers.js',
+  './src/app/route-loader.js',
+  './src/app/audio-controller.js',
+  './src/app/plan-actions.js',
+  './src/views/course-select.js',
+  './src/views/map-tab.js',
+  './src/views/plan-tab.js',
+  './src/views/audio-tab.js',
+  './src/views/settings-tab.js',
+  './src/views/work-detail-sheet.js',
+  './src/views/mini-player.js',
   './src/catalog.js',
   './src/floor-map.js',
   './src/floor-map-geo.js',

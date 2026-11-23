@@ -190,26 +190,54 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
   return parts.join('');
 }
 
+const ALWAYS_VISIBLE_FACILITY_TYPES = new Set([
+  'elevator',
+  'escalator',
+  'stairs-up',
+  'stairs-down',
+  'stairs-both',
+  'stairs'
+]);
+
+function facilityBadgeGraphic(type) {
+  switch (type) {
+    case 'elevator':
+      return `<rect class="fac-badge-bg fac-bg-elevator" x="-6.6" y="-6.2" width="13.2" height="12.4" rx="2.6"/><text class="fac-glyph-code" x="0" y="2.5" text-anchor="middle">EV</text>`;
+    case 'escalator':
+      return `<rect class="fac-badge-bg fac-bg-escalator" x="-7.6" y="-5.6" width="15.2" height="11.2" rx="5.6"/><text class="fac-glyph-code" x="0" y="2.5" text-anchor="middle">ES</text>`;
+    case 'stairs-up':
+      return `<path class="fac-badge-bg fac-bg-stairs-up" d="M0 -7.8 L6.6 -1.4 L6.6 5.0 Q6.6 6.4 5.2 6.4 L-5.2 6.4 Q-6.6 6.4 -6.6 5.0 L-6.6 -1.4 Z"/><path class="fac-glyph-fill" d="M0 -3.9 L3.7 0.7 H1.4 V4.0 H-1.4 V0.7 H-3.7 Z"/>`;
+    case 'stairs-down':
+      return `<path class="fac-badge-bg fac-bg-stairs-down" d="M-5.2 -6.4 L5.2 -6.4 Q6.6 -6.4 6.6 -5.0 L6.6 1.4 L0 7.8 L-6.6 1.4 L-6.6 -5.0 Q-6.6 -6.4 -5.2 -6.4 Z"/><path class="fac-glyph-fill" d="M0 3.9 L3.7 -0.7 H1.4 V-4.0 H-1.4 V-0.7 H-3.7 Z"/>`;
+    case 'stairs-both':
+      return `<rect class="fac-badge-bg fac-bg-stairs-both" x="-5.8" y="-7.4" width="11.6" height="14.8" rx="5.8"/><line class="fac-both-divider" x1="-5.2" y1="0" x2="5.2" y2="0"/><path class="fac-glyph-fill" d="M0 -5.6 L3.1 -1.5 H-3.1 Z M0 5.6 L3.1 1.5 H-3.1 Z"/>`;
+    case 'stairs':
+      return `<circle class="fac-badge-bg fac-bg-stairs" r="6.0"/><path class="fac-glyph-stroke" d="M-3.5 3.0h2.1V1h2.1v-2.0h2.1V-3.0h0.9"/>`;
+    case 'wc':
+      return `<circle class="fac-badge-bg fac-bg-wc" r="6.3"/><circle class="fac-glyph-fill" cx="-2.1" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M-2.1 -0.8v3.9M-3.3 0.7h2.4"/><circle class="fac-glyph-fill" cx="2.1" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M2.1 -0.8l-1.3 2.7h2.6l-1.3-2.7M2.1 1.9v1.3"/>`;
+    case 'information':
+      return `<circle class="fac-badge-bg fac-bg-information" r="6.3"/><circle class="fac-glyph-fill" cx="0" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M0 -0.4v3.4M-1.2 3h2.4"/>`;
+    case 'ticket':
+      return `<circle class="fac-badge-bg fac-bg-ticket" r="6.3"/><text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">T</text>`;
+    case 'shop':
+      return `<circle class="fac-badge-bg fac-bg-shop" r="6.3"/><text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">S</text>`;
+    case 'metro':
+      return `<circle class="fac-badge-bg fac-bg-metro" r="6.3"/><text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">M</text>`;
+    case 'parking':
+      return `<circle class="fac-badge-bg fac-bg-parking" r="6.3"/><text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">P</text>`;
+    case 'cafe':
+      return `<circle class="fac-badge-bg fac-bg-cafe" r="6.3"/><path class="fac-glyph-stroke" d="M-3.2-1.8h4.8v2.8a2.2 2.2 0 0 1-2.2 2.2h-.4a2.2 2.2 0 0 1-2.2-2.2v-2.8Zm4.8.5h1.1a1.1 1.1 0 0 1 0 2.2h-1.1"/>`;
+    default:
+      return `<circle class="fac-badge-bg fac-bg-${escapeHtml(type)}" r="6.3"/><circle class="fac-glyph-fill" r="2"/>`;
+  }
+}
+
 function facilityIconMarkup(item, facilityFilter) {
   const isPicked = (facilityFilter === 'wc' && item.type === 'wc') || (facilityFilter === 'cafe' && item.type === 'cafe');
-  const isDimmed = facilityFilter && facilityFilter !== 'none' && !isPicked;
+  const isAlwaysVisible = ALWAYS_VISIBLE_FACILITY_TYPES.has(item.type);
+  const isDimmed = facilityFilter && facilityFilter !== 'none' && !isPicked && !isAlwaysVisible;
   const scale = isPicked ? 1.42 : 1;
   const common = `transform="translate(${item.x} ${item.y}) scale(${scale})"`;
-  const glyphs = {
-    wc: `<circle class="fac-glyph-fill" cx="-2.1" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M-2.1 -0.8v3.9M-3.3 0.7h2.4"/><circle class="fac-glyph-fill" cx="2.1" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M2.1 -0.8l-1.3 2.7h2.6l-1.3-2.7M2.1 1.9v1.3"/>`,
-    stairs: `<path class="fac-glyph-stroke" d="M-3.6 3.1h2.2V1h2.2v-2.1h2.2V-3.1h1"/>`,
-    'stairs-down': `<path class="fac-glyph-stroke" d="M-3.5 -2.6h1.9v1.9h1.9v1.9h1.9v1.9h1.3M-3.2 0.2l2.4 2.4M-0.8 0.8v1.8h-1.8"/>`,
-    'stairs-up': `<path class="fac-glyph-stroke" d="M-3.5 3.1h1.9V1.2h1.9V-0.7h1.9V-2.6h1.3M-3.2 -0.2l2.4 -2.4M-2.6 -2.6h1.8v1.8"/>`,
-    'stairs-both': `<path class="fac-glyph-stroke" d="M-3.6 3.0h2.0V1.1h2.0V-0.8h2.0V-2.7h1.2M-2.8 -0.6l2.0 -2.0M-2.4 -2.6h1.6v1.6M2.8 0.8l-2.0 2.0M2.4 2.8h-1.6v-1.6"/>`,
-    escalator: `<path class="fac-glyph-stroke" d="M-3.6 2.7h1.6l3.8-4.8h1.8M-3.6 2.7a1.1 1.1 0 0 1 0-2.2h1.1l3.6-4.5h2.5a1.1 1.1 0 0 1 0 2.2"/>`,
-    elevator: `<path class="fac-glyph-stroke" d="M-1.7 2.8v-5.2M-3.3 -0.9l1.6-1.7 1.6 1.7M1.7 -2.8v5.2M0.1 0.9l1.6 1.7 1.6-1.7"/>`,
-    information: `<circle class="fac-glyph-fill" cx="0" cy="-2.4" r="1.05"/><path class="fac-glyph-stroke" d="M0 -0.4v3.4M-1.2 3h2.4"/>`,
-    ticket: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">T</text>`,
-    shop: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">S</text>`,
-    metro: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">M</text>`,
-    parking: `<text class="fac-glyph-letter" x="0" y="2.8" text-anchor="middle">P</text>`,
-    cafe: `<path class="fac-glyph-stroke" d="M-3.2-1.8h4.8v2.8a2.2 2.2 0 0 1-2.2 2.2h-.4a2.2 2.2 0 0 1-2.2-2.2v-2.8Zm4.8.5h1.1a1.1 1.1 0 0 1 0 2.2h-1.1"/>`
-  };
   const pickRing = isPicked ? `<circle class="facility-pick-bg pick-${escapeHtml(item.type)}" r="8.6"/>` : '';
   const labels = {
     wc: 'トイレ',
@@ -228,7 +256,7 @@ function facilityIconMarkup(item, facilityFilter) {
   };
   const ariaLabel = labels[item.type] || item.label || item.type;
   const linkAttr = item.linkId ? ` data-vertical-link="${escapeHtml(item.linkId)}"` : '';
-  return `<g class="facility facility-badge facility-${escapeHtml(item.type)} ${isPicked ? 'is-picked' : ''} ${isDimmed ? 'is-dimmed' : ''}" ${common} data-facility-type="${escapeHtml(item.type)}"${linkAttr} aria-label="${escapeHtml(ariaLabel)}">${pickRing}<circle class="fac-badge-bg fac-bg-${escapeHtml(item.type)}" r="6.3"/>${glyphs[item.type] || '<circle class="fac-glyph-fill" r="2"/>'}</g>`;
+  return `<g class="facility facility-badge facility-${escapeHtml(item.type)} ${isPicked ? 'is-picked' : ''} ${isDimmed ? 'is-dimmed' : ''}" ${common} data-facility-type="${escapeHtml(item.type)}"${linkAttr} aria-label="${escapeHtml(ariaLabel)}">${pickRing}${facilityBadgeGraphic(item.type)}</g>`;
 }
 
 const polylineMarkup = (segments, floor, className) => segments
@@ -299,8 +327,8 @@ function wrapHudText(text, maxChars = 14) {
 function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, hasRestArea = false, hasExhibition = false, facilityTypes = []}) {
   const x = 12;
   const y = 12;
-  const width = 180;
-  const padX = x + 12;
+  const width = 188;
+  const padX = x + 11;
   const contText = continuationFloors.length ? `続き：${continuationFloors.map(floorName).join('・')}` : '';
   const contLines = contText ? wrapHudText(contText, 14) : [];
 
@@ -317,7 +345,7 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
   }
 
   cursorY += 2;
-  parts.push(`<line class="hud-divider" x1="${padX}" y1="${cursorY}" x2="${x + width - 12}" y2="${cursorY}"/>`);
+  parts.push(`<line class="hud-divider" x1="${padX}" y1="${cursorY}" x2="${x + width - 11}" y2="${cursorY}"/>`);
   cursorY += 16;
 
   const col1 = padX;
@@ -335,19 +363,19 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
   let bottomY = cursorY + (extraItems.length > 1 ? 57 : 38);
 
   const facLegendSpecs = [
-    {type: 'wc', cls: 'hud-fac-wc', label: 'トイレ'},
-    {type: 'elevator', cls: 'hud-fac-elevator', label: 'EV'},
-    {type: 'escalator', cls: 'hud-fac-escalator', label: 'エスカレーター'},
-    {type: 'stairs-down', cls: 'hud-fac-stairs-down', label: '下り階段'},
-    {type: 'stairs-up', cls: 'hud-fac-stairs-up', label: '上り階段'},
-    {type: 'stairs-both', cls: 'hud-fac-stairs-both', label: '上下階段'},
-    {type: 'stairs', cls: 'hud-fac-stairs', label: '同階階段'},
-    {type: 'information', cls: 'hud-fac-information', label: '案内所'},
-    {type: 'ticket', cls: 'hud-fac-ticket', label: 'チケット'},
-    {type: 'shop', cls: 'hud-fac-shop', label: 'ショップ'},
-    {type: 'metro', cls: 'hud-fac-metro', label: 'メトロ'},
-    {type: 'parking', cls: 'hud-fac-parking', label: 'パーキング'},
-    {type: 'cafe', cls: 'hud-fac-cafe', label: 'カフェ'}
+    {type: 'elevator', label: 'エレベーター'},
+    {type: 'escalator', label: 'エスカレーター'},
+    {type: 'stairs-up', label: '上り階段'},
+    {type: 'stairs-down', label: '下り階段'},
+    {type: 'stairs-both', label: '上下階段'},
+    {type: 'stairs', label: '同階階段'},
+    {type: 'wc', label: 'トイレ'},
+    {type: 'information', label: '案内所'},
+    {type: 'ticket', label: 'チケット'},
+    {type: 'shop', label: 'ショップ'},
+    {type: 'metro', label: 'メトロ'},
+    {type: 'parking', label: 'パーキング'},
+    {type: 'cafe', label: 'カフェ'}
   ].filter(spec => facilityTypes.includes(spec.type));
 
   let facRow = '';
@@ -358,12 +386,12 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
       const r = Math.floor(idx / 2);
       const c = idx % 2;
       const fx = cols[c];
-      const ry = divY + 15 + r * 17;
-      return `<circle class="hud-dot ${spec.cls}" cx="${fx + 4.5}" cy="${ry - 3.5}" r="4.5"/><text class="hud-legend-text" x="${fx + 12}" y="${ry}">${spec.label}</text>`;
+      const ry = divY + 16 + r * 18;
+      return `<g class="facility-badge hud-fac-badge facility-${escapeHtml(spec.type)}" transform="translate(${fx + 5.5} ${ry - 3.5}) scale(0.76)">${facilityBadgeGraphic(spec.type)}</g><text class="hud-legend-text hud-fac-label" x="${fx + 13.5}" y="${ry}">${spec.label}</text>`;
     }).join('');
     const numRows = Math.ceil(facLegendSpecs.length / 2);
-    facRow = `<line class="hud-divider" x1="${padX}" y1="${divY}" x2="${x + width - 12}" y2="${divY}"/>${itemsSvg}`;
-    bottomY = divY + 15 + (numRows - 1) * 17;
+    facRow = `<line class="hud-divider" x1="${padX}" y1="${divY}" x2="${x + width - 11}" y2="${divY}"/>${itemsSvg}`;
+    bottomY = divY + 16 + (numRows - 1) * 18;
   }
 
   parts.push(`
@@ -579,7 +607,7 @@ export function floorMapMarkup({
     <linearGradient id="wing-denon-grad" gradientUnits="userSpaceOnUse" x1="0" y1="350" x2="0" y2="490"><stop offset="0%" stop-color="#cfa18e"/><stop offset="100%" stop-color="#be8d7a"/></linearGradient>
     <linearGradient id="studio-rest-grad" gradientUnits="userSpaceOnUse" x1="0" y1="145" x2="0" y2="230"><stop offset="0%" stop-color="#80b896"/><stop offset="100%" stop-color="#68a17e"/></linearGradient>
     <linearGradient id="exhibition-hall-grad" gradientUnits="userSpaceOnUse" x1="0" y1="265" x2="0" y2="340"><stop offset="0%" stop-color="#6fbbe0"/><stop offset="100%" stop-color="#52a1c9"/></linearGradient>
-    <linearGradient id="stairs-both-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="50%" stop-color="#2563a8"/><stop offset="50%" stop-color="#2c8a56"/></linearGradient>
+    <linearGradient id="stairs-both-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="50%" stop-color="#1565d8"/><stop offset="50%" stop-color="#0e9457"/></linearGradient>
     <pattern id="construction-stripe" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
       <rect width="7" height="7" fill="#f2cf5b"/>
       <line x1="0" y1="0" x2="0" y2="7" stroke="#dfb22a" stroke-width="2.6"/>

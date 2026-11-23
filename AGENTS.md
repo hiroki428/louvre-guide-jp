@@ -15,15 +15,60 @@
 ## 2. アーキテクチャと編集の正本（重要）
 
 - 依存ライブラリなしの素の ES Modules 静的PWA（Node.js 20+ で動作）。
-- **マップ・経路グラフの編集は必ず `scripts/build-floor-maps.mjs` に対して行う。**
+- **同時編集でもコンフリクトが起きないよう、UI・アプリロジック・階別マップ生成を機能・階単位でファイル分割している。**
+  - 作業時は、自分の担当画面・担当階に対応するファイルだけを編集し、無関係なモジュールを触らない。
+- **マップ・経路グラフの編集は `scripts/map-builder/` 配下の該当ファイルに対して行う。**
   - `src/floor-map-geo.js` と `src/navigation-graph.json` は自動生成物なので、**直接手編集しない**。
-  - 変更後は必ず `npm run build:maps` で再生成する。
+  - 変更後は必ず `npm run build:maps` で再生成する（`scripts/build-floor-maps.mjs` が全モジュールを結合して出力する）。
 - 公開版（GitHub Pages）は `main` ブランチへの push をトリガーに GitHub Actions が自動テスト・自動ビルド・デプロイを行う。
-- ソース変更時は、PWAキャッシュ更新のため **`public/sw.js` の `SHELL` バージョン（例：`louvre-shell-v45` → `v46`）を必ずインクリメント** する。
+- ソース変更時は、PWAキャッシュ更新のため **`public/sw.js` の `SHELL` バージョン（例：`louvre-shell-v46` → `v47`）を必ずインクリメント** する。新しくJSモジュールを追加した場合は `SHELL_ASSETS` にも必ず追記する（`test/ui-contract.mjs` が漏れを自動検知）。
+
+### 2-1. 機能別・担当ファイル一覧（共同開発の衝突回避マップ）
+
+#### フロントエンドUI・画面（`src/views/`）
+| 編集したい機能・画面 | 担当ファイル |
+|---|---|
+| 初期のコース選択画面（滞在時間・作品数・テーマ別） | `src/views/course-select.js` |
+| マップタブ（階タブ・施設フィルタ・道に迷ったときサポート） | `src/views/map-tab.js` |
+| プラン一覧タブ（コース切替・作品カード・並び替え） | `src/views/plan-tab.js` |
+| 音声一覧タブ（検索・絞り込み・ソート・作品行） | `src/views/audio-tab.js` |
+| 案内・設定タブ（オフライン保存・文字サイズ・クレジット等） | `src/views/settings-tab.js` |
+| 作品詳細ボトムシート（背景・見どころ・個別音声再生） | `src/views/work-detail-sheet.js` |
+| 常駐ミニプレイヤー・オーディオ設定モーダル | `src/views/mini-player.js` |
+| 地図SVG描画・ピン配置・ズーム操作 | `src/floor-map.js` |
+
+#### アプリ共通状態・ロジック（`src/app/` および `src/`）
+| 編集したいロジック | 担当ファイル |
+|---|---|
+| 起動処理・画面統合・共通ヘッダ／下部タブ配線 | `src/main.js` |
+| 状態管理・`localStorage` 永続化・現在プラン取得 | `src/app/state.js` |
+| 音声再生・シーク・Media Session・オフラインキャッシュ | `src/app/audio-controller.js` |
+| コース選択・マイプラン操作・到着進捗・現在地修正アクション | `src/app/plan-actions.js` |
+| ルート編成ローディングオーバーレイ | `src/app/route-loader.js` |
+| 共通フォーマッタ・サムネイル・トースト通知・下部タブHTML | `src/app/ui-helpers.js` |
+| 経路探索エンジン / プラン最適化 / 検索ロジック / アプリ定数 | `src/navigation.js` / `src/my-plan.js` / `src/catalog.js` / `src/app-config.js` |
+
+#### フロアマップ・経路グラフ生成（`scripts/map-builder/`）
+| 編集したい階・データ | 担当ファイル |
+|---|---|
+| 2階マップ（部屋・施設・ラベル） | `scripts/map-builder/floor-2.mjs` |
+| 1階マップ（部屋・施設・ラベル） | `scripts/map-builder/floor-1.mjs` |
+| 0階マップ（部屋・施設・ラベル） | `scripts/map-builder/floor-0.mjs` |
+| −1階マップ（部屋・施設・ラベル・休憩エリア） | `scripts/map-builder/floor-m1.mjs` |
+| −2階マップ（ナポレオンホール・企画展・案内所・T/S/M/P） | `scripts/map-builder/floor-m2.mjs` |
+| 全5階層の上下階接続定義（`verticalLinks` 全38系統） | `scripts/map-builder/vertical-links.mjs` |
+| 経路探索用ノード・扉・エッジ生成 | `scripts/map-builder/navigation-graph.mjs` |
+| GeoJSON基準投影・アンカー・共通定数 | `scripts/map-builder/geojson-base.mjs` |
+| 一括ビルド実行エントリ（`npm run build:maps`） | `scripts/build-floor-maps.mjs` |
+
+### 2-2. 共同開発のブランチ運用ルール（推奨）
+- `main` に直接コミットせず、作業ごとにブランチを切る（例：`feature/audio-search`、`fix/floor-0-wc`）。
+- 1つのブランチでは **1つの担当範囲（上記テーブルの1〜2ファイル）** に絞って編集する。
+- `src/floor-map-geo.js` と `src/navigation-graph.json` は自動生成物のため、マップ変更のPRをマージした直後に `npm run build:maps` で再生成すればコンフリクトを簡単に解消できる。
 
 ### 標準の更新・検証手順
 ```bash
-npm run build:maps   # マップ・経路グラフ再生成（build-floor-maps.mjs を変えた場合）
+npm run build:maps   # マップ・経路グラフ再生成（scripts/map-builder/ を変えた場合）
 npm test             # 全7テストスイート実行（必須）
 npm run build        # dist/ ビルド確認
 ```
@@ -46,12 +91,12 @@ npm run build        # dist/ ビルド確認
 | 元図の記号 | 意味 | アプリ内の `type` | 備考 |
 |---|---|---|---|
 | オレンジ丸 | トイレ | `wc` | 施設フィルタ（WC強調）対応 |
-| 紫丸 | エレベーター | `elevator` | 停車階のみ配置 |
-| カエル | エスカレーター | `escalator` | リシュリュー中央（−1F〜2F 4階貫通） |
-| 緑 `>>>` | 下り階段（下の階へ） | `stairs-down` | 緑バッジ |
-| 黄 `>>>` | 上り階段（上の階へ） | `stairs-up` | 青バッジ |
-| 黒 `>>>` | **上下階段（上にも下にも進める階段）** | `stairs-both` | 青/緑の2トーンバッジ |
-| （特例：1F 535室） | 同階階段（隣室への段差移動のみ） | `stairs` | 1F 535室のみ同階移動用として維持 |
+| 紫丸 | エレベーター | `elevator` | 紫の角丸四角＋`EV`（停車階のみ配置・常時表示） |
+| カエル | エスカレーター | `escalator` | ローズの横長カプセル＋`ES`（リシュリュー中央−1F〜2F・常時表示） |
+| 緑 `>>>` | 下り階段（下の階へ） | `stairs-down` | 緑の下向き五角形＋白`↓`（常時表示） |
+| 黄 `>>>` | 上り階段（上の階へ） | `stairs-up` | 青の上向き五角形＋白`↑`（常時表示） |
+| 黒 `>>>` | **上下階段（上にも下にも進める階段）** | `stairs-both` | 上青`▲`・下緑`▼`の縦長ツートン（常時表示） |
+| （特例：1F 535室） | 同階階段（隣室への段差移動のみ） | `stairs` | グレー丸＋段差（1F 535室のみ維持・常時表示） |
 | 赤丸 | 案内所（−2F） | `information` | 赤バッジ `i` |
 | `T` | チケット売り場（−2F） | `ticket` | バッジ `T` |
 | `S` | ショップ（−2F） | `shop` | バッジ `S` |
@@ -96,6 +141,32 @@ npm run build        # dist/ ビルド確認
   - 3階貫通：`stairs-richelieu-nw`（0F〜2F）、`stairs-richelieu-se`（−1Fステュディオ東↔0F 236右↔1F 531東）、`stairs-sully-n-west`（0F〜2F）、`stairs-sully-n-east`（0F〜2F）、`stairs-sully-se`（0F〜2F）、`stairs-daru`（−1F 170東↔0Fダリュ西・東↔1Fダリュ踊り場）、`stairs-denon-west`（−1F 164西↔0Fドゥノン西↔1Fドゥノン西）
   - 2階間：`stairs-sully-ne`（1F↔2F）、`stairs-sully-ne-lower`（0F北東・316東↔1F北東）、`stairs-denon-farwest`（0F↔1F）、`stairs-richelieu-102-n`（−1F 102北西↔0F 218下北）、`stairs-richelieu-102-s`（−1F 102南西↔0F 218下南）、`stairs-sully-338`（−1F 133南［338記載］↔0F 338室［339側・337側］）、`stairs-denon-403-e`（−1F 160–広間↔0F 403東）、`stairs-denon-406-w`（−1F 広間–170↔0F 406西）、`stairs-denon-402-s`（−1F 169内↔0F 402南）、`stairs-denon-405-n`（−1F 183北↔0F 405北）、`stairs-denon-405-s`（−1F 183南外↔0F 405南）、`stairs-pyramid-n` / `stairs-pyramid-e` / `stairs-pyramid-s`（−2F↔−1F ピラミッド北・東・南）
 
+### 4-4. ルート自動編成・最適化アルゴリズムと「最適」の定義
+
+初期画面の「滞在時間＋作品数」選択および「マイプランの最短順並び替え」は、事前ハードコードではなく **ブラウザ上で毎回リアルタイムに探索・最適化計算を実行** している（`src/my-plan.js` / `src/navigation.js`）。
+（※テーマ別コース・プラン一覧のプリセット切替は `src/routes.json` の作品リストを参照するが、作品間の館内経路は同様に毎回リアルタイム計算する。）
+
+#### 計算の3ステップ
+1. **作品選出（`buildTimedRouteWorks`）**：展示室座標が登録済みの作品プールから、①知名度ランク（超有名 → 有名 → 傑作）→ ②おすすめ順（`catalogRank`）の順に、指定作品数ぶんを選出する。
+2. **全地点間の最短経路算出（`shortestPath`）**：確認済みの全5階層の廊下・扉・階段・エスカレーター・エレベーターで構成されるグラフ（`src/navigation-graph.json`）上で **ダイクストラ法（Dijkstra's algorithm）** を実行し、全ペア間の最小コスト経路を算出する。
+3. **巡回順の最適化（`optimizeWorkOrder`）**：同じ展示室の作品を1グループにまとめた上で、−2階ピラミッド中央入口（`entrance:pyramid:fm2`）始点で巡回セールスマン問題（TSP）を解く。
+   - **展示室グループ数 14以下**：**ビットDP（Held–Karp法）** により数学的に厳密な最小コスト順（完全最適解）を求める。
+   - **展示室グループ数 15以上**：全始点候補からの **最近傍法 ＋ 2-opt 局所改善法** により交差・往復を除いた準最適解を求める。
+
+#### 「最適」の目的関数（移動コスト定義）
+最適の定義は **「ピラミッド入口から全作品を巡り終えるまでの合計移動コスト（`totalCost`）の最小化」** である（`scripts/map-builder/navigation-graph.mjs` / `src/navigation.js` の `edgeWeight`）。
+
+| 移動エッジ種別 | 通常「最短距離」モード | 「エレベーター優先」モード（`preferElevator: true`） |
+|---|---|---|
+| 廊下・展示室間の徒歩（`corridor`） | 実距離に応じた重み（目安 `2〜20`） | 同じ |
+| 展示室内の作品アクセス（`room-access`） | `4` | 同じ |
+| エスカレーター（`escalator`） | `16`（最も負担が軽い設定） | `cost + 10,000`（極力回避） |
+| 階段（`stairs`） | `18` | `cost + 10,000`（極力回避） |
+| エレベーター（`elevator`） | `22`（待ち時間ぶんやや重め） | `cost × 0.7`（優先的に採用） |
+
+- 行き先不明の階段・EVはグラフへ登録しないため、確認済みの実在経路のみを用いて最適化する。
+- 現状の定義は純粋に「知名度上位からの選出 ＋ 移動コスト最小化」であり、混雑度・ジャンル嗜好・休憩立ち寄り・遠方作品の差し替え（知名度と距離の同時最適化）は未導入（今後の拡張候補）。
+
 ---
 
 ## 5. UI・UXの固定方針（ユーザー合意済み・勝手に戻さないこと）
@@ -106,6 +177,7 @@ npm run build        # dist/ ビルド確認
 - **入れない機能（ユーザー方針により不採用）**：
   - 自動ズームボタン（`data-focus-destination`）
   - 作品メモ機能（`data-work-note`）
+  - マップタブの別階ジャンプバナー（`.floor-jump-banner` / 「次の目的地は○階（○室）にあります」表示）
   - 60分コース（90・120・150・180分＋カスタム時間・作品数選択を提供）
   - 地図上の不要なダミー矢印や「概略・検証用」コピー、音声一覧の冗長な導入文
 - **必須機能**：

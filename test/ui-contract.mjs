@@ -1,7 +1,23 @@
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readdir, readFile} from 'node:fs/promises';
 
-const main = await readFile(new URL('../src/main.js', import.meta.url), 'utf8');
+async function loadSplitUiSources() {
+  const appFiles = (await readdir(new URL('../src/app/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
+  const viewFiles = (await readdir(new URL('../src/views/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
+  const parts = [await readFile(new URL('../src/main.js', import.meta.url), 'utf8')];
+  for (const f of appFiles) parts.push(await readFile(new URL(`../src/app/${f}`, import.meta.url), 'utf8'));
+  for (const f of viewFiles) parts.push(await readFile(new URL(`../src/views/${f}`, import.meta.url), 'utf8'));
+  return {
+    combined: parts.join('\n'),
+    mapTabFile: await readFile(new URL('../src/views/map-tab.js', import.meta.url), 'utf8'),
+    splitPaths: [
+      ...appFiles.map(f => `./src/app/${f}`),
+      ...viewFiles.map(f => `./src/views/${f}`)
+    ]
+  };
+}
+
+const {combined: main, mapTabFile, splitPaths} = await loadSplitUiSources();
 const routes = JSON.parse(await readFile(new URL('../src/routes.json', import.meta.url), 'utf8'));
 const css = await readFile(new URL('../src/update.css', import.meta.url), 'utf8');
 const support = await readFile(new URL('../src/location-support.js', import.meta.url), 'utf8');
@@ -33,7 +49,7 @@ assert.match(main, /data-start-timed-route/, 'start button for timed custom-coun
 assert.match(main, /data-optimize-myplan/, 'my-plan shortest-order optimize button must exist');
 assert.match(main, /route-loader-overlay/, 'route designing loading overlay must exist');
 assert.match(css, /\.route-loader-overlay/, 'route designing loading overlay styles must exist');
-const mapTabSection = main.slice(main.indexOf('function mapTabView('), main.indexOf('function planTabView('));
+const mapTabSection = mapTabFile.slice(mapTabFile.indexOf('export function mapTabView('));
 assert.match(mapTabSection, /<main class="tab-screen map-screen[^"]*">\s*<div class="map-frame">/, 'map-frame must appear at the very top of the Map tab');
 assert.doesNotMatch(mapTabSection, /navigationPanel\(/, 'bulky route-guidance card must not appear in the Map tab');
 assert.match(main, /offline-pill/, 'online/offline status pill must exist');
@@ -59,7 +75,7 @@ assert.match(main, /label: 'プラン一覧'/);
 assert.match(main, /label: '音声一覧'/);
 assert.match(main, /label: '案内・設定'/);
 assert.match(main, /data-change-course/);
-assert.match(main, /data-jump-floor/, 'floor jump banner must be available for destinations on other floors');
+assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(main, /data-mini-prev/, 'Spotify-style player must provide ⏮ previous control');
 assert.match(main, /data-mini-play/, 'Spotify-style player must provide ▶/⏸ toggle');
 assert.match(main, /data-mini-next/, 'Spotify-style player must provide ⏭ next/complete control');
@@ -70,6 +86,9 @@ assert.match(main, /data-rate-slider/, 'audio settings must include playback spe
 assert.match(main, /data-bulk-download/, 'offline bulk course download must be provided');
 assert.match(main, /mediaSession/, 'Media Session API integration must be wired');
 assert.match(sw, /floor-map-geo\.js/, 'Service Worker must cache floor-map-geo.js for offline map support');
+for (const assetPath of splitPaths) {
+  assert.ok(sw.includes(`'${assetPath}'`), `Service Worker must cache split module ${assetPath}`);
+}
 assert.equal(routes.some(route => route.minutes === 60), false, 'the 60 minute route must not be offered');
 assert.match(css, /\.tier-badge\.tier-gold/, 'gold badge style required for 超有名');
 assert.match(css, /\.tier-badge\.tier-silver/, 'silver badge style required for 有名');

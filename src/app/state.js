@@ -1,0 +1,221 @@
+import {DEFAULT_DURATIONS} from '../app-config.js';
+import {buildNavigationView, navigationStateFromRoute} from '../navigation.js';
+import {validStoredProgress} from '../route-progress.js';
+import {audioLengthsFor} from '../catalog.js';
+import {activePlanMeta, planStopEstimates, timeCourseBounds} from '../my-plan.js';
+
+export const STORAGE_KEY = 'louvre-guide-state-v3';
+export const SESSION_PROGRESS_KEY = 'louvre-route-progress-v2';
+
+export function readPersistedState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export const clampRate = value => {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return 1;
+  return Math.round(Math.min(2, Math.max(0.5, num)) * 100) / 100;
+};
+
+export function createAppStore({
+  works,
+  routes,
+  byId,
+  worksByFloorRoom,
+  navigationIndex,
+  persistedBoot,
+  skipSplashImmediate,
+  appBase
+}) {
+  const maxRoutableCount = works.filter(w => w.locationPrecision === 'room' && navigationIndex.nodes.has(`work:${w.id}`)).length;
+  const initialMinutes = routes.some(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes) ? persistedBoot.minutes : 90;
+  const initialBounds = timeCourseBounds(initialMinutes, maxRoutableCount);
+  const initialCustomTimedIds = Array.isArray(persistedBoot?.customTimedIds)
+    ? persistedBoot.customTimedIds.filter(id => byId[id] && navigationIndex.nodes.has(`work:${id}`))
+    : null;
+
+  const state = {
+    appPhase: skipSplashImmediate ? 'main' : 'splash',
+    hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
+    tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
+    planMode: persistedBoot?.planMode === 'myplan' ? 'myplan' : 'preset',
+    routeId: routes.some(r => r.id === persistedBoot?.routeId)
+      ? persistedBoot.routeId
+      : (routes.find(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes)?.id ?? routes[0]?.id ?? 'preset-90'),
+    minutes: initialMinutes,
+    customTimedIds: initialCustomTimedIds?.length ? initialCustomTimedIds : null,
+    customTimedMinutes: initialCustomTimedIds?.length ? (Number(persistedBoot?.customTimedMinutes) || initialMinutes) : null,
+    draftMinutes: initialMinutes,
+    draftCount: initialCustomTimedIds?.length
+      ? Math.max(initialBounds.min, Math.min(initialBounds.max, initialCustomTimedIds.length))
+      : initialBounds.recommended,
+    preferElevator: Boolean(persistedBoot?.preferElevator),
+    facilityFilter: 'none',
+    autoPlayNext: Boolean(persistedBoot?.autoPlayNext),
+    largeText: Boolean(persistedBoot?.largeText),
+    offline: typeof navigator !== 'undefined' && navigator.onLine === false,
+    myPlanIds: Array.isArray(persistedBoot?.myPlanIds) ? persistedBoot.myPlanIds.filter(id => byId[id]) : [],
+    viewed: new Set(Array.isArray(persistedBoot?.viewed) ? persistedBoot.viewed.filter(id => byId[id]) : []),
+    floor: Number.isFinite(persistedBoot?.floor) ? persistedBoot.floor : 1,
+    selected: persistedBoot?.selected && byId[persistedBoot.selected] ? persistedBoot.selected : null,
+    detailWorkId: null,
+    detailRoomWorks: [],
+    audioSettingsOpen: false,
+    duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 60,
+    playbackRate: clampRate(persistedBoot?.playbackRate ?? 1),
+    audioDurations: {},
+    audioQuery: '',
+    audioSort: 'rank-asc',
+    audioFilter: 'all',
+    playing: null,
+    audio: null,
+    audioError: '',
+    downloaded: new Set(),
+    bulkDownload: {active: false, done: 0, total: 0},
+    navigation: null,
+    player: {workId: null, mode: 'standalone', sessionId: 0, hasStarted: false, arrivalHandled: false},
+    notice: null,
+    undo: null,
+    processedArrivalEvents: new Set(),
+    support: {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''}
+  };
+
+  const navOptions = () => ({preferElevator: state.preferElevator});
+  const currentPlan = () => activePlanMeta({
+    planMode: state.planMode,
+    routeId: state.routeId,
+    minutes: state.minutes,
+    routes,
+    myPlanIds: state.myPlanIds,
+    navigationIndex,
+    duration: state.duration,
+    customTimedIds: state.customTimedIds,
+    customTimedMinutes: state.customTimedMinutes
+  });
+  const planWorks = () => currentPlan().ids.map(id => byId[id]).filter(Boolean);
+  const routableIds = () => currentPlan().routableIds;
+  const currentEstimates = () => planStopEstimates(currentPlan(), navigationIndex, navOptions());
+  const audioPath = (id, length) => new URL(`audio/${id}-${length}.mp3`, appBase).href;
+
+  function preferredLengthFor(work) {
+    const lengths = audioLengthsFor(work);
+    const chosen = state.audioDurations[work.id] ?? state.duration;
+    return lengths.includes(chosen) ? chosen : lengths[0];
+  }
+
+  function validCustomNavigation(nav, ids) {
+    if (!nav || !ids.length) return false;
+    if (!navigationIndex.nodes.has(nav.currentNodeId)) return false;
+    if (!nav.routeComplete && !navigationIndex.nodes.has(nav.destinationNodeId)) return false;
+    if (!Array.isArray(nav.routeWorkIds) || nav.routeWorkIds.join('|') !== ids.join('|')) return false;
+    if (!Array.isArray(nav.passedNodeIds) || nav.passedNodeIds.some(id => !navigationIndex.nodes.has(id))) return false;
+    return true;
+  }
+
+  function restoreInitialNavigation() {
+    if (state.planMode === 'myplan' || state.customTimedIds?.length) {
+      const ids = routableIds();
+      if (validCustomNavigation(persistedBoot?.navigation, ids)) {
+        state.navigation = persistedBoot.navigation;
+      } else {
+        state.navigation = navigationStateFromRoute(navigationIndex, ids);
+      }
+      return;
+    }
+    const fromLocal = validStoredProgress(navigationIndex, routes, persistedBoot?.sessionProgress);
+    if (fromLocal) {
+      state.routeId = fromLocal.routeId ?? state.routeId;
+      state.minutes = fromLocal.minutes;
+      state.navigation = fromLocal.navigation;
+      state.selected = fromLocal.selected ?? state.selected;
+      state.floor = Number.isFinite(fromLocal.floor) ? fromLocal.floor : state.floor;
+      return;
+    }
+    try {
+      const legacy = validStoredProgress(navigationIndex, routes, JSON.parse(sessionStorage.getItem(SESSION_PROGRESS_KEY)));
+      if (legacy) {
+        state.routeId = legacy.routeId ?? state.routeId;
+        state.minutes = legacy.minutes;
+        state.navigation = legacy.navigation;
+        state.selected = legacy.selected ?? state.selected;
+        state.floor = Number.isFinite(legacy.floor) ? legacy.floor : state.floor;
+        return;
+      }
+    } catch { /* ignore */ }
+    state.navigation = navigationStateFromRoute(navigationIndex, routableIds());
+  }
+
+  restoreInitialNavigation();
+  if (!state.selected) {
+    state.selected = currentPlan().ids[0] ?? works[0]?.id ?? null;
+  }
+
+  function persistState() {
+    const plan = currentPlan();
+    const sessionProgress = !plan.isCustom ? {
+      version: 2,
+      routeId: plan.id,
+      minutes: plan.minutes,
+      routeSignature: plan.ids.join('|'),
+      navigation: state.navigation,
+      selected: state.selected,
+      floor: state.floor
+    } : null;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        version: 3,
+        hasChosenCourse: state.hasChosenCourse,
+        tab: state.tab,
+        planMode: state.planMode,
+        routeId: state.routeId,
+        minutes: state.minutes,
+        customTimedIds: state.customTimedIds,
+        customTimedMinutes: state.customTimedMinutes,
+        preferElevator: state.preferElevator,
+        autoPlayNext: state.autoPlayNext,
+        largeText: state.largeText,
+        myPlanIds: state.myPlanIds,
+        viewed: [...state.viewed],
+        floor: state.floor,
+        selected: state.selected,
+        duration: state.duration,
+        playbackRate: state.playbackRate,
+        navigation: state.navigation,
+        sessionProgress
+      }));
+    } catch { /* localStorage optional */ }
+    if (sessionProgress) {
+      try { sessionStorage.setItem(SESSION_PROGRESS_KEY, JSON.stringify(sessionProgress)); }
+      catch { /* sessionStorage optional */ }
+    }
+  }
+
+  function navigationView() {
+    return buildNavigationView(navigationIndex, state.navigation, navOptions());
+  }
+
+  function roomWorksFor(work) {
+    if (!work || work.locationPrecision !== 'room' || work.room == null || work.floor == null) return [];
+    return worksByFloorRoom.get(`${work.floor}:${work.room}`) || [work];
+  }
+
+  return {
+    maxRoutableCount,
+    state,
+    navOptions,
+    currentPlan,
+    planWorks,
+    routableIds,
+    currentEstimates,
+    audioPath,
+    preferredLengthFor,
+    persistState,
+    navigationView,
+    roomWorksFor
+  };
+}

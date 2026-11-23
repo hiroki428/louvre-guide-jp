@@ -1063,14 +1063,14 @@
 .artwork-count-text { fill: #fff; font: 700 7.5px 'Noto Sans JP', sans-serif; pointer-events: none; }
 .layer-artworks.is-subdued { opacity: .28; }
 .facility-badge { pointer-events: none; }
-.facility-badge .fac-badge-bg { stroke: #fffdf9; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+.facility-badge .fac-badge-bg { stroke: #fffdf9; stroke-width: 1.35; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .facility-badge .fac-bg-wc { fill: #df7a20; }
-.facility-badge .fac-bg-elevator { fill: #7550a8; }
-.facility-badge .fac-bg-stairs { fill: #3d3a36; }
-.facility-badge .fac-bg-stairs-down { fill: #2c8a56; }
-.facility-badge .fac-bg-stairs-up { fill: #2563a8; }
+.facility-badge .fac-bg-elevator { fill: #7c3aed; }
+.facility-badge .fac-bg-stairs { fill: #4b5563; }
+.facility-badge .fac-bg-stairs-down { fill: #0e9457; }
+.facility-badge .fac-bg-stairs-up { fill: #1565d8; }
 .facility-badge .fac-bg-stairs-both { fill: url(#stairs-both-grad); }
-.facility-badge .fac-bg-escalator { fill: #1c7c8c; }
+.facility-badge .fac-bg-escalator { fill: #d6336c; }
 .facility-badge .fac-bg-information { fill: #d63638; }
 .facility-badge .fac-bg-ticket { fill: #b87a14; }
 .facility-badge .fac-bg-shop { fill: #9e4b6c; }
@@ -1079,19 +1079,23 @@
 .facility-badge .fac-bg-cafe { fill: #8c5432; }
 .facility-badge .fac-glyph-stroke { fill: none; stroke: #fffdf9; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .facility-badge .fac-glyph-fill { fill: #fffdf9; stroke: none; }
+.facility-badge .fac-both-divider { stroke: rgb(255 253 249 / 88%); stroke-width: 0.9; vector-effect: non-scaling-stroke; }
 .facility-badge .fac-glyph-letter { fill: #fffdf9; font: 800 7.6px 'Noto Sans JP', sans-serif; pointer-events: none; }
+.facility-badge .fac-glyph-code { fill: #fffdf9; font: 900 7.6px 'Noto Sans JP', sans-serif; letter-spacing: -0.04em; pointer-events: none; }
+.map-hud .hud-fac-label { font-size: 9.2px; }
+.map-hud .hud-fac-badge .fac-badge-bg { stroke-width: 1; }
 .hall-landmark-label { fill: #4c463f; font: 700 9px 'Noto Sans JP', sans-serif; pointer-events: none; paint-order: stroke; stroke: rgb(255 253 250 / 90%); stroke-width: 2.4px; }
 .facility.is-dimmed { opacity: .16; }
 .facility.is-picked .facility-pick-bg { fill: none; stroke-width: 2.2; vector-effect: non-scaling-stroke; filter: url(#pin-shadow); }
 .facility.is-picked .facility-pick-bg.pick-wc { stroke: #df7a20; fill: rgb(223 122 32 / 22%); }
 .facility.is-picked .facility-pick-bg.pick-cafe { stroke: #8c5432; fill: rgb(140 84 50 / 22%); }
 .hud-dot.hud-fac-wc { fill: #df7a20; }
-.hud-dot.hud-fac-stairs { fill: #3d3a36; }
-.hud-dot.hud-fac-stairs-down { fill: #2c8a56; }
-.hud-dot.hud-fac-stairs-up { fill: #2563a8; }
+.hud-dot.hud-fac-stairs { fill: #4b5563; }
+.hud-dot.hud-fac-stairs-down { fill: #0e9457; }
+.hud-dot.hud-fac-stairs-up { fill: #1565d8; }
 .hud-dot.hud-fac-stairs-both { fill: url(#stairs-both-grad); }
-.hud-dot.hud-fac-escalator { fill: #1c7c8c; }
-.hud-dot.hud-fac-elevator { fill: #7550a8; }
+.hud-dot.hud-fac-escalator { fill: #d6336c; }
+.hud-dot.hud-fac-elevator { fill: #7c3aed; }
 .hud-dot.hud-fac-information { fill: #d63638; }
 .hud-dot.hud-fac-ticket { fill: #b87a14; }
 .hud-dot.hud-fac-shop { fill: #9e4b6c; }

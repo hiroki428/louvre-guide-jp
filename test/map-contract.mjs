@@ -209,10 +209,17 @@ assert.match(viewedFloor, /pin-viewed/, 'viewed route stop must render green vie
 assert.match(viewedFloor, /pin-check/, 'viewed route stop must render checkmark');
 assert.match(viewedFloor, /pin-route/, 'unvisited route stop must render blue route pin');
 
-const wcPickFloor = floorMapMarkup({floor:2, floorLabel:'2階', works, selectedId:null, facilityFilter:'wc'});
+const wcPickFloor = floorMapMarkup({floor:1, floorLabel:'1階', works, selectedId:null, facilityFilter:'wc'});
 assert.match(wcPickFloor, /facility-pick-mode/, 'facility pickup mode should activate on SVG');
 assert.match(wcPickFloor, /pick-wc/, 'toilet pickup mode should highlight WC markers');
 assert.match(wcPickFloor, /is-picked/, 'matching facility markers must be marked as picked');
+for (const mobType of ['elevator', 'escalator', 'stairs-up', 'stairs-down', 'stairs-both']) {
+  assert.doesNotMatch(
+    wcPickFloor,
+    new RegExp(`facility-${mobType}[^"]*is-dimmed`),
+    `${mobType} must remain always visible (not dimmed) even during WC pickup`
+  );
+}
 
 const cafePickFloor = floorMapMarkup({floor:2, floorLabel:'2階', works, selectedId:null, facilityFilter:'cafe'});
 assert.match(cafePickFloor, /facility-pick-mode/, 'cafe pickup mode should activate on SVG');
