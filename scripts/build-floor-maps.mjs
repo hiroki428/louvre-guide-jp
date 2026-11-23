@@ -183,7 +183,17 @@ const ROOM_ANCHORS = {
     '403': {x: 520.1, y: 369.8, wing: 'denon', name: 'ミケランジェロ・ギャラリー'},
     // Added 2026-11-23: rooms already drawn on the PPT plan; pin = centre of the drawn room shape
     '300': {x: 795.7, y: 260.3, wing: 'sully', name: '300室'},
-    '321': {x: 916.0, y: 276.8, wing: 'sully', name: '321室'}
+    '321': {x: 916.0, y: 276.8, wing: 'sully', name: '321室'},
+    // Added 2026-11-23 (group B): rooms not numbered on the PPT plan. Position = official Louvre plan
+    // (collections.louvre.fr/assets/svg/niveau{n}.svg), placed between the neighbouring landmark rooms
+    // in proportion to the official layout.
+    '221': {x: 627.9, y: 132.0, wing: 'richelieu', name: '221室'},
+    '301': {x: 795.7, y: 254.3, wing: 'sully', name: '301室'},
+    '302': {x: 795.7, y: 248.0, wing: 'sully', name: '302室'},
+    '307': {x: 791.0, y: 237.6, wing: 'sully', name: '307室'},
+    '322': {x: 916.0, y: 285.8, wing: 'sully', name: '322室'},
+    '325': {x: 916.0, y: 304.4, wing: 'sully', name: '325室'},
+    '330': {x: 902.0, y: 364.1, wing: 'sully', name: '330室'}
   },
   '1': {
     // Coordinates mapped directly from the user's exact 1F architectural PPT plan (1024x429 -> 960x600)
@@ -210,7 +220,24 @@ const ROOM_ANCHORS = {
     '633': {x: 916.0, y: 259.9, wing: 'sully', name: '633室'},
     '636': {x: 917.3, y: 307.9, wing: 'sully', name: '636室'},
     '640': {x: 916.0, y: 334.7, wing: 'sully', name: '640室'},
-    '641': {x: 892.8, y: 355.1, wing: 'sully', name: '641室'}
+    '641': {x: 892.8, y: 355.1, wing: 'sully', name: '641室'},
+    // Added 2026-11-23 (group B): rooms not numbered on the PPT plan. Position = official Louvre plan
+    // (collections.louvre.fr/assets/svg/niveau{n}.svg), placed between the neighbouring landmark rooms
+    // in proportion to the official layout.
+    '609': {x: 823.8, y: 238.2, wing: 'sully', name: '609室'},
+    '610': {x: 828.9, y: 233.9, wing: 'sully', name: '610室'},
+    '611': {x: 833.1, y: 233.9, wing: 'sully', name: '611室'},
+    '612': {x: 828.9, y: 240.7, wing: 'sully', name: '612室'},
+    '614': {x: 837.0, y: 236.4, wing: 'sully', name: '614室'},
+    '619': {x: 848.4, y: 242.1, wing: 'sully', name: '619室'},
+    '622': {x: 863.3, y: 233.1, wing: 'sully', name: '622室'},
+    '627': {x: 884.0, y: 237.2, wing: 'sully', name: '627室'},
+    '634': {x: 916.0, y: 266.5, wing: 'sully', name: '634室'},
+    '637': {x: 916.0, y: 317.0, wing: 'sully', name: '637室'},
+    '638': {x: 916.0, y: 323.7, wing: 'sully', name: '638室'},
+    '642': {x: 873.7, y: 355.1, wing: 'sully', name: '642室'},
+    '643': {x: 862.3, y: 355.1, wing: 'sully', name: '643室'},
+    '644': {x: 855.2, y: 355.1, wing: 'sully', name: '644室'}
   },
   '2': {
     // Coordinates mapped directly from the user's exact 2F architectural PPT plan (1024x429 -> 960x600)
@@ -2577,7 +2604,14 @@ const DOOR_POSITIONS = {
     '348': {x: 796, y: 333},
     '403': {x: 520, y: 370},
     '300': {x: 796, y: 262},
-    '321': {x: 916, y: 277}
+    '321': {x: 916, y: 277},
+    '221': {x: 628, y: 132},
+    '301': {x: 796, y: 254},
+    '302': {x: 796, y: 248},
+    '307': {x: 791, y: 238},
+    '322': {x: 916, y: 286},
+    '325': {x: 916, y: 304},
+    '330': {x: 902, y: 364}
   },
   '1': {
     '501': {x: 589, y: 174},
@@ -2602,7 +2636,21 @@ const DOOR_POSITIONS = {
     '633': {x: 916, y: 260},
     '636': {x: 916, y: 308},
     '640': {x: 916, y: 335},
-    '641': {x: 893, y: 362}
+    '641': {x: 893, y: 362},
+    '609': {x: 824, y: 238},
+    '610': {x: 829, y: 238},
+    '611': {x: 833, y: 238},
+    '612': {x: 829, y: 238},
+    '614': {x: 837, y: 237},
+    '619': {x: 848, y: 237},
+    '622': {x: 863, y: 237},
+    '627': {x: 884, y: 239},
+    '634': {x: 916, y: 266},
+    '637': {x: 916, y: 317},
+    '638': {x: 916, y: 324},
+    '642': {x: 874, y: 362},
+    '643': {x: 862, y: 362},
+    '644': {x: 855, y: 362}
   },
   '2': {
     '801': {x: 588, y: 171},
@@ -2778,6 +2826,40 @@ const edges = [
   // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
   {from: 'stairs:sully-se:f1', to: 'door:f1:641', cost: 2, kind: 'corridor', available: true},
   {from: 'door:f1:641', to: 'elevator:sully-sw:f1', cost: 8, kind: 'corridor', via: [[870, 362]], available: true},
+  // Added 2026-11-23 (group B): doors inserted on existing corridors (pieces add up to >= the original
+  // cost) or dead-end branches; existing edges are kept, so no existing route changes.
+  {from: 'door:f1:605', to: 'door:f1:609', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:609', to: 'stairs:sully-n-west:f1', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:610', to: 'stairs:sully-n-west:f1', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:612', to: 'stairs:sully-n-west:f1', cost: 1, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-west:f1', to: 'door:f1:611', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:611', to: 'door:f1:614', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:614', to: 'door:f1:619', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:619', to: 'door:f1:617', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:617', to: 'door:f1:622', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:622', to: 'stairs:sully-n-east:f1', cost: 1, kind: 'corridor', available: true},
+  {from: 'stairs:sully-n-east:f1', to: 'door:f1:627', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:627', to: 'stairs:sully-ne:f1', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:633', to: 'door:f1:634', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:634', to: 'door:f1:635', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:636', to: 'door:f1:637', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:637', to: 'door:f1:638', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:638', to: 'door:f1:640', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:641', to: 'door:f1:642', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:642', to: 'door:f1:643', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:643', to: 'door:f1:644', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f1:644', to: 'elevator:sully-sw:f1', cost: 4, kind: 'corridor', available: true},
+  {from: 'junction:f0:core', to: 'door:f0:302', cost: 13, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  {from: 'door:f0:302', to: 'door:f0:301', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f0:301', to: 'door:f0:300', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f0:307', to: 'door:f0:302', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f0:321', to: 'door:f0:322', cost: 1, kind: 'corridor', available: true},
+  {from: 'door:f0:322', to: 'door:f0:325', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f0:325', to: 'elevator:sully-se:f0', cost: 2, kind: 'corridor', available: true},
+  {from: 'stairs:sully-se:f0', to: 'door:f0:330', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f0:330', to: 'door:f0:338', cost: 7, kind: 'corridor', via: [[890, 364]], available: true},
+  {from: 'junction:f0:core', to: 'door:f0:221', cost: 10, kind: 'corridor', via: [[600, 130]], available: true},
+  {from: 'door:f0:221', to: 'stairs:richelieu-nw:f0', cost: 5, kind: 'corridor', via: [[600, 130]], available: true},
   {from: 'elevator:sully-sw:f1', to: 'door:f1:663', cost: 5, kind: 'corridor', via: [[796, 362]], available: true},
   {from: 'door:f1:663', to: 'door:f1:635', cost: 18, kind: 'corridor', via: [[796, 367], [916, 367]], available: true},
   {from: 'door:f1:663', to: 'junction:f1:denon-east', cost: 10, kind: 'corridor', via: [[796, 367], [760, 363], [733, 367]], available: true},
