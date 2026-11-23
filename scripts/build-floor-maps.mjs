@@ -180,7 +180,10 @@ const ROOM_ANCHORS = {
     '344': {x: 829.1, y: 364.1, wing: 'sully', name: 'ギリシア古典彫刻'},
     '345': {x: 795.7, y: 364.1, wing: 'sully', name: 'ミロのヴィーナスの間'},
     '348': {x: 795.7, y: 332.9, wing: 'sully', name: 'カリアティードの間'},
-    '403': {x: 520.1, y: 369.8, wing: 'denon', name: 'ミケランジェロ・ギャラリー'}
+    '403': {x: 520.1, y: 369.8, wing: 'denon', name: 'ミケランジェロ・ギャラリー'},
+    // Added 2026-11-23: rooms already drawn on the PPT plan; pin = centre of the drawn room shape
+    '300': {x: 795.7, y: 260.3, wing: 'sully', name: '300室'},
+    '321': {x: 916.0, y: 276.8, wing: 'sully', name: '321室'}
   },
   '1': {
     // Coordinates mapped directly from the user's exact 1F architectural PPT plan (1024x429 -> 960x600)
@@ -200,7 +203,14 @@ const ROOM_ANCHORS = {
     '711': {x: 557.5, y: 423.3, wing: 'denon', name: '諸国の間'},
     '712': {x: 511.6, y: 474.5, wing: 'denon', name: 'グラン・ギャラリー中央'},
     '716': {x: 342.4, y: 474.5, wing: 'denon', name: 'グラン・ギャラリー西'},
-    '718': {x: 154.5, y: 450.0, wing: 'denon', name: 'スペイン絵画'}
+    '718': {x: 154.5, y: 450.0, wing: 'denon', name: 'スペイン絵画'},
+    // Added 2026-11-23: rooms already drawn on the PPT plan; pin = centre of the drawn room shape
+    '505': {x: 589.1, y: 134.7, wing: 'richelieu', name: '505室'},
+    '617': {x: 852.3, y: 237.1, wing: 'sully', name: '617室'},
+    '633': {x: 916.0, y: 259.9, wing: 'sully', name: '633室'},
+    '636': {x: 917.3, y: 307.9, wing: 'sully', name: '636室'},
+    '640': {x: 916.0, y: 334.7, wing: 'sully', name: '640室'},
+    '641': {x: 892.8, y: 355.1, wing: 'sully', name: '641室'}
   },
   '2': {
     // Coordinates mapped directly from the user's exact 2F architectural PPT plan (1024x429 -> 960x600)
@@ -2565,7 +2575,9 @@ const DOOR_POSITIONS = {
     '344': {x: 829, y: 364},
     '345': {x: 796, y: 364},
     '348': {x: 796, y: 333},
-    '403': {x: 520, y: 370}
+    '403': {x: 520, y: 370},
+    '300': {x: 796, y: 262},
+    '321': {x: 916, y: 277}
   },
   '1': {
     '501': {x: 589, y: 174},
@@ -2584,7 +2596,13 @@ const DOOR_POSITIONS = {
     '711': {x: 558, y: 423},
     '712': {x: 512, y: 475},
     '716': {x: 342, y: 475},
-    '718': {x: 155, y: 450}
+    '718': {x: 155, y: 450},
+    '505': {x: 589, y: 140},
+    '617': {x: 852, y: 237},
+    '633': {x: 916, y: 260},
+    '636': {x: 916, y: 308},
+    '640': {x: 916, y: 335},
+    '641': {x: 893, y: 362}
   },
   '2': {
     '801': {x: 588, y: 171},
@@ -2673,11 +2691,17 @@ const edges = [
   {from: 'stairs:sully-n-east:f0', to: 'elevator:sully-ne:f0', cost: 4, kind: 'corridor', available: true},
   {from: 'elevator:sully-ne:f0', to: 'stairs:sully-ne-lower:f0', cost: 4, kind: 'corridor', available: true},
   {from: 'stairs:sully-ne-lower:f0', to: 'elevator:sully-se:f0', cost: 8, kind: 'corridor', via: [[915, 280]], available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'stairs:sully-ne-lower:f0', to: 'door:f0:321', cost: 4, kind: 'corridor', available: true},
+  {from: 'door:f0:321', to: 'elevator:sully-se:f0', cost: 4, kind: 'corridor', via: [[915, 280]], available: true},
   {from: 'elevator:sully-se:f0', to: 'stairs:sully-se:f0', cost: 8, kind: 'corridor', via: [[915, 335]], available: true},
   {from: 'stairs:sully-west-n:f0', to: 'stairs:sully-west-s:f0', cost: 4, kind: 'corridor', available: true},
   {from: 'elevator:sully-west:f0', to: 'junction:f0:sully', cost: 6, kind: 'corridor', via: [[796, 290]], available: true},
   {from: 'stairs:sully-west-s:f0', to: 'junction:f0:sully', cost: 2, kind: 'corridor', available: true},
   {from: 'junction:f0:core', to: 'junction:f0:sully', cost: 16, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'junction:f0:core', to: 'door:f0:300', cost: 13, kind: 'corridor', via: [[731, 232], [796, 238]], available: true},
+  {from: 'door:f0:300', to: 'junction:f0:sully', cost: 4, kind: 'corridor', available: true},
   {from: 'junction:f0:sully', to: 'door:f0:348', cost: 4, kind: 'corridor', available: true},
   {from: 'door:f0:348', to: 'door:f0:345', cost: 5, kind: 'corridor', available: true},
   {from: 'door:f0:345', to: 'elevator:sully-sw:f0', cost: 4, kind: 'corridor', available: true},
@@ -2715,6 +2739,9 @@ const edges = [
   {from: 'junction:f1:richelieu', to: 'door:f1:501', cost: 4, kind: 'corridor', available: true},
   {from: 'door:f1:501', to: 'door:f1:502', cost: 3, kind: 'corridor', available: true},
   {from: 'door:f1:502', to: 'door:f1:507', cost: 8, kind: 'corridor', via: [[589, 133]], available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'door:f1:502', to: 'door:f1:505', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:505', to: 'door:f1:507', cost: 5, kind: 'corridor', via: [[589, 133]], available: true},
   {from: 'door:f1:502', to: 'elevator:richelieu-nw:f1', cost: 5, kind: 'corridor', via: [[589, 133]], available: true},
   {from: 'door:f1:502', to: 'stairs:richelieu-nw:f1', cost: 5, kind: 'corridor', via: [[589, 133]], available: true},
   {from: 'door:f1:507', to: 'stairs:richelieu-nw:f1', cost: 6, kind: 'corridor', via: [[589, 133]], available: true},
@@ -2730,14 +2757,27 @@ const edges = [
   {from: 'door:f1:605', to: 'stairs:sully-n-west:f1', cost: 4, kind: 'corridor', available: true},
   {from: 'stairs:sully-n-west:f1', to: 'elevator:sully-north:f1', cost: 2, kind: 'corridor', available: true},
   {from: 'stairs:sully-n-west:f1', to: 'stairs:sully-n-east:f1', cost: 5, kind: 'corridor', available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'stairs:sully-n-west:f1', to: 'door:f1:617', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:617', to: 'stairs:sully-n-east:f1', cost: 2, kind: 'corridor', available: true},
   {from: 'stairs:sully-n-east:f1', to: 'stairs:sully-ne:f1', cost: 4, kind: 'corridor', available: true},
   {from: 'stairs:sully-ne:f1', to: 'elevator:sully-ne:f1', cost: 2, kind: 'corridor', available: true},
   {from: 'stairs:sully-ne:f1', to: 'stairs:sully-ne-lower:f1', cost: 3, kind: 'corridor', available: true},
   {from: 'stairs:sully-ne-lower:f1', to: 'door:f1:635', cost: 5, kind: 'corridor', available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'stairs:sully-ne-lower:f1', to: 'door:f1:633', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:633', to: 'door:f1:635', cost: 3, kind: 'corridor', available: true},
   {from: 'stairs:sully-ne:f1', to: 'door:f1:635', cost: 6, kind: 'corridor', via: [[916, 241]], available: true},
   {from: 'door:f1:605', to: 'door:f1:635', cost: 18, kind: 'corridor', via: [[852, 237], [916, 237]], available: true},
   {from: 'door:f1:635', to: 'stairs:sully-se:f1', cost: 9, kind: 'corridor', via: [[916, 362]], available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'door:f1:635', to: 'door:f1:636', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:636', to: 'door:f1:640', cost: 3, kind: 'corridor', available: true},
+  {from: 'door:f1:640', to: 'stairs:sully-se:f1', cost: 3, kind: 'corridor', via: [[916, 362]], available: true},
   {from: 'stairs:sully-se:f1', to: 'elevator:sully-sw:f1', cost: 10, kind: 'corridor', via: [[870, 362]], available: true},
+  // Added 2026-11-23 (door inserted on the corridor above; original edge kept, costs sum >= original)
+  {from: 'stairs:sully-se:f1', to: 'door:f1:641', cost: 2, kind: 'corridor', available: true},
+  {from: 'door:f1:641', to: 'elevator:sully-sw:f1', cost: 8, kind: 'corridor', via: [[870, 362]], available: true},
   {from: 'elevator:sully-sw:f1', to: 'door:f1:663', cost: 5, kind: 'corridor', via: [[796, 362]], available: true},
   {from: 'door:f1:663', to: 'door:f1:635', cost: 18, kind: 'corridor', via: [[796, 367], [916, 367]], available: true},
   {from: 'door:f1:663', to: 'junction:f1:denon-east', cost: 10, kind: 'corridor', via: [[796, 367], [760, 363], [733, 367]], available: true},
