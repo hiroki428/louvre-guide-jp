@@ -5,6 +5,9 @@ import {audioLengthsFor} from '../catalog.js';
 import {clampRate} from './state.js';
 import {creatorMeta, formatClock, formatRate} from './ui-helpers.js';
 
+// public/sw.js の AUDIO と同じ名前にすること。違うと保存した音声がオフラインで使われない。
+const AUDIO_CACHE = 'louvre-audio-v2';
+
 export function createAudioController(ctx) {
   const player = new Audio();
   player.preload = 'none';
@@ -302,7 +305,7 @@ export function createAudioController(ctx) {
     const url = ctx.audioPath(id, length);
     const response = await fetch(url);
     if (!response.ok) throw new Error('audio unavailable');
-    const cache = await caches.open('louvre-audio-v1');
+    const cache = await caches.open(AUDIO_CACHE);
     await cache.put(url, response.clone());
     ctx.state.downloaded.add(`${id}-${length}`);
     ctx.state.audioDurations[id] = length;
@@ -352,8 +355,8 @@ export function createAudioController(ctx) {
   async function clearAudioCache() {
     if (!('caches' in window)) return;
     try {
-      await caches.delete('louvre-audio-v2');
-      await caches.delete('louvre-audio-v1');
+      await caches.delete(AUDIO_CACHE);
+      await caches.delete('louvre-audio-v1'); // 以前の版が誤って使っていた保存先の掃除
       ctx.state.downloaded.clear();
       ctx.setNotice('保存済みの音声データを削除しました', false, 3500);
       ctx.render();
@@ -366,7 +369,7 @@ export function createAudioController(ctx) {
   async function loadDownloads() {
     if (!('caches' in window)) return;
     try {
-      const cache = await caches.open('louvre-audio-v2');
+      const cache = await caches.open(AUDIO_CACHE);
       const requests = await cache.keys();
       const cachedUrls = new Set(requests.map(req => req.url));
       for (const work of ctx.works) {
