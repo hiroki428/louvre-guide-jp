@@ -2,6 +2,15 @@ import {floorGeoData} from './floor-map-geo.js';
 
 const BASE_VIEW = Object.freeze({...floorGeoData.meta.viewBox});
 const MIN_VIEW_WIDTH = 280;
+// Artwork pins are drawn PIN_SCALE times their original size so their numbers are a little larger than
+// room numbers (they grow with the map like room numbers do). Rooms whose pins would overlap are drawn as one
+// "N件" group; tapping a group fans its pins out around it ("spider"), without zooming.
+const PIN_SCALE = 1.3;
+const CLUSTER_DISTANCE = 22;
+// The zoom/pan of each floor survives re-renders (e.g. opening and closing a work's detail sheet).
+const savedViews = new Map();
+// Builds the fanned-out pins of a group of the last rendered map (index = data-cluster).
+let spiderBuilders = [];
 const floorName = floor => ({2:'2階', 1:'1階', 0:'0階', '-1':'−1階', '-2':'−2階'}[floor] ?? `${floor}階`);
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 
@@ -39,10 +48,12 @@ function overlapArea(a, b) {
 }
 
 function markerBoxAt(x, y, kind) {
-  if (kind === 'dest') return {x0: x - 11.5, y0: y - 31.5, x1: x + 11.5, y1: y + 1};
-  if (kind === 'route') return {x0: x - 9.5, y0: y - 26.5, x1: x + 9.5, y1: y + 1};
-  if (kind === 'viewed') return {x0: x - 9.8, y0: y - 16, x1: x + 9.8, y1: y + 4};
-  return {x0: x - 5.2, y0: y - 5.2, x1: x + 5.2, y1: y + 5.2};
+  const k = PIN_SCALE;
+  if (kind === 'dest') return {x0: x - 11.5 * k, y0: y - 31.5 * k, x1: x + 11.5 * k, y1: y + 1 * k};
+  if (kind === 'route') return {x0: x - 9.5 * k, y0: y - 26.5 * k, x1: x + 9.5 * k, y1: y + 1 * k};
+  if (kind === 'viewed') return {x0: x - 9.8 * k, y0: y - 16 * k, x1: x + 9.8 * k, y1: y + 4 * k};
+  if (kind === 'cluster') return {x0: x - 16.5, y0: y - 12, x1: x + 16.5, y1: y + 12};
+  return {x0: x - 5.2 * k, y0: y - 5.2 * k, x1: x + 5.2 * k, y1: y + 5.2 * k};
 }
 
 function resolveNonOverlappingPinPos(ax, ay, kind, labelBoxes, placedPinBoxes) {
@@ -66,8 +77,10 @@ function resolveNonOverlappingPinPos(ax, ay, kind, labelBoxes, placedPinBoxes) {
           [28, -6], [-28, -6], [28, 12], [-28, 12]
         ];
 
+  // Pins are PIN_SCALE times larger than the offsets were designed for, so move them that much further.
+  const offsets = candidates.map(([dx, dy]) => [dx * PIN_SCALE, dy * PIN_SCALE]);
   let best = {x: ax, y: ay, score: Infinity, box: markerBoxAt(ax, ay, kind)};
-  for (const [dx, dy] of candidates) {
+  for (const [dx, dy] of offsets) {
     const cx = Math.round((ax + dx) * 10) / 10;
     const cy = Math.round((ay + dy) * 10) / 10;
     const box = markerBoxAt(cx, cy, kind);
@@ -89,6 +102,70 @@ function resolveNonOverlappingPinPos(ax, ay, kind, labelBoxes, placedPinBoxes) {
   return best;
 }
 
+// Group rooms whose pins would sit on top of each other. The destination is never grouped.
+function clusterPinItems(items, threshold) {
+  const groups = [];
+  for (const item of items) {
+    let target = null;
+    if (!item.destination) {
+      let bestDistance = Infinity;
+      for (const group of groups) {
+        if (group.locked) continue;
+        const distance = Math.hypot(group.cx - item.anchor.x, group.cy - item.anchor.y);
+        if (distance <= threshold && distance < bestDistance) {
+          bestDistance = distance;
+          target = group;
+        }
+      }
+    }
+    if (target) {
+      target.items.push(item);
+      const n = target.items.length;
+      target.cx += (item.anchor.x - target.cx) / n;
+      target.cy += (item.anchor.y - target.cy) / n;
+    } else {
+      groups.push({items: [item], cx: item.anchor.x, cy: item.anchor.y, locked: item.destination});
+    }
+  }
+  return groups;
+}
+
+function clusterMarkup(group, index, x, y) {
+  const groupWorks = group.items.flatMap(item => item.roomWorks);
+  const count = groupWorks.length;
+  const hasRoute = group.items.some(item => item.kind === 'route' || item.kind === 'viewed');
+  const allViewed = group.items.every(item => item.kind === 'viewed');
+  const tone = allViewed ? 'is-cluster-viewed' : hasRoute ? 'is-cluster-route' : 'is-cluster-catalog';
+  const rooms = group.items.map(item => item.roomNum).join('・');
+  const label = `${count}件`;
+  const width = 12 + label.length * 7.5;
+  return `<g class="artwork-marker artwork-cluster ${tone}" transform="translate(${x} ${y})" data-pin-kind="cluster" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(group.items[0].primary.id)}" data-room-works="${escapeHtml(groupWorks.map(work => work.id).join(','))}" data-cluster="${index}" tabindex="0" role="button" aria-expanded="false" aria-label="${escapeHtml(`${rooms}室の${count}作品。タップで広げる`)}"><rect class="artwork-hit" x="-18" y="-14" width="36" height="28" rx="14"/><rect class="cluster-halo" x="${-width / 2 - 3}" y="-13" width="${width + 6}" height="26" rx="13"/><rect class="cluster-bubble" x="${-width / 2}" y="-10" width="${width}" height="20" rx="10"/><text class="cluster-count" x="0" y="3.8" text-anchor="middle">${label}</text></g>`;
+}
+
+// The fanned-out pins of a group: each room's pin on a circle around the group, with a dotted line to the
+// room's real position.
+function spiderMarkup(group, x, y, pinOf) {
+  const n = group.items.length;
+  // Pins hang above their tip (about 34 map units tall), so the circle of tips is centred a little below
+  // the group: the pin bodies then ring the "N件" marker instead of covering it.
+  const radius = Math.max(46, n * 9);
+  const legs = [];
+  const pins = [];
+  group.items.forEach((item, i) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+    const px = Math.round((x + radius * Math.cos(angle)) * 10) / 10;
+    const py = Math.round((y + 17 + radius * Math.sin(angle)) * 10) / 10;
+    legs.push(`<line class="spider-leg" x1="${px}" y1="${py}" x2="${item.anchor.x}" y2="${item.anchor.y}"/><circle class="spider-room" cx="${item.anchor.x}" cy="${item.anchor.y}" r="2.4"/>`);
+    pins.push(pinOf(item, px, py));
+  });
+  return `<g class="map-spider" data-spider-pins>${legs.join('')}${pins.join('')}</g>`;
+}
+
+// For tests and the map wiring: the fanned-out pins of group `index` of the last rendered map.
+export function clusterSpiderMarkup(index) {
+  return spiderBuilders[index]?.() ?? '';
+}
+
 function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet, labelBoxes = []) {
   const routeOrder = new Map();
   if (Array.isArray(routeWorkIds)) {
@@ -103,7 +180,7 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
     return bDest - aDest;
   });
 
-  const placedMarkers = [];
+  const items = [];
   for (const [roomNum, roomWorks] of sortedEntries) {
     const anchor = anchors[roomNum];
     if (!anchor || !roomWorks.length) continue;
@@ -114,12 +191,12 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
     const allViewed = viewedSet && routeWorksInRoom.length > 0 && routeWorksInRoom.every(w => viewedSet.has(w.id));
     const orderNum = routeOrder.get(primary.id) || (routeWorksInRoom[0] ? routeOrder.get(routeWorksInRoom[0].id) : null);
     const kind = destination ? 'dest' : (onRoute && allViewed) ? 'viewed' : onRoute ? 'route' : 'catalog';
-    const pos = labelBoxes.length
-      ? resolveNonOverlappingPinPos(anchor.x, anchor.y, kind, labelBoxes, placedPinBoxes)
-      : {x: anchor.x, y: anchor.y, box: markerBoxAt(anchor.x, anchor.y, kind)};
-    placedPinBoxes.push(pos.box);
-    const x = pos.x;
-    const y = pos.y;
+    items.push({roomNum, roomWorks, anchor, primary, destination, onRoute, allViewed, orderNum, kind});
+  }
+
+  // One room's pin (same look and rules as before, drawn PIN_SCALE times larger).
+  const pinOf = (item, x, y) => {
+    const {roomWorks, primary, destination, onRoute, allViewed, orderNum, kind} = item;
     const count = roomWorks.length;
     const idsAttr = roomWorks.map(work => work.id).join(',');
     const extraLabel = count > 1 ? `ほか${count - 1}作品` : '';
@@ -179,11 +256,30 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
       allViewed ? 'is-viewed' : ''
     ].filter(Boolean).join(' ');
 
-    const zOrder = destination ? 3 : onRoute ? 2 : 1;
-    placedMarkers.push({
-      zOrder,
-      markup: `<g class="${stateClasses}" transform="translate(${x} ${y})" data-pin-kind="${kind}" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(primary.id)}" data-room-works="${escapeHtml(idsAttr)}" tabindex="0" role="button" aria-label="${escapeHtml(ariaLabel)}">${shapeMarkup}${countBadge}</g>`
-    });
+    return `<g class="${stateClasses}" transform="translate(${x} ${y}) scale(${PIN_SCALE})" data-pin-kind="${kind}" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(primary.id)}" data-room-works="${escapeHtml(idsAttr)}" tabindex="0" role="button" aria-label="${escapeHtml(ariaLabel)}">${shapeMarkup}${countBadge}</g>`;
+  };
+
+  const placedMarkers = [];
+  spiderBuilders = [];
+  for (const group of clusterPinItems(items, CLUSTER_DISTANCE)) {
+    if (group.items.length > 1) {
+      const pos = labelBoxes.length
+        ? resolveNonOverlappingPinPos(group.cx, group.cy, 'cluster', labelBoxes, placedPinBoxes)
+        : {x: group.cx, y: group.cy, box: markerBoxAt(group.cx, group.cy, 'cluster')};
+      placedPinBoxes.push(pos.box);
+      const index = spiderBuilders.length;
+      spiderBuilders.push(() => spiderMarkup(group, pos.x, pos.y, pinOf));
+      const zOrder = group.items.some(item => item.kind === 'route' || item.kind === 'viewed') ? 2 : 1;
+      placedMarkers.push({zOrder, markup: clusterMarkup(group, index, pos.x, pos.y)});
+      continue;
+    }
+    const item = group.items[0];
+    const pos = labelBoxes.length
+      ? resolveNonOverlappingPinPos(item.anchor.x, item.anchor.y, item.kind, labelBoxes, placedPinBoxes)
+      : {x: item.anchor.x, y: item.anchor.y, box: markerBoxAt(item.anchor.x, item.anchor.y, item.kind)};
+    placedPinBoxes.push(pos.box);
+    const zOrder = item.destination ? 3 : item.onRoute ? 2 : 1;
+    placedMarkers.push({zOrder, markup: pinOf(item, pos.x, pos.y)});
   }
   placedMarkers.sort((a, b) => a.zOrder - b.zOrder);
   for (const m of placedMarkers) parts.push(m.markup);
@@ -585,7 +681,7 @@ export function floorMapMarkup({
       <line x1="0" y1="0" x2="0" y2="7" stroke="#dfb22a" stroke-width="2.6"/>
     </pattern>`;
 
-  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">ルーブル宮殿の展示室、廊下、壁、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g>${hud.markup}</svg>`;
+  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" data-floor="${escapeHtml(String(floor))}" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">ルーブル宮殿の展示室、廊下、壁、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g>${hud.markup}</svg>`;
 }
 
 function clampView(view) {
@@ -599,7 +695,9 @@ export function wireFloorMap({onWorkSelect}) {
   const svg = document.querySelector('#floor-map');
   const frame = svg?.closest('.map-frame');
   if (!svg || !frame) return;
-  const view = {...BASE_VIEW};
+  const floorKey = svg.dataset.floor ?? '';
+  // Restore this floor's zoom/pan so a re-render (e.g. after opening a work) does not jump back to 100%.
+  const view = {...(savedViews.get(floorKey) || BASE_VIEW)};
   const pointers = new Map();
   let lastDrag = null;
   let lastPinch = null;
@@ -610,6 +708,7 @@ export function wireFloorMap({onWorkSelect}) {
     clampView(view);
     svg.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
     if (status) status.textContent = `${Math.round(BASE_VIEW.width / view.width * 100)}%`;
+    savedViews.set(floorKey, {...view});
   };
   const zoomAt = (factor, clientX, clientY) => {
     const rect = svg.getBoundingClientRect();
@@ -680,17 +779,55 @@ export function wireFloorMap({onWorkSelect}) {
   };
   svg.addEventListener('pointerup', endPointer);
   svg.addEventListener('pointercancel', endPointer);
-  document.querySelectorAll('[data-map-work]').forEach(marker => {
-    const choose = event => {
-      if (didDrag) { didDrag = false; return; }
-      event?.stopPropagation?.();
-      const roomWorks = (marker.dataset.roomWorks || '').split(',').filter(Boolean);
-      onWorkSelect(marker.dataset.mapWork, roomWorks);
-    };
-    marker.addEventListener('click', choose);
-    marker.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(event); }
+  // Tapping a "N件" group fans its pins out around it; tapping it again, an empty spot of the map, or Esc
+  // closes the fan. The fan stays in place while zooming or panning (it is drawn in map coordinates).
+  let openCluster = null;
+  const closeSpider = () => {
+    svg.querySelector('[data-spider-pins]')?.remove();
+    if (openCluster) {
+      openCluster.classList.remove('is-open');
+      openCluster.setAttribute('aria-expanded', 'false');
+    }
+    openCluster = null;
+  };
+  const openSpider = marker => {
+    closeSpider();
+    const markup = clusterSpiderMarkup(Number(marker.dataset.cluster));
+    if (!markup) return;
+    const hud = svg.querySelector('.map-hud');
+    if (hud) hud.insertAdjacentHTML('beforebegin', markup);
+    else svg.insertAdjacentHTML('beforeend', markup);
+    openCluster = marker;
+    marker.classList.add('is-open');
+    marker.setAttribute('aria-expanded', 'true');
+    wireMarkers(svg.querySelector('[data-spider-pins]'));
+  };
+  const wireMarkers = (root = svg) => {
+    root.querySelectorAll('[data-map-work]').forEach(marker => {
+      const choose = event => {
+        if (didDrag) { didDrag = false; return; }
+        event?.stopPropagation?.();
+        if (marker.dataset.cluster != null) {
+          if (openCluster === marker) closeSpider();
+          else openSpider(marker);
+          return;
+        }
+        const roomWorks = (marker.dataset.roomWorks || '').split(',').filter(Boolean);
+        onWorkSelect(marker.dataset.mapWork, roomWorks);
+      };
+      marker.addEventListener('click', choose);
+      marker.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(event); }
+      });
     });
+  };
+  svg.addEventListener('click', event => {
+    if (didDrag || !openCluster || event.target.closest('[data-map-work]')) return;
+    closeSpider();
   });
+  svg.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && openCluster) { const marker = openCluster; closeSpider(); marker.focus(); }
+  });
+  wireMarkers();
   applyView();
 }
