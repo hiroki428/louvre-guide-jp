@@ -1,4 +1,5 @@
-import {APP_NAME, APP_TAGLINE} from './app-config.js';
+import {APP_NAME} from './app-config.js';
+import {detectBrowserLang, getLangMeta, normalizeLang, setLang, t} from './i18n.js';
 import {indexNavigationGraph} from './navigation.js';
 import {timeCourseBounds} from './my-plan.js';
 import {createAppStore, readPersistedState} from './app/state.js';
@@ -15,6 +16,7 @@ import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wire
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
+const bootLang = setLang(persistedBoot?.lang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
 const skipSplashImmediate = typeof window !== 'undefined'
   && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -25,9 +27,9 @@ const iconUrl = new URL('icons/icon-192.png', appBase).href;
 const monaUrl = new URL('images/mona.jpg', appBase).href;
 
 if (!skipSplashImmediate) {
-  app.innerHTML = `<div class="splash" data-skip-splash role="button" tabindex="0" aria-label="イントロをスキップ"><div class="gallery-arches" aria-hidden="true"></div><div class="splash-stage"><figure class="splash-mona-frame"><div class="splash-mona-mat"><img class="splash-mona-img" src="${monaUrl}" alt="モナ・リザ"></div><figcaption>La Joconde · Salle 711</figcaption></figure><div class="splash-brand-line"><img class="splash-icon" src="${iconUrl}" alt="${APP_NAME}"><span>LOUVRE SELF-GUIDE</span></div><h1>${APP_NAME}</h1><p>${APP_TAGLINE}</p><span class="splash-hint">タップでスキップ</span></div></div>`;
+  app.innerHTML = `<div class="splash" data-skip-splash role="button" tabindex="0" aria-label="${esc(t('app.skipSplashAria', null, bootLang))}"><div class="gallery-arches" aria-hidden="true"></div><div class="splash-stage"><figure class="splash-mona-frame"><div class="splash-mona-mat"><img class="splash-mona-img" src="${monaUrl}" alt="Mona Lisa"></div><figcaption>La Joconde · Salle 711</figcaption></figure><div class="splash-brand-line"><img class="splash-icon" src="${iconUrl}" alt="${APP_NAME}"><span>${esc(t('app.brandSubtitle', null, bootLang))}</span></div><h1>${APP_NAME}</h1><p>${esc(t('app.tagline', null, bootLang))}</p><span class="splash-hint">${esc(t('app.splashHint', null, bootLang))}</span></div></div>`;
 } else {
-  app.innerHTML = `<div class="boot-loading"><p>読み込み中…</p></div>`;
+  app.innerHTML = `<div class="boot-loading"><p>${esc(t('app.loading', null, bootLang))}</p></div>`;
 }
 
 const [works, routes, sources, navigationGraph, artworkImages, imageCredits] = await Promise.all([
@@ -39,10 +41,10 @@ const [works, routes, sources, navigationGraph, artworkImages, imageCredits] = a
   'image-credits.json'
 ].map(async name => {
   const response = await fetch(new URL(name, import.meta.url));
-  if (!response.ok) throw new Error(`${name} を読み込めません`);
+  if (!response.ok) throw new Error(`Failed to load ${name}`);
   return response.json();
 })).catch(error => {
-  app.innerHTML = '<main class="error-screen"><h1>読み込みできませんでした</h1><p>通信状態を確認して再読み込みしてください。</p><button class="primary" onclick="location.reload()">再読み込み</button></main>';
+  app.innerHTML = `<main class="error-screen"><h1>${esc(t('app.errorTitle', null, bootLang))}</h1><p>${esc(t('app.errorBody', null, bootLang))}</p><button class="primary" onclick="location.reload()">${esc(t('app.reload', null, bootLang))}</button></main>`;
   throw error;
 });
 
@@ -184,6 +186,17 @@ function wireShell() {
   document.querySelectorAll('[data-undo-arrival]').forEach(btn => {
     btn.onclick = planActions.undoArrival;
   });
+
+  document.querySelectorAll('[data-set-lang]').forEach(btn => {
+    btn.onclick = () => {
+      const next = btn.dataset.setLang;
+      if (!next || next === state.lang) return;
+      const applied = ctx.setAppLang(next);
+      const meta = getLangMeta(applied);
+      ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+      render();
+    };
+  });
 }
 
 function wireMain() {
@@ -199,10 +212,21 @@ function wireMain() {
 
 function render() {
   const {state} = ctx;
+  const lang = state.lang;
   if (state.appPhase === 'splash') return;
   if (state.appPhase === 'select_time') {
     app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
+    document.querySelectorAll('[data-set-lang]').forEach(btn => {
+      btn.onclick = () => {
+        const next = btn.dataset.setLang;
+        if (!next || next === state.lang) return;
+        const applied = ctx.setAppLang(next);
+        const meta = getLangMeta(applied);
+        ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+        render();
+      };
+    });
     return;
   }
   const plan = ctx.currentPlan();
@@ -221,11 +245,11 @@ function render() {
         <img class="header-app-icon" src="${iconUrl}" alt="">
         <b>${esc(APP_NAME)}</b>
         <span class="header-course-tag">${esc(plan.label)}</span>
-        ${state.offline ? '<span class="offline-pill" role="status">オフライン</span>' : ''}
+        ${state.offline ? `<span class="offline-pill" role="status">${esc(t('app.offline', null, lang))}</span>` : ''}
       </div>
       <div class="header-actions">
-        <button type="button" class="header-course-btn" data-change-course>コース変更</button>
-        <button type="button" class="header-audio-btn" data-open-audio-settings aria-label="オーディオ設定" title="オーディオ設定（速度調整）">⚙</button>
+        <button type="button" class="header-course-btn" data-change-course>${esc(t('app.changeCourse', null, lang))}</button>
+        <button type="button" class="header-audio-btn" data-open-audio-settings aria-label="${esc(t('app.audioSettingsAria', null, lang))}" title="${esc(t('app.audioSettingsTitle', null, lang))}">⚙</button>
       </div>
     </header>
     ${body}

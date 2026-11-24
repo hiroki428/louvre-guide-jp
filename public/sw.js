@@ -1,4 +1,4 @@
-const SHELL = 'louvre-shell-v48';
+const SHELL = 'louvre-shell-v49';
 const AUDIO = 'louvre-audio-v2';
 const IMAGES = 'louvre-images-v1';
 
@@ -10,6 +10,9 @@ const SHELL_ASSETS = [
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
   './src/app-config.js',
+  './src/i18n.js',
+  './src/locales/ja.js',
+  './src/locales/en.js',
   './src/my-plan.js',
   './src/main.js',
   './src/app/state.js',

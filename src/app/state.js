@@ -3,6 +3,7 @@ import {buildNavigationView, navigationStateFromRoute} from '../navigation.js';
 import {validStoredProgress} from '../route-progress.js';
 import {audioLengthsFor} from '../catalog.js';
 import {activePlanMeta, planStopEstimates, timeCourseBounds} from '../my-plan.js';
+import {detectBrowserLang, normalizeLang, setLang} from '../i18n.js';
 
 export const STORAGE_KEY = 'louvre-guide-state-v3';
 export const SESSION_PROGRESS_KEY = 'louvre-route-progress-v2';
@@ -32,6 +33,7 @@ export function createAppStore({
   skipSplashImmediate,
   appBase
 }) {
+  const initialLang = setLang(persistedBoot?.lang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
   const maxRoutableCount = works.filter(w => w.locationPrecision === 'room' && navigationIndex.nodes.has(`work:${w.id}`)).length;
   const initialMinutes = routes.some(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes) ? persistedBoot.minutes : 90;
   const initialBounds = timeCourseBounds(initialMinutes, maxRoutableCount);
@@ -40,6 +42,7 @@ export function createAppStore({
     : null;
 
   const state = {
+    lang: initialLang,
     appPhase: skipSplashImmediate ? 'main' : 'splash',
     hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
     tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
@@ -85,7 +88,7 @@ export function createAppStore({
     support: {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''}
   };
 
-  const navOptions = () => ({preferElevator: state.preferElevator});
+  const navOptions = () => ({preferElevator: state.preferElevator, lang: state.lang});
   const currentPlan = () => activePlanMeta({
     planMode: state.planMode,
     routeId: state.routeId,
@@ -95,12 +98,20 @@ export function createAppStore({
     navigationIndex,
     duration: state.duration,
     customTimedIds: state.customTimedIds,
-    customTimedMinutes: state.customTimedMinutes
+    customTimedMinutes: state.customTimedMinutes,
+    lang: state.lang
   });
   const planWorks = () => currentPlan().ids.map(id => byId[id]).filter(Boolean);
   const routableIds = () => currentPlan().routableIds;
   const currentEstimates = () => planStopEstimates(currentPlan(), navigationIndex, navOptions());
   const audioPath = (id, length) => new URL(`audio/${id}-${length}.mp3`, appBase).href;
+
+  function setAppLang(lang) {
+    const next = setLang(lang);
+    state.lang = next;
+    persistState();
+    return next;
+  }
 
   function preferredLengthFor(work) {
     const lengths = audioLengthsFor(work);
@@ -169,6 +180,7 @@ export function createAppStore({
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         version: 3,
+        lang: state.lang,
         hasChosenCourse: state.hasChosenCourse,
         tab: state.tab,
         planMode: state.planMode,
@@ -214,6 +226,7 @@ export function createAppStore({
     currentEstimates,
     audioPath,
     preferredLengthFor,
+    setAppLang,
     persistState,
     navigationView,
     roomWorksFor

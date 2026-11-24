@@ -1,5 +1,6 @@
 import {audioLengthsFor} from '../catalog.js';
 import {formatMinutesLabel} from '../my-plan.js';
+import {localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, formatAudioLengthLabel, formatClock, formatRate, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
 export function openWorkDetail(ctx, workId, roomWorkIds = null) {
@@ -22,9 +23,12 @@ export function closeWorkDetail(ctx) {
 
 export function workDetailSheetMarkup(ctx) {
   const {state, byId, navigationIndex, sources} = ctx;
+  const lang = state.lang;
+  const tr = (key, params) => t(key, params, lang);
   const player = ctx.audio.player;
-  const work = state.detailWorkId ? byId[state.detailWorkId] : null;
-  if (!work) return '';
+  const rawWork = state.detailWorkId ? byId[state.detailWorkId] : null;
+  if (!rawWork) return '';
+  const work = localizeWork(rawWork, lang);
   const plan = ctx.currentPlan();
   const planIdx = plan.ids.indexOf(work.id);
   const estimates = ctx.currentEstimates();
@@ -43,19 +47,20 @@ export function workDetailSheetMarkup(ctx) {
   const hasMap = navigationIndex.nodes.has(`work:${work.id}`);
   const siblings = state.detailRoomWorks.length > 1
     ? state.detailRoomWorks.map(id => byId[id]).filter(Boolean)
-    : ctx.roomWorksFor(work);
+    : ctx.roomWorksFor(rawWork);
+  const singleGuideLabel = lengths[0] === 60 ? tr('audio.guideOneMin') : tr('audio.guideSec', {sec: lengths[0]});
 
   return `<div class="sheet-backdrop" data-close-detail></div>
-  <section class="work-sheet ${state.largeText ? 'large-text' : ''}" role="dialog" aria-modal="true" aria-label="${esc(work.title)}の詳細">
+  <section class="work-sheet ${state.largeText ? 'large-text' : ''}" role="dialog" aria-modal="true" aria-label="${esc(tr('detail.dialogAria', {title: work.title}))}">
     <div class="sheet-handle-bar">
       <span class="sheet-grabber" aria-hidden="true"></span>
-      <button type="button" class="sheet-close-btn" data-close-detail aria-label="閉じる">✕ 閉じる</button>
+      <button type="button" class="sheet-close-btn" data-close-detail aria-label="${esc(tr('app.close'))}">${esc(tr('app.closeBtn'))}</button>
     </div>
 
-    ${siblings.length > 1 ? `<div class="room-siblings" aria-label="この展示室のほかの作品">
-      <span class="room-siblings-label">${esc(work.room)}室の作品 (${siblings.length}件)</span>
+    ${siblings.length > 1 ? `<div class="room-siblings" aria-label="${esc(tr('detail.siblingsAria'))}">
+      <span class="room-siblings-label">${esc(tr('detail.siblingsLabel', {room: work.room, count: siblings.length}))}</span>
       <div class="room-siblings-list">
-        ${siblings.map(item => `<button type="button" class="sibling-chip ${item.id === work.id ? 'active' : ''}" data-switch-detail="${esc(item.id)}">${esc(item.title)}</button>`).join('')}
+        ${siblings.map(item => `<button type="button" class="sibling-chip ${item.id === work.id ? 'active' : ''}" data-switch-detail="${esc(item.id)}">${esc(localizeWork(item, lang).title)}</button>`).join('')}
       </div>
     </div>` : ''}
 
@@ -63,60 +68,61 @@ export function workDetailSheetMarkup(ctx) {
       <div class="work-hero">
         ${thumbMarkup(ctx, work, 'thumb-hero')}
         <div class="work-hero-copy">
-          <div class="eyebrow">${planIdx >= 0 ? `訪問 ${planIdx + 1} / ${plan.ids.length} · ` : ''}${esc(workStatus(work))}</div>
-          ${est ? `<div class="detail-elapsed-line">目安経過 約${formatMinutesLabel(est.elapsedMinutes)}${plan.minutes ? ` / ${plan.minutes}分` : ''}</div>` : ''}
+          <div class="eyebrow">${planIdx >= 0 ? esc(tr('detail.visitOrder', {order: planIdx + 1, total: plan.ids.length})) : ''}${esc(workStatus(work, lang))}</div>
+          ${est ? `<div class="detail-elapsed-line">${esc(tr('detail.elapsedLine', {elapsed: formatMinutesLabel(est.elapsedMinutes, lang), totalPart: plan.minutes ? tr('detail.elapsedTotalPart', {minutes: plan.minutes}) : ''}))}</div>` : ''}
           <h2>${esc(work.title)}</h2>
-          <p class="artist">${esc(creatorMeta(work))}</p>
+          <p class="artist">${esc(creatorMeta(work, lang))}</p>
           <div class="hero-badges">
-            ${priorityBadgeMarkup(work)}
+            ${priorityBadgeMarkup(work, lang)}
           </div>
         </div>
       </div>
 
       <div class="detail-quick-actions">
-        <button type="button" class="action-pill ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}">${inMyPlan ? '★ マイプラン済' : '☆ マイプラン'}</button>
-        <button type="button" class="action-pill ${isViewed ? 'done' : ''}" data-toggle-viewed="${esc(work.id)}">${isViewed ? '✓ 鑑賞済み' : '鑑賞済みにする'}</button>
-        ${hasMap ? `<button type="button" class="action-pill" data-show-map="${esc(work.id)}">地図で位置を見る</button>` : ''}
+        <button type="button" class="action-pill ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}">${esc(inMyPlan ? tr('detail.inMyPlan') : tr('detail.addMyPlan'))}</button>
+        <button type="button" class="action-pill ${isViewed ? 'done' : ''}" data-toggle-viewed="${esc(work.id)}">${esc(isViewed ? tr('detail.viewed') : tr('detail.markViewed'))}</button>
+        ${hasMap ? `<button type="button" class="action-pill" data-show-map="${esc(work.id)}">${esc(tr('detail.showOnMap'))}</button>` : ''}
       </div>
 
       <div class="sheet-audio-box sticky-audio-box">
         <div class="sheet-audio-top">
-          <h3>音声解説</h3>
+          <h3>${esc(tr('detail.audioTitle'))}</h3>
           ${lengths.length > 1
-            ? `<div class="durations">${lengths.map(opt => `<button type="button" class="chip ${length === opt ? 'active' : ''}" data-detail-duration="${opt}" data-detail-work="${esc(work.id)}">${formatAudioLengthLabel(opt)}</button>`).join('')}</div>`
-            : `<span class="minor">解説ガイド（約${lengths[0] === 60 ? '1分' : `${lengths[0]}秒`}）</span>`}
+            ? `<div class="durations">${lengths.map(opt => `<button type="button" class="chip ${length === opt ? 'active' : ''}" data-detail-duration="${opt}" data-detail-work="${esc(work.id)}">${esc(formatAudioLengthLabel(opt, lang))}</button>`).join('')}</div>`
+            : `<span class="minor">${esc(tr('audio.guideDuration', {label: singleGuideLabel}))}</span>`}
         </div>
+        ${lang !== 'ja' ? `<p class="audio-lang-note">${esc(tr('audio.jpAudioNote'))}</p>` : ''}
         <div class="sheet-seek-wrap">
-          <input type="range" min="0" max="1000" value="${ratio}" style="--seek-pct:${pct}%" data-seek data-seek-work="${esc(work.id)}" aria-label="再生位置を調整">
+          <input type="range" min="0" max="1000" value="${ratio}" style="--seek-pct:${pct}%" data-seek data-seek-work="${esc(work.id)}" aria-label="${esc(tr('detail.seekAria'))}">
           <div class="sheet-time-row">
             <span data-time-current data-time-work="${esc(work.id)}">${formatClock(current)}</span>
             <span data-time-total data-time-work="${esc(work.id)}">${duration > 0 ? formatClock(duration) : '--:--'}</span>
           </div>
         </div>
         <div class="sheet-player-controls">
-          <button type="button" class="secondary compact-btn" data-seek-delta="-10" ${!isLoaded ? 'disabled' : ''}>−10秒</button>
-          <button type="button" class="primary sheet-play-main" data-detail-play="${esc(work.id)}">${isPlaying ? '⏸ 一時停止' : '▶ 音声を再生'}</button>
-          <button type="button" class="secondary compact-btn" data-seek-delta="10" ${!isLoaded ? 'disabled' : ''}>＋10秒</button>
+          <button type="button" class="secondary compact-btn" data-seek-delta="-10" ${!isLoaded ? 'disabled' : ''}>${esc(tr('detail.back10'))}</button>
+          <button type="button" class="primary sheet-play-main" data-detail-play="${esc(work.id)}">${esc(isPlaying ? tr('detail.pauseBtn') : tr('detail.playBtn'))}</button>
+          <button type="button" class="secondary compact-btn" data-seek-delta="10" ${!isLoaded ? 'disabled' : ''}>${esc(tr('detail.fwd10'))}</button>
         </div>
         <div class="sheet-player-sub">
-          <button type="button" class="secondary compact-btn" data-open-audio-settings>⚙ 速度 ${formatRate(state.playbackRate)}</button>
-          <button type="button" class="secondary compact-btn" data-detail-download="${esc(work.id)}" ${saved ? 'disabled' : ''}>${saved ? 'オフライン保存済み ✓' : '端末に保存'}</button>
+          <button type="button" class="secondary compact-btn" data-open-audio-settings>${esc(tr('detail.speedBtn', {rate: formatRate(state.playbackRate)}))}</button>
+          <button type="button" class="secondary compact-btn" data-detail-download="${esc(work.id)}" ${saved ? 'disabled' : ''}>${esc(saved ? tr('detail.savedOffline') : tr('detail.saveToDevice'))}</button>
           ${planIdx >= 0 ? `
-            <button type="button" class="secondary compact-btn" data-plan-step="${planIdx - 1}" ${planIdx <= 0 ? 'disabled' : ''}>⏮ 前の作品</button>
-            <button type="button" class="secondary compact-btn" data-plan-step="${planIdx + 1}" ${planIdx >= plan.ids.length - 1 ? 'disabled' : ''}>次の作品 ⏭</button>
+            <button type="button" class="secondary compact-btn" data-plan-step="${planIdx - 1}" ${planIdx <= 0 ? 'disabled' : ''}>${esc(tr('detail.prevWork'))}</button>
+            <button type="button" class="secondary compact-btn" data-plan-step="${planIdx + 1}" ${planIdx >= plan.ids.length - 1 ? 'disabled' : ''}>${esc(tr('detail.nextWork'))}</button>
           ` : ''}
         </div>
         ${state.audioError ? `<p class="audio-error" role="alert">${esc(state.audioError)}</p>` : ''}
       </div>
 
       <div class="detail-text-section">
-        <h3>作品の背景</h3>
+        <h3>${esc(tr('detail.backgroundTitle'))}</h3>
         <p>${esc(work.background)}</p>
-        <h3>鑑賞時に見るポイント</h3>
+        <h3>${esc(tr('detail.lookTitle'))}</h3>
         <p>${esc(work.look)}</p>
       </div>
 
-      <p class="source">展示室情報：<a href="${esc(work.source)}" target="_blank" rel="noreferrer">公式情報 ↗</a> · 確認日 ${esc(work.verifiedAt || sources.checkedAt)}</p>
+      <p class="source">${esc(tr('detail.sourceLine'))}<a href="${esc(work.source)}" target="_blank" rel="noreferrer">${esc(tr('detail.officialLink'))}</a>${esc(tr('detail.verifiedAt', {date: work.verifiedAt || sources.checkedAt}))}</p>
     </article>
   </section>`;
 }
