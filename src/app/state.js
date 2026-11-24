@@ -43,6 +43,7 @@ export function createAppStore({
 
   const state = {
     lang: initialLang,
+    hasChosenLang: Boolean(persistedBoot?.hasChosenLang),
     appPhase: skipSplashImmediate ? 'main' : 'splash',
     hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
     tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
@@ -106,9 +107,10 @@ export function createAppStore({
   const currentEstimates = () => planStopEstimates(currentPlan(), navigationIndex, navOptions());
   const audioPath = (id, length) => new URL(`audio/${id}-${length}.mp3`, appBase).href;
 
-  function setAppLang(lang) {
+  function setAppLang(lang, {confirm = true} = {}) {
     const next = setLang(lang);
     state.lang = next;
+    if (confirm) state.hasChosenLang = true;
     persistState();
     return next;
   }
@@ -181,6 +183,7 @@ export function createAppStore({
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         version: 3,
         lang: state.lang,
+        hasChosenLang: state.hasChosenLang,
         hasChosenCourse: state.hasChosenCourse,
         tab: state.tab,
         planMode: state.planMode,

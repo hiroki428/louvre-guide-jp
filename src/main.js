@@ -16,8 +16,8 @@ import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wire
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
-const hasPersistedLang = Boolean(persistedBoot?.lang);
-const bootLang = setLang(hasPersistedLang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
+const hasConfirmedLang = Boolean(persistedBoot?.hasChosenLang);
+const bootLang = setLang(persistedBoot?.lang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
 const skipSplashImmediate = typeof window !== 'undefined'
   && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -28,7 +28,7 @@ const iconUrl = new URL('icons/icon-192.png', appBase).href;
 const monaUrl = new URL('images/mona.jpg', appBase).href;
 
 let splashLang = bootLang;
-let splashNeedsConfirm = !hasPersistedLang;
+let splashNeedsConfirm = !hasConfirmedLang;
 let splashReady = false;
 let splashStartRequested = false;
 let splashSkipped = false;
@@ -377,17 +377,17 @@ const downloadsPromise = ctx.audio.loadDownloads();
 
 if (!skipSplashImmediate) {
   onSplashLangSelected = applied => {
-    ctx.setAppLang(applied);
+    ctx.setAppLang(applied, {confirm: false});
   };
-  if (splashLang !== ctx.state.lang) ctx.setAppLang(splashLang);
+  if (splashLang !== ctx.state.lang) ctx.setAppLang(splashLang, {confirm: false});
 
   finishSplashImpl = async () => {
     if (splashSkipped) return;
     splashSkipped = true;
     const startBtn = document.querySelector('[data-splash-start]');
     if (startBtn) startBtn.disabled = true;
-    if (ctx.state.lang !== splashLang || !hasPersistedLang) {
-      ctx.setAppLang(splashLang);
+    if (ctx.state.lang !== splashLang || !ctx.state.hasChosenLang) {
+      ctx.setAppLang(splashLang, {confirm: true});
     }
     await ensureWorkLocale(splashLang, appBase);
     document.querySelector('.splash')?.classList.add('leaving');
@@ -403,7 +403,7 @@ if (!skipSplashImmediate) {
   if (splashStartRequested) {
     await finishSplashImpl();
   } else if (!splashNeedsConfirm) {
-    await new Promise(resolve => setTimeout(resolve, Math.max(0, 2700 - (performance.now() - bootStarted))));
+    await new Promise(resolve => setTimeout(resolve, Math.max(0, 2800 - (performance.now() - bootStarted))));
     if (!splashNeedsConfirm && !splashSkipped) {
       await finishSplashImpl();
     }
