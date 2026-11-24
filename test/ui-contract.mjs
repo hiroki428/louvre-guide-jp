@@ -84,6 +84,8 @@ assert.match(main, /'tabs\.plan': 'プラン一覧'/);
 assert.match(main, /'tabs\.audio': '音声一覧'/);
 assert.match(main, /'tabs\.settings': '案内・設定'/);
 assert.match(main, /data-set-lang/, 'language switcher controls must exist');
+assert.match(main, /data-splash-lang/, 'splash screen must offer language selection pills');
+assert.match(main, /data-splash-start/, 'splash screen must offer start button for initial language confirmation');
 assert.match(main, /data-change-course/);
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(main, /data-mini-prev/, 'Spotify-style player must provide ⏮ previous control');

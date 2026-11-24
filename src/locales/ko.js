@@ -7,6 +7,8 @@ export const ko = Object.freeze({
   'app.reload': '새로고침',
   'app.skipSplashAria': '인트로 건너뛰기',
   'app.splashHint': '탭하여 건너뛰기',
+  'app.splashStart': '시작하기',
+  'app.splashLangLabel': '언어 선택',
   'app.offline': '오프라인',
   'app.changeCourse': '코스 변경',
   'app.audioSettingsAria': '오디오 설정',

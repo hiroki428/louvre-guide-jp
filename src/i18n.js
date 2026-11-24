@@ -6,6 +6,7 @@ import {ko} from './locales/ko.js';
 import {es} from './locales/es.js';
 
 export const DEFAULT_LANG = 'ja';
+export const BROWSER_FALLBACK_LANG = 'en';
 
 export const SUPPORTED_LANGS = Object.freeze([
   {code: 'ja', label: '日本語', shortLabel: '日本語'},
@@ -176,17 +177,21 @@ export function normalizeLang(value) {
   return Object.prototype.hasOwnProperty.call(DICTIONARIES, base) ? base : DEFAULT_LANG;
 }
 
-export function detectBrowserLang() {
-  if (typeof navigator === 'undefined') return DEFAULT_LANG;
-  const candidates = Array.isArray(navigator.languages) && navigator.languages.length
-    ? navigator.languages
-    : [navigator.language];
+export function detectBrowserLang(explicitCandidates = null) {
+  const candidates = Array.isArray(explicitCandidates)
+    ? explicitCandidates
+    : (typeof navigator !== 'undefined'
+      ? (Array.isArray(navigator.languages) && navigator.languages.length
+        ? navigator.languages
+        : (navigator.language ? [navigator.language] : []))
+      : []);
+  if (!candidates.length) return DEFAULT_LANG;
   for (const candidate of candidates) {
     if (!candidate) continue;
     const base = String(candidate).trim().toLowerCase().split(/[-_]/)[0];
     if (Object.prototype.hasOwnProperty.call(DICTIONARIES, base)) return base;
   }
-  return DEFAULT_LANG;
+  return BROWSER_FALLBACK_LANG;
 }
 
 export function getLang() {

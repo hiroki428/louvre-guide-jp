@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {
+  BROWSER_FALLBACK_LANG,
   DEFAULT_LANG,
   SUPPORTED_LANGS,
+  detectBrowserLang,
   formatWingLocalized,
   getDictionaries,
   getFloorName,
@@ -58,6 +60,15 @@ assert.equal(normalizeLang('ko-KR'), 'ko');
 assert.equal(normalizeLang('es-ES'), 'es');
 assert.equal(normalizeLang('ja-JP'), 'ja');
 assert.equal(normalizeLang('de-DE'), 'ja');
+assert.equal(BROWSER_FALLBACK_LANG, 'en');
+assert.equal(detectBrowserLang(['ja-JP', 'en-US']), 'ja');
+assert.equal(detectBrowserLang(['fr-FR']), 'fr');
+assert.equal(detectBrowserLang(['zh-Hans-CN']), 'zh');
+assert.equal(detectBrowserLang(['ko-KR']), 'ko');
+assert.equal(detectBrowserLang(['es-MX']), 'es');
+assert.equal(detectBrowserLang(['de-DE', 'it-IT']), 'en', 'unsupported browser locales should fall back to English');
+assert.equal(detectBrowserLang(['de-DE', 'ko-KR']), 'ko', 'first supported browser locale should win');
+assert.equal(detectBrowserLang([]), DEFAULT_LANG);
 assert.equal(getLang(), 'ja');
 assert.equal(t('tabs.map', null, 'en'), 'Map');
 assert.equal(t('map.viewedCount', {viewed: 3, total: 8}, 'en'), '3 / 8 viewed');

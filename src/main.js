@@ -1,5 +1,5 @@
 import {APP_NAME} from './app-config.js';
-import {detectBrowserLang, ensureWorkLocale, getLangMeta, normalizeLang, setLang, t} from './i18n.js';
+import {SUPPORTED_LANGS, detectBrowserLang, ensureWorkLocale, getLangMeta, normalizeLang, setLang, t} from './i18n.js';
 import {indexNavigationGraph} from './navigation.js';
 import {timeCourseBounds} from './my-plan.js';
 import {createAppStore, readPersistedState} from './app/state.js';
@@ -16,7 +16,8 @@ import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wire
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
-const bootLang = setLang(persistedBoot?.lang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
+const hasPersistedLang = Boolean(persistedBoot?.lang);
+const bootLang = setLang(hasPersistedLang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
 const skipSplashImmediate = typeof window !== 'undefined'
   && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -26,8 +27,97 @@ const appBase = new URL('../', import.meta.url);
 const iconUrl = new URL('icons/icon-192.png', appBase).href;
 const monaUrl = new URL('images/mona.jpg', appBase).href;
 
+let splashLang = bootLang;
+let splashNeedsConfirm = !hasPersistedLang;
+let splashReady = false;
+let splashStartRequested = false;
+let splashSkipped = false;
+let finishSplashImpl = null;
+let onSplashLangSelected = null;
+
+function requestSplashFinish() {
+  if (splashSkipped) return;
+  splashStartRequested = true;
+  if (splashReady && finishSplashImpl) {
+    void finishSplashImpl();
+    return;
+  }
+  const startBtn = document.querySelector('[data-splash-start]');
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.textContent = t('app.loading', null, splashLang);
+  }
+}
+
+function applySplashLanguage(nextLang) {
+  const applied = setLang(nextLang);
+  splashLang = applied;
+  splashNeedsConfirm = true;
+  void ensureWorkLocale(applied, appBase);
+  onSplashLangSelected?.(applied);
+
+  const splashEl = document.querySelector('[data-skip-splash]');
+  if (splashEl) {
+    splashEl.classList.add('is-confirm-mode');
+    splashEl.removeAttribute('role');
+    splashEl.removeAttribute('tabindex');
+    splashEl.removeAttribute('aria-label');
+  }
+  const subtitleEl = document.querySelector('[data-splash-subtitle]');
+  if (subtitleEl) subtitleEl.textContent = t('app.brandSubtitle', null, applied);
+  const taglineEl = document.querySelector('[data-splash-tagline]');
+  if (taglineEl) taglineEl.textContent = t('app.tagline', null, applied);
+  const langLabelEl = document.querySelector('[data-splash-lang-label]');
+  if (langLabelEl) langLabelEl.textContent = t('app.splashLangLabel', null, applied);
+  const langGroupEl = document.querySelector('[data-splash-lang-group]');
+  if (langGroupEl) langGroupEl.setAttribute('aria-label', t('app.splashLangLabel', null, applied));
+  const startBtn = document.querySelector('[data-splash-start]');
+  if (startBtn) {
+    startBtn.hidden = false;
+    startBtn.textContent = splashStartRequested && !splashReady
+      ? t('app.loading', null, applied)
+      : t('app.splashStart', null, applied);
+  }
+  const hintEl = document.querySelector('[data-splash-hint]');
+  if (hintEl) {
+    hintEl.hidden = true;
+    hintEl.textContent = t('app.splashHint', null, applied);
+  }
+  document.querySelectorAll('[data-splash-lang]').forEach(btn => {
+    const active = btn.dataset.splashLang === applied;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', String(active));
+  });
+}
+
 if (!skipSplashImmediate) {
-  app.innerHTML = `<div class="splash" data-skip-splash role="button" tabindex="0" aria-label="${esc(t('app.skipSplashAria', null, bootLang))}"><div class="gallery-arches" aria-hidden="true"></div><div class="splash-stage"><figure class="splash-mona-frame"><div class="splash-mona-mat"><img class="splash-mona-img" src="${monaUrl}" alt="Mona Lisa"></div><figcaption>La Joconde · Salle 711</figcaption></figure><div class="splash-brand-line"><img class="splash-icon" src="${iconUrl}" alt="${APP_NAME}"><span>${esc(t('app.brandSubtitle', null, bootLang))}</span></div><h1>${APP_NAME}</h1><p>${esc(t('app.tagline', null, bootLang))}</p><span class="splash-hint">${esc(t('app.splashHint', null, bootLang))}</span></div></div>`;
+  const skipAttrs = splashNeedsConfirm
+    ? ''
+    : `role="button" tabindex="0" aria-label="${esc(t('app.skipSplashAria', null, bootLang))}"`;
+  app.innerHTML = `<div class="splash ${splashNeedsConfirm ? 'is-confirm-mode' : ''}" data-skip-splash ${skipAttrs}><div class="gallery-arches" aria-hidden="true"></div><div class="splash-stage"><figure class="splash-mona-frame"><div class="splash-mona-mat"><img class="splash-mona-img" src="${monaUrl}" alt="Mona Lisa"></div><figcaption>La Joconde · Salle 711</figcaption></figure><div class="splash-brand-line"><img class="splash-icon" src="${iconUrl}" alt="${APP_NAME}"><span data-splash-subtitle>${esc(t('app.brandSubtitle', null, bootLang))}</span></div><h1>${APP_NAME}</h1><p data-splash-tagline>${esc(t('app.tagline', null, bootLang))}</p><div class="splash-lang-wrap" data-splash-controls><span class="splash-lang-label" data-splash-lang-label>${esc(t('app.splashLangLabel', null, bootLang))}</span><div class="splash-lang-pills" role="group" aria-label="${esc(t('app.splashLangLabel', null, bootLang))}" data-splash-lang-group>${SUPPORTED_LANGS.map(item => `<button type="button" class="splash-lang-pill ${bootLang === item.code ? 'active' : ''}" data-splash-lang="${item.code}" aria-pressed="${bootLang === item.code}">${esc(item.label)}</button>`).join('')}</div></div><div class="splash-action-slot" data-splash-controls><button type="button" class="splash-start-btn" data-splash-start ${splashNeedsConfirm ? '' : 'hidden'}>${esc(t('app.splashStart', null, bootLang))}</button><span class="splash-hint" data-splash-hint ${splashNeedsConfirm ? 'hidden' : ''}>${esc(t('app.splashHint', null, bootLang))}</span></div></div></div>`;
+
+  const skipEl = document.querySelector('[data-skip-splash]');
+  document.querySelectorAll('[data-splash-lang]').forEach(btn => {
+    btn.addEventListener('click', event => {
+      event.stopPropagation();
+      const next = btn.dataset.splashLang;
+      if (next) applySplashLanguage(next);
+    });
+  });
+  document.querySelector('[data-splash-start]')?.addEventListener('click', event => {
+    event.stopPropagation();
+    requestSplashFinish();
+  });
+  skipEl?.addEventListener('click', event => {
+    if (event.target.closest('[data-splash-controls]')) return;
+    if (splashNeedsConfirm) return;
+    requestSplashFinish();
+  });
+  skipEl?.addEventListener('keydown', event => {
+    if (event.target.closest('[data-splash-controls]')) return;
+    if (splashNeedsConfirm) return;
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); requestSplashFinish(); }
+  });
 } else {
   app.innerHTML = `<div class="boot-loading"><p>${esc(t('app.loading', null, bootLang))}</p></div>`;
 }
@@ -62,7 +152,6 @@ for (const work of works) {
 }
 
 const navigationIndex = indexNavigationGraph(navigationGraph);
-let splashSkipped = false;
 
 const store = createAppStore({
   works,
@@ -287,25 +376,38 @@ window.addEventListener('keydown', event => {
 const downloadsPromise = ctx.audio.loadDownloads();
 
 if (!skipSplashImmediate) {
-  const skipEl = document.querySelector('[data-skip-splash]');
-  const finishSplash = () => {
+  onSplashLangSelected = applied => {
+    ctx.setAppLang(applied);
+  };
+  if (splashLang !== ctx.state.lang) ctx.setAppLang(splashLang);
+
+  finishSplashImpl = async () => {
     if (splashSkipped) return;
     splashSkipped = true;
+    const startBtn = document.querySelector('[data-splash-start]');
+    if (startBtn) startBtn.disabled = true;
+    if (ctx.state.lang !== splashLang || !hasPersistedLang) {
+      ctx.setAppLang(splashLang);
+    }
+    await ensureWorkLocale(splashLang, appBase);
     document.querySelector('.splash')?.classList.add('leaving');
     setTimeout(() => {
       ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';
       render();
     }, 460);
   };
-  skipEl?.addEventListener('click', finishSplash);
-  skipEl?.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); finishSplash(); }
-  });
-  await Promise.all([
-    downloadsPromise,
-    new Promise(resolve => setTimeout(resolve, Math.max(0, 2700 - (performance.now() - bootStarted))))
-  ]);
-  finishSplash();
+
+  await downloadsPromise;
+  splashReady = true;
+
+  if (splashStartRequested) {
+    await finishSplashImpl();
+  } else if (!splashNeedsConfirm) {
+    await new Promise(resolve => setTimeout(resolve, Math.max(0, 2700 - (performance.now() - bootStarted))));
+    if (!splashNeedsConfirm && !splashSkipped) {
+      await finishSplashImpl();
+    }
+  }
 } else {
   await downloadsPromise;
   ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';

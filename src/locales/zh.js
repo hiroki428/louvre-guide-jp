@@ -7,6 +7,8 @@ export const zh = Object.freeze({
   'app.reload': '重新加载',
   'app.skipSplashAria': '跳过开场动画',
   'app.splashHint': '轻触跳过',
+  'app.splashStart': '开始使用',
+  'app.splashLangLabel': '选择语言',
   'app.offline': '离线',
   'app.changeCourse': '更改路线',
   'app.audioSettingsAria': '音频设置',

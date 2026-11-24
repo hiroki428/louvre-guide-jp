@@ -7,6 +7,8 @@ export const en = Object.freeze({
   'app.reload': 'Reload',
   'app.skipSplashAria': 'Skip intro',
   'app.splashHint': 'Tap to skip',
+  'app.splashStart': 'Get Started',
+  'app.splashLangLabel': 'Choose Language',
   'app.offline': 'Offline',
   'app.changeCourse': 'Change Plan',
   'app.audioSettingsAria': 'Audio settings',
