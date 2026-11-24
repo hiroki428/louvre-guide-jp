@@ -180,7 +180,20 @@ const ROOM_ANCHORS = {
     '344': {x: 829.1, y: 364.1, wing: 'sully', name: 'ギリシア古典彫刻'},
     '345': {x: 795.7, y: 364.1, wing: 'sully', name: 'ミロのヴィーナスの間'},
     '348': {x: 795.7, y: 332.9, wing: 'sully', name: 'カリアティードの間'},
-    '403': {x: 520.1, y: 369.8, wing: 'denon', name: 'ミケランジェロ・ギャラリー'}
+    '403': {x: 520.1, y: 369.8, wing: 'denon', name: 'ミケランジェロ・ギャラリー'},
+    // Added 2026-11-23: rooms already drawn on the PPT plan; pin = centre of the drawn room shape
+    '300': {x: 795.7, y: 260.3, wing: 'sully', name: '300室'},
+    '321': {x: 916.0, y: 276.8, wing: 'sully', name: '321室'},
+    // Added 2026-11-23 (group B): rooms not numbered on the PPT plan. Position = official Louvre plan
+    // (collections.louvre.fr/assets/svg/niveau{n}.svg), placed between the neighbouring landmark rooms
+    // in proportion to the official layout.
+    '221': {x: 627.9, y: 132.0, wing: 'richelieu', name: '221室'},
+    '301': {x: 795.7, y: 254.3, wing: 'sully', name: '301室'},
+    '302': {x: 795.7, y: 248.0, wing: 'sully', name: '302室'},
+    '307': {x: 791.0, y: 237.6, wing: 'sully', name: '307室'},
+    '322': {x: 916.0, y: 285.8, wing: 'sully', name: '322室'},
+    '325': {x: 916.0, y: 304.4, wing: 'sully', name: '325室'},
+    '330': {x: 902.0, y: 364.1, wing: 'sully', name: '330室'}
   },
   '1': {
     // Coordinates mapped directly from the user's exact 1F architectural PPT plan (1024x429 -> 960x600)
@@ -200,7 +213,31 @@ const ROOM_ANCHORS = {
     '711': {x: 557.5, y: 423.3, wing: 'denon', name: '諸国の間'},
     '712': {x: 511.6, y: 474.5, wing: 'denon', name: 'グラン・ギャラリー中央'},
     '716': {x: 342.4, y: 474.5, wing: 'denon', name: 'グラン・ギャラリー西'},
-    '718': {x: 154.5, y: 450.0, wing: 'denon', name: 'スペイン絵画'}
+    '718': {x: 154.5, y: 450.0, wing: 'denon', name: 'スペイン絵画'},
+    // Added 2026-11-23: rooms already drawn on the PPT plan; pin = centre of the drawn room shape
+    '505': {x: 589.1, y: 134.7, wing: 'richelieu', name: '505室'},
+    '617': {x: 852.3, y: 237.1, wing: 'sully', name: '617室'},
+    '633': {x: 916.0, y: 259.9, wing: 'sully', name: '633室'},
+    '636': {x: 917.3, y: 307.9, wing: 'sully', name: '636室'},
+    '640': {x: 916.0, y: 334.7, wing: 'sully', name: '640室'},
+    '641': {x: 892.8, y: 355.1, wing: 'sully', name: '641室'},
+    // Added 2026-11-23 (group B): rooms not numbered on the PPT plan. Position = official Louvre plan
+    // (collections.louvre.fr/assets/svg/niveau{n}.svg), placed between the neighbouring landmark rooms
+    // in proportion to the official layout.
+    '609': {x: 823.8, y: 238.2, wing: 'sully', name: '609室'},
+    '610': {x: 828.9, y: 233.9, wing: 'sully', name: '610室'},
+    '611': {x: 833.1, y: 233.9, wing: 'sully', name: '611室'},
+    '612': {x: 828.9, y: 240.7, wing: 'sully', name: '612室'},
+    '614': {x: 837.0, y: 236.4, wing: 'sully', name: '614室'},
+    '619': {x: 848.4, y: 242.1, wing: 'sully', name: '619室'},
+    '622': {x: 863.3, y: 233.1, wing: 'sully', name: '622室'},
+    '627': {x: 884.0, y: 237.2, wing: 'sully', name: '627室'},
+    '634': {x: 916.0, y: 266.5, wing: 'sully', name: '634室'},
+    '637': {x: 916.0, y: 317.0, wing: 'sully', name: '637室'},
+    '638': {x: 916.0, y: 323.7, wing: 'sully', name: '638室'},
+    '642': {x: 873.7, y: 355.1, wing: 'sully', name: '642室'},
+    '643': {x: 862.3, y: 355.1, wing: 'sully', name: '643室'},
+    '644': {x: 855.2, y: 355.1, wing: 'sully', name: '644室'}
   },
   '2': {
     // Coordinates mapped directly from the user's exact 2F architectural PPT plan (1024x429 -> 960x600)

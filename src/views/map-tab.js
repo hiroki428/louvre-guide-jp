@@ -193,7 +193,7 @@ export function wireMapTab(ctx) {
     };
   });
 
-  document.querySelectorAll('[data-floor]').forEach(btn => {
+  document.querySelectorAll('button[data-floor]').forEach(btn => {
     btn.onclick = () => {
       state.floor = Number(btn.dataset.floor);
       ctx.persistState();

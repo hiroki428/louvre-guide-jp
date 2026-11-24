@@ -1934,3 +1934,17 @@
 @media (prefers-reduced-motion: reduce) {
   .gallery-arches, .splash h1, .splash p { animation: none; }
 }
+
+/* Grouped artwork pins ("N件"): rooms whose pins would overlap; tap to fan the pins out around it. */
+.artwork-cluster .cluster-halo { fill: rgb(23 105 170 / 18%); stroke: none; }
+.artwork-cluster .cluster-bubble { fill: #1769AA; stroke: #fff; stroke-width: 2; }
+.artwork-cluster .cluster-count { fill: #fff; font: 800 10.5px 'Noto Sans JP', sans-serif; pointer-events: none; }
+.artwork-cluster.is-cluster-catalog .cluster-halo { fill: rgb(194 142 54 / 22%); }
+.artwork-cluster.is-cluster-catalog .cluster-bubble { fill: #c28e36; }
+.artwork-cluster.is-cluster-viewed .cluster-halo { fill: rgb(38 135 95 / 18%); }
+.artwork-cluster.is-cluster-viewed .cluster-bubble { fill: #26875f; }
+.artwork-cluster.is-open .cluster-bubble { fill: #14364a; }
+.artwork-cluster.is-open .cluster-halo { fill: rgb(20 54 74 / 22%); }
+/* Fanned-out pins: a dotted line from each pin to the real position of its room. */
+.map-spider .spider-leg { stroke: #14364a; stroke-width: 1.3; stroke-dasharray: 2.2 2; opacity: .75; }
+.map-spider .spider-room { fill: #14364a; stroke: #fff; stroke-width: 1; }

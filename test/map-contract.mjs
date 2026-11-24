@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {floorMapMarkup} from '../src/floor-map.js';
+import {clusterSpiderMarkup, floorMapMarkup} from '../src/floor-map.js';
 import {floorGeoData} from '../src/floor-map-geo.js';
 import {buildNavigationView, indexNavigationGraph, navigationStateForSelection, navigationStateFromRoute} from '../src/navigation.js';
 import {advanceOnRouteAudio} from '../src/route-progress.js';
@@ -58,10 +58,11 @@ for (const floor of [2, 1, 0, -1, -2]) {
     const pinsM1 = [...routedM1.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
       .map(m => {
         const k = m[1], x = Number(m[2]), y = Number(m[3]);
-        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
-        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
-        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
-        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+        if (k === 'dest') return {k, x0: x - 14.3, y0: y - 40.3, x1: x + 14.3, y1: y};
+        if (k === 'route') return {k, x0: x - 11.7, y0: y - 33.8, x1: x + 11.7, y1: y};
+        if (k === 'viewed') return {k, x0: x - 12.35, y0: y - 20.15, x1: x + 12.35, y1: y + 4.55};
+        if (k === 'cluster') return {k, x0: x - 16, y0: y - 11.5, x1: x + 16, y1: y + 11.5};
+        return {k, x0: x - 6.5, y0: y - 6.5, x1: x + 6.5, y1: y + 6.5};
       });
     assert.ok(pinsM1.length > 0, 'floor -1 must render artwork pins');
     for (const p of pinsM1) {
@@ -95,10 +96,11 @@ for (const floor of [2, 1, 0, -1, -2]) {
     const pins0 = [...routed0F.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
       .map(m => {
         const k = m[1], x = Number(m[2]), y = Number(m[3]);
-        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
-        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
-        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
-        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+        if (k === 'dest') return {k, x0: x - 14.3, y0: y - 40.3, x1: x + 14.3, y1: y};
+        if (k === 'route') return {k, x0: x - 11.7, y0: y - 33.8, x1: x + 11.7, y1: y};
+        if (k === 'viewed') return {k, x0: x - 12.35, y0: y - 20.15, x1: x + 12.35, y1: y + 4.55};
+        if (k === 'cluster') return {k, x0: x - 16, y0: y - 11.5, x1: x + 16, y1: y + 11.5};
+        return {k, x0: x - 6.5, y0: y - 6.5, x1: x + 6.5, y1: y + 6.5};
       });
     assert.ok(pins0.length > 0, 'floor 0 must render artwork pins');
     for (const p of pins0) {
@@ -135,10 +137,11 @@ for (const floor of [2, 1, 0, -1, -2]) {
     const pins1 = [...routed1F.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
       .map(m => {
         const k = m[1], x = Number(m[2]), y = Number(m[3]);
-        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
-        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
-        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
-        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+        if (k === 'dest') return {k, x0: x - 14.3, y0: y - 40.3, x1: x + 14.3, y1: y};
+        if (k === 'route') return {k, x0: x - 11.7, y0: y - 33.8, x1: x + 11.7, y1: y};
+        if (k === 'viewed') return {k, x0: x - 12.35, y0: y - 20.15, x1: x + 12.35, y1: y + 4.55};
+        if (k === 'cluster') return {k, x0: x - 16, y0: y - 11.5, x1: x + 16, y1: y + 11.5};
+        return {k, x0: x - 6.5, y0: y - 6.5, x1: x + 6.5, y1: y + 6.5};
       });
     assert.ok(pins1.length > 0, 'floor 1 must render artwork pins');
     for (const p of pins1) {
@@ -168,10 +171,11 @@ for (const floor of [2, 1, 0, -1, -2]) {
     const pins = [...routed2F.matchAll(/data-pin-kind="([^"]+)" data-pin-pos="([0-9.]+),([0-9.]+)"/g)]
       .map(m => {
         const k = m[1], x = Number(m[2]), y = Number(m[3]);
-        if (k === 'dest') return {k, x0: x - 11, y0: y - 31, x1: x + 11, y1: y};
-        if (k === 'route') return {k, x0: x - 9, y0: y - 26, x1: x + 9, y1: y};
-        if (k === 'viewed') return {k, x0: x - 9.5, y0: y - 15.5, x1: x + 9.5, y1: y + 3.5};
-        return {k, x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5};
+        if (k === 'dest') return {k, x0: x - 14.3, y0: y - 40.3, x1: x + 14.3, y1: y};
+        if (k === 'route') return {k, x0: x - 11.7, y0: y - 33.8, x1: x + 11.7, y1: y};
+        if (k === 'viewed') return {k, x0: x - 12.35, y0: y - 20.15, x1: x + 12.35, y1: y + 4.55};
+        if (k === 'cluster') return {k, x0: x - 16, y0: y - 11.5, x1: x + 16, y1: y + 11.5};
+        return {k, x0: x - 6.5, y0: y - 6.5, x1: x + 6.5, y1: y + 6.5};
       });
     assert.ok(pins.length > 0, 'floor 2 must render artwork pins');
     for (const p of pins) {
@@ -261,3 +265,32 @@ assert.match(arrivedFloor, /class="route-passed"/, 'arrived leg should remain as
 assert.match(arrivedFloor, /class="route-active"/, 'the newly calculated next leg should render');
 
 console.log('floor map contract: passed');
+
+// Pin grouping: rooms whose pins would overlap are drawn as one "N件" marker; tapping it fans the pins out
+// around it (each with a dotted line to its room). Pins are drawn 1.3x so their numbers beat room numbers.
+{
+  const anchors1 = floorGeoData.floors['1'].roomAnchors;
+  const mapped1 = works.filter(w => w.floor === 1 && w.locationPrecision === 'room' && anchors1[String(w.room)]);
+  const markup = floorMapMarkup({floor: 1, floorLabel: '1階', works, selectedId: 'mona', routeWorkIds: mapped1.map(w => w.id)});
+  assert.match(markup, /<svg id="floor-map"[^>]*data-map-floor="1"/, 'floor map SVG must store floor key in data-map-floor');
+  assert.doesNotMatch(markup, /<svg id="floor-map"[^>]*\bdata-floor=/, 'floor map SVG must not reuse data-floor (reserved for floor tab buttons)');
+  const groups = [...markup.matchAll(/data-pin-kind="cluster"[^>]*data-room-works="([^"]*)" data-cluster="(\d+)"/g)];
+  assert.ok(groups.length > 0, 'overlapping pins must be grouped into "N件" markers');
+  assert.match(markup, /data-pin-kind="dest"[^>]*data-map-work="mona"/, 'the destination pin must never be grouped');
+  assert.match(markup, /class="cluster-count"[^>]*>\d+件</, 'a group must show how many works it holds');
+  assert.match(markup, /data-pin-kind="route"[^>]*transform="translate\([0-9. ]+\) scale\(1\.3\)"|transform="translate\([0-9. ]+\) scale\(1\.3\)"[^>]*data-pin-kind="route"/, 'pins must be drawn 1.3x larger');
+  const ids = [...markup.matchAll(/data-room-works="([^"]*)"/g)].flatMap(m => m[1].split(',').filter(Boolean));
+  assert.equal(new Set(ids).size, ids.length, 'no work may appear in two markers');
+  assert.equal(ids.length, mapped1.length, 'every mapped work must be reachable from exactly one marker');
+  for (const [, groupIds, index] of groups) {
+    const spider = clusterSpiderMarkup(Number(index));
+    const spiderIds = [...spider.matchAll(/data-room-works="([^"]*)"/g)].flatMap(m => m[1].split(',').filter(Boolean));
+    assert.deepEqual([...spiderIds].sort(), groupIds.split(',').sort(), `group ${index}: fanning out must show a pin for every work of the group`);
+    const rooms = (spider.match(/data-map-work=/g) || []).length;
+    assert.equal((spider.match(/class="spider-leg"/g) || []).length, rooms, `group ${index}: every fanned-out pin needs a line to its room`);
+    for (const [, pxStr, pyStr] of spider.matchAll(/data-pin-pos="([0-9.-]+),([0-9.-]+)"/g)) {
+      const px = Number(pxStr), py = Number(pyStr);
+      assert.ok(px >= 14 && px <= 946 && py >= 40 && py <= 592, `group ${index}: fanned-out pin (${px},${py}) must stay inside viewBox`);
+    }
+  }
+}
