@@ -339,6 +339,8 @@ export function createAuthSyncController(ctx, client = createCloudSyncClient()) 
   function applyMerged(merged) {
     if (merged.lang && merged.lang !== state.lang) {
       ctx.setAppLang(merged.lang);
+      ctx.audio?.handleLanguageChange?.();
+      void ctx.audio?.loadDownloads?.().then(() => ctx.render());
     }
     state.preferElevator = Boolean(merged.preferElevator);
     state.autoPlayNext = Boolean(merged.autoPlayNext);

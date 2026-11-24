@@ -1,18 +1,22 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {
+  AUDIO_LANGS,
   BROWSER_FALLBACK_LANG,
   DEFAULT_LANG,
   SUPPORTED_LANGS,
+  audioRelativePath,
   detectBrowserLang,
   formatWingLocalized,
   getDictionaries,
   getFloorName,
   getLang,
+  hasNativeAudio,
   localizeRoute,
   localizeWork,
   normalizeLang,
   registerWorkLocale,
+  resolveAudioLang,
   setLang,
   t
 } from '../src/i18n.js';
@@ -161,6 +165,18 @@ for (const [lang, check] of Object.entries(packSamples)) {
   assert.ok(catalogWorks(works, {query: check.query, lang}).some(w => w.id === 'mona'), `${lang} title search must match Mona Lisa`);
   assert.ok(catalogWorks(works, {query: 'モナリザ', lang}).some(w => w.id === 'mona'), `Japanese query should still match in ${lang} mode`);
 }
+
+// Verify multilingual audio path resolution across all 6 languages
+assert.deepEqual([...AUDIO_LANGS], EXPECTED_LANGS);
+assert.equal(audioRelativePath('mona', 60, 'ja'), 'audio/mona-60.mp3');
+assert.equal(audioRelativePath('mona', 120, 'en'), 'audio/en/mona-120.mp3');
+assert.equal(audioRelativePath('mona', 60, 'fr'), 'audio/fr/mona-60.mp3');
+assert.equal(audioRelativePath('mona', 60, 'zh'), 'audio/zh/mona-60.mp3');
+assert.equal(audioRelativePath('mona', 60, 'ko'), 'audio/ko/mona-60.mp3');
+assert.equal(audioRelativePath('mona', 60, 'es'), 'audio/es/mona-60.mp3');
+assert.equal(resolveAudioLang('fr-FR'), 'fr');
+assert.equal(hasNativeAudio('en'), true);
+assert.equal(hasNativeAudio('es'), true);
 
 // Verify setLang restores cleanly
 setLang('fr');

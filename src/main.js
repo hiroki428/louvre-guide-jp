@@ -194,6 +194,20 @@ ctx.audio = createAudioController(ctx);
 ctx.planActions = createPlanActions(ctx);
 ctx.cloudSync = createAuthSyncController(ctx);
 
+async function switchAppLanguage(next) {
+  if (!next || next === ctx.state.lang) return;
+  const applied = ctx.setAppLang(next);
+  ctx.audio.handleLanguageChange();
+  const meta = getLangMeta(applied);
+  ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+  render();
+  const [localeLoaded] = await Promise.all([
+    ensureWorkLocale(applied, appBase),
+    ctx.audio.loadDownloads()
+  ]);
+  if (localeLoaded || ctx.state.lang === applied) render();
+}
+
 function wireShell() {
   const {state, maxRoutableCount, planActions, audio} = ctx;
 
@@ -283,15 +297,7 @@ function wireShell() {
   });
 
   document.querySelectorAll('[data-set-lang]').forEach(btn => {
-    btn.onclick = async () => {
-      const next = btn.dataset.setLang;
-      if (!next || next === state.lang) return;
-      const applied = ctx.setAppLang(next);
-      const meta = getLangMeta(applied);
-      ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
-      render();
-      if (await ensureWorkLocale(applied, appBase)) render();
-    };
+    btn.onclick = () => switchAppLanguage(btn.dataset.setLang);
   });
 }
 
@@ -314,15 +320,7 @@ function render() {
     app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
     document.querySelectorAll('[data-set-lang]').forEach(btn => {
-      btn.onclick = async () => {
-        const next = btn.dataset.setLang;
-        if (!next || next === state.lang) return;
-        const applied = ctx.setAppLang(next);
-        const meta = getLangMeta(applied);
-        ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
-        render();
-        if (await ensureWorkLocale(applied, appBase)) render();
-      };
+      btn.onclick = () => switchAppLanguage(btn.dataset.setLang);
     });
     return;
   }
@@ -395,7 +393,10 @@ if (!skipSplashImmediate) {
     if (ctx.state.lang !== splashLang || !ctx.state.hasChosenLang) {
       ctx.setAppLang(splashLang, {confirm: true});
     }
-    await ensureWorkLocale(splashLang, appBase);
+    await Promise.all([
+      ensureWorkLocale(splashLang, appBase),
+      ctx.audio.loadDownloads()
+    ]);
     document.querySelector('.splash')?.classList.add('leaving');
     setTimeout(() => {
       ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';

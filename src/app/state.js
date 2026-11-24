@@ -3,7 +3,7 @@ import {buildNavigationView, navigationStateFromRoute} from '../navigation.js';
 import {validStoredProgress} from '../route-progress.js';
 import {audioLengthsFor} from '../catalog.js';
 import {activePlanMeta, planStopEstimates, timeCourseBounds} from '../my-plan.js';
-import {detectBrowserLang, normalizeLang, setLang} from '../i18n.js';
+import {audioRelativePath, detectBrowserLang, normalizeLang, setLang} from '../i18n.js';
 
 export const STORAGE_KEY = 'louvre-guide-state-v3';
 export const SESSION_PROGRESS_KEY = 'louvre-route-progress-v2';
@@ -111,7 +111,7 @@ export function createAppStore({
   const planWorks = () => currentPlan().ids.map(id => byId[id]).filter(Boolean);
   const routableIds = () => currentPlan().routableIds;
   const currentEstimates = () => planStopEstimates(currentPlan(), navigationIndex, navOptions());
-  const audioPath = (id, length) => new URL(`audio/${id}-${length}.mp3`, appBase).href;
+  const audioPath = (id, length, lang = state.lang) => new URL(audioRelativePath(id, length, lang), appBase).href;
 
   function setAppLang(lang, {confirm = true} = {}) {
     const next = setLang(lang);

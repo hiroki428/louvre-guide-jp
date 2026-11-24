@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {audioLengthsFor, catalogWorks, priorityTierFor} from '../src/catalog.js';
 import {formatWorkLocation} from '../src/app-config.js';
+import {AUDIO_LANGS, audioRelativePath} from '../src/i18n.js';
 
 const works = JSON.parse(fs.readFileSync(new URL('../src/works.json', import.meta.url), 'utf8'));
 assert.equal(works.length, 200, 'deduplicated catalog should contain 200 unique works');
@@ -51,16 +52,22 @@ for (const sort of ['room-asc', 'room-desc']) {
   assert.ok(ordered.slice(rooms.length).every(work => work.room == null));
 }
 assert.notEqual(catalogWorks(works, {sort:'title-asc'})[0].id, catalogWorks(works, {sort:'title-desc'})[0].id);
-for (const work of works) for (const length of audioLengthsFor(work)) {
-  const path = new URL(`../public/audio/${work.id}-${length}.mp3`, import.meta.url);
-  assert.ok(fs.existsSync(path), `missing audio: ${work.id}-${length}`);
-  const stat = fs.statSync(path);
-  assert.ok(stat.size >= 1500, `audio file too small: ${work.id}-${length}`);
-  const header = Buffer.alloc(3);
-  const file = fs.openSync(path, 'r');
-  try { fs.readSync(file, header, 0, 3, 0); } finally { fs.closeSync(file); }
-  const isId3 = header.toString('ascii', 0, 3) === 'ID3';
-  const isMpegSync = header[0] === 0xFF && (header[1] & 0xE0) === 0xE0;
-  assert.ok(isId3 || isMpegSync, `invalid MP3 audio: ${work.id}-${length}`);
+let checkedTracks = 0;
+for (const lang of AUDIO_LANGS) {
+  for (const work of works) for (const length of audioLengthsFor(work)) {
+    const rel = audioRelativePath(work.id, length, lang);
+    const path = new URL(`../public/${rel}`, import.meta.url);
+    assert.ok(fs.existsSync(path), `missing audio: ${rel}`);
+    const stat = fs.statSync(path);
+    assert.ok(stat.size >= 1500, `audio file too small: ${rel}`);
+    const header = Buffer.alloc(3);
+    const file = fs.openSync(path, 'r');
+    try { fs.readSync(file, header, 0, 3, 0); } finally { fs.closeSync(file); }
+    const isId3 = header.toString('ascii', 0, 3) === 'ID3';
+    const isMpegSync = header[0] === 0xFF && (header[1] & 0xE0) === 0xE0;
+    assert.ok(isId3 || isMpegSync, `invalid MP3 audio: ${rel}`);
+    checkedTracks += 1;
+  }
 }
-console.log('audio catalog: passed');
+assert.equal(checkedTracks, AUDIO_LANGS.length * 215, 'all 6 languages must have all 215 MP3 tracks');
+console.log(`audio catalog (${AUDIO_LANGS.length} languages, ${checkedTracks} tracks): passed`);

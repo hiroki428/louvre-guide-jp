@@ -7,6 +7,7 @@ import {es} from './locales/es.js';
 
 export const DEFAULT_LANG = 'ja';
 export const BROWSER_FALLBACK_LANG = 'en';
+export const AUDIO_LANGS = Object.freeze(['ja', 'en', 'fr', 'zh', 'ko', 'es']);
 
 export const SUPPORTED_LANGS = Object.freeze([
   {code: 'ja', label: '日本語', shortLabel: '日本語'},
@@ -335,6 +336,20 @@ export function localizeWork(work, lang = currentLang) {
     ...(override || {}),
     ...(nextLocationLabel !== undefined ? {locationLabel: nextLocationLabel} : {})
   };
+}
+
+export function resolveAudioLang(lang = currentLang) {
+  const code = normalizeLang(lang);
+  return AUDIO_LANGS.includes(code) ? code : DEFAULT_LANG;
+}
+
+export function hasNativeAudio(lang = currentLang) {
+  return AUDIO_LANGS.includes(normalizeLang(lang));
+}
+
+export function audioRelativePath(id, length, lang = currentLang) {
+  const code = resolveAudioLang(lang);
+  return code === DEFAULT_LANG ? `audio/${id}-${length}.mp3` : `audio/${code}/${id}-${length}.mp3`;
 }
 
 export function getDictionaries() {
