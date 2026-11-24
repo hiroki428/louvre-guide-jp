@@ -1,5 +1,5 @@
 import {audioLengthsFor, catalogWorks, priorityTierFor} from '../catalog.js';
-import {t} from '../i18n.js';
+import {localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, formatAudioLengthLabel, formatRate, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
 export function visibleAudioWorks(ctx) {
@@ -21,7 +21,8 @@ export function audioRowsMarkup(ctx, items) {
     return `<div class="empty-catalog"><p>${esc(tr('catalog.emptyMsg'))}</p><button type="button" class="secondary compact-btn" data-reset-audio-filter>${esc(tr('catalog.resetFilterBtn'))}</button></div>`;
   }
   const myPlanSet = new Set(state.myPlanIds);
-  return items.map(work => {
+  return items.map(rawWork => {
+    const work = localizeWork(rawWork, lang);
     const lengths = audioLengthsFor(work);
     const length = ctx.preferredLengthFor(work);
     const saved = state.downloaded.has(`${work.id}-${length}`);

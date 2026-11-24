@@ -46,7 +46,7 @@
 | コース選択・マイプラン操作・到着進捗・現在地修正アクション | `src/app/plan-actions.js` |
 | ルート編成ローディングオーバーレイ | `src/app/route-loader.js` |
 | 共通フォーマッタ・サムネイル・トースト通知・下部タブHTML | `src/app/ui-helpers.js` |
-| 多言語化エンジン・言語辞書（日・英／将来の多言語拡張） | `src/i18n.js` / `src/locales/*.js` |
+| 多言語化エンジン・言語辞書・作品翻訳パック（日・英／将来の多言語拡張） | `src/i18n.js` / `src/locales/*.js` / `src/locales/works.*.json` |
 | 経路探索エンジン / プラン最適化 / 検索ロジック / アプリ定数 | `src/navigation.js` / `src/my-plan.js` / `src/catalog.js` / `src/app-config.js` |
 
 #### フロアマップ・経路グラフ生成（`scripts/map-builder/`）

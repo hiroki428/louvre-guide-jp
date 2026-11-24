@@ -8,7 +8,9 @@ import {
   getFloorName,
   getLang,
   localizeRoute,
+  localizeWork,
   normalizeLang,
+  registerWorkLocale,
   setLang,
   t
 } from '../src/i18n.js';
@@ -122,6 +124,25 @@ for (const floor of [2, 1, 0, -1, -2]) {
     assert.match(markup, /Exit/);
   }
 }
+
+// 6. English artwork locale pack (all 200 works, search, sorting, fallback)
+const worksEn = JSON.parse(await readFile(new URL('../src/locales/works.en.json', import.meta.url), 'utf8'));
+assert.equal(Object.keys(worksEn).length, works.length, 'works.en.json must cover all 200 works');
+for (const work of works) {
+  const entry = worksEn[work.id];
+  assert.ok(entry, `works.en.json is missing entry for ${work.id}`);
+  for (const field of ['title', 'author', 'year', 'background', 'look']) {
+    assert.ok(typeof entry[field] === 'string' && entry[field].trim().length > 0, `works.en.json[${work.id}].${field} must be non-empty`);
+    assert.doesNotMatch(entry[field], /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/, `works.en.json[${work.id}].${field} must not retain Japanese characters`);
+  }
+}
+registerWorkLocale('en', worksEn);
+const monaEn = localizeWork(mona, 'en');
+assert.equal(monaEn.title, 'Mona Lisa');
+assert.match(monaEn.author, /Leonardo da Vinci/i);
+assert.ok(catalogWorks(works, {query: 'Mona Lisa', lang: 'en'}).some(w => w.id === 'mona'), 'English title search must match Mona Lisa');
+assert.ok(catalogWorks(works, {query: 'Leonardo', lang: 'en'}).some(w => w.id === 'mona'), 'English artist search must match Mona Lisa');
+assert.ok(catalogWorks(works, {query: 'モナリザ', lang: 'en'}).some(w => w.id === 'mona'), 'Japanese query should still match in English mode');
 
 // Verify setLang restores cleanly
 setLang('en');

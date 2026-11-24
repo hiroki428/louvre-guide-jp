@@ -1,4 +1,4 @@
-import {getLang, getWingName, t} from './i18n.js';
+import {getLang, getWingName, localizeWork, t} from './i18n.js';
 
 const collators = new Map();
 function collatorFor(lang) {
@@ -51,16 +51,22 @@ export function catalogWorks(works, {query = '', sort = 'title-asc', filter = 'a
     if (filter === 'masterpiece' && tier.key !== 'bronze') return false;
     if (filter === 'myplan' && (!myPlanSet || !myPlanSet.has(work.id))) return false;
     if (!needle) return true;
+    const localized = localizeWork(work, lang);
     const wingJa = getWingName(work.wing, 'ja');
     const wingEn = getWingName(work.wing, 'en');
     const text = normalizeSearchText(
-      [work.title, work.author, work.year, work.room, work.wing, wingJa, wingEn, work.catalogPriority, tier.label, tierEn.label]
+      [
+        work.title, work.author, work.year,
+        localized.title, localized.author, localized.year,
+        work.room, work.wing, wingJa, wingEn,
+        work.catalogPriority, tier.label, tierEn.label
+      ]
         .filter(Boolean)
         .join(' ')
     );
     return text.includes(needle);
   });
-  const byTitle = (a, b) => collator.compare(a.title, b.title);
+  const byTitle = (a, b) => collator.compare(localizeWork(a, lang).title, localizeWork(b, lang).title);
   const byRank = (a, b) => {
     const tierDiff = priorityTierFor(a).rank - priorityTierFor(b).rank;
     if (tierDiff) return tierDiff;

@@ -1,5 +1,5 @@
 import {DEFAULT_DURATIONS, PLAYBACK_RATES} from '../app-config.js';
-import {t} from '../i18n.js';
+import {localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, formatAudioLengthLabel, formatClock, formatRate, thumbMarkup} from '../app/ui-helpers.js';
 
 export function miniPlayerMarkup(ctx) {
@@ -9,7 +9,8 @@ export function miniPlayerMarkup(ctx) {
   const player = audio.player;
   const mini = audio.miniPlayerContext();
   if (!mini) return '';
-  const {work, prevId, nextId, isLastInPlan} = mini;
+  const {work: rawWork, prevId, nextId, isLastInPlan} = mini;
+  const work = localizeWork(rawWork, lang);
   const isPlaying = state.playing === work.id;
   const duration = Number.isFinite(player.duration) && player.duration > 0 ? player.duration : 0;
   const current = Number.isFinite(player.currentTime) ? player.currentTime : 0;

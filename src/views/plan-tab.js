@@ -1,5 +1,5 @@
 import {destinationWorkId} from '../route-progress.js';
-import {localizeRoute, t} from '../i18n.js';
+import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
 export function planTabView(ctx, hasMini) {
@@ -54,7 +54,8 @@ export function planTabView(ctx, hasMini) {
       <p>${tr('plan.emptyBody', {total: works.length})}</p>
       <button type="button" class="primary" data-go-audio-mapped>${esc(tr('plan.emptyBtn'))}</button>
     </section>` : `<ol class="plan-list">
-      ${items.map((work, index) => {
+      ${items.map((rawWork, index) => {
+        const work = localizeWork(rawWork, lang);
         const isViewed = state.viewed.has(work.id);
         const isDest = work.id === destId;
         const isPlaying = state.playing === work.id;

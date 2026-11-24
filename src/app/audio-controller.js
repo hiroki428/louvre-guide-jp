@@ -2,7 +2,7 @@ import {APP_NAME} from '../app-config.js';
 import {navigationStateForSelection} from '../navigation.js';
 import {advanceOnRouteAudio, playbackModeFor} from '../route-progress.js';
 import {audioLengthsFor} from '../catalog.js';
-import {t} from '../i18n.js';
+import {localizeWork, t} from '../i18n.js';
 import {clampRate} from './state.js';
 import {creatorMeta, formatClock, formatRate} from './ui-helpers.js';
 
@@ -89,14 +89,15 @@ export function createAudioController(ctx) {
     }
   }
 
-  function updateMediaSession(work) {
-    if (!('mediaSession' in navigator) || !work) return;
+  function updateMediaSession(rawWork) {
+    if (!('mediaSession' in navigator) || !rawWork) return;
+    const work = localizeWork(rawWork, ctx.state.lang);
     try {
       const image = ctx.artworkImages[work.id];
       const artwork = image?.src ? [{src: new URL(image.src, ctx.appBase).href, sizes: '512x512', type: 'image/jpeg'}] : [];
       navigator.mediaSession.metadata = new MediaMetadata({
         title: work.title,
-        artist: creatorMeta(work),
+        artist: creatorMeta(work, ctx.state.lang),
         album: APP_NAME,
         artwork
       });
@@ -146,7 +147,7 @@ export function createAudioController(ctx) {
             player.currentTime = 0;
             ctx.state.player = {workId: mini.nextId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.nextId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
             player.src = ctx.audioPath(mini.nextId, ctx.preferredLengthFor(ctx.byId[mini.nextId]));
-            ctx.setNotice(tr('audio.completedNextNotice', {current: currentWork.title, next: ctx.byId[mini.nextId].title}), false, 3600);
+            ctx.setNotice(tr('audio.completedNextNotice', {current: localizeWork(currentWork, ctx.state.lang).title, next: localizeWork(ctx.byId[mini.nextId], ctx.state.lang).title}), false, 3600);
             ctx.render();
           }
         } else {
@@ -158,7 +159,7 @@ export function createAudioController(ctx) {
           player.pause();
           ctx.state.playing = null;
           ctx.persistState();
-          ctx.setNotice(tr('audio.completedAllNotice', {current: currentWork.title}), false, 4500);
+          ctx.setNotice(tr('audio.completedAllNotice', {current: localizeWork(currentWork, ctx.state.lang).title}), false, 4500);
           ctx.render();
         }
         return;
@@ -204,7 +205,7 @@ export function createAudioController(ctx) {
       player.currentTime = 0;
       ctx.state.player = {workId: mini.prevId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.prevId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
       player.src = ctx.audioPath(mini.prevId, ctx.preferredLengthFor(prevWork));
-      ctx.setNotice(tr('audio.backTargetNotice', {title: prevWork.title}), false, 3200);
+      ctx.setNotice(tr('audio.backTargetNotice', {title: localizeWork(prevWork, ctx.state.lang).title}), false, 3200);
       ctx.render();
     }
   }
@@ -319,7 +320,7 @@ export function createAudioController(ctx) {
     button.textContent = tr('audio.saving');
     try {
       await saveSingleAudio(id, length);
-      ctx.setNotice(tr('audio.savedSingleNotice', {title: ctx.byId[id]?.title ?? ''}), false, 3000);
+      ctx.setNotice(tr('audio.savedSingleNotice', {title: localizeWork(ctx.byId[id], ctx.state.lang)?.title ?? ''}), false, 3000);
       ctx.render();
     } catch {
       button.textContent = tr('audio.saveFailed');

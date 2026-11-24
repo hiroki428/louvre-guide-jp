@@ -2,7 +2,7 @@ import {navigationStateForSelection, navigationStateFromRoute} from '../navigati
 import {advanceOnRouteAudio, destinationWorkId} from '../route-progress.js';
 import {correctLocation, findRoomCandidates} from '../location-support.js';
 import {buildTimedRouteWorks, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
-import {localizeRoute, t} from '../i18n.js';
+import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {runWithRouteLoader} from './route-loader.js';
 
 export function createPlanActions(ctx) {
@@ -230,7 +230,7 @@ export function createPlanActions(ctx) {
     ctx.state.myPlanIds = result.ids;
     syncMyPlanNavigation();
     ctx.persistState();
-    const title = ctx.byId[workId]?.title ?? tr('notice.workFallback');
+    const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
     ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3000);
     ctx.render();
   }
@@ -269,7 +269,7 @@ export function createPlanActions(ctx) {
     ctx.persistState();
     const roomText = ctx.byId[workId]?.room
       ? tr('location.room', {room: ctx.byId[workId].room})
-      : (ctx.byId[workId]?.title ?? tr('notice.currentLocFallback'));
+      : (localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.currentLocFallback'));
     ctx.setNotice(tr('notice.arrivalUpdated', {room: roomText}), true, 6500);
     ctx.render();
     return true;

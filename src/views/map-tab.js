@@ -1,7 +1,7 @@
 import {FLOORS} from '../app-config.js';
 import {floorMapMarkup, wireFloorMap} from '../floor-map.js';
 import {floorGeoData} from '../floor-map-geo.js';
-import {getFloorName, t} from '../i18n.js';
+import {getFloorName, localizeWork, t} from '../i18n.js';
 import {esc, workStatus} from '../app/ui-helpers.js';
 
 export function navigationPanel(ctx, view, plan) {
@@ -36,7 +36,8 @@ export function navigationPanel(ctx, view, plan) {
       <p class="next-action"><span>${esc(tr('map.completeThanks'))}</span>${esc(tr('map.completeThanksBody'))}</p>
     </section>`;
   }
-  const destinationWork = byId[view.destinationNode.workId];
+  const rawDestWork = byId[view.destinationNode.workId];
+  const destinationWork = rawDestWork ? localizeWork(rawDestWork, lang) : null;
   const transition = view.transitions[0];
   const estimates = ctx.currentEstimates();
   const destEst = destinationWork ? estimates[destinationWork.id] : null;

@@ -1,5 +1,5 @@
 import {APP_NAME} from './app-config.js';
-import {detectBrowserLang, getLangMeta, normalizeLang, setLang, t} from './i18n.js';
+import {detectBrowserLang, ensureWorkLocale, getLangMeta, normalizeLang, setLang, t} from './i18n.js';
 import {indexNavigationGraph} from './navigation.js';
 import {timeCourseBounds} from './my-plan.js';
 import {createAppStore, readPersistedState} from './app/state.js';
@@ -32,18 +32,21 @@ if (!skipSplashImmediate) {
   app.innerHTML = `<div class="boot-loading"><p>${esc(t('app.loading', null, bootLang))}</p></div>`;
 }
 
-const [works, routes, sources, navigationGraph, artworkImages, imageCredits] = await Promise.all([
-  'works.json',
-  'routes.json',
-  'provenance.json',
-  'navigation-graph.json',
-  'artwork-images.json',
-  'image-credits.json'
-].map(async name => {
-  const response = await fetch(new URL(name, import.meta.url));
-  if (!response.ok) throw new Error(`Failed to load ${name}`);
-  return response.json();
-})).catch(error => {
+const [[works, routes, sources, navigationGraph, artworkImages, imageCredits]] = await Promise.all([
+  Promise.all([
+    'works.json',
+    'routes.json',
+    'provenance.json',
+    'navigation-graph.json',
+    'artwork-images.json',
+    'image-credits.json'
+  ].map(async name => {
+    const response = await fetch(new URL(name, import.meta.url));
+    if (!response.ok) throw new Error(`Failed to load ${name}`);
+    return response.json();
+  })),
+  ensureWorkLocale(bootLang, appBase)
+]).catch(error => {
   app.innerHTML = `<main class="error-screen"><h1>${esc(t('app.errorTitle', null, bootLang))}</h1><p>${esc(t('app.errorBody', null, bootLang))}</p><button class="primary" onclick="location.reload()">${esc(t('app.reload', null, bootLang))}</button></main>`;
   throw error;
 });
@@ -188,13 +191,14 @@ function wireShell() {
   });
 
   document.querySelectorAll('[data-set-lang]').forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = async () => {
       const next = btn.dataset.setLang;
       if (!next || next === state.lang) return;
       const applied = ctx.setAppLang(next);
       const meta = getLangMeta(applied);
       ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
       render();
+      if (await ensureWorkLocale(applied, appBase)) render();
     };
   });
 }
@@ -218,13 +222,14 @@ function render() {
     app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
     document.querySelectorAll('[data-set-lang]').forEach(btn => {
-      btn.onclick = () => {
+      btn.onclick = async () => {
         const next = btn.dataset.setLang;
         if (!next || next === state.lang) return;
         const applied = ctx.setAppLang(next);
         const meta = getLangMeta(applied);
         ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
         render();
+        if (await ensureWorkLocale(applied, appBase)) render();
       };
     });
     return;

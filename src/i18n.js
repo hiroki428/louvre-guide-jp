@@ -169,6 +169,35 @@ export function registerWorkLocale(lang, entries) {
   workLocaleOverrides.set(code, entries && typeof entries === 'object' ? entries : {});
 }
 
+export function hasWorkLocale(lang = currentLang) {
+  const code = normalizeLang(lang);
+  return code === DEFAULT_LANG || workLocaleOverrides.has(code);
+}
+
+const pendingWorkLocales = new Map();
+
+export async function ensureWorkLocale(lang, appBase) {
+  const code = normalizeLang(lang);
+  if (code === DEFAULT_LANG || workLocaleOverrides.has(code)) return true;
+  if (pendingWorkLocales.has(code)) return pendingWorkLocales.get(code);
+  const promise = (async () => {
+    try {
+      const url = new URL(`src/locales/works.${code}.json`, appBase);
+      const response = await fetch(url);
+      if (!response.ok) return false;
+      const data = await response.json();
+      registerWorkLocale(code, data);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      pendingWorkLocales.delete(code);
+    }
+  })();
+  pendingWorkLocales.set(code, promise);
+  return promise;
+}
+
 export function localizeWork(work, lang = currentLang) {
   if (!work) return work;
   const code = normalizeLang(lang);

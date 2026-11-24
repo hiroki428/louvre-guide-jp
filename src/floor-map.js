@@ -1,5 +1,5 @@
 import {floorGeoData} from './floor-map-geo.js';
-import {getFloorName, getLang, localizeMapText, t} from './i18n.js';
+import {getFloorName, getLang, localizeMapText, localizeWork, t} from './i18n.js';
 
 const BASE_VIEW = Object.freeze({...floorGeoData.meta.viewBox});
 const MIN_VIEW_WIDTH = 280;
@@ -210,7 +210,8 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
         ? t('svg.pinViewedPrefix', null, lang)
         : '';
     const extraFormatted = extraLabel ? (lang === 'ja' ? `（${extraLabel}）` : ` (${extraLabel})`) : '';
-    const ariaLabel = t('svg.pinAria', {status: statusLabel, title: primary.title, extra: extraFormatted, room: primary.room}, lang);
+    const primaryTitle = localizeWork(primary, lang).title;
+    const ariaLabel = t('svg.pinAria', {status: statusLabel, title: primaryTitle, extra: extraFormatted, room: primary.room}, lang);
 
     let shapeMarkup = '';
     let badgeX = 9;
