@@ -7,8 +7,8 @@ export function normalizeRoomNumber(value) {
   return String(value ?? '')
     .trim()
     .replace(/[０-９]/g, character => String.fromCharCode(character.charCodeAt(0) - 0xFEE0))
-    .replace(/^(?:room|salle|rm\.?)\s*/i, '')
-    .replace(/\s*室\s*$/, '');
+    .replace(/^(?:room|salle|sala|rm\.?|第)\s*/i, '')
+    .replace(/\s*(?:室|展厅|号厅|호실|실|호)\s*$/, '');
 }
 
 export function findRoomCandidates(index, works, value, lang = getLang()) {

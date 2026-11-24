@@ -1,0 +1,1402 @@
+{
+  "mona": {
+    "title": "La Joconde",
+    "author": "Léonard de Vinci",
+    "year": "v. 1503–1519",
+    "background": "Tout en peignant Lisa, l'épouse d'un marchand de soie florentin, Léonard de Vinci ne remit jamais ce tableau à son commanditaire et le conserva auprès de lui jusqu'à son départ pour la France à la fin de sa vie. La technique du « sfumato », qui consiste à superposer des dizaines de glacis d'huile extrêmement fins, crée une lumière et une atmosphère vivantes, sans aucun contour figé.",
+    "look": "Commencez par fixer son regard. Au moment où vous déplacez vos yeux vers ses lèvres, n'avez-vous pas l'impression que son sourire s'efface ? Léonard avait calculé avec précision l'illusion produite par notre vision périphérique qui perçoit le flou. Observez également la ligne d'horizon, volontairement décalée entre la gauche et la droite du paysage."
+  },
+  "venus": {
+    "title": "La Vénus de Milo",
+    "author": "Sculpteur grec antique",
+    "year": "v. 130–100 av. J.-C.",
+    "background": "Sculptée en Grèce à l'époque hellénistique, vers 130 avant notre ère, cette statue fut découverte par hasard en 1820 par un paysan, enfouie dans un muret sur l'île de Milos, en mer Égée. Sa gracieuse torsion en S et le drapé qui glisse sur ses hanches en font l'un des sommets absolus de la sculpture antique.",
+    "look": "Ne vous contentez pas de la contempler de face : décalez-vous légèrement de biais. Les épaules et les hanches pivotent subtilement en sens opposé, créant une tension qui semble prête à s'animer malgré l'immobilité du marbre. Ses bras disparus tenaient-ils une pomme ou un miroir ? C'est précisément cette part de mystère qui fait toute sa fascination."
+  },
+  "victory": {
+    "title": "La Victoire de Samothrace",
+    "author": "Sculpteur grec antique",
+    "year": "v. 190 av. J.-C.",
+    "background": "Érigé vers 190 avant notre ère dans le sanctuaire de l'île de Samothrace, au nord de la mer Égée, ce monument remerciait les dieux après une victoire navale. À l'origine, il reposait sur un socle rocheux au-dessus d'un bassin, figurant la déesse Niké au moment où elle se pose sur la proue d'un navire de guerre.",
+    "look": "La mise en scène au sommet du grand escalier reproduit l'effet saisissant du sanctuaire antique, que l'on découvrait en contre-plongée. Admirez la draperie mouillée plaquée par le vent marin et les plis qui claquent violemment vers l'arrière. Sans tête ni bras, la statue semble pourtant vibrer d'un souffle impétueux et d'un élan irrésistible."
+  },
+  "liberty": {
+    "title": "La Liberté guidant le peuple",
+    "author": "Eugène Delacroix",
+    "year": "1830",
+    "background": "En juillet 1830, témoin de l'effervescence populaire des Trois Glorieuses contre la tyrannie, Eugène Delacroix réalisa ce chef-d'œuvre en à peine trois mois. La femme au centre ne représente pas une personne réelle, mais l'allégorie même de la Liberté (Marianne).",
+    "look": "Le bonnet rouge que porte la déesse est le bonnet phrygien, coiffure des esclaves affranchis dans l'Antiquité romaine devenue symbole de liberté. Au loin à droite, derrière la fumée des combats, repérez les deux tours de Notre-Dame, et détaillez la foule bigarrée où un bourgeois en haut-de-forme côtoie un gamin des rues."
+  },
+  "catalog-0001": {
+    "title": "Le Sacre de Napoléon",
+    "author": "Jacques-Louis David",
+    "year": "1805–1807",
+    "background": "Dans une toile monumentale de près de dix mètres de large, le peintre officiel Jacques-Louis David immortalise le sacre célébré à Notre-Dame en décembre 1804. Plutôt que de montrer Napoléon se couronnant lui-même, l'artiste a choisi l'instant solennel où l'empereur pose la couronne sur la tête de l'impératrice Joséphine.",
+    "look": "Cherchez la dame qui trône avec assurance dans la tribune centrale, à l'arrière-plan : il s'agit de Letizia, la mère de Napoléon. En réalité, elle avait refusé d'assister à la cérémonie en signe de protestation ! Ce tour de passe-passe politique privilégie la mise en scène impériale idéale sur la vérité historique."
+  },
+  "catalog-0002": {
+    "title": "Le Radeau de la Méduse",
+    "author": "Théodore Géricault",
+    "year": "1818–1819",
+    "background": "En 1816, la frégate française La Méduse s'échoua au large des côtes africaines. Son commandant aristocrate et incompétent s'accapara les canots de sauvetage, abandonnant cent quarante-sept personnes sur un radeau de fortune. Après treize jours de dérive, seuls quinze survivants furent secourus : à vingt-sept ans, Géricault s'empara de ce scandale d'État.",
+    "look": "Scrutez la ligne d'horizon, tout à droite : un point minuscule, pas plus grand qu'un grain de riz, signale le navire sauveteur L'Argus. L'immense composition en pyramide, qui s'élève des corps agonisants en bas à gauche jusqu'aux hommes agitant désespérément un linge en haut à droite, traduit avec une force dramatique le cri de l'humanité arrachée au néant."
+  },
+  "catalog-0003": {
+    "title": "Les Noces de Cana",
+    "author": "Paul Véronèse",
+    "year": "1563",
+    "background": "Faisant face à La Joconde, voici le plus grand tableau du Louvre. Peint en 1563 pour le réfectoire du monastère de San Giorgio Maggiore à Venise, il offrait aux moines l'illusion de partager chaque jour leur repas à la table même du Christ.",
+    "look": "Au premier plan, l'homme vêtu de blanc qui joue d'un instrument à cordes est Véronèse lui-même ; à ses côtés, drapé de rouge, figure le grand Titien. Mais observez le petit sablier posé sur la table des musiciens et le cuisinier découpant la viande juste au-dessus de la tête du Christ : au cœur de cette fête somptueuse se dissimulent déjà les signes discrets de la Passion."
+  },
+  "catalog-0004": {
+    "title": "Le Serment des Horaces",
+    "author": "Jacques-Louis David",
+    "year": "1784",
+    "background": "Présenté en 1784, cinq ans avant la Révolution française, ce tableau souleva l'enthousiasme de toute l'Europe et s'imposa comme le manifeste du néoclassicisme. David y dépeint les trois frères Horaces jurant de défendre Rome au péril de leur vie, exaltant le sacrifice des sentiments personnels au nom du devoir civique.",
+    "look": "Comparez le langage des formes entre la gauche et la droite du tableau. À gauche, les lignes droites et tendues des hommes incarnent une volonté de fer ; à droite, les courbes molles et affaissées des femmes expriment l'accablement. L'une des sœurs représentées est d'ailleurs fiancée à l'un des ennemis que ses frères s'apprêtent à combattre."
+  },
+  "catalog-0005": {
+    "title": "Psyché ranimée par le baiser de l'Amour",
+    "author": "Antonio Canova",
+    "year": "1787–1793",
+    "background": "Le maître du néoclassicisme italien Antonio Canova a sculpté dans un marbre d'une pureté éclatante l'épisode le plus romantique de la mythologie grecque : la résurrection amoureuse de la princesse Psyché, plongée dans un sommeil mortel, que le dieu Amour vient éveiller d'un baiser.",
+    "look": "Approchez-vous pour observer l'espace entre leurs deux visages : leurs lèvres ne se touchent pas encore, séparées par quelques millimètres à peine. En figeant pour l'éternité l'instant qui précède l'étreinte, Canova suscite une émotion vibrante. Admirez aussi la finesse prodigieuse des ailes, amincies jusqu'à devenir presque translucides."
+  },
+  "catalog-0006": {
+    "title": "Code de Hammurabi",
+    "author": "Art babylonien antique",
+    "year": "v. 1750 av. J.-C.",
+    "background": "Promulgué vers 1750 avant notre ère par le roi Hammurabi de Babylone, ce monument compte parmi les plus anciens recueils juridiques écrits de l'histoire. Sur cette stèle de basalte noir haute de deux mètres vingt-cinq, près de deux cent quatre-vingt-deux articles de loi sont gravés en écriture cunéiforme.",
+    "look": "Regardez le bas-relief au sommet de la stèle : le dieu du soleil et de la justice Shamash siège sur son trône devant le roi Hammurabi qui lui rend hommage. Contrairement aux idées reçues, la célèbre maxime « œil pour œil » n'était pas une incitation à la cruauté, mais une avancée majeure destinée à limiter la vengeance en interdisant de punir plus durement que le tort subi."
+  },
+  "scribe": {
+    "title": "Le Scribe accroupi",
+    "author": "Art égyptien antique",
+    "year": "v. 2600–2350 av. J.-C.",
+    "background": "Vieille d'environ quatre mille cinq cents ans, cette statue en calcaire peint provient d'une tombe de Saqqarah datant de l'Ancien Empire égyptien. Maîtriser la lecture et l'écriture faisait alors du scribe un lettré de haut rang, membre d'une élite aussi rare que respectée.",
+    "look": "Ce qui saisit d'emblée chez cette figure, c'est son regard. Les yeux sont incrustés de cristal de roche et de magnésite blanche, cerclés de paupières en cuivre : quel que soit l'angle sous lequel vous l'observez, cet homme d'il y a quatre millénaires et demi semble vous fixer avec une présence troublante."
+  },
+  "lacemaker": {
+    "title": "La Dentellière",
+    "author": "Johannes Vermeer",
+    "year": "v. 1669–1670",
+    "background": "Plus petit tableau de Vermeer — vingt-quatre centimètres sur vingt et un à peine —, cette huile sur toile brille comme un bijou. Le maître hollandais y élève une simple scène du quotidien du XVIIe siècle à une sérénité hors du temps grâce à une attention prodigieuse et à la magie de la lumière.",
+    "look": "Observez les fils rouges et blancs qui s'échappent du coussin au tout premier plan : ils sont volontairement peints avec un léger flou, tandis que la netteté se concentre sur les doigts et l'aiguille à l'arrière. Bien avant l'invention de la photographie, Vermeer avait déjà percé le secret de la profondeur de champ optique."
+  },
+  "catalog-0007": {
+    "title": "Taureau ailé androcéphale (Lamassu)",
+    "author": "Art assyrien antique",
+    "year": "v. 713–706 av. J.-C.",
+    "background": "Au VIIIe siècle avant notre ère, ces colosses appelés Lamassu gardaient les portes du palais de Sargon II dans sa nouvelle capitale de Dur-Sharrukin. Taillés dans un seul bloc de pierre haut de plus de quatre mètres, ces génies protecteurs incarnaient la sagesse, la puissance et la souveraineté divine du roi.",
+    "look": "Amusez-vous à compter ses pattes. De face, il se tient campé sur deux jambes immobiles ; de profil, il avance sur quatre pattes. Le sculpteur assyrien lui en a en réalité sculpté cinq, un ingénieux stratagème visuel permettant au visiteur de le voir sous un aspect parfait, quel que soit l'angle d'approche."
+  },
+  "dying": {
+    "title": "L'Esclave mourant",
+    "author": "Michel-Ange",
+    "year": "v. 1513–1515",
+    "background": "Sculptée entre 1513 et 1515 pour le monumental tombeau du pape Jules II, cette œuvre inachevée ne montre pas une agonie douloureuse, mais plutôt un abandon sensuel et apaisé, comme si le corps, délivré de ses entraves, glissait doucement dans un profond sommeil.",
+    "look": "Repérez la bande d'étoffe qui barre sa poitrine et, dans le bloc brut près de son pied, la silhouette à peine ébauchée d'un singe. Voir ainsi un corps humain surgir peu à peu du marbre dégrossi révèle toute la philosophie de Michel-Ange : libérer la forme déjà prisonnière de la pierre."
+  },
+  "catalog-0008": {
+    "title": "La Grande Odalisque",
+    "author": "Jean-Auguste-Dominique Ingres",
+    "year": "1814",
+    "background": "Commandée en 1814 par Caroline Murat, sœur de Napoléon et reine de Naples, cette toile suscita de vives controverses lors de sa présentation. Sous le prétexte d'une scène de harem oriental, Ingres s'affranchit délibérément du réalisme anatomique pour célébrer la pure beauté de la ligne et des courbes.",
+    "look": "Suivez attentivement la longueur de son dos : d'un point de vue anatomique, il compte l'équivalent de trois vertèbres supplémentaires, et son bras droit est lui aussi étiré outre mesure. Ingres a sacrifié l'exactitude du corps humain au profit d'une ligne fluide et musicale qui traverse toute la composition."
+  },
+  "catalog-0009": {
+    "title": "L'Esclave rebelle",
+    "author": "Michel-Ange",
+    "year": "v. 1513–1515",
+    "background": "Conçu en pendant à L'Esclave mourant pour le mausolée de Jules II, ce marbre inachevé offre un contraste saisissant avec la quiétude de son voisin : le corps se tord violemment pour tenter de rompre des liens invisibles, exprimant une lutte farouche pour la vie et la liberté.",
+    "look": "Observez, de face comme de profil, la tension des muscles de l'épaule et le mouvement du visage tourné vers le ciel. Les masses de marbre laissées brutes autour de la figure semblent former une cage pesante qui accroît encore la puissance dramatique de cette révolte."
+  },
+  "catalog-0010": {
+    "title": "Portrait de Louis XIV",
+    "author": "Hyacinthe Rigaud",
+    "year": "1701",
+    "background": "À soixante-trois ans, le Roi-Soleil commanda ce portrait d'apparat pour l'offrir à son petit-fils, devenu roi d'Espagne. Mais Louis XIV fut si séduit par le résultat qu'il décida finalement de garder la toile à Versailles, où elle fut installée dans la salle du Trône.",
+    "look": "Notez le contraste savoureux entre le visage majestueux d'un monarque âgé et ses jambes élancées de jeune danseur, campées dans une pose de ballet. Excellent danseur dans sa jeunesse, Louis XIV tirait une immense fierté de ses mollets galbés, mis en valeur par ses chaussures à talons rouges."
+  },
+  "catalog-0011": {
+    "title": "Le Grand Sphinx de Tanis",
+    "author": "Art égyptien antique",
+    "year": "v. 2600 av. J.-C.",
+    "background": "Découvert dans les ruines de Tanis, au nord-est du delta du Nil, ce colosse figure parmi les plus grands sphinx conservés hors d'Égypte. Sans doute sculpté sous l'Ancien Empire il y a près de quatre mille six cents ans, il vit ensuite plusieurs pharaons y graver leurs noms pour s'approprier son prestige millénaire.",
+    "look": "Admirez la virtuosité des sculpteurs anciens capables de polir aussi finement un granit rose d'une extrême dureté, et relevez les cartouches hiéroglyphiques gravés sur le socle et le poitrail. Unissant la tête humaine, siège de l'intelligence royale, au corps puissant du lion, il veilla pendant des millénaires sur l'entrée des temples."
+  },
+  "catalog-0012": {
+    "title": "La Vierge, l'Enfant Jésus et sainte Anne",
+    "author": "Léonard de Vinci",
+    "year": "v. 1503–1519",
+    "background": "Voici l'un des trois chefs-d'œuvre inachevés que Léonard de Vinci retoucha jusqu'à ses derniers jours et emporta avec lui en France. La Vierge Marie, assise sur les genoux de sa mère sainte Anne, se penche pour retenir l'Enfant Jésus qui joue avec un agneau, réunissant trois générations dans une même composition.",
+    "look": "Comparez le regard teinté de gravité de Marie et l'élan innocent de Jésus qui saisit les oreilles de l'agneau, symbole de son futur sacrifice sur la croix. La tendresse d'une mère qui pressent le destin de son fils et la sérénité protectrice de la grand-mère s'unissent dans une savante construction pyramidale."
+  },
+  "catalog-0013": {
+    "title": "La Vierge aux rochers",
+    "author": "Léonard de Vinci",
+    "year": "v. 1483–1486",
+    "background": "Commandé à Léonard à Milan en 1483 pour un retable, ce tableau constitue la première version du sujet, antérieure à celle conservée à la National Gallery de Londres. Dans la pénombre d'une grotte mystérieuse, la Vierge et l'Enfant rencontrent le jeune saint Jean Baptiste accompagné d'un ange.",
+    "look": "Portez votre attention sur l'ange à droite : tout en nous regardant droit dans les yeux, il désigne du doigt le petit saint Jean Baptiste à gauche. Par ce geste complice, Léonard brise la frontière du cadre et nous invite à pénétrer dans le secret de cette assemblée sacrée."
+  },
+  "catalog-0014": {
+    "title": "Saint Jean Baptiste",
+    "author": "Léonard de Vinci",
+    "year": "v. 1513–1516",
+    "background": "Considérée comme l'ultime peinture de Léonard de Vinci, cette toile fit partie avec La Joconde des œuvres acquises par le roi de France François Ier. Surgissant d'une obscurité profonde sous une lumière caressante, le jeune prophète esquisse un sourire énigmatique en levant l'index vers le ciel.",
+    "look": "Oubliez l'image traditionnelle de l'ascète austère du désert : ici, le saint rayonne d'une beauté androgyne et d'une douceur troublante. Le modelé de l'épaule et du bras émergeant de l'ombre marque l'aboutissement suprême du sfumato, tandis que le doigt pointé vers le haut annonce la venue du Sauveur."
+  },
+  "catalog-0015": {
+    "title": "La Mort de Sardanapale",
+    "author": "Eugène Delacroix",
+    "year": "1827",
+    "background": "Inspiré en 1827 par une tragédie de Lord Byron, Delacroix signe ici l'un des coups d'éclat du romantisme. Assiégé dans son palais, le roi assyrien Sardanapale préfère tout anéantir plutôt que de céder quoi que ce soit aux rebelles, ordonnant la destruction sous ses yeux de ses chevaux, de ses trésors et de ses femmes.",
+    "look": "Suivez la grande diagonale rouge du lit royal qui traverse la toile et observez, tout en haut à gauche, l'indifférence glaciale du souverain contemplant le carnage. Chevaux cabrés, coupes d'or, corps convulsés : en bousculant volontairement l'ordre classique et la perspective, Delacroix déchaîne un tourbillon de couleurs qui célèbre l'ivresse romantique."
+  },
+  "catalog-0016": {
+    "title": "Le Bain turc",
+    "author": "Jean-Auguste-Dominique Ingres",
+    "year": "1862",
+    "background": "Achevé par Ingres à l'âge vénérable de quatre-vingt-deux ans, ce tondo apparaît comme le testament artistique de toute sa vie. D'abord rectangulaire, la toile fut retaillée en cercle par le peintre lui-même afin d'accentuer l'impression d'intimité, comme si le regard épiait un harem d'Orient par un judas.",
+    "look": "Regardez au premier plan la femme assise de dos jouant de la mandoline : Ingres y reprend exactement la silhouette de sa célèbre Baigneuse Valpinçon, peinte cinquante-quatre ans plus tôt. Plus de vingt nus féminins entrelacent leurs courbes sinueuses, qui se répondent comme des ondes à l'intérieur du format circulaire."
+  },
+  "catalog-0017": {
+    "title": "Portrait de Baldassare Castiglione",
+    "author": "Raphaël",
+    "year": "v. 1514–1515",
+    "background": "Chef-d'œuvre de l'art du portrait à la Haute Renaissance, cette toile de Raphaël immortalise son ami proche Baldassare Castiglione, l'un des plus brillants humanistes et diplomates de son temps. L'auteur du Livre du courtisan y apparaît avec toute sa noblesse et sa douce intelligence, rendues dans une harmonie sobre de gris et de noirs.",
+    "look": "Pas une touche de rouge éclatant ni d'or : la fourrure grise, la toque noire et la carnation lumineuse suffisent à conférer au modèle une élégance incomparable. Admiré et copié plus tard par Rembrandt comme par Rubens, ce portrait est resté un modèle indépassable."
+  },
+  "catalog-0018": {
+    "title": "La Belle Ferronnière",
+    "author": "Léonard de Vinci",
+    "year": "v. 1495–1499",
+    "background": "Peint durant le séjour de Léonard de Vinci à la cour de Milan, ce portrait d'une grande distinction doit son surnom traditionnel au bijou ceignant le front de la jeune femme, appelé une ferronnière. L'œuvre est actuellement prêtée au Louvre Abu Dhabi.",
+    "look": "Remarquez le léger mouvement de torsion : son buste est tourné vers la gauche, tandis que sa tête pivote doucement de trois quarts vers nous. Observez aussi le subtil reflet rouge de sa robe sur sa joue — preuve de l'acuité avec laquelle Léonard étudiait les phénomènes de réverbération de la lumière et des couleurs."
+  },
+  "catalog-0019": {
+    "title": "Pierrot, dit autrefois Gilles",
+    "author": "Antoine Watteau",
+    "year": "v. 1718–1719",
+    "background": "Poète du rococo au XVIIIe siècle, Antoine Watteau peignit cette œuvre énigmatique peu avant sa mort prématurée à trente-six ans. En plaçant au centre, à grandeur nature, le personnage bouffon de la commedia dell'arte, il dévoile la profonde solitude tapie derrière le masque de la scène.",
+    "look": "Examinez son costume blanc mal ajusté, aux manches trop longues et au pantalon trop court, ainsi que sa posture désarmée, les bras ballants. Isolé de la troupe joyeuse qui s'agite à ses pieds, son regard fixe et mélancolique semble refléter celui du peintre lui-même, déjà miné par la maladie."
+  },
+  "catalog-0020": {
+    "title": "Pèlerinage à l'île de Cythère",
+    "author": "Antoine Watteau",
+    "year": "1717",
+    "background": "Présenté en 1717 comme morceau de réception à l'Académie royale de peinture et de sculpture, ce tableau fonda un genre inédit, celui des « fêtes galantes ». Dans la lumière dorée d'un crépuscule de rêve, des couples s'attardent sur Cythère, l'île légendaire de Vénus.",
+    "look": "Les historiens débattent encore : ces amoureux s'apprêtent-ils à embarquer vers l'île de l'Amour, ou bien doivent-ils déjà la quitter à la fin d'un songe ? Suivez les couples de droite à gauche pour lire la progression délicate de leurs sentiments, de l'hésitation timide jusqu'à l'enlacement."
+  },
+  "catalog-0021": {
+    "title": "L'Astronome",
+    "author": "Johannes Vermeer",
+    "year": "1668",
+    "background": "Témoignant de la vive curiosité scientifique de Vermeer, L'Astronome forme un pendant célèbre avec Le Géographe conservé à Francfort. On a souvent supposé que le savant représenté s'inspirait d'Antoni van Leeuwenhoek, l'inventeur du microscope, qui vivait lui aussi à Delft.",
+    "look": "Regardez l'objet que le savant effleure délicatement du bout des doigts : ce n'est pas un globe terrestre, mais un globe céleste. Sur le mur du fond est accroché un tableau figurant Moïse sauvé des eaux — référence biblique à celui qui fut instruit dans toute la sagesse des Égyptiens, célébrant ainsi la quête universelle du savoir."
+  },
+  "catalog-0022": {
+    "title": "La Mort de la Vierge",
+    "author": "Le Caravage",
+    "year": "v. 1604–1606",
+    "background": "Peinte pour une église de Rome par le révolutionnaire du baroque, cette toile fit scandale et fut refusée par les commanditaires, qui la jugeaient trop triviale et irrévérencieuse. Pourtant, de passage à Rome, Rubens fut bouleversé par sa puissance et convainquit aussitôt le duc de Mantoue de l'acheter.",
+    "look": "L'immense tenture rouge sang qui retombe du haut du tableau encadre Marie étendue, les chevilles gonflées et dénudées. Sans anges ni nuées miraculeuses, Le Caravage ne montre que la douleur humaine et brute des apôtres frappés par le deuil, sculptée par un clair-obscur d'une intensité bouleversante."
+  },
+  "catalog-0023": {
+    "title": "La Vénus d'Arles",
+    "author": "Sculpteur romain antique (restaurée par François Girardon)",
+    "year": "Fin du Ier siècle av. J.-C.",
+    "background": "Inspirée du grand maître grec Praxitèle du IVe siècle avant notre ère, cette gracieuse statue en marbre remonte à la fin du Ier siècle avant notre ère. Mise au jour au XVIIe siècle dans les vestiges du théâtre antique d'Arles, elle fut offerte à Louis XIV ; elle est actuellement prêtée au musée départemental Arles antique.",
+    "look": "Les bras manquants lors de sa découverte furent restitués par François Girardon, sculpteur officiel de Louis XIV, qui lui donna un miroir et une pomme. Cette déesse offre ainsi la rencontre rare entre l'élégance souple de la sculpture gréco-romaine et le goût raffiné du Grand Siècle français."
+  },
+  "catalog-0024": {
+    "title": "Le Zodiaque de Dendérah",
+    "author": "Artisans égyptiens antiques",
+    "year": "v. 50 av. J.-C.",
+    "background": "Ce monumental planisphère céleste en grès ornait jadis le plafond du temple d'Hathor à Dendérah, en Égypte. Gravé vers 50 avant notre ère, il mêle les douze signes du zodiaque aux constellations divines de l'Égypte ancienne, constituant un témoignage exceptionnel de la fusion entre astronomies grecque, babylonienne et égyptienne.",
+    "look": "Autour du disque soutenu par douze divinités, vous reconnaîtrez sans peine le Bélier, le Lion ou la Balance, nos signes zodiacaux actuels. Grâce à la position précise des éclipses solaires et lunaires qui y sont gravées, les chercheurs ont pu dater cette voûte céleste de l'an 50 avant notre ère."
+  },
+  "catalog-0025": {
+    "title": "Les Appartements Napoléon III",
+    "author": "Décorateurs du Second Empire",
+    "year": "1857–1861",
+    "background": "Achevés en 1861 sous le Second Empire de Napoléon III, ces salons d'apparat étaient destinés aux réceptions officielles du ministre d'État. Ils rappellent de façon spectaculaire que le Louvre ne fut pas seulement un palais royal, mais aussi un haut lieu du faste et du pouvoir politique au XIXe siècle.",
+    "look": "Levez les yeux et laissez-vous envelopper par cette débauche de velours cramoisi, de boiseries dorées à l'or fin et d'immenses lustres en cristal. Plus qu'un simple décor, ces pièces forment une œuvre d'art totale où s'exprime tout le savoir-faire des meilleurs ébénistes, tisserands et bronziers de France."
+  },
+  "catalog-0026": {
+    "title": "Les Sabines",
+    "author": "Jacques-Louis David",
+    "year": "1799",
+    "background": "Emprisonné sous la Terreur après la Révolution, David conçut cette grande composition en cellule avant de l'achever en 1799. Au cœur d'une bataille sanglante entre Romains et Sabins, les femmes liées aux deux camps se précipitent avec leurs jeunes enfants pour supplier les combattants de déposer les armes.",
+    "look": "Au centre, toute vêtue de blanc, Hersilie écarte largement les bras pour séparer les deux chefs adverses. À travers ce geste désespéré, David lançait un poignant appel à la réconciliation aux Français déchirés par les luttes fratricides de la Révolution."
+  },
+  "catalog-0028": {
+    "title": "La Belle Jardinière",
+    "author": "Raphaël",
+    "year": "1507–1508",
+    "background": "Peint par Raphaël à vingt-quatre ans comme un couronnement de son séjour florentin, ce tableau compte parmi les plus purs sommets de sa série des Vierges à l'Enfant. Dans un paysage champêtre baigné de sérénité, Marie, l'Enfant Jésus et le petit saint Jean Baptiste s'unissent dans une harmonie triangulaire parfaite.",
+    "look": "Observez la solidité calme de cette pyramide humaine et le geste plein de tendresse de l'Enfant Jésus posant son petit pied nu sur celui de sa mère. Alliant la science géométrique héritée de Léonard à une profonde chaleur humaine et à un ciel d'azur limpide, l'œuvre respire le bonheur serein."
+  },
+  "catalog-0029": {
+    "title": "La Vierge du chancelier Rolin",
+    "author": "Jan van Eyck",
+    "year": "v. 1435",
+    "background": "Géant de la peinture flamande du XVe siècle, Jan van Eyck exécuta ce panneau d'une minutie prodigieuse pour Nicolas Rolin, puissant chancelier du duc de Bourgogne. Poussant la maîtrise de la peinture à l'huile à son paroxysme, l'artiste y déploie une précision microscopique et un éclat de pierrerie.",
+    "look": "Approchez-vous des trois arcades du fond pour contempler la ville traversée par un fleuve et peuplée d'une foule minuscule de quelque deux mille personnages. Sur les créneaux de la terrasse, deux petits hommes regardent vers la rivière : l'un d'eux, coiffé d'un chaperon rouge, pourrait bien être un autoportrait discret de Van Eyck."
+  },
+  "catalog-0031": {
+    "title": "La Diseuse de bonne aventure",
+    "author": "Le Caravage",
+    "year": "v. 1595–1598",
+    "background": "Réalisée par Le Caravage autour de ses vingt-cinq ans, cette scène pleine d'esprit saisit sur le vif un épisode de rue. Un jeune gentilhomme un peu fat tend la main pour se faire lire les lignes de la main, sans s'apercevoir que la jeune bohémienne profite de l'instant pour lui dérober son anneau.",
+    "look": "Baissez les yeux vers leurs mains : tandis que la jeune femme captive le regard du dandy par un sourire langoureux, ses doigts habiles font glisser sans bruit la bague d'or de son annulaire. Un pur chef-d'œuvre de narration psychologique où tout se joue dans un échange de regards."
+  },
+  "catalog-0032": {
+    "title": "Les Bergers d'Arcadie",
+    "author": "Nicolas Poussin",
+    "year": "v. 1638–1640",
+    "background": "Père du classicisme français au XVIIe siècle, Nicolas Poussin livre ici une méditation sereine sur la vie et la mort à travers des bergers découvrant un tombeau dans la contrée idéale d'Arcadie. L'inscription latine gravée dans la pierre, « Et in Arcadia ego » (« Moi aussi, j'existe en Arcadie »), laisse résonner une mélancolie profonde.",
+    "look": "Observez le doigt du berger agenouillé qui suit les lettres gravées, et juste à côté, l'ombre projetée sur le tombeau. Même au sein du plus doux des paradis, la mort reste présente : cette vérité grave s'impose sous le regard noble et apaisé de la figure féminine drapée à droite."
+  },
+  "money": {
+    "title": "Le Prêteur et sa femme",
+    "author": "Quentin Metsys",
+    "year": "1514",
+    "background": "Peint en 1514 dans la métropole marchande d'Anvers, ce chef-d'œuvre de scène de genre met face à face l'attrait des richesses et la vie spirituelle. Tandis que l'homme pèse scrupuleusement ses pièces d'or, son épouse délaisse son livre d'heures enluminé pour lorgner vers le métal brillant.",
+    "look": "Penchez-vous sur le petit miroir convexe posé au centre du comptoir : vous y verrez se refléter avec netteté le clocher d'une église par la fenêtre et un visiteur coiffé d'un bonnet rouge. Ce procédé raffiné de la Renaissance du Nord prolonge l'espace peint bien au-delà du cadre visible."
+  },
+  "catalog-0033": {
+    "title": "Gabrielle d'Estrées et une de ses sœurs",
+    "author": "École de Fontainebleau",
+    "year": "v. 1594",
+    "background": "Ce double portrait de la fin du XVIe siècle, issu de l'École de Fontainebleau, figure parmi les tableaux les plus célèbres et les plus intrigants de l'histoire de l'art. On y voit Gabrielle d'Estrées, favorite du roi Henri IV, dans son bain aux côtés de sa sœur, échangeant un geste pour le moins surprenant.",
+    "look": "Loin d'être une simple provocation, le geste de la sœur pinçant délicatement le sein de Gabrielle est un symbole d'époque célébrant une grossesse royale imminente et la future maternité. À l'arrière-plan, la servante qui coud une layette et la bague du roi tenue par Gabrielle confirment toutes deux l'annonce de cette naissance attendue."
+  },
+  "marly": {
+    "title": "Les Chevaux de Marly",
+    "author": "Guillaume Coustou",
+    "year": "1743–1745",
+    "background": "Sculptés entre 1743 et 1745 par Guillaume Coustou pour orner l'abreuvoir du château royal de Marly sous Louis XV, ces deux groupes monumentaux en marbre débordent d'énergie. Transférés après la Révolution à l'entrée des Champs-Élysées, les originaux sont aujourd'hui abrités et préservés dans cette cour vitrée.",
+    "look": "Levez les yeux vers les crinières fougueuses, les naseaux dilatés de ces coursiers cabrés et la musculature tendue des palefreniers qui s'efforcent de les maîtriser. Sous la verrière, la lumière naturelle change au fil des heures et semble insuffler à la pierre le frémissement de la vie."
+  },
+  "catalog-0034": {
+    "title": "La Frise des Archers",
+    "author": "Art perse achéménide",
+    "year": "v. 510 av. J.-C.",
+    "background": "Vers 510 avant notre ère, cette frise monumentale en briques siliceuses glaçurées parait les murs du palais de Darius Ier à Suse, dans l'Empire perse achéménide. Elle représente la garde d'élite royale, les célèbres Immortels, défilant en ordre parfait avec leurs lances et leurs riches tenues d'apparat.",
+    "look": "Laissez-vous émerveiller par l'éclat intact des bleus turquoise et des ocres dorés après deux mille cinq cents ans. Observez de près les variations subtiles des visages et des motifs textiles d'un archer à l'autre : un rythme majestueux qui célèbre la puissance et le raffinement artisanal de l'Empire perse."
+  },
+  "catalog-0036": {
+    "title": "Pyxide au nom d'Ibrahim ibn al-Mughira",
+    "author": "Artisan omeyyade de Cordoue",
+    "year": "968",
+    "background": "Façonné en 968 dans l'Espagne omeyyade, ce petit coffret cylindrique en ivoire sculpté porte une inscription mentionnant Ibrahim ibn al-Mughira. La richesse de son décor végétal et animalier témoigne du raffinement exceptionnel de la cour de Cordoue.",
+    "look": "Suivez tout autour de la boîte les motifs d'animaux et de feuillages sculptés en relief. Remarquez la manière dont les ornements s'imbriquent avec précision, occupant le moindre espace libre : une véritable prouesse de minutie concentrée sur un objet précieux de taille modeste."
+  },
+  "catalog-0037": {
+    "title": "Statue de l'intendant Ebih-Il",
+    "author": "Art mésopotamien antique",
+    "year": "v. 2400 av. J.-C.",
+    "background": "Mise au jour dans le temple d'Ishtar à Mari, en Mésopotamie, cette statuette de haut dignitaire remonte à environ 2400 avant notre ère. Sculptée dans l'albâtre et parée d'yeux incrustés de lapis-lazuli bleu profond, elle nous est parvenue dans un état de conservation miraculeux.",
+    "look": "Observez la limpidité surprenante de son regard bleu et son doux sourire vieux de quatre mille quatre cents ans. Les mains jointes sur la poitrine et la jupe traditionnelle à mèches de laine, le kaunakès, traduisent la ferveur perpétuelle de cet orant figé en prière devant sa déesse."
+  },
+  "catalog-0038": {
+    "title": "Le Sarcophage des Époux",
+    "author": "Art étrusque antique",
+    "year": "v. 520–510 av. J.-C.",
+    "background": "Réalisée vers 520 avant notre ère par la brillante civilisation étrusque d'Italie centrale, cette urne cinéraire en terre cuite peinte représente un couple uni jusque dans l'au-delà. Loin d'une vision lugubre de la mort, les Étrusques concevaient la vie future comme le prolongement d'un joyeux banquet.",
+    "look": "Admirez la tendresse avec laquelle l'époux passe le bras autour des épaules de sa femme, tous deux allongés sur un lit de banquet avec le même sourire apaisé. Alors que les femmes grecques de la même époque étaient exclues des festins, cette œuvre témoigne de la complicité et de l'égalité dont jouissaient les époux chez les Étrusques."
+  },
+  "catalog-0039": {
+    "title": "Le Lion de Monzón",
+    "author": "Artisan du monde islamique",
+    "year": "XIIe–XIIIe siècle",
+    "background": "Originaire du monde islamique médiéval, ce récipient en bronze adopte la silhouette fière d'un lion. Doté d'une ouverture sur le dos et d'un bec verseur dans la gueule, cet aquamanile servait probablement à verser de l'eau lors des ablutions ou des banquets, unissant sculpture animalière et objet utilitaire.",
+    "look": "Observez le traitement stylisé du mufle et des pattes, qui accentue la puissance du fauve, puis imaginez le trajet de l'eau entre l'orifice dorsal et la gueule entrouverte. Les gravures décoratives et les inscriptions calligraphiques qui couvrent le métal participent pleinement à la noblesse de cet objet."
+  },
+  "catalog-0040": {
+    "title": "Sainte Marie-Madeleine",
+    "author": "Gregor Erhart",
+    "year": "v. 1515–1520",
+    "background": "Taillée dans un seul tronc de tilleul par le sculpteur allemand Gregor Erhart au début du XVIe siècle, cette figure grandeur nature en bois polychrome représente Marie-Madeleine en prière, le regard levé vers le ciel, uniquement vêtue de sa longue chevelure dorée.",
+    "look": "À l'origine, la statue était suspendue par des chaînes à la voûte d'une église et entourée de quatre anges, comme en lévitation dans les airs. Faites-en le tour pour apprécier l'harmonie sans faille de ses courbes sous tous les angles et la grâce délicate des mèches ondulant sur son corps."
+  },
+  "catalog-0041": {
+    "title": "L'Hiver",
+    "author": "Giuseppe Arcimboldo",
+    "year": "1573",
+    "background": "En assemblant des branches noueuses, des racines et des agrumes pour former un profil humain, Arcimboldo signe l'un des quatre tableaux allégoriques des Saisons. Très appréciées dans les cours européennes de la Renaissance, ces compositions savantes mêlaient jeu d'esprit visuel et méditation sur la nature.",
+    "look": "Contemplez d'abord le visage de profil, puis amusez-vous à identifier chaque végétal qui le compose : l'écorce ridée d'un vieux tronc se métamorphose en peau marquée par l'âge. En alternant ainsi entre la vue d'ensemble et les détails, le portrait semble se transformer sous vos yeux."
+  },
+  "catalog-0042": {
+    "title": "Le Printemps",
+    "author": "Giuseppe Arcimboldo",
+    "year": "1573",
+    "background": "Composée exclusivement de fleurs et de feuillages printaniers, cette allégorie personnifie le renouveau et la générosité de la saison sous les traits d'une jeune figure souriante. Le tableau joue habilement sur un double niveau de lecture, de loin comme de près.",
+    "look": "Après avoir saisi le portrait à distance, approchez-vous pour nommer les fleurs une à une et observer comment leurs nuances colorées modèlent les joues ou la collerette. Prenez aussi le temps de comparer la fraîcheur de ces pétales avec les matériaux rugueux de L'Hiver voisin."
+  },
+  "catalog-0043": {
+    "title": "Atala au tombeau",
+    "author": "Anne-Louis Girodet",
+    "year": "1808",
+    "background": "Tiré en 1808 du dénouement tragique du célèbre roman de Chateaubriand, ce chef-d'œuvre du préromantisme est dû à Girodet, élève de David. Déchirée entre son vœu religieux et son amour, la jeune Atala s'est donné la mort ; son amant et un vieux missionnaire s'apprêtent à l'ensevelir dans une grotte.",
+    "look": "Une clarté lunaire irréelle filtre par l'ouverture de la grotte et n'éclaire que le visage pâle et le buste de la défunte. Le contraste entre Chactas, effondré en larmes aux pieds de sa bien-aimée, et le père Aubry, recueilli dans une prière silencieuse, confère à la scène une poignante gravité."
+  },
+  "catalog-0044": {
+    "title": "Œdipe explique l'énigme du Sphinx",
+    "author": "Jean-Auguste-Dominique Ingres",
+    "year": "1808",
+    "background": "Peinte par Ingres à vingt-huit ans lors de son séjour à Rome, puis remaniée par la suite, cette toile mythologique saisit l'instant de haute tension où le jeune héros Œdipe affronte le redoutable Sphinx par la seule force de son intelligence et de son sang-froid.",
+    "look": "Jetez un œil dans l'ombre rocheuse, en bas à gauche, sous les pattes du Sphinx : on y distingue les ossements des voyageurs qui n'ont pas su résoudre l'énigme. Face à cette menace mortelle, la sérénité intrépide du profil d'Œdipe, qui soutient droit dans les yeux le regard du monstre, n'en ressort qu'avec plus d'éclat."
+  },
+  "catalog-0045": {
+    "title": "Portrait de Juliette Récamier",
+    "author": "Jacques-Louis David",
+    "year": "1800",
+    "background": "Réalisé en 1800, ce portrait inachevé représente Juliette Récamier à l'âge de vingt-trois ans, alors célèbre dans la société parisienne pour sa beauté et son esprit. Sa pose élégante, pieds nus sur une méridienne dans un intérieur sobre inspiré de l'Antiquité romaine, lança une véritable mode à son époque.",
+    "look": "Observez le dépouillement extrême du décor, ses pieds nus et la grâce de son regard tourné par-dessus l'épaule. Agacée par la lenteur de David, Juliette Récamier finit par commander un autre portrait à un peintre rival, laissant cet arrière-plan inachevé."
+  },
+  "catalog-0046": {
+    "title": "Madame Vigée-Le Brun et sa fille",
+    "author": "Élisabeth Vigée-Le Brun",
+    "year": "1789",
+    "background": "Portraitiste attitrée de Marie-Antoinette, Élisabeth Vigée-Le Brun peignit en 1789, l'année même de la Révolution française, cet autoportrait empreint de tendresse avec sa fille Julie. Selon la base de données officielle du Louvre, l'œuvre n'est actuellement pas exposée.",
+    "look": "Remarquez l'étreinte intime de la mère et de la fille, joue contre joue, formant une composition pyramidale harmonieuse. À rebours des portraits aristocratiques figés dans des tenues d'apparat, l'artiste privilégie un drapé simple à l'antique et des sourires naturels pour exprimer l'amour maternel."
+  },
+  "catalog-0047": {
+    "title": "La Jeune Martyre",
+    "author": "Paul Delaroche",
+    "year": "1855",
+    "background": "Peinte au XIXe siècle par Paul Delaroche alors qu'il était plongé dans le deuil de son épouse bien-aimée, cette toile mystique évoque le martyre d'une jeune chrétienne noyée dans le Tibre sous la Rome antique, flottant à la surface de l'eau couronnée d'une auréole.",
+    "look": "Contemplez le visage serein de la jeune fille dérivant sur le fleuve nocturne et l'étrange nimbe lumineux qui flotte au-dessus de sa tête. Sur la rive obscure, deux silhouettes observent de loin, prolongeant la tristesse silencieuse et le recueillement de la scène. L'œuvre est actuellement en prêt au Louvre-Lens."
+  },
+  "catalog-0048": {
+    "title": "L'Apothéose d'Homère",
+    "author": "Jean-Auguste-Dominique Ingres",
+    "year": "1827",
+    "background": "Conçu en 1827 comme décor de plafond pour le palais du Louvre, ce vaste tableau est un véritable manifeste du néoclassicisme. Autour du poète grec Homère sont réunis quarante-six des plus grands artistes, poètes et philosophes de tous les temps.",
+    "look": "Aux pieds d'Homère sont assises les personnifications de l'Iliade et de l'Odyssée. Tout autour figurent Raphaël, Dante, Michel-Ange, Shakespeare ou encore Mozart, mais vous n'y trouverez ni Delacroix ni aucun peintre romantique, tant l'opposition esthétique avec Ingres était vive."
+  },
+  "catalog-0049": {
+    "title": "Le Couronnement de Marie de Médicis",
+    "author": "Pierre Paul Rubens",
+    "year": "1622–1625",
+    "background": "Cette toile monumentale fait partie du cycle de vingt-quatre tableaux commandé au maître baroque Rubens pour célébrer la vie de Marie de Médicis. Elle retrace la fastueuse cérémonie du sacre de la reine de France à la basilique Saint-Denis, en 1610.",
+    "look": "Peint près de deux siècles avant Le Sacre de Napoléon de David, ce tableau lui servit d'ailleurs de modèle de composition. La reine agenouillée au centre et les génies allégoriques qui répandent fleurs et pièces d'or transforment l'événement historique en un grand théâtre céleste."
+  },
+  "catalog-0050": {
+    "title": "Le Printemps (Le Paradis terrestre)",
+    "author": "Nicolas Poussin",
+    "year": "1660–1664",
+    "background": "Peinte au soir de la vie de Nicolas Poussin, cette toile appartient à son ultime série des Quatre Saisons. Dans la lumière matinale du jardin d'Éden, Adam et Ève incarnent la sérénité limpide du paradis avant la Chute.",
+    "look": "Observez Ève désignant l'arbre de la connaissance au centre, puis cherchez dans les nuages, en haut à gauche, la silhouette lointaine du Créateur. La douce lumière oblique qui traverse la forêt luxuriante suspend un instant de pureté fragile, juste avant la tentation."
+  },
+  "catalog-0051": {
+    "title": "Saint Sébastien",
+    "author": "Andrea Mantegna",
+    "year": "v. 1480",
+    "background": "Chef-d'œuvre de la Renaissance italienne, cette toile d'Andrea Mantegna témoigne de sa maîtrise vertigineuse de la perspective et de sa passion pour l'Antiquité. Percé de flèches devant des ruines antiques, saint Sébastien lève un regard sublime vers le ciel.",
+    "look": "Scrutez attentivement le nuage blanc flottant dans le ciel bleu, en haut à gauche : on y distingue la forme d'un cavalier sur sa monture. Quant aux fragments de sculpture romaine brisés au pied du saint, ils symbolisent le triomphe de la foi chrétienne sur le monde païen."
+  },
+  "catalog-0052": {
+    "title": "Portrait d'un vieillard et d'un jeune garçon",
+    "author": "Domenico Ghirlandaio",
+    "year": "v. 1490",
+    "background": "Réalisé à Florence à la fin du XVe siècle par Domenico Ghirlandaio, ce portrait bouleversant saisit la tendresse silencieuse entre un grand-père et son petit-fils. En représentant sans fard le nez déformé du vieillard, le peintre rend son humanité d'autant plus touchante.",
+    "look": "Loin d'être effrayé par la maladie qui déforme le nez de son aïeul, l'enfant lève vers lui un regard plein de confiance et d'affection. L'intensité de cet échange de regards touche toujours profondément les visiteurs, plus de cinq siècles après sa création."
+  },
+  "catalog-0053": {
+    "title": "Portrait d'homme, dit Le Condottiere",
+    "author": "Antonello de Messine",
+    "year": "1475",
+    "background": "Originaire de Sicile, Antonello de Messine révolutionna le portrait en unissant la précision de la peinture à l'huile flamande au sens du volume italien. L'intensité farouche de ce visage valut au modèle le surnom de « Condottiere », chef de mercenaires.",
+    "look": "Soutenez ce regard perçant, presque prêt à surgir hors du cadre. La petite cicatrice entre la joue gauche et la lèvre, tout comme la bouche fermement close, évoquent la rudesse et la détermination d'un homme trempé par l'Italie agitée du XVe siècle."
+  },
+  "catalog-0054": {
+    "title": "Le Concert champêtre",
+    "author": "Attribué à Titien",
+    "year": "v. 1509",
+    "background": "Chef-d'œuvre poétique de l'âge d'or vénitien, cette toile aurait été imaginée par Giorgione puis achevée par le jeune Titien. Selon la base de données officielle du Louvre, l'œuvre n'est actuellement pas exposée.",
+    "look": "Tandis que deux jeunes gens richement vêtus jouent du luth, deux femmes nues puisent l'eau d'une fontaine ou tiennent une flûte à leurs côtés. Musiciens bien réels et muses invisibles de la poésie et de la musique semblent ainsi réunis dans un même paysage rêvé."
+  },
+  "catalog-0055": {
+    "title": "L'Homme au gant",
+    "author": "Titien",
+    "year": "v. 1520",
+    "background": "Peint par Titien au début de la trentaine, ce portrait incarne le sommet de l'élégance aristocratique vénitienne. Un gant de cuir serré dans la main gauche, l'autre déjà enfilé à la droite : une attitude sobre d'où émanent intelligence et mélancolie.",
+    "look": "Dans l'obscurité du vêtement noir et du fond sombre, seuls émergent le visage, les deux mains et le discret triangle blanc de la chemise. Cette économie de couleurs sublime la retenue, l'assurance tranquille et la profondeur intérieure du jeune homme."
+  },
+  "catalog-0056": {
+    "title": "La Vierge au lapin",
+    "author": "Titien",
+    "year": "v. 1520–1530",
+    "background": "Dans une palette lumineuse caractéristique de Venise, Titien compose une scène tendre et intime autour de la Sainte Famille. La Vierge retient doucement un lapin blanc de la main gauche tandis que l'Enfant Jésus, dans les bras de sainte Catherine, tend les mains avec espièglerie.",
+    "look": "Le lapin blanc sous la main de Marie symbolise depuis l'Antiquité la pureté et la fécondité, faisant écho à l'innocence de la Vierge. Des Dolomites baignées par le crépuscule jusqu'à saint Joseph qui veille discrètement à droite, toute la scène respire une douce quiétude."
+  },
+  "catalog-0057": {
+    "title": "Figurine d'hippopotame bleu",
+    "author": "Artisan de l'Égypte antique",
+    "year": "v. 1985–1795 av. J.-C.",
+    "background": "Cette statuette d'hippopotame est recouverte d'une glaçure bleu turquoise. Animal à la fois redoutable et puissant dans l'Égypte ancienne, il était déposé dans les tombes comme symbole de renaissance.",
+    "look": "Cherchez les motifs de plantes aquatiques peints sur son corps : ce bleu éclatant évoque les eaux du Nil. Le contraste entre ses petites pattes trapues et sa silhouette arrondie fait tout le charme de l'objet."
+  },
+  "catalog-0058": {
+    "title": "Chapelle du mastaba d'Akhethétep",
+    "author": "Artisans de l'Égypte antique",
+    "year": "v. 2400 av. J.-C.",
+    "background": "Cette chapelle funéraire de l'Ancien Empire a été remontée pierre par pierre au Louvre. Ses parois sculptées en bas-relief figurent des travaux agricoles et des processions d'offrandes destinées à assurer la subsistance du défunt dans l'au-delà.",
+    "look": "Observez ce que transportent et préparent les personnages sur les murs, puis repérez l'alliance des hiéroglyphes et des images. En parcourant l'espace de la pièce, vous comprenez comment était conçu ce lieu de culte funéraire."
+  },
+  "catalog-0059": {
+    "title": "Statue de Karomama",
+    "author": "Orfèvre de l'Égypte antique",
+    "year": "v. 870 av. J.-C.",
+    "background": "Cette statue en bronze incrusté représente Karomama, divine adoratrice d'Amon. Chef-d'œuvre de l'orfèvrerie de la Troisième Période intermédiaire, elle témoigne aussi des liens étroits entre la famille royale et le clergé.",
+    "look": "Suivez le galbe de sa robe plissée et les fines lignes décoratives incrustées à la surface du métal. Malgré ses dimensions modestes, l'attitude de la prêtresse dégage une remarquable majesté."
+  },
+  "catalog-0060": {
+    "title": "Statue colossale de Ramsès II",
+    "author": "Sculpteur de l'Égypte antique",
+    "year": "v. 1279–1213 av. J.-C.",
+    "background": "Cette statue monumentale figure le pharaon Ramsès II, célèbre pour la longévité de son règne. L'échelle colossale affirme l'autorité souveraine et reflète la vision idéalisée du roi dans l'art égyptien.",
+    "look": "Levez les yeux des pieds jusqu'au visage du souverain : sa symétrie rigoureuse exprime une puissance inébranlable. Prenez le temps de repérer sa couronne et les cartouches gravés à son nom."
+  },
+  "catalog-0061": {
+    "title": "Héros maîtrisant un lion, dit Gilgamesh",
+    "author": "Artisan de l'Assyrie antique",
+    "year": "v. 713–706 av. J.-C.",
+    "background": "Ce bas-relief provenant d'un palais assyrien montre un colosse serrant un lion contre lui. Souvent identifié au héros légendaire Gilgamesh, bien que son identité reste débattue, il incarnait la force protectrice du souverain.",
+    "look": "Comparez la taille du lion à la carrure herculéenne du héros et remarquez sa posture frontale, rare face aux figures habituellement sculptées de profil. Attardez-vous aussi sur le ciselage minutieux de sa chevelure et de sa barbe."
+  },
+  "catalog-0062": {
+    "title": "Stèle du dieu Baal au foudre",
+    "author": "Artisan d'Ougarit",
+    "year": "v. XVe–XIIIe siècle av. J.-C.",
+    "background": "Découverte à Ougarit, sur la côte syrienne, cette stèle représente le dieu de l'Orage brandissant une arme symbolisant la foudre. Pour une société agricole, sa maîtrise de la pluie était vitale.",
+    "look": "Observez le bras levé, la forme de l'arme et la lance prolongée par une plante qui s'enracine près de ses pieds. Le relief semble faire jaillir la puissance divine hors de la dalle de pierre."
+  },
+  "catalog-0063": {
+    "title": "Bureau à cylindre de Marie-Antoinette",
+    "author": "Jean-Henri Riesener",
+    "year": "1784",
+    "background": "Réalisé pour la reine Marie-Antoinette, ce meuble de cour est doté d'un abattant coulissant qui dissimule l'espace d'écriture. Il allie matériaux précieux et prouesse d'ébénisterie.",
+    "look": "Admirez la courbe du cylindre et l'agencement équilibré des tiroirs, puis savourez le contraste entre les essences de bois et les bronzes dorés. Objet d'usage quotidien, il s'impose comme une véritable sculpture."
+  },
+  "catalog-0064": {
+    "title": "Milon de Crotone",
+    "author": "Pierre Puget",
+    "year": "1671–1682",
+    "background": "Ce marbre illustre la légende du vieux lutteur Milon, attaqué par un lion après que sa main fut restée coincée dans un tronc fendu. C'est un avertissement contre l'orgueil d'une force passée, traité avec toute l'intensité dramatique du baroque.",
+    "look": "Suivez la torsion du corps depuis la main prisonnière du bois et comparez l'expression de douleur du visage à l'élan du fauve. En tournant autour de la statue, vous verrez changer la ligne de tension."
+  },
+  "catalog-0065": {
+    "title": "La Renommée du Roi chevauchant Pégase",
+    "author": "Antoine Coysevox",
+    "year": "1701–1702",
+    "background": "Sculpté pour les jardins royaux à la gloire de Louis XIV, ce groupe représente l'allégorie de la Renommée chevauchant Pégase, le cheval ailé. L'image évoquait les victoires du roi portées jusqu'aux confins du monde.",
+    "look": "Suivez l'élan du cheval cabré et le geste du bras de la figure ailée, puis comparez le travail des plumes à celui de la crinière. Imaginez l'œuvre placée en hauteur : son mouvement n'en paraît que plus aérien."
+  },
+  "catalog-0066": {
+    "title": "L'Amour se faisant un arc de la massue d'Hercule",
+    "author": "Edme Bouchardon",
+    "year": "1750",
+    "background": "Le dieu de l'Amour s'empare ici de la massue d'Hercule pour s'en tailler un arc. Cette sculpture du XVIIIe siècle français séduit par la délicatesse de l'anatomie juvénile et détourne avec esprit la force mythologique.",
+    "look": "Regardez la massue posée à ses pieds, les mains appliquées à leur ouvrage et le modelé subtil de sa jeune musculature. Faites le tour du marbre pour apprécier l'harmonie de la silhouette."
+  },
+  "catalog-0067": {
+    "title": "Mercure volant",
+    "author": "Giambologna",
+    "year": "v. 1580",
+    "background": "Le messager des dieux prend son envol dans ce bronze emblématique du maniérisme de la fin de la Renaissance. Grâce à un point d'appui minuscule, la figure tout entière semble flotter dans les airs.",
+    "look": "Partez du pied qui touche à peine le socle et suivez l'élan vers le haut : bras et jambes se déploient dans des directions opposées. En tournant autour du bronze, son équilibre paraît sans cesse se réinventer."
+  },
+  "catalog-0068": {
+    "title": "Hermaphrodite endormi",
+    "author": "Sculpteur de la Rome antique",
+    "year": "v. IIe siècle apr. J.-C. (matelas de 1620)",
+    "background": "Cette sculpture antique représente Hermaphrodite étendu dans son sommeil ; au XVIIe siècle, le Bernin y ajouta le matelas de marbre sur lequel repose le corps. L'œuvre joue sur la surprise selon l'angle d'observation.",
+    "look": "Commencez par observer le corps allongé de dos, puis contournez l'œuvre pour découvrir l'autre profil. Amusez-vous aussi à distinguer la facture antique du marbre et le matelas sculpté des siècles plus tard."
+  },
+  "catalog-0069": {
+    "title": "Tête de Sésostris III âgé",
+    "author": "Sculpteur de l'Égypte antique",
+    "year": "v. 1850 av. J.-C.",
+    "background": "Ce souverain du Moyen Empire apparaît sous les traits d'un homme marqué par l'âge. Fait rare dans l'art royal égyptien, le visage exprime la gravité, la fatigue et la méditation, mêlant autorité et intériorité.",
+    "look": "Observez les cernes sous les yeux et les plis autour de la bouche, puis opposez la sérénité du port de tête à cette expression complexe. De face comme de trois quarts, le visage semble changer d'humeur."
+  },
+  "catalog-0070": {
+    "title": "Buste d'Akhenaton",
+    "author": "Sculpteur de l'Égypte antique",
+    "year": "v. 1353–1336 av. J.-C.",
+    "background": "Ce buste est lié au pharaon Akhenaton, célèbre pour sa réforme religieuse. Ses traits allongés rompent avec les conventions traditionnelles et illustrent l'esthétique singulière de l'époque amarnienne.",
+    "look": "Remarquez l'allongement du crâne et du cou, ainsi que la douceur des lèvres et des paupières. En comparant ce visage aux portraits royaux plus anciens, le changement de style saute aux yeux."
+  },
+  "catalog-0071": {
+    "title": "Diane de Gabies",
+    "author": "Sculpteur de la Rome antique",
+    "year": "v. Ier–IIe siècle apr. J.-C.",
+    "background": "Cette statue romaine, d'après un original grec, saisit Artémis, déesse de la chasse, au moment où elle agrafe son manteau. Le geste saisi sur le vif conserve un équilibre empreint de calme.",
+    "look": "Suivez la main qui se porte vers l'agrafe sur l'épaule et observez le dialogue entre les plis du drapé et le mouvement du corps. De profil, on distingue nettement le croisement des bras."
+  },
+  "catalog-0072": {
+    "title": "Baptistère de Saint Louis",
+    "author": "Artisan mamelouk",
+    "year": "v. 1320–1340",
+    "background": "Ce grand bassin métallique du XIVe siècle servit plus tard aux baptêmes de la famille royale de France. Malgré son nom, il fut réalisé bien après le règne de saint Louis.",
+    "look": "Repérez les scènes de chasse et les cavaliers, puis admirez la finesse des incrustations d'or et d'argent. Suivez le décor qui se prolonge du rebord jusque dans la cuve."
+  },
+  "catalog-0073": {
+    "title": "Le dieu Amon protégeant Toutânkhamon",
+    "author": "Sculpteur de l'Égypte antique",
+    "year": "v. 1330 av. J.-C.",
+    "background": "Dans ce groupe sculpté, le dieu Amon veille sur le jeune pharaon Toutânkhamon en se tenant juste derrière lui, comme pour l'envelopper. L'œuvre affirme que la royauté repose sur la protection divine.",
+    "look": "Regardez la grande figure du dieu derrière le jeune souverain et repérez l'endroit où leurs corps s'unissent. De face, cette protection se fond en une silhouette unique."
+  },
+  "catalog-0074": {
+    "title": "Stèle de Cléopâtre VII",
+    "author": "Artisan de l'Égypte antique",
+    "year": "51 av. J.-C.",
+    "background": "Cette stèle porte le nom de Cléopâtre VII, dernière souveraine de la dynastie lagide. Elle montre la persistance de l'iconographie égyptienne traditionnelle jusqu'à la fin de l'époque ptolémaïque, reliant une figure célèbre de l'histoire aux hiéroglyphes anciens.",
+    "look": "Cherchez le cartouche gravé au nom de la reine et observez le cintre supérieur ainsi que la disposition des figures. Notez combien cette représentation diffère des portraits plus connus de Cléopâtre."
+  },
+  "catalog-0075": {
+    "title": "Voltaire assis",
+    "author": "Jean-Antoine Houdon",
+    "year": "1781",
+    "background": "Houdon représente le philosophe des Lumières sous les traits d'un vieillard. Sous la draperie légère, on devine un corps bien vivant : un portrait qui révèle l'acuité de l'esprit sans recourir à l'idéalisation.",
+    "look": "Scrutez les rides du visage et l'esquisse de sourire, puis mettez en regard la pesanteur du corps assis et la vivacité du regard. La finesse du drapé accentue encore la présence du modèle."
+  },
+  "catalog-0076": {
+    "title": "Apollon et Daphné",
+    "author": "Nicolas Coustou",
+    "year": "1714",
+    "background": "Ce groupe sculpté met en scène l'épisode mythologique d'Apollon poursuivant la nymphe Daphné. Pensée pour les jardins, la sculpture capture en trois dimensions l'instant précis de la métamorphose.",
+    "look": "Observez l'espace qui sépare encore les deux corps : l'élan des bras et des jambes rend la poursuite palpable. Cherchez ensuite les premiers signes de transformation en laurier."
+  },
+  "catalog-0077": {
+    "title": "Le Verrou",
+    "author": "Jean-Honoré Fragonard",
+    "year": "v. 1777",
+    "background": "Maître du rococo au XVIIIe siècle, Fragonard saisit ici l'emportement amoureux dans un jeu théâtral d'ombre et de lumière. Un jeune homme s'élance pour pousser le verrou de la porte tandis que la jeune femme tente de le retenir.",
+    "look": "Suivez la diagonale formée par les deux corps en direction du petit verrou, en haut à droite, puis remarquez le lit rouge défait sur la gauche et la pomme posée sur la table, symbole biblique de la tentation. La légèreté rococo s'y unit à la dramaturgie baroque."
+  },
+  "catalog-0078": {
+    "title": "La Raie",
+    "author": "Jean-Siméon Chardin",
+    "year": "v. 1728",
+    "background": "Présentée en 1728, cette nature morte révéla le jeune Chardin, encore inconnu à vingt-huit ans, et lui ouvrit les portes de l'Académie. Une raie suspendue au mur de la cuisine et un chat noir hérissé prêt à bondir sur des huîtres y sont rendus avec une vérité tactile saisissante.",
+    "look": "Comparez la chair nacrée et translucide de la raie éventrée au dos voûté du chat qui feule, poil dressé. Matisse et Cézanne passèrent de longues heures devant cette toile, convaincus que tout réside non dans le sujet, mais dans la lumière et la matière."
+  },
+  "catalog-0079": {
+    "title": "La Madeleine pénitente",
+    "author": "Georges de La Tour",
+    "year": "v. 1640",
+    "background": "Peintre des scènes nocturnes au XVIIe siècle, Georges de La Tour traduit une profonde méditation intérieure à la lueur d'une unique bougie. Ayant renoncé aux vanités du monde, Marie Madeleine pose la main sur un crâne et contemple la fragilité de l'existence.",
+    "look": "Presque toute la composition sombre dans la nuit, mais la flamme éclaire délicatement le menton, le bout des doigts et le crâne posé sur ses genoux. Dépouillée de ses bijoux, cette silhouette immobile et la constance de la flamme invitent au silence."
+  },
+  "catalog-0080": {
+    "title": "Diane sortant du bain",
+    "author": "François Boucher",
+    "year": "1742",
+    "background": "Œuvre emblématique de François Boucher, peintre favori de Louis XV et de Madame de Pompadour, ce tableau incarne le goût raffiné de la cour au XVIIIe siècle. La déesse de la chasse se repose gracieusement au bord d'une source forestière en compagnie d'une nymphe.",
+    "look": "Le petit croissant de lune brillant sur le front de Diane rappelle qu'elle est aussi déesse de la lune. Entre le gibier abandonné à ses pieds, les étoffes rose pâle et bleu ciel et l'éclat nacré des chairs, toute la sensualité du rococo est ici condensée."
+  },
+  "catalog-0081": {
+    "title": "Bethsabée au bain tenant la lettre de David",
+    "author": "Rembrandt van Rijn",
+    "year": "1654",
+    "background": "Peinte par Rembrandt à quarante-huit ans, cette œuvre compte parmi les explorations psychologiques les plus profondes de la peinture occidentale. Bethsabée vient de recevoir la lettre interdite du roi David et médite en silence, partagée entre trouble, loyauté et culpabilité.",
+    "look": "Regardez la lettre qu'elle serre dans sa main droite et son regard perdu au loin, lourd de gravité. Le peintre prit pour modèle Hendrickje, sa compagne des dernières années, donnant à ce nu non la perfection d'une déesse, mais la dignité émouvante d'une femme réelle."
+  },
+  "catalog-0082": {
+    "title": "Autoportrait au chevalet",
+    "author": "Rembrandt van Rijn",
+    "year": "1660",
+    "background": "Auteur de dizaines d'autoportraits tout au long de sa vie, Rembrandt livre ici, à cinquante-quatre ans, un témoignage bouleversant après la faillite et la perte des siens. Palette et pinceaux en main, il regarde le spectateur bien en face, sans dissimuler son vieillissement.",
+    "look": "Le front creusé de rides profondes, les traits relâchés et la barbe grisonnante disent les épreuves, mais ses yeux conservent la fierté intacte du peintre qui a tout perdu sauf son art. La pâte épaisse, posée par touches vigoureuses, semble porter les traces mêmes du temps."
+  },
+  "catalog-0083": {
+    "title": "Les Pèlerins d'Emmaüs",
+    "author": "Rembrandt van Rijn",
+    "year": "1648",
+    "background": "Peint en 1648, ce chef-d'œuvre d'une grande retenue émotionnelle illustre l'épisode de la Résurrection. Dans une auberge modeste, au moment où le Christ rompt le pain, deux disciples le reconnaissent soudain.",
+    "look": "Derrière le Christ, au centre, rayonne une lumière douce et diffuse. Tandis que le disciple de droite joint les mains et que celui de gauche se penche, saisi de stupeur, le jeune valet apportant un plat demeure totalement étranger au miracle, créant un contraste saisissant."
+  },
+  "catalog-0084": {
+    "title": "Mademoiselle Caroline Rivière",
+    "author": "Jean-Auguste-Dominique Ingres",
+    "year": "1806",
+    "background": "À vingt-six ans à peine, Ingres peignit ce portrait d'une délicatesse inoubliable représentant Caroline, la fille de quinze ans d'un haut fonctionnaire parisien. Quelques mois seulement après l'achèvement du tableau, la jeune fille succomba prématurément à la maladie.",
+    "look": "Observez ses longs gants blancs, son châle en duvet de cygne et la fraîcheur légèrement inquiète de son regard limpide. Sur fond de paysage printanier, Ingres fixe pour l'éternité la grâce éphémère de ses quinze ans."
+  },
+  "catalog-0085": {
+    "title": "L'Arrivée de Marie de Médicis à Marseille",
+    "author": "Pierre Paul Rubens",
+    "year": "1622–1625",
+    "background": "L'arrivée de la future reine en France devient ici un accueil triomphal peuplé de divinités mythologiques. L'événement historique s'unit aux dieux marins dans cette toile issue du grand cycle consacré à la vie de Marie de Médicis.",
+    "look": "Suivez la reine qui descend du navire tandis que les divinités des flots semblent soutenir la scène. De haut en bas, réalité politique et allégorie se répondent."
+  },
+  "catalog-0086": {
+    "title": "L'Éducation de Marie de Médicis",
+    "author": "Pierre Paul Rubens",
+    "year": "1622–1625",
+    "background": "Ce tableau du cycle médicéen transpose la jeunesse de la reine sur le terrain de l'allégorie. Les divinités lui insufflent savoir et talents, transformant sa biographie en récit mythologique idéal.",
+    "look": "Repérez la jeune Marie au centre et observez les attributs que lui tendent les figures qui l'entourent. Le tournoiement des nuages et des draperies anime toute la composition d'un souffle fastueux."
+  },
+  "catalog-0087": {
+    "title": "L'Adoration des bergers",
+    "author": "Georges de La Tour",
+    "year": "v. 1644",
+    "background": "Peinte par Georges de La Tour à la fin de sa carrière, cette Nativité baigne dans la lueur chaleureuse d'une chandelle. L'un des personnages abrite la flamme de la paume, concentrant ainsi toute la clarté sur l'Enfant Jésus nouveau-né.",
+    "look": "À droite, remarquez saint Joseph tenant la chandelle tout en modérant la lumière de l'autre main : ses doigts s'illuminent d'un rouge translucide. Autour du nouveau-né, les visages bienveillants des bergers et le petit agneau au premier plan achèvent d'adoucir la scène."
+  },
+  "catalog-0088": {
+    "title": "Portrait de François Ier",
+    "author": "Titien",
+    "year": "v. 1539",
+    "background": "Ce portrait de profil représente le roi de France François Ier. Réalisé non d'après nature mais à partir d'effigies existantes, il condense avec sobriété toute la majesté d'un souverain de la Renaissance.",
+    "look": "Suivez la ligne nette du profil et du nez, ainsi que la richesse du costume et du chapeau à plumes qui soulignent le rang royal. Ce choix du profil installe une distance solennelle, très différente d'un portrait de face."
+  },
+  "catalog-0089": {
+    "title": "Tête dite de Kéros",
+    "author": "Artisan des Cyclades",
+    "year": "v. 2700–2400 av. J.-C.",
+    "background": "Cette tête en marbre provient d'une grande figure de la civilisation des Cyclades, en mer Égée. Sans sculpter ni yeux ni bouche en relief, l'artisan réduit le visage à l'arête du nez et à l'ovale pur, dans une épure qui évoque la sculpture moderne alors que sa fonction antique reste mystérieuse.",
+    "look": "Regardez-la de profil pour voir comment le nez se détache du plan du visage, puis vérifiez la symétrie presque parfaite des contours. Il est fascinant de constater qu'un visage entier s'impose avec si peu de lignes."
+  },
+  "catalog-0090": {
+    "title": "Le Couronnement de la Vierge",
+    "author": "Fra Angelico",
+    "year": "v. 1430–1432",
+    "background": "Ce retable du XVe siècle représente la Vierge Marie couronnée dans les cieux. Fra Angelico y rassemble une multitude d'anges et de saints dans une composition ordonnée aux couleurs éclatantes, empreinte de ferveur religieuse.",
+    "look": "Partez du couronnement au centre et laissez votre regard glisser vers l'assemblée céleste : comparez les teintes des vêtements et les expressions de chaque figure. Malgré la foule, la symétrie d'ensemble maintient un ordre paisible."
+  },
+  "catalog-0091": {
+    "title": "Autoportrait au chardon",
+    "author": "Albrecht Dürer",
+    "year": "1493",
+    "background": "Peint dans sa jeunesse par le maître allemand Albrecht Dürer, cet autoportrait le montre tenant une branche de panicaut, interprétée tour à tour comme symbole de fiançailles ou de foi. C'est un jalon majeur de l'autoportrait conçu comme œuvre à part entière.",
+    "look": "Mettez en regard la plante qu'il tient et le sérieux de son visage tourné vers vous, tout en admirant le rendu minutieux des cheveux et des plis du vêtement. Demandez-vous quelle image de lui-même le jeune artiste souhaitait transmettre."
+  },
+  "catalog-0092": {
+    "title": "La Femme au miroir",
+    "author": "Titien",
+    "year": "v. 1515",
+    "background": "Dans cette toile vénitienne, une jeune femme procède à sa toilette tandis qu'un homme dans l'ombre lui tend un miroir, faisant du jeu entre voir et être vu le cœur même du sujet. Titien y exalte la sensualité des matières par la richesse des touches colorées.",
+    "look": "Cherchez ce que reflète chacun des deux miroirs, puis comparez l'éclat des cheveux, de la peau et des étoffes. En intégrant à votre regard l'homme qui tient la glace, toute la relation entre les deux personnages se révèle."
+  },
+  "catalog-0093": {
+    "title": "Cratère d'Antée",
+    "author": "Euphronios",
+    "year": "v. 515–510 av. J.-C.",
+    "background": "Ce grand vase grec met en scène la lutte entre le héros Héraclès et le géant Antée. Grâce à la technique des figures rouges, les corps se détachent en argile claire sur un vernis noir brillant, transformant la panse du cratère en théâtre mythologique.",
+    "look": "Suivez l'entrelacs des bras et des jambes des deux lutteurs et repérez les traits fins qui dessinent les muscles et les boucles sur le fond sombre. Comme le décor enveloppe le vase, n'hésitez pas à en faire le tour."
+  },
+  "catalog-0094": {
+    "title": "Lion au serpent",
+    "author": "Antoine-Louis Barye",
+    "year": "1832",
+    "background": "Au XIXe siècle, le sculpteur animalier Barye saisit ici le combat féroce d'un lion et d'un serpent. Loin de toute idéalisation, il observe avec précision la tension des muscles et des postures, insufflant une puissance monumentale à un sujet de format contenu.",
+    "look": "Observez l'endroit où le reptile s'enroule sous la patte du lion, puis déchiffrez dans les muscles du dos et le mufle crispé l'imminence du mouvement suivant. En tournant autour du bronze, la dynamique de l'affrontement se renouvelle sans cesse."
+  },
+  "catalog-0095": {
+    "title": "Portrait en pied de la marquise de Pompadour",
+    "author": "Maurice-Quentin de La Tour",
+    "year": "Vers 1755",
+    "background": "Ce portrait représente la marquise de Pompadour, figure influente de la cour de Louis XV. Les livres et les partitions disposés autour d'elle témoignent de son goût pour les arts et les lettres. L'œuvre unit ainsi l'éclat d'une parure somptueuse à l'image d'une femme cultivée.",
+    "look": "Au-delà de la robe, repérez les ouvrages et les partitions posés sur le bureau. L'expression du visage et le maintien des mains traduisent une assurance sereine. En vous approchant, vous distinguerez les subtiles superpositions de couleurs propres au pastel."
+  },
+  "catalog-0096": {
+    "title": "L'Empereur triomphant",
+    "author": "Artiste byzantin",
+    "year": "Première moitié du VIe siècle",
+    "background": "Ce relief en ivoire célèbre le triomphe d'un empereur du VIe siècle. Au centre, le souverain à cheval est entouré de figures qui l'acclament. Plusieurs historiens l'identifient à Justinien, sans qu'il soit possible de l'affirmer avec certitude.",
+    "look": "Portez d'abord votre regard sur l'empereur et sa monture au centre de la plaque. Passez ensuite aux registres supérieur et inférieur pour découvrir qui célèbre cette victoire. Observez la profondeur du relief sculpté dans une si fine épaisseur d'ivoire."
+  },
+  "catalog-0097": {
+    "title": "David et Goliath",
+    "author": "Daniele da Volterra",
+    "year": "Vers 1555",
+    "background": "Cette œuvre peint sur ses deux faces l'affrontement tiré de l'Ancien Testament. Elle vit le jour à une époque où l'on débattait de la prééminence entre la peinture et la sculpture. En changeant de point de vue, le spectateur découvre un autre instant du récit.",
+    "look": "Observez tour à tour le recto et le verso du panneau. Comparez la torsion des corps et la position de l'épée. Ces deux compositions complémentaires réunissent les deux moments d'un même mouvement."
+  },
+  "catalog-0098": {
+    "title": "L'Enlèvement d'Hélène",
+    "author": "Guido Reni",
+    "year": "1628–1629",
+    "background": "Le peintre illustre ici l'épisode mythologique à l'origine de la guerre de Troie. Les figures sont ordonnées avec rigueur selon l'idéal classique. Un événement dramatique y est exprimé à travers des visages empreints de retenue.",
+    "look": "Comparez la figure centrale d'Hélène aux personnages qui l'entourent. Les gestes des mains orientent la lecture du récit. Remarquez le contraste entre la douceur des coloris et la tension du sujet."
+  },
+  "catalog-0099": {
+    "title": "Les Pèlerins d'Emmaüs",
+    "author": "Paul Véronèse",
+    "year": "Vers 1559",
+    "background": "La scène montre le Christ ressuscité se révélant à ses disciples. Véronèse transpose le récit évangélique dans le cadre d'un somptueux banquet vénitien. Le quotidien d'une table animée y côtoie le mystère du miracle.",
+    "look": "Repérez le Christ au centre et observez les réactions des convives autour de lui. La vaisselle comme les vêtements révèlent une grande richesse de couleurs. Vous pouvez également comparer cette toile aux monumentales « Noces de Cana »."
+  },
+  "catalog-0100": {
+    "title": "Portrait de femme, dit La Belle Nani",
+    "author": "Paul Véronèse",
+    "year": "Vers 1560",
+    "background": "Ce portrait présente une dame vêtue d'une toilette fastueuse, bien que son identité demeure incertaine. Les bijoux et la richesse des étoffes reflètent le raffinement de l'aristocratie vénitienne. L'œuvre offre un témoignage précieux sur la haute société de l'époque.",
+    "look": "Attardez-vous sur la sérénité du visage. Cherchez les parures qui scintillent sur le velours sombre de la robe. La position des mains confère au modèle toute sa noblesse."
+  },
+  "catalog-0101": {
+    "title": "Jupiter foudroyant les Vices",
+    "author": "Paul Véronèse",
+    "year": "1554–1556",
+    "background": "Cette allégorie montre Jupiter chassant les Vices du ciel. Conçue pour être admirée d'en bas, la composition adopte une perspective vertigineuse. Elle exprime l'autorité et le triomphe de l'ordre à travers la mythologie.",
+    "look": "Suivez le mouvement depuis la main brandissant la foudre jusqu'aux figures précipitées dans le vide. L'élan ascendant s'oppose nettement à la chute. Observez aussi le contraste entre la clarté du ciel et l'obscurité du bas de la scène."
+  },
+  "catalog-0102": {
+    "title": "Le Paradis (Le Couronnement de la Vierge)",
+    "author": "Le Tintoret",
+    "year": "Vers 1578–1579",
+    "background": "Cette peinture religieuse rassemble une foule immense d'élus dans les cieux. Autour du Couronnement de la Vierge s'organisent de vastes groupes de personnages. Le dynamisme impétueux de l'ensemble incarne toute la vitalité de l'école vénitienne.",
+    "look": "Partez de la lumière centrale et laissez votre regard glisser vers l'extérieur. Observez vers où se tournent les nombreuses figures. Au sein de cette foule dense, un ample mouvement circulaire structure la composition."
+  },
+  "catalog-0103": {
+    "title": "La Crucifixion",
+    "author": "Paul Véronèse",
+    "year": "Vers 1580",
+    "background": "Véronèse représente le Christ en croix entouré des proches venus assister à sa Passion. Même dans ce moment de deuil, les vêtements conservent des teintes éclatantes. La ferveur religieuse s'allie ici au goût vénitien pour la splendeur chromatique.",
+    "look": "Observez la distance qui sépare les personnages regroupés autour de la croix. Leurs regards et le mouvement de leurs mains traduisent la douleur. Remarquez comment les nuances du ciel modulent l'atmosphère du drame."
+  },
+  "catalog-0104": {
+    "title": "Portrait de l'impératrice Joséphine",
+    "author": "Pierre-Paul Prud'hon",
+    "year": "1805",
+    "background": "Prud'hon représente l'épouse de Napoléon dans le calme d'un parc ombragé. Loin de la solennité d'un portrait d'apparat, il privilégie l'intimité et la sensibilité du modèle. Ce tableau illustre la diversité de l'art du portrait au début du XIXe siècle.",
+    "look": "Observez la pose assise de l'impératrice devant les frondaisons. Sa robe claire se détache délicatement sur le vert sombre du feuillage. Attardez-vous sur la douceur mélancolique de son regard."
+  },
+  "catalog-0105": {
+    "title": "Une scène de déluge",
+    "author": "Anne-Louis Girodet",
+    "year": "1806",
+    "background": "Inspirée du Déluge biblique, cette peinture d'histoire saisit l'instant dramatique où une famille tente d'échapper aux flots. L'artiste met en scène la fragilité humaine face à une catastrophe extrême. L'émotion et l'angoisse dominent toute la toile.",
+    "look": "Regardez l'arbre prêt à céder et la chaîne formée par les corps. Suivez la ligne tendue des mains qui s'agrippent les unes aux autres. L'arrière-plan ténébreux accentue la détresse de cette famille."
+  },
+  "catalog-0106": {
+    "title": "Les Ombres de Francesca da Rimini et de Paolo Malatesta apparaissent à Dante et à Virgile",
+    "author": "Ary Scheffer",
+    "year": "1855",
+    "background": "Le peintre s'inspire de la « Divine Comédie » de Dante pour évoquer ces deux amants tragiques. Emportées par le tourbillon des Enfers, leurs ombres apparaissent sous les yeux de Dante et de Virgile. La littérature nourrit ici une vision empreinte de mélancolie romantique.",
+    "look": "Portez votre attention sur l'étreinte et le mouvement des deux figures enlacées. Remarquez la distance qui les sépare des deux poètes placés à gauche. Dans la pénombre, la pâleur des chairs renforce leur caractère spectral."
+  },
+  "catalog-0107": {
+    "title": "La Nymphe de Fontainebleau",
+    "author": "Benvenuto Cellini",
+    "year": "1542–1544",
+    "background": "Conçu pour orner le château royal de Fontainebleau, ce grand bas-relief figure une divinité des eaux allongée. Il témoigne du rayonnement des artistes italiens appelés à la cour de France. L'œuvre était destinée à s'intégrer directement dans l'architecture du palais.",
+    "look": "Observez comment le corps épouse le format très allongé de la lunette. Repérez les animaux et les symboles aquatiques qui l'entourent. Imaginez ce bronze monumental surmontant l'entrée d'une résidence royale."
+  },
+  "catalog-0108": {
+    "title": "Mercure enlevant Psyché",
+    "author": "Adriaen de Vries",
+    "year": "1593",
+    "background": "Ce bronze illustre l'épisode mythologique où le messager des dieux porte Psyché vers l'Olympe. Le sculpteur choisit le dénouement heureux qui précède les retrouvailles des amants. L'élan vertical des silhouettes crée une impression de vol suspendu.",
+    "look": "Faites monter votre regard depuis la base jusqu'aux bras tendus vers le haut. Cherchez par quels points d'équilibre le groupe repose sur son socle. Vous pouvez relier ce mythe au célèbre marbre de Canova consacré à Psyché."
+  },
+  "catalog-0109": {
+    "title": "Psyché ranimée par le baiser de l'Amour",
+    "author": "Antonio Canova",
+    "year": "1796–1800",
+    "background": "Canova propose ici une autre interprétation des célèbres amants de la mythologie. Il recherche la perfection des formes juvéniles dans un marbre d'une extrême pureté. Cette œuvre silencieuse suggère l'instant suspendu juste avant et après l'étreinte.",
+    "look": "Observez les points où les corps des deux figures se frôlent et s'unissent. Comparez la finesse des ailes à la souplesse de la chevelure. En tournant autour du groupe, vous découvrirez de nouvelles nuances dans cette scène intime."
+  },
+  "catalog-0110": {
+    "title": "Le Temps découvrant la Vérité",
+    "author": "Giacomo Antonio Ponsonelli",
+    "year": "Vers 1710",
+    "background": "Cette sculpture allégorique personnifie le Temps et la Vérité sous les traits de deux figures. Des notions abstraites prennent vie grâce à l'expressivité des attitudes. Le goût baroque pour la mise en scène théâtrale s'y exprime pleinement.",
+    "look": "Suivez le dialogue des regards entre les deux personnages. Observez le geste qui soulève le voile. Demandez-vous à quels attributs on reconnaît le Temps et la Vérité."
+  },
+  "catalog-0111": {
+    "title": "Nymphe au scorpion",
+    "author": "Lorenzo Bartolini",
+    "year": "1845",
+    "background": "Bartolini saisit la surprise d'une nymphe effrayée par un scorpion. Un incident anecdotique devient prétexte à une étude gracieuse du corps féminin. L'œuvre illustre le raffinement de la sculpture néoclassique au XIXe siècle.",
+    "look": "Cherchez le petit scorpion près des pieds de la jeune femme. Observez comment la frayeur se lit sur son visage et dans le repli de ses mains. De profil, la torsion souple du buste se révèle pleinement."
+  },
+  "catalog-0112": {
+    "title": "Buste de Maria Duglioli Barberini",
+    "author": "Giuliano Finelli",
+    "year": "1626–1627",
+    "background": "Ce portrait sculpté au XVIIe siècle représente une noble dame romaine en marbre. La virtuosité du ciseau éclate dans les dentelles du col et les bijoux. La sérénité du visage contraste avec l'exubérance de la parure.",
+    "look": "Approchez-vous pour admirer la délicatesse des boucles et de la collerette. Comparez le poli lisse du visage aux jeux d'ombre dans les plis du vêtement. N'hésitez pas à observer le buste de profil."
+  },
+  "catalog-0113": {
+    "title": "Hercule et l'Hydre de Lerne",
+    "author": "Sculpteur italien",
+    "year": "XVIIe siècle",
+    "background": "Ce groupe sculpté met en scène le combat du héros antique contre le monstre aux têtes multiples. L'affrontement entre la force humaine et la bête constitue le cœur de l'œuvre. L'enchevêtrement complexe des formes invite à en faire le tour.",
+    "look": "Suivez l'action depuis le bras du héros jusqu'aux cous sinueux du monstre. Chaque angle de vue révèle une silhouette différente. Remarquez aussi comment la composition assure la stabilité de l'ensemble."
+  },
+  "catalog-0114": {
+    "title": "Les Lutteurs",
+    "author": "Philippe Magnier",
+    "year": "1684–1687",
+    "background": "Cette sculpture saisit deux athlètes engagés dans une prise décisive. Inspirée d'un modèle antique, elle apporte énergie et vigueur aux décors de jardins. Le croisement des corps se transforme à mesure que l'on se déplace autour d'elle.",
+    "look": "Suivez tour à tour les quatre bras et les jambes entremêlés. Cherchez où se situe le centre de gravité du groupe. Observez comment les deux corps se soutiennent mutuellement dans l'effort."
+  },
+  "catalog-0115": {
+    "title": "Hercule combattant Achéloüs métamorphosé en serpent",
+    "author": "François-Joseph Bosio",
+    "year": "1824",
+    "background": "L'œuvre illustre le duel opposant Hercule au dieu-fleuve Achéloüs. Le sculpteur saisit l'instant où le héros maîtrise son adversaire transformé en serpent géant. L'énergie héroïque de cette lutte convenait idéalement aux jardins monumentaux.",
+    "look": "Suivez les anneaux du serpent jusqu'à la main d'Hercule qui l'étreint. Repérez les zones où la tension musculaire est à son comble. Vue d'en bas, la stature du héros paraît encore plus imposante."
+  },
+  "catalog-0116": {
+    "title": "Spartacus",
+    "author": "Denis Foyatier",
+    "year": "1830",
+    "background": "Foyatier représente le célèbre chef de la révolte des esclaves dans la Rome antique. Ses chaînes brisées incarnent la soif de liberté. L'œuvre fait écho aux idéaux politiques et aux débats historiques du début du XIXe siècle.",
+    "look": "Remontez des chaînes brisées à ses pieds jusqu'à son visage déterminé. Observez la puissance concentrée dans son bras et la gravité de son expression. Son attitude suggère l'instant qui précède l'action."
+  },
+  "catalog-0117": {
+    "title": "Mercure attachant sa talonnière",
+    "author": "Jean-Baptiste Pigalle",
+    "year": "1744",
+    "background": "Le messager des dieux est saisi au moment où il ajuste sa sandale ailée avant de s'envoler. Pigalle choisit de montrer le dieu le plus rapide dans un instant de calme préparation. Un geste familier se trouve ainsi élevé à la dignité mythologique.",
+    "look": "Observez la position de la main près du pied ailé. Remarquez l'équilibre subtil de ce corps penché en avant. On devine aisément l'élan qui va suivre."
+  },
+  "catalog-0118": {
+    "title": "Le Soldat de Marathon annonçant la victoire",
+    "author": "Jean-Pierre Cortot",
+    "year": "1834",
+    "background": "Ce marbre évoque le messager grec venu proclamer la victoire athénienne après une course épuisante. Le sculpteur réunit dans une même silhouette l'élan du coureur et l'épuisement fatal. Tout un épisode héroïque se condense dans un seul corps.",
+    "look": "Suivez le geste du bras tendu qui brandit la palme. L'inclinaison du buste et des jambes traduit encore la vitesse de la course. Regardez aussi la fatigue profonde marquée sur son visage."
+  },
+  "catalog-0119": {
+    "title": "Faune endormi",
+    "author": "Edme Bouchardon",
+    "year": "1726–1730",
+    "background": "Cette copie d'un célèbre marbre antique montre un faune plongé dans le sommeil. L'artiste étudie avec justesse le relâchement d'un corps sans tension. L'œuvre invite au calme et au repos, à l'image des statues de jardins.",
+    "look": "Observez l'abandon du visage et des mains au repos. Repérez les appuis naturels qui soutiennent la silhouette. Par endroits, le marbre semble acquérir une étonnante souplesse."
+  },
+  "catalog-0120": {
+    "title": "Persée délivrant Andromède",
+    "author": "Pierre Puget",
+    "year": "1684",
+    "background": "Puget met en scène le sauvetage d'Andromède, livrée à un monstre marin. Réalisé pour les jardins de Versailles, ce groupe déborde d'énergie. Le mouvement tourmenté des figures illustre toute la fougue de l'art baroque.",
+    "look": "Suivez l'orientation des regards et des bras qui se répondent. Une puissante dynamique anime la pierre de part en part. En changeant de place, vous verrez les silhouettes se découper différemment."
+  },
+  "catalog-0121": {
+    "title": "Les Quatre Captifs",
+    "author": "Martin Desjardins",
+    "year": "1682–1685",
+    "background": "Ces quatre figures en bronze ornaient à l'origine le piédestal d'un monument royal célébrant Louis XIV. Elles personnifient les nations vaincues enchaînées aux pieds du souverain. Sauvé après la Révolution, ce témoignage politique est parvenu jusqu'à nous.",
+    "look": "Comparez les attitudes et les visages des quatre prisonniers. Repérez les chaînes et les trophées disposés à leurs pieds. Imaginez-les adossés au socle monumental qui portait autrefois la statue du roi."
+  },
+  "catalog-0122": {
+    "title": "Tête d'Aphrodite du type de Cnide",
+    "author": "Sculpteur romain",
+    "year": "IIe siècle apr. J.-C.",
+    "background": "Cette tête reprend les traits d'une célèbre statue grecque d'Aphrodite. Le modèle connut un tel succès qu'il fut copié à de nombreuses reprises dans l'Antiquité. Elle témoigne de la diffusion d'un idéal de beauté classique.",
+    "look": "Observez la coiffure séparée par une raie médiane et l'ovale pur du visage. Comparez son expression paisible à celle d'autres déesses exposées à proximité. Sous un angle légèrement différent, le regard semble s'animer."
+  },
+  "catalog-0123": {
+    "title": "Vénus accroupie, dite Vénus de Vienne",
+    "author": "Sculpteur romain",
+    "year": "Ier–IIe siècle apr. J.-C.",
+    "background": "Cette sculpture antique figure Aphrodite surprise au bain dans une posture accroupie. Ce mouvement inattendu confère à la déesse une grâce plus familière. Le thème fut largement repris et décliné dans tout le monde gréco-romain.",
+    "look": "Suivez la courbe dessinée par les bras et les genoux repliés. Contournez la statue pour admirer le modelé du dos. Vous percevrez aussitôt le contraste avec les Vénus représentées debout."
+  },
+  "catalog-0124": {
+    "title": "Arès Borghèse",
+    "author": "Sculpteur romain",
+    "year": "Ier–IIe siècle apr. J.-C.",
+    "background": "Cette statue romaine représente Arès, le dieu de la guerre. Elle provient de la prestigieuse collection Borghèse acquise par Napoléon. Malgré sa nature guerrière, le dieu apparaît ici dans une attitude calme et méditative.",
+    "look": "Observez le casque empanaché et le port du corps. Comparez les attributs militaires à la sérénité du visage. Selon que vous la regardiez de face ou de côté, la répartition du poids produit un effet différent."
+  },
+  "catalog-0125": {
+    "title": "Hermès dénouant sa sandale",
+    "author": "Sculpteur romain",
+    "year": "Ier–IIe siècle apr. J.-C.",
+    "background": "Le dieu messager Hermès s'incline pour porter la main à sa sandale. L'artiste capture cette divinité agile dans une pause brève, entre deux déplacements. Un geste ordinaire du quotidien entre ainsi dans le répertoire de la grande sculpture antique.",
+    "look": "Observez la tension entre la main et le pied surélevé. Bien que penché en avant, le corps conserve un équilibre parfait. La direction du visage laisse pressentir le mouvement suivant."
+  },
+  "catalog-0126": {
+    "title": "Athéna Mattei",
+    "author": "Sculpteur romain",
+    "year": "Ier–IIe siècle apr. J.-C.",
+    "background": "Cette statue figure Athéna, déesse de la sagesse et de la guerre, d'après un modèle grec classique. Son vêtement drapé et ses attributs militaires rappellent ses deux fonctions protectrices. L'œuvre illustre l'héritage de la statuaire grecque à Rome.",
+    "look": "Repérez le casque sur la tête et l'égide ornant la poitrine. Les plis verticaux de la tunique soulignent la posture ferme du corps. Comparez l'appareil guerrier au calme imperturbable du visage."
+  },
+  "catalog-0127": {
+    "title": "Athéna, dite Pallas de Velletri",
+    "author": "Sculpteur romain",
+    "year": "Ier siècle apr. J.-C.",
+    "background": "Connue sous le nom de Pallas de Velletri, cette statue colossale incarne la majesté des divinités antiques. Ses dimensions imposantes frappent d'emblée le visiteur. Elle doit son aspect actuel à plusieurs restaurations réalisées à l'époque moderne.",
+    "look": "Prenez du recul pour apprécier la hauteur majestueuse de la figure. Observez la régularité des traits du visage et des plis du drapé. En vous rapprochant, vous pourrez repérer les raccords des restaurations anciennes."
+  },
+  "catalog-0128": {
+    "title": "Torse du type du Diadumène",
+    "author": "Sculpteur romain",
+    "year": "Ier–IIe siècle apr. J.-C.",
+    "background": "Ce fragment s'inspire d'une célèbre statue grecque montrant un athlète victorieux ceignant son front d'un bandeau. Même incomplet, le torse conserve toute l'harmonie des proportions classiques. L'absence des membres invite l'imagination à reconstituer le geste originel.",
+    "look": "Remarquez l'inclinaison opposée de la ligne des épaules et de celle des hanches. Imaginez le poids du corps reposant sur une seule jambe. La lumière révèle avec finesse le modelé musculaire du marbre."
+  },
+  "catalog-0129": {
+    "title": "Statuette du dieu Horus faucon (ancienne collection Posno)",
+    "author": "Sculpteur égyptien",
+    "year": "Vers 1000–700 av. J.-C.",
+    "background": "Cette sculpture représente le dieu Horus sous les traits d'un faucon. Vénéré comme protecteur de la royauté pharaonique, il incarne la puissance divine sous une forme animale. L'œuvre provient de l'ancienne collection Posno.",
+    "look": "Observez le bec acéré et le regard perçant de l'oiseau. Les ailes repliées enveloppent fermement le corps. Comparez la silhouette frontale à l'élégance du profil."
+  },
+  "catalog-0130": {
+    "title": "Cercueil extérieur de Tamoutnefret",
+    "author": "Artisan égyptien",
+    "year": "Vers 900 av. J.-C.",
+    "background": "Ce cercueil en bois peint était destiné à protéger la défunte dans l'au-delà. Le visage et les divinités représentés expriment les vœux de renaissance éternelle. Pour les Égyptiens, le sarcophage constituait une véritable enveloppe protectrice et un nouveau corps.",
+    "look": "Descendez du visage paisible vers les larges motifs qui ornent la poitrine. Repérez les hiéroglyphes et les scènes figurant des divinités. Attardez-vous sur les zones où les couleurs d'origine ont gardé tout leur éclat."
+  },
+  "catalog-0131": {
+    "title": "Cercueil de la dame Madja",
+    "author": "Artisan égyptien",
+    "year": "Vers 1000 av. J.-C.",
+    "background": "Réalisé pour une femme nommée Madja, ce cercueil présente un décor foisonnant. Le nom de la défunte y côtoie des figures divines chargées de veiller sur elle. Cet objet funéraire témoigne aussi d'un grand savoir-faire artistique.",
+    "look": "Observez les traits du visage et les peintures qui recouvrent l'ensemble de la cuve. Suivez les contrastes nets entre les différentes couleurs. Remarquez comment l'écriture hiéroglyphique s'intègre harmonieusement au décor."
+  },
+  "catalog-0132": {
+    "title": "Momie d'homme en cartonnage",
+    "author": "Artisan égyptien",
+    "year": "Vers le Ier millénaire av. J.-C.",
+    "background": "Cette momie est revêtue d'une gaine en toile enduite et peinte appelée cartonnage. Ce procédé protégeait le corps tout en accompagnant le défunt vers l'au-delà. L'identité précise du personnage et sa datation exacte sont précisées dans la documentation de la salle.",
+    "look": "Observez comment l'enveloppe épouse fidèlement les contours du corps. Notez la différence entre le traitement du visage et les motifs décoratifs du torse. L'intérêt principal réside dans la lecture des symboles peints à la surface."
+  },
+  "catalog-0133": {
+    "title": "Poignard de Gebel el-Arak",
+    "author": "Artisan égyptien de l'époque prédynastique",
+    "year": "Vers 3300–3200 av. J.-C.",
+    "background": "Façonné avant l'unification de l'Égypte, ce poignard d'apparat associe une lame en silex à un manche en ivoire sculpté. Le décor minutieux montre des animaux ainsi que des scènes d'affrontement. L'objet dépasse largement la simple fonction d'arme.",
+    "look": "Scrutez les minuscules silhouettes humaines et animales gravées sur le manche. Comparez les scènes figurées sur chacune des deux faces. Admirez la maîtrise technique de ce chef-d'œuvre de la préhistoire égyptienne."
+  },
+  "catalog-0134": {
+    "title": "Stèle du roi Djet, dit le Roi Serpent",
+    "author": "Artisan égyptien",
+    "year": "Vers 3000 av. J.-C.",
+    "background": "Cette stèle monumentale appartenait à un souverain des premières dynasties égyptiennes. Les hiéroglyphes y inscrivent le nom royal à une époque où l'écriture prend son essor. En quelques signes épurés s'affirme déjà toute l'autorité du pharaon.",
+    "look": "Repérez le serpent sculpté à l'intérieur du cadre rectangulaire représentant le palais. Observez sa relation avec le faucon perché au-dessus. Voyez avec quelle économie de lignes le nom du roi est gravé dans la pierre."
+  },
+  "catalog-0135": {
+    "title": "Stèle de la princesse Néfertiabet",
+    "author": "Artisan égyptien",
+    "year": "Vers 2590–2565 av. J.-C.",
+    "background": "Cette stèle funéraire de l'Ancien Empire était destinée à une princesse royale. Elle dresse avec précision la liste des offrandes qui lui sont présentées. L'image garantissait ainsi à la défunte de ne jamais manquer de nourriture dans l'au-delà.",
+    "look": "Regardez la princesse assise devant la table chargée d'offrandes. Amusez-vous à identifier les différents aliments figurés en détail. Admirez l'équilibre rigoureux entre les images et les colonnes d'écriture."
+  },
+  "catalog-0136": {
+    "title": "Buste d'une princesse amarnienne",
+    "author": "Sculpteur égyptien",
+    "year": "Vers 1345 av. J.-C.",
+    "background": "Cette statuette figure une jeune fille issue de la famille du pharaon Akhénaton. Elle reflète le style souple et naturaliste propre à la période amarnienne. L'attitude évoque avec naturel l'intimité de la vie de cour.",
+    "look": "Observez le modelé allongé du crâne et la courbe délicate du cou. Comparez ce style aux portraits royaux plus rigides d'autres époques. Remarquez la spontanéité enfantine qui se dégage de la posture."
+  },
+  "catalog-0137": {
+    "title": "Relief d'Akhénaton et de Néfertiti",
+    "author": "Artisan égyptien",
+    "year": "Vers 1345 av. J.-C.",
+    "background": "Ce bas-relief met en scène le couple royal à l'époque de la réforme religieuse d'Amarna. La représentation du roi et de la reine revêt ici une portée profondément sacrée. Derrière l'apparente intimité se cache une image officielle du pouvoir divin.",
+    "look": "Observez l'orientation des deux visages. Cherchez les rayons tombant d'en haut ou les symboles divins qui bénissent le couple. Le creux discret de la gravure met parfaitement les contours en valeur."
+  },
+  "catalog-0138": {
+    "title": "Coupe du général Djéhouty",
+    "author": "Artisan égyptien",
+    "year": "Vers 1450 av. J.-C.",
+    "background": "Cette coupe précieuse porte le nom d'un haut dignitaire militaire de l'Égypte antique. Elle témoigne du raffinement atteint par l'orfèvrerie au service du roi et de son entourage. Même un objet de table devient un symbole de rang et d'autorité.",
+    "look": "Suivez la courbe pure du bord et de la panse. Repérez les inscriptions et les motifs gravés qui l'ornent. Imaginez sans peine les dimensions de cet objet précieux tenu entre les mains."
+  },
+  "catalog-0139": {
+    "title": "La déesse Hathor accueillant Séthi Ier",
+    "author": "Artisan égyptien",
+    "year": "Vers 1280 av. J.-C.",
+    "background": "Provenant du tombeau royal, ce relief illustre la rencontre entre la déesse et le souverain défunt. La protection divine accompagne le pharaon jusque dans le monde d'après la mort. Le dessin des figures témoigne d'une grande maîtrise rituelle.",
+    "look": "Portez votre regard là où les mains des deux figures se rapprochent. Comparez la couronne royale aux attributs de la déesse. La finesse du bas-relief accuse avec élégance chaque silhouette."
+  },
+  "catalog-0140": {
+    "title": "Stèle de Ramsès II enfant",
+    "author": "Artisan égyptien",
+    "year": "Vers 1270 av. J.-C.",
+    "background": "Cette stèle représente le futur grand pharaon Ramsès II sous les traits d'un enfant. L'image et les hiéroglyphes s'unissent pour proclamer le nom royal. La légitimité du pouvoir s'affirme dès le plus jeune âge.",
+    "look": "Observez la petite figure royale et les inscriptions qui l'encadrent. Cherchez comment le nom du souverain est mis en valeur par les signes gravés. Notez les différences d'échelle entre les personnages."
+  },
+  "catalog-0141": {
+    "title": "Taharqa offrant les vases de vin au dieu Hémen",
+    "author": "Sculpteur égyptien",
+    "year": "Vers 690–664 av. J.-C.",
+    "background": "Le roi Taharqa tend deux vases à vin en offrande au dieu faucon Hémen. Cette scène figure le lien rituel qui unit le souverain au monde divin. Elle reflète la rencontre entre la dynastie koushite et la tradition artistique égyptienne.",
+    "look": "Observez les mains du roi présentant les vases rituels. Suivez le face-à-face entre le souverain et la divinité. Attardez-vous sur les détails du pagne et des coiffures royales."
+  },
+  "catalog-0142": {
+    "title": "Stèle de la dame Taperet",
+    "author": "Artisan égyptien",
+    "year": "Vers 900–800 av. J.-C.",
+    "background": "Cette stèle en bois peint fut réalisée pour accompagner une femme dans sa tombe. Les couleurs vives et les prières inscrites adressent une invocation aux dieux. Elle rappelle que l'espérance de l'au-delà concernait aussi les particuliers.",
+    "look": "Observez le cintre arrondi en haut de la stèle et la scène d'offrande. Repérez les parties peintes les mieux préservées. Remarquez comment les colonnes de texte encadrent l'image centrale."
+  },
+  "catalog-0143": {
+    "title": "Statuette d'Ahmès-Néfertari",
+    "author": "Artisan égyptien",
+    "year": "Vers 1300 av. J.-C.",
+    "background": "Cette statuette figure une reine d'Égypte divinisée après sa mort. Elle était vénérée comme la protectrice des artisans chargés de creuser les tombes royales. L'œuvre atteste la longue mémoire dont jouissaient certaines reines.",
+    "look": "Observez sa haute coiffe et les traits de son visage. Cherchez les insignes qui rappellent son statut divin. Cette silhouette invite à distinguer à la fois la reine historique et la déesse protectrice."
+  },
+  "catalog-0144": {
+    "title": "Pectoral au nom de Ramsès II",
+    "author": "Orfèvre égyptien",
+    "year": "Vers 1250 av. J.-C.",
+    "background": "Ce bijou royal porte gravé le cartouche de Ramsès II. Même les parures précieuses servaient à affirmer la puissance du souverain. Ce petit objet concentre une remarquable virtuosité d'orfèvrerie.",
+    "look": "Observez l'inscription centrale et la symétrie parfaite qui l'entoure. Repérez le jeu des matériaux aux couleurs contrastées. Imaginez l'éclat de ce pectoral porté sur la poitrine."
+  },
+  "catalog-0145": {
+    "title": "Statuette de la déesse Bastet sous forme de chatte",
+    "author": "Artisan de l'Égypte antique",
+    "year": "Vers 664–332 av. J.-C.",
+    "background": "Cette figure représente la déesse Bastet sous les traits d'une chatte. Associée au foyer et à la protection, elle faisait l'objet d'une grande dévotion. C'est aussi une petite sculpture animalière d'un charme remarquable.",
+    "look": "Observez le dessin des oreilles et des yeux. Prêtez attention à la sérénité de sa posture assise, et cherchez les détails de la parure autour de son cou."
+  },
+  "catalog-0146": {
+    "title": "Ostracon figurant une tête de roi",
+    "author": "Dessinateur de l'Égypte antique",
+    "year": "Vers 1200 av. J.-C.",
+    "background": "Cet éclat de pierre ou de céramique porte une étude préparatoire d'une tête royale. Contrairement aux œuvres achevées, il révèle les étapes mêmes de la création et nous rapproche du trait de l'artiste.",
+    "look": "Suivez le contour du visage et le tracé de l'œil. Repérez les reprises successives du pinceau : ce modeste fragment annonce déjà l'ampleur des grandes peintures murales."
+  },
+  "catalog-0147": {
+    "title": "Pendentif d'Osorkon II : la triade d'Osiris",
+    "author": "Orfèvre de l'Égypte antique",
+    "year": "Vers 874–850 av. J.-C.",
+    "background": "Ce joyau réunit les divinités Osiris, Isis et Horus, et porte le nom du pharaon Osorkon II. Il associe étroitement le mythe familial des dieux à la légitimité du pouvoir royal.",
+    "look": "Distinguez les trois figures divines, au centre et de part et d'autre. Admirez la finesse du travail de l'or : ce bijou miniature condense tout un récit mythologique."
+  },
+  "catalog-0148": {
+    "title": "Statue de la déesse Sekhmet",
+    "author": "Sculpteur de l'Égypte antique",
+    "year": "Vers 1390–1353 av. J.-C.",
+    "background": "Voici Sekhmet, la déesse à tête de lionne, dont la puissance redoutable pouvait tout aussi bien protéger que détruire. Cette effigie faisait partie d'une vaste série de statues disposées en grand nombre dans le temple.",
+    "look": "Comparez le corps humain et le visage léonin. Repérez le disque solaire au sommet de la tête et les attributs qu'elle tient : une force immense se dégage de cette attitude immobile."
+  },
+  "catalog-0149": {
+    "title": "Vase sculpté en forme d'oiseau aquatique",
+    "author": "Artisan de l'Égypte antique",
+    "year": "Vers 1400 av. J.-C.",
+    "background": "Ce récipient reprend la silhouette d'un oiseau des marais. L'observation attentive de la faune nourrit ici l'art décoratif, intégrant les formes de la nature jusque dans les objets du quotidien.",
+    "look": "Suivez la courbe du bec et du corps. Repérez l'ouverture ménagée pour en faire un récipient, et observez comment le naturalisme de l'oiseau s'accorde à la fonction de l'objet."
+  },
+  "catalog-0150": {
+    "title": "Poignard à tête de cheval de l'époque moghole",
+    "author": "Artisan de l'Empire moghol",
+    "year": "XVIIe siècle",
+    "background": "Ce somptueux poignard est doté d'une poignée sculptée en tête de cheval. Le jade et les pierres précieuses reflètent le goût fastueux des élites : l'arme devient ici un véritable joyau.",
+    "look": "Observez la sculpture des oreilles et des naseaux du cheval. Comparez la couleur de la pierre à celle de la lame métallique, et imaginez la prise en main de cette poignée."
+  },
+  "catalog-0151": {
+    "title": "Panneau de carreaux : joute poétique dans un jardin",
+    "author": "Céramiste d'Iran",
+    "year": "Première moitié du XVIIe siècle",
+    "background": "Ce grand panneau de céramique émaillée illustre le raffinement de la cour safavide en Iran. Deux personnages y rivalisent de poésie au cœur d'un jardin, sur une composition assemblée à partir de soixante-trois carreaux.",
+    "look": "Repérez les deux figures et la végétation du jardin. Suivez du regard les joints entre les carreaux : les bleus et les verts déploient toute la richesse de l'espace."
+  },
+  "catalog-0152": {
+    "title": "Tête de prince",
+    "author": "Artisan du monde islamique",
+    "year": "Vers le XIIe–XIIIe siècle",
+    "background": "Cette tête sculptée représente un personnage princier dont les traits individualisés évoquent la culture de cour. Elle rappelle que l'art islamique possède également une riche tradition de représentation figurée.",
+    "look": "Examinez la forme de la couronne et de la chevelure, puis comparez le modelé des yeux et de la bouche. À partir de ce fragment, imaginez l'allure de la statue entière."
+  },
+  "catalog-0153": {
+    "title": "Aiguière aux oiseaux affrontés",
+    "author": "Orfèvre du monde islamique",
+    "year": "Vers le XIIe siècle",
+    "background": "Cette aiguière en métal intègre deux oiseaux dans sa silhouette même. L'objet utilitaire s'enrichit d'un décor animalier où l'anse et le bec verseur participent pleinement à l'ornementation.",
+    "look": "Repérez les deux oiseaux qui se font face. Cherchez l'orifice par lequel s'écoulait l'eau et l'emplacement de la prise en main, tout en suivant les motifs qui épousent les courbes du vase."
+  },
+  "catalog-0154": {
+    "title": "Chandelier au canard",
+    "author": "Orfèvre du monde islamique",
+    "year": "Vers le XIIe–XIIIe siècle",
+    "background": "Ce chandelier métallique est orné d'un canard, apportant une note d'esprit et de fantaisie à un instrument d'éclairage. La maîtrise technique du métal s'allie ici à une grande vivacité dans l'art animalier.",
+    "look": "Observez la silhouette du canard et l'endroit prévu pour planter la chandelle. Approchez-vous pour suivre les fines gravures et imaginez l'effet de la flamme allumée."
+  },
+  "catalog-0155": {
+    "title": "Lampe de mosquée au nom d'un sultan qalawunide",
+    "author": "Verrier de l'époque mamelouke",
+    "year": "Première moitié du XIVe siècle",
+    "background": "Destinée à éclairer une mosquée, cette lampe en verre émaillé porte le nom du sultan régnant. Couleurs et calligraphies habillaient l'espace sacré tout en inscrivant le prestige du souverain dans la transparence du verre.",
+    "look": "Lisez l'inscription calligraphiée qui court sur la panse. Repérez les attaches destinées à suspendre la lampe, et imaginez les reflets colorés lorsque la lumière y brillait."
+  },
+  "catalog-0156": {
+    "title": "Lecteur au manteau rapiécé",
+    "author": "Enlumineur du monde islamique",
+    "year": "Seconde moitié du XVIe siècle",
+    "background": "Cette miniature destinée à orner l'ouverture d'un manuscrit met en scène un lecteur dont le vêtement composite attire d'emblée l'attention. Sur une surface minuscule se concentrent à la fois récit et décor.",
+    "look": "Observez les contrastes de couleurs sur l'étoffe du manteau. Suivez le regard du personnage vers son livre, sans oublier le rôle des marges et des bordures enluminées qui l'encadrent."
+  },
+  "catalog-0157": {
+    "title": "Plat au paon",
+    "author": "Céramiste du monde islamique",
+    "year": "Seconde moitié du XVIe siècle",
+    "background": "Ce plat en céramique place un paon au centre de sa composition. La silhouette de l'oiseau s'adapte avec souplesse au format circulaire de l'assiette, brouillant avec grâce la frontière entre objet usuel et œuvre d'art.",
+    "look": "Observez l'oiseau au cœur du plat et voyez comment son plumage épouse la courbe du bord. Attardez-vous aussi sur les nuances et les variations de la glaçure."
+  },
+  "catalog-0158": {
+    "title": "Reliure représentant un prince en partie de plaisir dans un jardin",
+    "author": "Artisan du monde islamique",
+    "year": "Seconde moitié du XVIe siècle",
+    "background": "Cette couverture de manuscrit illustre une scène de divertissement princier en plein air. L'étui protecteur du livre devient lui-même un chef-d'œuvre : personnages et motifs végétaux amorcent le récit avant même la lecture.",
+    "look": "Observez le personnage central entouré par la nature. Repérez la symétrie du décor et appréciez la richesse artistique offerte dès l'extérieur du volume."
+  },
+  "catalog-0159": {
+    "title": "Gobelet aux joueurs de polo",
+    "author": "Verrier du monde islamique",
+    "year": "Seconde moitié du XIIIe siècle",
+    "background": "Ce gobelet en verre est décoré de cavaliers disputant une partie de polo. Un divertissement aristocratique prend vie sur un objet de table, déployant toute une scène en mouvement sur une surface réduite.",
+    "look": "Cherchez les chevaux et la balle. Observez comment les figures s'organisent autour de la paroi courbe, et remarquez les zones où les couleurs d'origine subsistent."
+  },
+  "catalog-0160": {
+    "title": "Coupe au porte-étendard",
+    "author": "Céramiste du monde islamique",
+    "year": "Vers le Xe–XIe siècle",
+    "background": "Le fond de cette coupe accueille la figure d'un personnage tenant un étendard. Le centre du récipient se transforme en une petite scène qui évoque la vie de cour ou les cérémonies médiévales.",
+    "look": "Observez l'étendard et le vêtement du personnage. Voyez comment le motif du marli encadre le sujet central, conçu pour être admiré en plongée depuis le haut."
+  },
+  "catalog-0161": {
+    "title": "Deux serviteurs portant un tabouret",
+    "author": "Sculpteur de l'Assyrie antique",
+    "year": "Vers 713–706 av. J.-C.",
+    "background": "Ce bas-relief ornait le palais du roi Sargon II. En montrant des serviteurs transportant du mobilier, il donne à voir le quotidien de la cour et rappelle le rôle de ceux qui soutenaient l'apparat royal.",
+    "look": "Regardez les mains des deux porteurs et les pieds du tabouret. Comparez l'accord de leurs pas et observez les lignes des vêtements qui traduisent l'élan de la marche."
+  },
+  "catalog-0162": {
+    "title": "Sargon II et un haut dignitaire",
+    "author": "Sculpteur de l'Assyrie antique",
+    "year": "Vers 713–706 av. J.-C.",
+    "background": "Ce relief palatial présente le souverain face à l'un de ses plus hauts officiers. La stature et le costume de chacun expriment leur rang, gravant dans la pierre l'ordre politique du palais.",
+    "look": "Comparez la taille et la coiffure des deux figures. Suivez la gestuelle de leurs mains et prêtez attention au dessin rigoureux et régulier des barbes et des draperies."
+  },
+  "catalog-0163": {
+    "title": "Génie ailé bénissant",
+    "author": "Sculpteur de l'Assyrie antique",
+    "year": "Vers 713–706 av. J.-C.",
+    "background": "Sculpté pour protéger le roi et son palais, ce génie ailé mêle traits humains et attributs aviaires afin d'incarner une puissance surnaturelle et bienveillante.",
+    "look": "Observez chaque plume de ses grandes ailes et repérez les objets rituels qu'il tient à la main. Son emplacement était directement lié à la garde des portes du palais."
+  },
+  "catalog-0164": {
+    "title": "Serviteurs transportant le trône à roues du roi",
+    "author": "Sculpteur de l'Assyrie antique",
+    "year": "Vers 713–706 av. J.-C.",
+    "background": "Ce bas-relief montre des hommes déplaçant un imposant trône monté sur roues. Il illustre concrètement les préparatifs des cérémonies et rappelle que la majesté royale reposait sur le travail de nombreux serviteurs.",
+    "look": "Examinez la roue et la structure du trône. Comptez les porteurs et observez la position de leurs pieds, qui traduit le poids de la charge."
+  },
+  "catalog-0165": {
+    "title": "Plaque d'Assarhaddon et de la reine mère Naqi'a",
+    "author": "Sculpteur de l'Assyrie antique",
+    "year": "Vers 670 av. J.-C.",
+    "background": "Cette petite plaque associe le roi Assarhaddon et sa mère Naqi'a, soulignant l'importance politique des liens familiaux à la cour. Elle exprime l'autorité royale sous une forme plus intime que les grands reliefs monumentaux.",
+    "look": "Observez la disposition des deux figures et des inscriptions qui les nomment. Examinez le découpage du bord : ce document modeste éclaire précieusement l'histoire de la dynastie."
+  },
+  "catalog-0166": {
+    "title": "Transport de bois du Liban : débarquement de troncs de cèdre",
+    "author": "Sculpteur de l'Assyrie antique",
+    "year": "Vers 713–706 av. J.-C.",
+    "background": "Cette scène relate l'acheminement des célèbres cèdres du Liban vers la capitale pour édifier le palais royal. À la manière d'une fresque narrative, elle célèbre les vastes chantiers du souverain.",
+    "look": "Repérez les embarcations et les troncs d'arbres. Suivez la répartition des tâches entre les ouvriers et imaginez le long voyage parcouru par ces matériaux."
+  },
+  "catalog-0167": {
+    "title": "Stèle de Mésha",
+    "author": "Artisan du royaume de Moab",
+    "year": "Vers 840 av. J.-C.",
+    "background": "Cette stèle célèbre les hauts faits de Mésha, roi de Moab, qui voulut ainsi transmettre ses exploits à la postérité. Elle constitue un témoignage épigraphique majeur du Levant antique.",
+    "look": "Parcourez du regard l'alignement régulier des lignes gravées, sans négliger les lacunes de la pierre. Lire cette stèle, c'est remonter directement aux sources de l'histoire."
+  },
+  "catalog-0168": {
+    "title": "Maquette architecturale en forme de temple",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le IIe millénaire av. J.-C.",
+    "background": "Cette maquette réduit un sanctuaire à une échelle portative. Elle offre un indice précieux pour restituer l'apparence d'édifices aujourd'hui disparus.",
+    "look": "Observez le dessin de l'entrée et de la toiture, puis cherchez les éléments décoratifs sur les parois afin d'imaginer les proportions du bâtiment réel."
+  },
+  "catalog-0169": {
+    "title": "Élément de mobilier en forme de sphinx",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le IXe–VIIIe siècle av. J.-C.",
+    "background": "Cette figure hybride mi-humaine, mi-animale ornait un meuble. Typique de la Méditerranée orientale où se croisent diverses traditions iconographiques, elle conférait au mobilier une valeur protectrice.",
+    "look": "Observez la transition entre le visage et le corps, et demandez-vous comment la pièce s'insérait dans le meuble : ce petit décor révèle des influences culturelles multiples."
+  },
+  "catalog-0170": {
+    "title": "Divinité assise vêtue d'une large robe évasée",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le XIVe–XIIIe siècle av. J.-C.",
+    "background": "Cette statuette figure une divinité trônante dont le vêtement ample signale le statut éminent. Elle offre un jalon précieux pour comprendre l'iconographie religieuse du Levant antique.",
+    "look": "Examinez l'évasement du vêtement et l'assise de la figure. Repérez la position des mains et ressentez la majesté qui se dégage de sa présentation frontale."
+  },
+  "catalog-0171": {
+    "title": "Statue d'Osorkon Ier",
+    "author": "Artisan de l'Égypte antique",
+    "year": "Vers 924–889 av. J.-C.",
+    "background": "Présentée parmi les collections de Méditerranée orientale, cette effigie d'un pharaon égyptien atteste les échanges entre les régions. Le nom royal et la silhouette affirment d'emblée son autorité.",
+    "look": "Observez la coiffe et le modelé du corps, puis comparez-les aux sculptures des cultures voisines pour imaginer les carrefours d'échanges de l'Antiquité."
+  },
+  "catalog-0172": {
+    "title": "Pectoral d'inspiration égyptienne",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le XVIIIe siècle av. J.-C.",
+    "background": "Cette parure s'inspire des bijoux égyptiens et témoigne de la circulation des motifs en Méditerranée orientale. En imitant un modèle étranger, les ateliers locaux ont donné naissance à une création originale.",
+    "look": "Observez la symétrie des motifs de part et d'autre, et cherchez ce qui le distingue d'un original égyptien, notamment dans le choix des couleurs et des matériaux."
+  },
+  "catalog-0173": {
+    "title": "Veau doré",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le XVIe–XVe siècle av. J.-C.",
+    "background": "Cette petite figurine de bovidé revêtue d'or montre combien l'animal pouvait incarner à la fois le sacré et la richesse. Elle invite à associer l'étude des techniques anciennes à celle des croyances religieuses.",
+    "look": "Observez la courbe des cornes et le dessin du dos, puis étudiez l'éclat du métal en imaginant dans quel contexte cultuel cette minuscule effigie était utilisée."
+  },
+  "catalog-0174": {
+    "title": "Boîte à fard en forme de canard",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le XIVe–XIIIe siècle av. J.-C.",
+    "background": "Ce récipient emprunte sa forme à un oiseau aquatique, mariant un objet de toilette quotidien à une figure animale pleine de fantaisie caractéristique des arts du Levant.",
+    "look": "Observez le raccord entre la tête et le corps, et cherchez comment s'ouvrait le couvercle : la silhouette se lit à la fois comme un oiseau et comme un écrin."
+  },
+  "catalog-0175": {
+    "title": "Coupe de chasse d'Ougarit",
+    "author": "Orfèvre d'Ougarit",
+    "year": "Vers le XIVe siècle av. J.-C.",
+    "background": "Cette patère gravée d'une scène de chasse provient d'Ougarit, grand port de commerce méditerranéen où affluaient et se mêlaient des motifs venus de contrées lointaines.",
+    "look": "Suivez successivement les chasseurs et le gibier pour lire le récit qui se déploie en cercle, tout en admirant la finesse du trait gravé."
+  },
+  "catalog-0176": {
+    "title": "Couvercle de pyxide en ivoire : déesse allaitant des bouquetins",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le XIIIe siècle av. J.-C.",
+    "background": "Sculpté sur le couvercle d'une petite boîte, ce thème d'une divinité nourrissant des animaux évoque la fécondité et l'abondance. Ce chef-d'œuvre d'ivoirerie miniature ouvre une fenêtre sur le monde des croyances.",
+    "look": "Observez la position de la déesse par rapport aux deux bouquetins et appréciez la profondeur du relief, en imaginant la boîte complète dont ce couvercle faisait partie."
+  },
+  "catalog-0177": {
+    "title": "Femme portant un enfant au berceau",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le IIe millénaire av. J.-C.",
+    "background": "Au-delà des effigies royales et divines, cette statuette retient une scène de la vie quotidienne. Cette image de maternité rend le monde antique soudain plus proche et plus humain.",
+    "look": "Repérez la minuscule silhouette de l'enfant et suivez le mouvement des bras de la femme, particulièrement la posture adoptée pour soutenir son poids."
+  },
+  "catalog-0178": {
+    "title": "Personnages préparant du pain ou de la bière",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le IIe millénaire av. J.-C.",
+    "background": "Ce petit groupe réunit plusieurs figures autour de récipients. S'il semble représenter la fabrication du pain ou de la bière, l'identification exacte de l'activité laisse place à plusieurs interprétations.",
+    "look": "Comptez les personnages et observez les gestes de leurs mains autour du récipient central pour imaginer une scène de travail collectif dans l'Antiquité."
+  },
+  "catalog-0179": {
+    "title": "Maquette de bateau avec équipage",
+    "author": "Artisan du Levant antique",
+    "year": "Vers le IIe millénaire av. J.-C.",
+    "background": "Cette embarcation miniature peuplée de figurines reflète l'importance vitale de la navigation et du commerce dans la région. Cette réduction à petite échelle suffit à évoquer tout un récit de voyage.",
+    "look": "Comparez les proportions de la coque et des passagers, puis observez vers où chacun tourne le regard pour imaginer la traversée sur l'eau."
+  },
+  "catalog-0180": {
+    "title": "Commode aux singes",
+    "author": "Ébéniste français du XVIIIe siècle",
+    "year": "Première moitié du XVIIIe siècle",
+    "background": "Ce meuble de cour associe la fonction pratique des tiroirs à un décor malicieux de singeries, témoignant du goût raffiné et fantaisiste de l'aristocratie.",
+    "look": "Cherchez les figures de singes, confrontez le travail du bois aux bronzes dorés et voyez comment les lignes des tiroirs se fondent dans le décor."
+  },
+  "catalog-0181": {
+    "title": "Nécessaire de voyage de Marie-Antoinette",
+    "author": "Artisan français du XVIIIe siècle",
+    "year": "1787–1788",
+    "background": "Conçu pour accompagner les déplacements de la reine, ce coffret rassemble avec méthode tout un ensemble d'accessoires indispensables, offrant un témoignage vivant sur l'intimité de la vie de cour.",
+    "look": "Examinez les compartiments intérieurs et suivez l'agencement millimétré de chaque instrument, en mesurant l'équilibre entre luxe et commodité de transport."
+  },
+  "catalog-0182": {
+    "title": "Pendule de la Création du monde",
+    "author": "Horloger français du XVIIIe siècle",
+    "year": "1754",
+    "background": "Cet instrument astronomique allie la mesure du temps à une iconographie cosmique, illustrant la rencontre entre l'essor des sciences et les arts décoratifs tout en donnant en spectacle la complexité de son mécanisme.",
+    "look": "Observez le cadran et les figures sculptées qui l'entourent, cherchez la frontière entre mécanique et sculpture, et imaginez l'ensemble animé par son mouvement."
+  },
+  "catalog-0183": {
+    "title": "Vase pot-pourri « à vaisseau »",
+    "author": "Céramiste français du XVIIIe siècle",
+    "year": "Vers 1758",
+    "background": "Ce vase à parfum adopte la silhouette d'un navire et impose à la porcelaine une prouesse sculpturale complexe, reflet de la virtuosité et de l'esprit ludique des manufactures royales.",
+    "look": "Repérez la proue et la poupe, cherchez les ajours par où s'échappaient les effluves et admirez l'ingéniosité qui fait oublier la porcelaine sous l'apparence d'un navire."
+  },
+  "catalog-0184": {
+    "title": "Paire de vases à anses en oreilles",
+    "author": "Céramiste français du XVIIIe siècle",
+    "year": "Seconde moitié du XVIIIe siècle",
+    "background": "Conçue pour former un ensemble symétrique, cette paire de vases décoratifs aux anses saillantes en forme d'oreilles était destinée à rythmer et équilibrer l'espace d'un salon.",
+    "look": "Vérifiez la ressemblance entre les deux pièces, suivez la courbe élégante des anses et amusez-vous à chercher de subtiles variations dans les décors peints."
+  },
+  "catalog-0185": {
+    "title": "Commode en laque du Japon",
+    "author": "Ébéniste français du XVIIIe siècle",
+    "year": "Vers 1785",
+    "background": "Ce meuble français intègre de précieux panneaux de laque japonaise, remployés pour satisfaire l'engouement de la cour pour l'Extrême-Orient et mariant deux traditions artisanales sur une même pièce.",
+    "look": "Comparez les surfaces laquées aux montures métalliques, repérez les motifs extrême-orientaux et songez à l'écart géographique entre la forme du meuble et l'origine de son décor."
+  },
+  "catalog-0186": {
+    "title": "Surtout de table",
+    "author": "Artisan français du XVIIIe siècle",
+    "year": "Seconde moitié du XVIIIe siècle",
+    "background": "Destinée à trôner au centre de la table, cette pièce d'apparat composait le décor d'un moment de sociabilité raffinée et transformait l'art de recevoir.",
+    "look": "Observez comment la composition s'étend de part et d'autre du centre, imaginez ce qu'elle pouvait accueillir et représentez-vous les dimensions de la table qui l'entourait."
+  },
+  "catalog-0187": {
+    "title": "Terrine et son présentoir",
+    "author": "Artisan français du XVIIIe siècle",
+    "year": "Vers 1770",
+    "background": "Cet ensemble conçu pour apporter et servir les mets illustre, par ses formes et ses ornements, l'étiquette des arts de la table à la cour, élevant la vaisselle au rang d'œuvre d'art à part entière.",
+    "look": "Comparez le décor du couvercle à celui du plateau, attardez-vous sur le dessin des prises et imaginez les gestes du service."
+  },
+  "catalog-0188": {
+    "title": "Tenture de l'Histoire de Don Quichotte",
+    "author": "Lissier français du XVIIIe siècle",
+    "year": "Seconde moitié du XVIIIe siècle",
+    "background": "Inspirée du célèbre roman de Cervantès, cette tapisserie habillait les murs tout en déployant un récit en images, unissant étroitement la littérature au décor intérieur.",
+    "look": "Situez les protagonistes dans la composition, examinez la manière dont les fils tissés définissent les passages de couleurs, puis prenez un peu de recul pour embrasser l'ensemble de la scène."
+  },
+  "catalog-0189": {
+    "title": "Fauteuil du cabinet turc du comte d'Artois",
+    "author": "Menuisier en sièges français du XVIIIe siècle",
+    "year": "Vers 1780",
+    "background": "Réalisé pour un cabinet d'inspiration exotique, ce siège reflète l'imaginaire des « turqueries » au siècle des Lumières : le mobilier participait pleinement à la mise en scène de la pièce.",
+    "look": "Observez le profil du dossier, confrontez la tapisserie aux boiseries sculptées et imaginez la place de ce fauteuil dans l'harmonie générale du salon."
+  },
+  "catalog-0190": {
+    "title": "Tabatière ornée du portrait de Louis XV",
+    "author": "Orfèvre français du XVIIIe siècle",
+    "year": "Vers 1760",
+    "background": "Dissimulant l'effigie du souverain à l'intérieur de son couvercle, cette boîte de poche chargeait un objet personnel d'une marque d'attachement politique, concentrant tout le raffinement de l'orfèvrerie de cour.",
+    "look": "Comparez l'extérieur et l'intérieur de la boîte, admirez l'ingéniosité du portrait dissimulé et appréciez la virtuosité technique réunie dans le creux de la main."
+  },
+  "catalog-0191": {
+    "title": "Statue de naïade",
+    "author": "Sculpteur français du XVIIIe siècle",
+    "year": "1786",
+    "background": "Cette figure décorative incarne une nymphe mythologique des eaux douces, apportant une note poétique aux appartements ou aux jardins en donnant forme humaine aux forces de la nature.",
+    "look": "Suivez le mouvement fluide des cheveux et des draperies, repérez les attributs évoquant l'eau et pensez au dialogue que la sculpture entretenait avec l'espace environnant."
+  },
+  "cheat": {
+    "title": "Le Tricheur à l'as de carreau",
+    "author": "Georges de La Tour",
+    "year": "Vers 1635",
+    "background": "Chef-d'œuvre de Georges de La Tour, maître incontesté des jeux d'ombre et de lumière au XVIIe siècle en France, ce tableau saisit en plein jour une joute psychologique haletante : un jeune homme riche et naïf est sur le point de se faire dépouiller par trois complices parfaitement coordonnés.",
+    "look": "Suivez le jeu de regards entre les quatre personnages. Au centre, la courtisane et la servante qui verse le vin échangent un coup d'œil entendu, tandis que l'homme à gauche s'apprête à tirer un as de carreau dissimulé dans son dos. Absorbé par ses cartes, le jeune homme à droite demeure seul aveugle au piège qui se referme sur lui."
+  },
+  "bather": {
+    "title": "La Baigneuse, dite Baigneuse de Valpinçon",
+    "author": "Jean-Auguste-Dominique Ingres",
+    "year": "1808",
+    "background": "Peinte à l'âge de vingt-huit ans lors de son séjour à Rome, cette toile marque le premier grand chef-d'œuvre de nu d'Ingres. Le contour épuré de cette femme vue de dos et la lumière douce, presque sans ombre, confèrent à la scène la sérénité intemporelle d'une sculpture antique.",
+    "look": "Savourez le contraste des textures entre la peau lisse du dos, le rideau vert qui retombe à gauche et la blancheur des draps au pied du lit. Fasciné toute sa vie par cette silhouette de dos, Ingres la fera réapparaître cinquante-quatre ans plus tard au centre même du Bain turc, son ultime chef-d'œuvre."
+  },
+  "clubfoot": {
+    "title": "Le Pied-bot",
+    "author": "Jusepe de Ribera",
+    "year": "1642",
+    "background": "Peint à Naples en 1642 par le maître espagnol Jusepe de Ribera, ce tableau bouleversant est un hymne à la dignité humaine. Souffrant d'un handicap au pied droit et portant sa béquille sur l'épaule, ce jeune mendiant se tient pourtant bien droit, le visage illuminé d'un sourire franc, sans la moindre tristesse ni soumission.",
+    "look": "Le petit billet qu'il tient dans la main gauche porte une inscription en latin : « Donnez-moi l'aumône pour l'amour de Dieu. » Pourtant, Ribera adopte ici une contre-plongée digne des portraits princiers et détache sa silhouette sur un ciel bleu lumineux, lui conférant une fierté et une vitalité inébranlables."
+  }
+}

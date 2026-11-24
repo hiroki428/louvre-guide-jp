@@ -1952,6 +1952,8 @@
 /* ==================== LANGUAGE SWITCHER (i18n) ==================== */
 .course-brand-row {
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .course-brand-left {
   display: flex;
@@ -1962,16 +1964,17 @@
 .lang-switch-pills {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 3px;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: 16px;
   background: var(--color-surface, #fff);
   border: 1px solid var(--color-line, #ded8ce);
   flex: none;
 }
 .lang-pill {
-  min-height: 28px;
-  padding: 3px 10px;
+  min-height: 26px;
+  padding: 2px 8px;
   border: 0;
   border-radius: 999px;
   background: transparent;

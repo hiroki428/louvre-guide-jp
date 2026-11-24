@@ -1,19 +1,27 @@
 import {ja} from './locales/ja.js';
 import {en} from './locales/en.js';
+import {fr} from './locales/fr.js';
+import {zh} from './locales/zh.js';
+import {ko} from './locales/ko.js';
+import {es} from './locales/es.js';
 
 export const DEFAULT_LANG = 'ja';
 
 export const SUPPORTED_LANGS = Object.freeze([
   {code: 'ja', label: '日本語', shortLabel: '日本語'},
-  {code: 'en', label: 'English', shortLabel: 'EN'}
+  {code: 'en', label: 'English', shortLabel: 'EN'},
+  {code: 'fr', label: 'Français', shortLabel: 'FR'},
+  {code: 'zh', label: '简体中文', shortLabel: '中文'},
+  {code: 'ko', label: '한국어', shortLabel: '한국어'},
+  {code: 'es', label: 'Español', shortLabel: 'ES'}
 ]);
 
-const DICTIONARIES = Object.freeze({ja, en});
+const DICTIONARIES = Object.freeze({ja, en, fr, zh, ko, es});
 
-// Optional work-level translation overlay maps registered per language (populated in future locale packs).
+// Optional work-level translation overlay maps registered per language (lazy-loaded JSON packs).
 const workLocaleOverrides = new Map();
 
-// Fixed labels embedded in generated floor-map-geo.js / works.json locationLabel
+// Fixed labels embedded in generated floor-map-geo.js
 const MAP_TEXT_TRANSLATIONS = Object.freeze({
   en: Object.freeze({
     'リシュリュー翼': 'Richelieu Wing',
@@ -29,6 +37,66 @@ const MAP_TEXT_TRANSLATIONS = Object.freeze({
     'ナポレオンホール': 'Hall Napoléon',
     'ピラミッド中央入口': 'Pyramid Entrance',
     'ナポレオン・ホール中央': 'Hall Napoléon Center'
+  }),
+  fr: Object.freeze({
+    'リシュリュー翼': 'Aile Richelieu',
+    'シュリー翼': 'Aile Sully',
+    'ドゥノン翼': 'Aile Denon',
+    '工事中（閉鎖）': 'Fermé',
+    '工事中': 'Fermé',
+    'ステュディオ': 'Le Studio',
+    '休憩エリア': 'Espace repos',
+    '企画展': 'Exposition',
+    '特別展示': 'Expo temp.',
+    '出口': 'Sortie',
+    'ナポレオンホール': 'Hall Napoléon',
+    'ピラミッド中央入口': 'Entrée Pyramide',
+    'ナポレオン・ホール中央': 'Centre Hall Napoléon'
+  }),
+  zh: Object.freeze({
+    'リシュリュー翼': '黎塞留馆',
+    'シュリー翼': '叙利馆',
+    'ドゥノン翼': '德农馆',
+    '工事中（閉鎖）': '施工关闭',
+    '工事中': '施工中',
+    'ステュディオ': '工作室',
+    '休憩エリア': '休息区',
+    '企画展': '特展',
+    '特別展示': '特别展览',
+    '出口': '出口',
+    'ナポレオンホール': '拿破仑大厅',
+    'ピラミッド中央入口': '金字塔主入口',
+    'ナポレオン・ホール中央': '拿破仑大厅中央'
+  }),
+  ko: Object.freeze({
+    'リシュリュー翼': '리슐리외관',
+    'シュリー翼': '쉴리관',
+    'ドゥノン翼': '드농관',
+    '工事中（閉鎖）': '공사 중',
+    '工事中': '공사 중',
+    'ステュディオ': '스튜디오',
+    '休憩エリア': '휴식 공간',
+    '企画展': '기획전',
+    '特別展示': '특별전',
+    '出口': '출구',
+    'ナポレオンホール': '나폴레옹 홀',
+    'ピラミッド中央入口': '피라미드 중앙 입구',
+    'ナポレオン・ホール中央': '나폴레옹 홀 중앙'
+  }),
+  es: Object.freeze({
+    'リシュリュー翼': 'Ala Richelieu',
+    'シュリー翼': 'Ala Sully',
+    'ドゥノン翼': 'Ala Denon',
+    '工事中（閉鎖）': 'Cerrado',
+    '工事中': 'Cerrado',
+    'ステュディオ': 'El Estudio',
+    '休憩エリア': 'Zona de descanso',
+    '企画展': 'Exposición',
+    '特別展示': 'Expo temp.',
+    '出口': 'Salida',
+    'ナポレオンホール': 'Hall Napoléon',
+    'ピラミッド中央入口': 'Entrada Pirámide',
+    'ナポレオン・ホール中央': 'Centro Hall Napoléon'
   })
 });
 
@@ -45,6 +113,58 @@ const LOCATION_LABEL_TRANSLATIONS = Object.freeze({
     '現在 貸出中（シンガポール・アジア文明博物館）': 'On loan (Asian Civilisations Museum, Singapore)',
     '現在 貸出中（アラブ世界研究所）': 'On loan (Institut du Monde Arabe)',
     '現在 貸出中（メゾン＝ラフィット城）': 'On loan (Château de Maisons-Laffitte)'
+  }),
+  fr: Object.freeze({
+    '現在 非展示（公式収蔵DB）': 'Non exposé actuellement (Louvre DB)',
+    '現在 貸出中（ルーブル・アブダビ）': 'En prêt (Louvre Abou Dabi)',
+    '現在 貸出中（アルル古代博物館）': 'En prêt (Musée départemental Arles antique)',
+    '現在 貸出中（フォンテーヌブロー宮殿）': 'En prêt (Château de Fontainebleau)',
+    '現在 貸出中（ルーブル・ランス）': 'En prêt (Louvre-Lens)',
+    '0階 · リシュリュー翼 · 偉人ギャラリー': 'Niveau 0 · Aile Richelieu · Galerie des Grands Hommes',
+    '1階 · ドゥノン翼 · モリアン階段踊り場': 'Niveau 1 · Aile Denon · Escalier Mollien',
+    '現在 貸出中（バイヨンヌ・ボナ＝エリュー美術館）': 'En prêt (Musée Bonnat-Helleu, Bayonne)',
+    '現在 貸出中（シンガポール・アジア文明博物館）': 'En prêt (Asian Civilisations Museum, Singapour)',
+    '現在 貸出中（アラブ世界研究所）': 'En prêt (Institut du Monde Arabe)',
+    '現在 貸出中（メゾン＝ラフィット城）': 'En prêt (Château de Maisons-Laffitte)'
+  }),
+  zh: Object.freeze({
+    '現在 非展示（公式収蔵DB）': '目前未展出（卢浮宫官方数据库）',
+    '現在 貸出中（ルーブル・アブダビ）': '目前外借中（阿布扎比卢浮宫）',
+    '現在 貸出中（アルル古代博物館）': '目前外借中（阿尔勒古代博物馆）',
+    '現在 貸出中（フォンテーヌブロー宮殿）': '目前外借中（枫丹白露宫）',
+    '現在 貸出中（ルーブル・ランス）': '目前外借中（卢浮宫朗斯分馆）',
+    '0階 · リシュリュー翼 · 偉人ギャラリー': '0层 · 黎塞留馆 · 伟人长廊',
+    '1階 · ドゥノン翼 · モリアン階段踊り場': '1层 · 德农馆 · 莫利安楼梯平台',
+    '現在 貸出中（バイヨンヌ・ボナ＝エリュー美術館）': '目前外借中（巴约讷博纳-埃勒美术馆）',
+    '現在 貸出中（シンガポール・アジア文明博物館）': '目前外借中（新加坡亚洲文明博物馆）',
+    '現在 貸出中（アラブ世界研究所）': '目前外借中（阿拉伯世界研究所）',
+    '現在 貸出中（メゾン＝ラフィット城）': '目前外借中（梅宗拉菲特城堡）'
+  }),
+  ko: Object.freeze({
+    '現在 非展示（公式収蔵DB）': '현재 미전시 (루브르 공식 DB)',
+    '現在 貸出中（ルーブル・アブダビ）': '현재 대여 중 (루브르 아부다비)',
+    '現在 貸出中（アルル古代博物館）': '현재 대여 중 (아를 고대 박물관)',
+    '現在 貸出中（フォンテーヌブロー宮殿）': '현재 대여 중 (퐁텐블로 궁전)',
+    '現在 貸出中（ルーブル・ランス）': '현재 대여 중 (루브르 랑스)',
+    '0階 · リシュリュー翼 · 偉人ギャラリー': '0층 · 리슐리외관 · 위인 갤러리',
+    '1階 · ドゥノン翼 · モリアン階段踊り場': '1층 · 드농관 · 몰리앙 계단 참',
+    '現在 貸出中（バイヨンヌ・ボナ＝エリュー美術館）': '현재 대여 중 (바욘 보나-엘뢰 미술관)',
+    '現在 貸出中（シンガポール・アジア文明博物館）': '현재 대여 중 (싱가포르 아시아 문명 박물관)',
+    '現在 貸出中（アラブ世界研究所）': '현재 대여 중 (아랍 세계 연구소)',
+    '現在 貸出中（メゾン＝ラフィット城）': '현재 대여 중 (메종-라피트 성)'
+  }),
+  es: Object.freeze({
+    '現在 非展示（公式収蔵DB）': 'Actualmente no expuesta (BD Louvre)',
+    '現在 貸出中（ルーブル・アブダビ）': 'En préstamo (Louvre Abu Dabi)',
+    '現在 貸出中（アルル古代博物館）': 'En préstamo (Museo Departamental Arles Antiguo)',
+    '現在 貸出中（フォンテーヌブロー宮殿）': 'En préstamo (Palacio de Fontainebleau)',
+    '現在 貸出中（ルーブル・ランス）': 'En préstamo (Louvre-Lens)',
+    '0階 · リシュリュー翼 · 偉人ギャラリー': 'Planta 0 · Ala Richelieu · Galería de los Grandes Hombres',
+    '1階 · ドゥノン翼 · モリアン階段踊り場': 'Planta 1 · Ala Denon · Escalera Mollien',
+    '現在 貸出中（バイヨンヌ・ボナ＝エリュー美術館）': 'En préstamo (Museo Bonnat-Helleu, Bayona)',
+    '現在 貸出中（シンガポール・アジア文明博物館）': 'En préstamo (Museo de Civilizaciones Asiáticas, Singapur)',
+    '現在 貸出中（アラブ世界研究所）': 'En préstamo (Instituto del Mundo Árabe)',
+    '現在 貸出中（メゾン＝ラフィット城）': 'En préstamo (Castillo de Maisons-Laffitte)'
   })
 });
 
