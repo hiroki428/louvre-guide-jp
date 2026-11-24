@@ -448,5 +448,26 @@ export const ja = Object.freeze({
   'settings.scopeTitle': '地図・経路データについて',
   'settings.scopeBody': '階別地図の建物輪郭、部屋番号、通路、扉、移動設備、主要施設、作品位置は公式館内マップおよび館内建築データを基準に再構成しています。展示室の開室状況は当日の館内表示を優先してください。',
   'settings.creditsSummary': '作品画像の出典・ライセンス（{count}件）',
-  'settings.creditSource': '出典 ↗'
+  'settings.creditSource': '出典 ↗',
+
+  'auth.sectionTitle': 'アカウント・端末間同期（任意）',
+  'auth.guestNote': 'ログインなしのまま全機能を使えます。ログインすると、PCとスマホ間でマイプラン・鑑賞済みチェック・設定を自動同期できます。',
+  'auth.notConfigured': 'クラウド同期は現在準備中です（Supabase の接続設定を行うと有効になります）。このままゲストとして引き続きご利用いただけます。',
+  'auth.signedInAs': 'ログイン中：{email}',
+  'auth.syncIdle': '同期済み',
+  'auth.syncPending': '未同期の変更あり（オンライン復帰時に自動同期）',
+  'auth.syncSyncing': '同期中…',
+  'auth.syncError': '同期に失敗しました（端末には保存済み）',
+  'auth.syncNowBtn': '今すぐ同期',
+  'auth.signOutBtn': 'ログアウト',
+  'auth.googleBtn': 'Google でログイン',
+  'auth.emailLabel': 'メールアドレスでログイン（ワンタイムリンク）',
+  'auth.emailPlaceholder': 'you@example.com',
+  'auth.sendLinkBtn': 'ログインリンクを送信',
+  'auth.sendingLink': '送信中…',
+  'auth.linkSent': 'ログイン用メールを送信しました。メール内のリンクを開いてください。',
+  'auth.invalidEmail': '有効なメールアドレスを入力してください',
+  'auth.sendFailed': '送信できませんでした。通信状態を確認して再度お試しください。',
+  'auth.signedOutNotice': 'ログアウトしました（端末内のデータはそのまま残ります）',
+  'auth.syncedNotice': 'クラウドとデータを同期しました'
 });
