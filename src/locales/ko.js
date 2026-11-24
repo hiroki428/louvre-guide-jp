@@ -452,5 +452,26 @@ export const ko = Object.freeze({
   'settings.scopeTitle': '지도 및 경로 데이터 안내',
   'settings.scopeBody': '층별 윤곽, 전시실 번호, 통로, 계단, 엘리베이터, 편의시설 및 작품 위치는 루브르 공식 층별 안내도를 바탕으로 재구성되었습니다. 전시실 폐쇄 여부는 당일 현장 안내를 따라 주세요.',
   'settings.creditsSummary': '이미지 출처 및 라이선스 ({count}건)',
-  'settings.creditSource': '출처 ↗'
+  'settings.creditSource': '출처 ↗',
+
+  'auth.sectionTitle': '계정 및 클라우드 동기화 (선택)',
+  'auth.guestNote': '로그인 없이 모든 기능을 사용할 수 있습니다. 로그인하면 내 플랜, 감상 완료 기록, 설정을 기기 간에 자동 동기화할 수 있습니다.',
+  'auth.notConfigured': '클라우드 동기화가 아직 설정되지 않았습니다(Supabase URL과 공개 키를 입력하면 활성화됩니다). 게스트로 계속 이용하실 수 있습니다.',
+  'auth.signedInAs': '로그인됨: {email}',
+  'auth.syncIdle': '동기화됨',
+  'auth.syncPending': '동기화 대기 중인 변경 사항 있음 (온라인 복귀 시 자동 동기화)',
+  'auth.syncSyncing': '동기화 중…',
+  'auth.syncError': '동기화 실패 (변경 사항은 이 기기에 안전하게 저장됨)',
+  'auth.syncNowBtn': '지금 동기화',
+  'auth.signOutBtn': '로그아웃',
+  'auth.googleBtn': 'Google로 계속하기',
+  'auth.emailLabel': '이메일로 로그인 (매직 링크)',
+  'auth.emailPlaceholder': 'you@example.com',
+  'auth.sendLinkBtn': '로그인 링크 보내기',
+  'auth.sendingLink': '전송 중…',
+  'auth.linkSent': '로그인 링크를 보냈습니다. 이메일에서 링크를 열어 주세요.',
+  'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
+  'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
+  'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
 });

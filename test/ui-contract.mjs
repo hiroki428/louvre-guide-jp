@@ -18,6 +18,7 @@ async function loadSplitUiSources() {
     mapTabFile: await readFile(new URL('../src/views/map-tab.js', import.meta.url), 'utf8'),
     splitPaths: [
       './src/i18n.js',
+      './src/supabase-config.js',
       ...localeFiles.map(f => `./src/locales/${f}`),
       ...appFiles.map(f => `./src/app/${f}`),
       ...viewFiles.map(f => `./src/views/${f}`)

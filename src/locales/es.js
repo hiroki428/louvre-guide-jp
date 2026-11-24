@@ -452,5 +452,26 @@ export const es = Object.freeze({
   'settings.scopeTitle': 'Acerca de los datos de mapa y rutas',
   'settings.scopeBody': 'Los contornos de plantas, números de sala, pasillos, escaleras, ascensores, servicios y posiciones de obras se reconstruyeron a partir de planos oficiales del Louvre. Sigue la señalización presencial ante cierres de salas.',
   'settings.creditsSummary': 'Créditos de imágenes y licencias ({count})',
-  'settings.creditSource': 'Fuente ↗'
+  'settings.creditSource': 'Fuente ↗',
+
+  'auth.sectionTitle': 'Cuenta y sincronización en la nube (opcional)',
+  'auth.guestNote': 'Todas las funciones funcionan sin iniciar sesión. Inicia sesión para sincronizar Mi Plan, las obras vistas y los ajustes entre dispositivos.',
+  'auth.notConfigured': 'La sincronización en la nube aún no está configurada (añade la URL y clave pública de Supabase para activarla). Puedes seguir usando todo como invitado.',
+  'auth.signedInAs': 'Sesión iniciada como {email}',
+  'auth.syncIdle': 'Sincronizado',
+  'auth.syncPending': 'Cambios locales pendientes (se sincronizarán al volver en línea)',
+  'auth.syncSyncing': 'Sincronizando…',
+  'auth.syncError': 'Error de sincronización (tus cambios siguen guardados en este dispositivo)',
+  'auth.syncNowBtn': 'Sincronizar ahora',
+  'auth.signOutBtn': 'Cerrar sesión',
+  'auth.googleBtn': 'Continuar con Google',
+  'auth.emailLabel': 'Iniciar sesión por correo (enlace mágico)',
+  'auth.emailPlaceholder': 'tu@ejemplo.com',
+  'auth.sendLinkBtn': 'Enviar enlace de acceso',
+  'auth.sendingLink': 'Enviando…',
+  'auth.linkSent': '¡Enlace enviado! Revisa tu correo y abre el enlace.',
+  'auth.invalidEmail': 'Introduce una dirección de correo válida',
+  'auth.sendFailed': 'No se pudo enviar el enlace. Revisa tu conexión e inténtalo de nuevo.',
+  'auth.signedOutNotice': 'Sesión cerrada (tus datos siguen guardados en este dispositivo)',
+  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube'
 });

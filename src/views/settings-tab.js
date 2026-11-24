@@ -16,10 +16,50 @@ export function settingsTabView(ctx, hasMini) {
       ? tr('settings.allSaved')
       : tr('settings.bulkSaveBtn', {label: plan.label, count: items.length});
 
+  const auth = state.auth;
+  const authStatusText = auth.status === 'syncing'
+    ? tr('auth.syncSyncing')
+    : auth.status === 'error'
+      ? tr('auth.syncError')
+      : auth.pending
+        ? tr('auth.syncPending')
+        : tr('auth.syncIdle');
+  const accountCard = `<section class="settings-card account-sync-card" aria-label="${esc(tr('auth.sectionTitle'))}">
+      <h2>${esc(tr('auth.sectionTitle'))}</h2>
+      <p class="account-note">${esc(tr('auth.guestNote'))}</p>
+      ${!auth.configured
+        ? `<p class="account-status-muted">${esc(tr('auth.notConfigured'))}</p>`
+        : auth.user
+          ? `<div class="setting-row">
+              <div>
+                <strong>${esc(tr('auth.signedInAs', {email: auth.user.email || auth.user.id}))}</strong>
+                <small>${esc(authStatusText)}</small>
+              </div>
+              <div class="setting-actions">
+                <button type="button" class="primary compact-btn" data-sync-now ${auth.status === 'syncing' || state.offline ? 'disabled' : ''}>${esc(tr('auth.syncNowBtn'))}</button>
+                <button type="button" class="secondary compact-btn" data-sign-out>${esc(tr('auth.signOutBtn'))}</button>
+              </div>
+            </div>`
+          : `<div class="account-login-box">
+              <button type="button" class="primary compact-btn" data-signin-google>${esc(tr('auth.googleBtn'))}</button>
+              <form class="auth-email-form" data-signin-email novalidate>
+                <label for="auth-email">${esc(tr('auth.emailLabel'))}</label>
+                <div class="room-input-row">
+                  <input id="auth-email" name="email" type="email" autocomplete="email" value="${esc(auth.emailDraft)}" placeholder="${esc(tr('auth.emailPlaceholder'))}">
+                  <button type="submit" class="secondary compact-btn" ${auth.status === 'sending' ? 'disabled' : ''}>${esc(auth.status === 'sending' ? tr('auth.sendingLink') : tr('auth.sendLinkBtn'))}</button>
+                </div>
+              </form>
+              ${auth.message ? `<p class="auth-msg-ok" role="status">${esc(auth.message)}</p>` : ''}
+              ${auth.error ? `<p class="room-error" role="alert">${esc(auth.error)}</p>` : ''}
+            </div>`}
+    </section>`;
+
   return `<main class="tab-screen other-page ${hasMini ? 'has-mini-player' : ''}">
     <div class="eyebrow">${esc(tr('settings.eyebrow'))}</div>
     <h1>${esc(tr('settings.title'))}</h1>
     <p class="information-lead">${esc(tr('settings.lead'))}</p>
+
+    ${accountCard}
 
     <section class="settings-card">
       <h2>${esc(tr('settings.cardTitle'))}</h2>
@@ -121,8 +161,16 @@ export function settingsTabView(ctx, hasMini) {
 }
 
 export function wireSettingsTab(ctx) {
-  const {state, navigationIndex, audio} = ctx;
+  const {state, navigationIndex, audio, cloudSync} = ctx;
 
+  document.querySelector('[data-signin-google]')?.addEventListener('click', () => cloudSync?.signInWithGoogle());
+  document.querySelector('[data-signin-email]')?.addEventListener('submit', event => {
+    event.preventDefault();
+    const email = new FormData(event.currentTarget).get('email');
+    cloudSync?.signInWithEmail(email);
+  });
+  document.querySelector('[data-sync-now]')?.addEventListener('click', () => cloudSync?.syncNow({silent: false}));
+  document.querySelector('[data-sign-out]')?.addEventListener('click', () => cloudSync?.signOut());
   document.querySelector('[data-clear-cache]')?.addEventListener('click', audio.clearAudioCache);
   document.querySelector('[data-reset-progress]')?.addEventListener('click', () => {
     if (!window.confirm(t('settings.resetConfirm', null, state.lang))) return;

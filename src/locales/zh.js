@@ -452,5 +452,26 @@ export const zh = Object.freeze({
   'settings.scopeTitle': '关于地图与路线数据',
   'settings.scopeBody': '各楼层建筑轮廓、展室编号、通道、楼梯、电梯、服务设施及作品位置均依据卢浮宫官方平面图重新绘制。如遇展室临时关闭，请以现场指示为准。',
   'settings.creditsSummary': '作品图片来源与授权许可（{count}项）',
-  'settings.creditSource': '来源 ↗'
+  'settings.creditSource': '来源 ↗',
+
+  'auth.sectionTitle': '账号与云端同步（可选）',
+  'auth.guestNote': '无需登录即可使用全部功能。登录后可在电脑与手机间自动同步我的行程、已看记录与设置。',
+  'auth.notConfigured': '云端同步尚未配置（填入 Supabase URL 和公开密钥后即可启用）。您仍可以游客身份继续使用全部功能。',
+  'auth.signedInAs': '已登录：{email}',
+  'auth.syncIdle': '已同步',
+  'auth.syncPending': '有未同步更改（恢复联网后自动同步）',
+  'auth.syncSyncing': '正在同步…',
+  'auth.syncError': '同步失败（更改已安全保存在本设备）',
+  'auth.syncNowBtn': '立即同步',
+  'auth.signOutBtn': '退出登录',
+  'auth.googleBtn': '使用 Google 登录',
+  'auth.emailLabel': '邮箱登录（免密链接）',
+  'auth.emailPlaceholder': 'you@example.com',
+  'auth.sendLinkBtn': '发送登录链接',
+  'auth.sendingLink': '发送中…',
+  'auth.linkSent': '登录链接已发送，请查收邮件并打开链接。',
+  'auth.invalidEmail': '请输入有效的邮箱地址',
+  'auth.sendFailed': '发送失败，请检查网络后重试。',
+  'auth.signedOutNotice': '已退出登录（本设备上的数据仍会保留）',
+  'auth.syncedNotice': '已与云端同步行程和设置'
 });

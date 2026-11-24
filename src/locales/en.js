@@ -452,5 +452,26 @@ export const en = Object.freeze({
   'settings.scopeTitle': 'About Map & Route Data',
   'settings.scopeBody': 'Floor outlines, room numbers, passages, stairs, elevators, facilities, and artwork positions are reconstructed from official Louvre floor plans. Please follow on-site signage for room closures.',
   'settings.creditsSummary': 'Image Credits & Licenses ({count})',
-  'settings.creditSource': 'Source ↗'
+  'settings.creditSource': 'Source ↗',
+
+  'auth.sectionTitle': 'Account & Cloud Sync (Optional)',
+  'auth.guestNote': 'All features work without signing in. Sign in to sync your My Plan, viewed artworks, and settings across devices.',
+  'auth.notConfigured': 'Cloud sync is not configured yet (set Supabase URL & Anon Key to enable). You can continue using all features as a guest.',
+  'auth.signedInAs': 'Signed in as {email}',
+  'auth.syncIdle': 'Synced',
+  'auth.syncPending': 'Local changes pending sync (will auto-sync when online)',
+  'auth.syncSyncing': 'Syncing…',
+  'auth.syncError': 'Sync failed (changes are safely saved on this device)',
+  'auth.syncNowBtn': 'Sync Now',
+  'auth.signOutBtn': 'Sign Out',
+  'auth.googleBtn': 'Continue with Google',
+  'auth.emailLabel': 'Sign in via Email (Magic Link)',
+  'auth.emailPlaceholder': 'you@example.com',
+  'auth.sendLinkBtn': 'Send Sign-In Link',
+  'auth.sendingLink': 'Sending…',
+  'auth.linkSent': 'Sign-in link sent! Please check your email and open the link.',
+  'auth.invalidEmail': 'Please enter a valid email address',
+  'auth.sendFailed': 'Could not send sign-in link. Please check your connection and try again.',
+  'auth.signedOutNotice': 'Signed out (your data remains saved on this device)',
+  'auth.syncedNotice': 'Synced your plan and settings with the cloud'
 });

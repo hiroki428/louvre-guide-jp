@@ -6,6 +6,7 @@ import {createAppStore, readPersistedState} from './app/state.js';
 import {bottomTabsMarkup, createNoticeController, esc, noticeMarkup} from './app/ui-helpers.js';
 import {createAudioController} from './app/audio-controller.js';
 import {createPlanActions} from './app/plan-actions.js';
+import {createAuthSyncController} from './app/cloud-sync.js';
 import {courseSelectView, wireCourseSelect} from './views/course-select.js';
 import {mapTabView, wireMapTab} from './views/map-tab.js';
 import {planTabView, wirePlanTab} from './views/plan-tab.js';
@@ -182,6 +183,7 @@ const ctx = {
   navigationIndex,
   ...store,
   ...notices,
+  t: (key, params) => t(key, params, store.state.lang),
   visibleAudioWorks: () => visibleAudioWorks(ctx),
   openWorkDetail: (workId, roomWorkIds) => openWorkDetail(ctx, workId, roomWorkIds),
   closeWorkDetail: () => closeWorkDetail(ctx),
@@ -190,6 +192,7 @@ const ctx = {
 
 ctx.audio = createAudioController(ctx);
 ctx.planActions = createPlanActions(ctx);
+ctx.cloudSync = createAuthSyncController(ctx);
 
 function wireShell() {
   const {state, maxRoutableCount, planActions, audio} = ctx;
@@ -361,7 +364,7 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register(new URL('sw.js', appBase)).catch(() => {});
 }
 
-window.addEventListener('online', () => { ctx.state.offline = false; render(); });
+window.addEventListener('online', () => { ctx.state.offline = false; ctx.cloudSync.flushPending(); render(); });
 window.addEventListener('offline', () => { ctx.state.offline = true; render(); });
 
 ctx.audio.player.addEventListener('timeupdate', ctx.audio.syncSeekBars);
@@ -373,7 +376,10 @@ window.addEventListener('keydown', event => {
   }
 });
 
-const downloadsPromise = ctx.audio.loadDownloads();
+const downloadsPromise = Promise.all([
+  ctx.audio.loadDownloads(),
+  ctx.cloudSync.init()
+]);
 
 if (!skipSplashImmediate) {
   onSplashLangSelected = applied => {

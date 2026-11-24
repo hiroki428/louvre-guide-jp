@@ -86,8 +86,14 @@ export function createAppStore({
     notice: null,
     undo: null,
     processedArrivalEvents: new Set(),
-    support: {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''}
+    support: {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''},
+    auth: {configured: false, user: null, status: 'idle', emailDraft: '', pending: false, lastSyncedAt: null, message: '', error: ''}
   };
+
+  let persistListener = null;
+  function setPersistListener(fn) {
+    persistListener = typeof fn === 'function' ? fn : null;
+  }
 
   const navOptions = () => ({preferElevator: state.preferElevator, lang: state.lang});
   const currentPlan = () => activePlanMeta({
@@ -168,7 +174,7 @@ export function createAppStore({
     state.selected = currentPlan().ids[0] ?? works[0]?.id ?? null;
   }
 
-  function persistState() {
+  function persistState({skipSync = false} = {}) {
     const plan = currentPlan();
     const sessionProgress = !plan.isCustom ? {
       version: 2,
@@ -208,6 +214,7 @@ export function createAppStore({
       try { sessionStorage.setItem(SESSION_PROGRESS_KEY, JSON.stringify(sessionProgress)); }
       catch { /* sessionStorage optional */ }
     }
+    if (!skipSync && persistListener) persistListener();
   }
 
   function navigationView() {
@@ -230,6 +237,7 @@ export function createAppStore({
     audioPath,
     preferredLengthFor,
     setAppLang,
+    setPersistListener,
     persistState,
     navigationView,
     roomWorksFor
