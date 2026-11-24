@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readdir, readFile} from 'node:fs/promises';
+import {mapTabView} from '../src/views/map-tab.js';
 
 async function loadSplitUiSources() {
   const appFiles = (await readdir(new URL('../src/app/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
@@ -76,6 +77,10 @@ assert.match(main, /label: '音声一覧'/);
 assert.match(main, /label: '案内・設定'/);
 assert.match(main, /data-change-course/);
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
+assert.match(mapTabSection, /has-destination/, 'floor tab must highlight the floor containing the next artwork');
+assert.match(mapTabSection, /class="floor-next-badge">次の作品<\/em>/, 'floor tab must display a clear 次の作品 badge on the destination floor');
+assert.match(css, /\.floor-tabs button\.has-destination/, 'destination floor tab highlight style must exist');
+assert.match(css, /\.floor-next-badge/, 'destination floor badge style must exist');
 assert.match(main, /data-mini-prev/, 'Spotify-style player must provide ⏮ previous control');
 assert.match(main, /data-mini-play/, 'Spotify-style player must provide ▶/⏸ toggle');
 assert.match(main, /data-mini-next/, 'Spotify-style player must provide ⏭ next/complete control');
@@ -95,5 +100,45 @@ assert.match(css, /\.tier-badge\.tier-silver/, 'silver badge style required for 
 assert.match(css, /\.tier-badge\.tier-bronze/, 'bronze badge style required for 傑作');
 assert.match(css, /\.room-input-row input \{[^}]*min-height:\s*44px/s, 'room input needs a mobile tap target');
 assert.match(css, /\.bottom-tabs \{[^}]*position:\s*fixed;[^}]*bottom:\s*0/s, 'bottom tabs must be fixed at the bottom for one-handed use');
+
+// Dynamic check: destination floor (including floor 0) gets the red highlight + 次の作品 badge; complete route gets none
+{
+  const works = JSON.parse(await readFile(new URL('../src/works.json', import.meta.url), 'utf8'));
+  const byId = Object.fromEntries(works.map(w => [w.id, w]));
+  const baseCtx = (nav) => ({
+    state: {floor: 1, facilityFilter: 'none', preferElevator: false, viewed: new Set(), support: {open: false, editing: false, room: '', error: '', candidates: [], selectedCandidateId: null}},
+    works,
+    byId,
+    navigationGraph: {roomNotices: []},
+    currentPlan: () => ({label: 'テスト', ids: ['venus'], routableIds: ['venus']}),
+    planWorks: () => [byId.venus].filter(Boolean),
+    navigationView: () => nav,
+    currentEstimates: () => ({})
+  });
+  const htmlFloor0Dest = mapTabView(baseCtx({
+    available: true,
+    complete: false,
+    destinationNode: {id: 'work:venus', workId: 'venus', floor: 0, x: 795.7, y: 364.1, label: 'ミロのヴィーナス'},
+    routeFloors: [0, 1],
+    transitions: [],
+    passedSegments: [],
+    remainingSegments: [],
+    plannedSegments: []
+  }), false);
+  assert.match(htmlFloor0Dest, /data-floor="0" data-destination-floor="true"[^>]*has-destination[^>]*>\s*<em class="floor-next-badge">次の作品<\/em>/, 'floor 0 destination must show has-destination and 次の作品 badge');
+  assert.doesNotMatch(htmlFloor0Dest, /data-floor="1" data-destination-floor="true"/, 'non-destination floor must not be marked as destination');
+
+  const htmlComplete = mapTabView(baseCtx({
+    available: true,
+    complete: true,
+    destinationNode: null,
+    routeFloors: [0, 1],
+    transitions: [],
+    passedSegments: [],
+    remainingSegments: [],
+    plannedSegments: []
+  }), false);
+  assert.doesNotMatch(htmlComplete, /floor-next-badge|data-destination-floor="true"/, 'completed route must not show a 次の作品 floor badge');
+}
 
 console.log('support and information UI contract: passed');

@@ -93,6 +93,9 @@ export function mapTabView(ctx, hasMini) {
   const plan = ctx.currentPlan();
   const nav = ctx.navigationView();
   const destinationId = nav.destinationNode?.workId ?? null;
+  const destinationFloor = !nav.complete && Number.isFinite(nav.destinationNode?.floor)
+    ? nav.destinationNode.floor
+    : null;
   const floorWorkCounts = Object.fromEntries(FLOORS.map(f => {
     const anchors = floorGeoData.floors[String(f)]?.roomAnchors || {};
     return [f, works.filter(w => w.floor === f && w.locationPrecision === 'room' && Boolean(anchors[String(w.room)])).length];
@@ -139,11 +142,16 @@ export function mapTabView(ctx, hasMini) {
     <div class="floor-tabs map-floor-tabs-below" role="tablist" aria-label="表示する階">
       ${FLOORS.map(floor => {
         const hasRoute = nav.routeFloors?.includes(floor);
+        const isDestinationFloor = destinationFloor === floor;
         const count = floorWorkCounts[floor];
-        return `<button type="button" data-floor="${floor}" class="${floor === state.floor ? 'active' : ''} ${hasRoute ? 'has-route' : ''}" aria-pressed="${floor === state.floor}">
+        const ariaLabel = isDestinationFloor
+          ? `${FLOOR_NAMES[floor]}（次の作品あり）`
+          : FLOOR_NAMES[floor];
+        return `<button type="button" data-floor="${floor}"${isDestinationFloor ? ' data-destination-floor="true"' : ''} class="${floor === state.floor ? 'active' : ''} ${hasRoute ? 'has-route' : ''} ${isDestinationFloor ? 'has-destination' : ''}" aria-pressed="${floor === state.floor}" aria-label="${esc(ariaLabel)}">
+          ${isDestinationFloor ? '<em class="floor-next-badge">次の作品</em>' : ''}
           <span>${FLOOR_NAMES[floor]}</span>
           ${count ? `<small>${count}作</small>` : ''}
-          ${hasRoute ? '<i aria-hidden="true"></i>' : ''}
+          ${hasRoute && !isDestinationFloor ? '<i aria-hidden="true"></i>' : ''}
         </button>`;
       }).join('')}
     </div>

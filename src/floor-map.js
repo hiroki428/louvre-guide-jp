@@ -130,7 +130,7 @@ function clusterPinItems(items, threshold) {
   return groups;
 }
 
-function clusterMarkup(group, index, x, y) {
+function clusterMarkup(group, index, x, y, yielding = false) {
   const groupWorks = group.items.flatMap(item => item.roomWorks);
   const count = groupWorks.length;
   const hasRoute = group.items.some(item => item.kind === 'route' || item.kind === 'viewed');
@@ -139,7 +139,7 @@ function clusterMarkup(group, index, x, y) {
   const rooms = group.items.map(item => item.roomNum).join('・');
   const label = `${count}件`;
   const width = 12 + label.length * 7.5;
-  return `<g class="artwork-marker artwork-cluster ${tone}" transform="translate(${x} ${y})" data-pin-kind="cluster" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(group.items[0].primary.id)}" data-room-works="${escapeHtml(groupWorks.map(work => work.id).join(','))}" data-cluster="${index}" tabindex="0" role="button" aria-expanded="false" aria-label="${escapeHtml(`${rooms}室の${count}作品。タップで広げる`)}"><rect class="artwork-hit" x="-18" y="-14" width="36" height="28" rx="14"/><rect class="cluster-halo" x="${-width / 2 - 3}" y="-13" width="${width + 6}" height="26" rx="13"/><rect class="cluster-bubble" x="${-width / 2}" y="-10" width="${width}" height="20" rx="10"/><text class="cluster-count" x="0" y="3.8" text-anchor="middle">${label}</text></g>`;
+  return `<g class="artwork-marker artwork-cluster ${tone}${yielding ? ' is-route-yielding' : ''}" transform="translate(${x} ${y})" data-pin-kind="cluster" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(group.items[0].primary.id)}" data-room-works="${escapeHtml(groupWorks.map(work => work.id).join(','))}" data-cluster="${index}" tabindex="0" role="button" aria-expanded="false" aria-label="${escapeHtml(`${rooms}室の${count}作品。タップで広げる`)}"><rect class="artwork-hit" x="-18" y="-14" width="36" height="28" rx="14"/><rect class="cluster-halo" x="${-width / 2 - 3}" y="-13" width="${width + 6}" height="26" rx="13"/><rect class="cluster-bubble" x="${-width / 2}" y="-10" width="${width}" height="20" rx="10"/><text class="cluster-count" x="0" y="3.8" text-anchor="middle">${label}</text></g>`;
 }
 
 // The fanned-out pins of a group: each room's pin on a circle around the group, with a dotted line to the
@@ -169,7 +169,7 @@ export function clusterSpiderMarkup(index) {
   return spiderBuilders[index]?.() ?? '';
 }
 
-function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet, labelBoxes = []) {
+function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet, labelBoxes = [], avoidBoxes = []) {
   const routeOrder = new Map();
   if (Array.isArray(routeWorkIds)) {
     routeWorkIds.forEach((id, idx) => routeOrder.set(id, idx + 1));
@@ -198,7 +198,7 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
   }
 
   // One room's pin (same look and rules as before, drawn PIN_SCALE times larger).
-  const pinOf = (item, x, y) => {
+  const pinOf = (item, x, y, yielding = false) => {
     const {roomWorks, primary, destination, onRoute, allViewed, orderNum, kind} = item;
     const count = roomWorks.length;
     const idsAttr = roomWorks.map(work => work.id).join(',');
@@ -256,12 +256,14 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
       'artwork-marker',
       destination ? 'is-selected is-destination' : '',
       onRoute ? 'is-route-work' : 'is-catalog-work',
-      allViewed ? 'is-viewed' : ''
+      allViewed ? 'is-viewed' : '',
+      yielding ? 'is-route-yielding' : ''
     ].filter(Boolean).join(' ');
 
     return `<g class="${stateClasses}" transform="translate(${x} ${y}) scale(${PIN_SCALE})" data-pin-kind="${kind}" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(primary.id)}" data-room-works="${escapeHtml(idsAttr)}" tabindex="0" role="button" aria-label="${escapeHtml(ariaLabel)}">${shapeMarkup}${countBadge}</g>`;
   };
 
+  const overlapsRoute = box => avoidBoxes.some(ab => boxesOverlap(box, ab, 1.5));
   const placedMarkers = [];
   spiderBuilders = [];
   for (const group of clusterPinItems(items, CLUSTER_DISTANCE)) {
@@ -273,7 +275,7 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
       const index = spiderBuilders.length;
       spiderBuilders.push(() => spiderMarkup(group, pos.x, pos.y, pinOf));
       const zOrder = group.items.some(item => item.kind === 'route' || item.kind === 'viewed') ? 2 : 1;
-      placedMarkers.push({zOrder, markup: clusterMarkup(group, index, pos.x, pos.y)});
+      placedMarkers.push({zOrder, markup: clusterMarkup(group, index, pos.x, pos.y, overlapsRoute(pos.box))});
       continue;
     }
     const item = group.items[0];
@@ -282,7 +284,8 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
       : {x: item.anchor.x, y: item.anchor.y, box: markerBoxAt(item.anchor.x, item.anchor.y, item.kind)};
     placedPinBoxes.push(pos.box);
     const zOrder = item.destination ? 3 : item.onRoute ? 2 : 1;
-    placedMarkers.push({zOrder, markup: pinOf(item, pos.x, pos.y)});
+    const yielding = !item.destination && overlapsRoute(pos.box);
+    placedMarkers.push({zOrder, markup: pinOf(item, pos.x, pos.y, yielding)});
   }
   placedMarkers.sort((a, b) => a.zOrder - b.zOrder);
   for (const m of placedMarkers) parts.push(m.markup);
@@ -363,23 +366,111 @@ const polylineMarkup = (segments, floor, className) => segments
   .map(segment => `<polyline class="${className}" points="${segment.points.map(point => point.join(',')).join(' ')}"/>`)
   .join('');
 
-function routeLayerMarkup(floor, navigation) {
-  if (!navigation) return '';
+function sampleActiveRouteBoxes(segments, floor) {
+  const boxes = [];
+  for (const seg of (segments ?? []).filter(s => s.floor === floor)) {
+    const pts = seg.points || [];
+    for (let i = 0; i < pts.length - 1; i += 1) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[i + 1];
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      const steps = Math.max(1, Math.ceil(len / 10));
+      for (let s = 0; s <= steps; s += 1) {
+        const t = s / steps;
+        const x = x1 + (x2 - x1) * t;
+        const y = y1 + (y2 - y1) * t;
+        boxes.push({x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5});
+      }
+    }
+  }
+  return boxes;
+}
+
+function routeDirectionArrowsMarkup(segments, floor) {
+  const arrows = [];
+  for (const seg of (segments ?? []).filter(s => s.floor === floor)) {
+    const pts = seg.points || [];
+    if (pts.length < 2) continue;
+    const subSegs = [];
+    let totalLen = 0;
+    for (let i = 0; i < pts.length - 1; i += 1) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[i + 1];
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      if (len < 1) continue;
+      subSegs.push({x1, y1, x2, y2, len, start: totalLen});
+      totalLen += len;
+    }
+    if (totalLen < 14) continue;
+    const count = totalLen < 75 ? 1 : Math.min(4, Math.floor(totalLen / 60));
+    for (let k = 1; k <= count; k += 1) {
+      const target = (totalLen * k) / (count + 1);
+      const hit = subSegs.find(s => target >= s.start && target <= s.start + s.len) || subSegs[subSegs.length - 1];
+      const ratio = (target - hit.start) / hit.len;
+      const x = Math.round((hit.x1 + (hit.x2 - hit.x1) * ratio) * 10) / 10;
+      const y = Math.round((hit.y1 + (hit.y2 - hit.y1) * ratio) * 10) / 10;
+      const deg = Math.round(Math.atan2(hit.y2 - hit.y1, hit.x2 - hit.x1) * 1800 / Math.PI) / 10;
+      arrows.push(`<g transform="translate(${x} ${y}) rotate(${deg})"><path class="route-dir-arrow callout-body" d="M-4.6 -3.8 L5 0 L-4.6 3.8 L-2.2 0 Z"/></g>`);
+    }
+  }
+  return arrows.join('');
+}
+
+function estimatePillWidth(text, minWidth = 44) {
+  const charsWidth = [...String(text ?? '')].reduce((w, ch) => w + (/[ -~]/.test(ch) ? 6.2 : 10.2), 18);
+  return Math.max(minWidth, Math.ceil(charsWidth));
+}
+
+function resolveCalloutPillPos(candidates, width, height, obstacles) {
+  let best = null;
+  for (const [cx, cy, prefPen = 0] of candidates) {
+    const rx = Math.round(cx * 10) / 10;
+    const ry = Math.round(cy * 10) / 10;
+    const box = {x0: rx - width / 2, y0: ry - height / 2, x1: rx + width / 2, y1: ry + height / 2};
+    let score = prefPen;
+    if (box.x0 < 6 || box.x1 > BASE_VIEW.width - 6 || box.y0 < 6 || box.y1 > BASE_VIEW.height - 6) {
+      score += 5000;
+    }
+    for (const ob of obstacles) {
+      if (boxesOverlap(box, ob.box, ob.pad ?? 1.5)) {
+        score += ob.weight + overlapArea(box, ob.box) * (ob.weight / 15);
+      }
+    }
+    if (!best || score < best.score) {
+      best = {cx: rx, cy: ry, box, score};
+      if (score === prefPen) break;
+    }
+  }
+  return best;
+}
+
+function routeLayerMarkup(floor, navigation, roomLabelBoxes = []) {
+  if (!navigation) return {passedMarkup: '', activeMarkup: '', calloutsMarkup: '', avoidBoxes: []};
+  const activeSegments = (navigation.remainingSegments ?? []).filter(segment => segment.floor === floor);
   const passed = polylineMarkup(navigation.passedSegments ?? [], floor, 'route-passed');
-  const activeCasing = polylineMarkup(navigation.remainingSegments ?? [], floor, 'route-active-casing');
-  const active = polylineMarkup(navigation.remainingSegments ?? [], floor, 'route-active');
-  const currentLabel = navigation.locationMethod === 'selection'
-    ? '区間の開始地点'
-    : ['audio', 'manual'].includes(navigation.locationMethod)
-      ? '推定現在地'
-      : '最後に確認した地点';
-  const shortCurrent = navigation.locationMethod === 'selection' ? '開始' : '現在地';
-  const current = navigation.currentNode?.floor === floor
-    ? `<g class="current-location" transform="translate(${navigation.currentNode.x} ${navigation.currentNode.y})" aria-label="${currentLabel}"><circle class="current-halo" r="13"/><circle class="current-dot" r="6"/><rect x="-26" y="-32" width="52" height="18" rx="9"/><text x="0" y="-20" text-anchor="middle">${shortCurrent}</text></g>`
-    : '';
-  const destination = navigation.destinationNode?.floor === floor
-    ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})" aria-label="次の作品"></g>`
-    : '';
+  const activeCasing = polylineMarkup(activeSegments, floor, 'route-active-casing');
+  const active = polylineMarkup(activeSegments, floor, 'route-active');
+  const dirArrows = routeDirectionArrowsMarkup(activeSegments, floor);
+  const activeRouteBoxes = sampleActiveRouteBoxes(activeSegments, floor);
+
+  const hudBox = {x0: 10, y0: 10, x1: 204, y1: 440};
+  const baseObstacles = [
+    {box: hudBox, weight: 800, pad: 2},
+    ...roomLabelBoxes.map(box => ({box, weight: 420, pad: 1.5})),
+    ...activeRouteBoxes.map(box => ({box, weight: 280, pad: 1}))
+  ];
+  const placedCalloutBoxes = [];
+
+  const hasCurrent = navigation.currentNode?.floor === floor;
+  const currentDotBox = hasCurrent
+    ? {
+        x0: navigation.currentNode.x - 11,
+        y0: navigation.currentNode.y - 11,
+        x1: navigation.currentNode.x + 11,
+        y1: navigation.currentNode.y + 11
+      }
+    : null;
+
   const transitions = (navigation.transitions ?? []).flatMap(transition => {
     if (transition.from.floor !== floor && transition.to.floor !== floor) return [];
     const leaving = transition.from.floor === floor;
@@ -388,17 +479,113 @@ function routeLayerMarkup(floor, navigation) {
     const fullLabel = leaving ? transition.message : `${transition.facilityName}から到着・経路続行`;
     const shortTarget = floorName(transition.to.floor);
     const kindPrefix = transition.kind === 'elevator' ? 'EV ' : '';
-    const pill = leaving
-      ? `<rect x="16" y="-11" width="76" height="22" rx="11"/><text class="transition-label" x="54" y="3.5" text-anchor="middle">${escapeHtml(`${direction}${kindPrefix}${shortTarget}へ`)}</text>`
-      : '';
-    return [`<g class="floor-transition ${leaving ? 'is-leaving' : 'is-arriving'}" transform="translate(${node.x} ${node.y})" aria-label="${escapeHtml(fullLabel)}"><circle r="12"/><text class="transition-arrow" x="0" y="4.5" text-anchor="middle">${direction}</text>${pill}</g>`];
+    const dotBox = {x0: node.x - 11.5, y0: node.y - 11.5, x1: node.x + 11.5, y1: node.y + 11.5};
+    placedCalloutBoxes.push(dotBox);
+
+    let pillMarkup = '';
+    if (leaving) {
+      const labelText = `${direction}${kindPrefix}${shortTarget}へ`;
+      const pillW = estimatePillWidth(labelText, 64);
+      const pillH = 20;
+      const obstacles = [
+        ...baseObstacles,
+        ...(currentDotBox ? [{box: currentDotBox, weight: 1000, pad: 2}] : []),
+        ...placedCalloutBoxes.map(box => ({box, weight: 1400, pad: 2}))
+      ];
+      const candidates = [
+        [node.x + 14 + pillW / 2, node.y, 0],
+        [node.x - 14 - pillW / 2, node.y, 4],
+        [node.x, node.y - 23, 10],
+        [node.x, node.y + 23, 12],
+        [node.x + 12 + pillW / 2, node.y - 17, 16],
+        [node.x - 12 - pillW / 2, node.y - 17, 18],
+        [node.x + 12 + pillW / 2, node.y + 17, 20],
+        [node.x - 12 - pillW / 2, node.y + 17, 22]
+      ];
+      const placed = resolveCalloutPillPos(candidates, pillW, pillH, obstacles);
+      placedCalloutBoxes.push(placed.box);
+      const dx = Math.round((placed.cx - node.x) * 10) / 10;
+      const dy = Math.round((placed.cy - node.y) * 10) / 10;
+      const boxAttr = `${Math.round(placed.box.x0 * 10) / 10},${Math.round(placed.box.y0 * 10) / 10},${Math.round(placed.box.x1 * 10) / 10},${Math.round(placed.box.y1 * 10) / 10}`;
+      pillMarkup = `<line class="callout-stem" x1="0" y1="0" x2="${dx}" y2="${dy}"/><g class="transition-pill" data-callout-kind="transition" data-callout-box="${boxAttr}" transform="translate(${dx} ${dy})"><rect x="${-pillW / 2}" y="${-pillH / 2}" width="${pillW}" height="${pillH}" rx="${pillH / 2}"/><text class="transition-label" x="0" y="3.5" text-anchor="middle">${escapeHtml(labelText)}</text></g>`;
+    }
+    return [`<g class="floor-transition ${leaving ? 'is-leaving' : 'is-arriving'}" transform="translate(${node.x} ${node.y})" aria-label="${escapeHtml(fullLabel)}"><g class="callout-body">${pillMarkup}<circle r="10.5"/><text class="transition-arrow" x="0" y="4" text-anchor="middle">${direction}</text></g></g>`];
   }).join('');
+
+  const currentLabel = navigation.locationMethod === 'selection'
+    ? '区間の開始地点'
+    : ['audio', 'manual'].includes(navigation.locationMethod)
+      ? '推定現在地'
+      : '最後に確認した地点';
+  const shortCurrent = navigation.locationMethod === 'selection' ? '開始' : '現在地';
+  let current = '';
+  if (hasCurrent) {
+    const cx = navigation.currentNode.x;
+    const cy = navigation.currentNode.y;
+    placedCalloutBoxes.push(currentDotBox);
+
+    // Detect initial outgoing direction of the active route so the "現在地" pill prefers the opposite side.
+    let dirX = 0;
+    let dirY = 0;
+    const firstPts = activeSegments[0]?.points;
+    if (firstPts && firstPts.length >= 2) {
+      for (let i = 1; i < firstPts.length; i += 1) {
+        const vx = firstPts[i][0] - firstPts[0][0];
+        const vy = firstPts[i][1] - firstPts[0][1];
+        const len = Math.hypot(vx, vy);
+        if (len >= 4) {
+          dirX = vx / len;
+          dirY = vy / len;
+          break;
+        }
+      }
+    }
+
+    const pillW = shortCurrent.length <= 2 ? 38 : 48;
+    const pillH = 17;
+    const rawDirs = [
+      [0, 22, 0],
+      [-13 - pillW / 2, 0, 4],
+      [13 + pillW / 2, 0, 4],
+      [0, -22, 6],
+      [-11 - pillW / 2, 16, 12],
+      [11 + pillW / 2, 16, 12],
+      [-11 - pillW / 2, -16, 14],
+      [11 + pillW / 2, -16, 14]
+    ];
+    const candidates = rawDirs.map(([ox, oy, basePen]) => {
+      const len = Math.hypot(ox, oy) || 1;
+      const align = (ox / len) * dirX + (oy / len) * dirY;
+      const dirPen = align > 0.25 ? 70 * align : align < -0.25 ? -6 : 0;
+      return [cx + ox, cy + oy, basePen + dirPen];
+    });
+    const obstacles = [
+      ...baseObstacles,
+      ...placedCalloutBoxes.map(box => ({box, weight: 1500, pad: 2}))
+    ];
+    const placed = resolveCalloutPillPos(candidates, pillW, pillH, obstacles);
+    placedCalloutBoxes.push(placed.box);
+    const dx = Math.round((placed.cx - cx) * 10) / 10;
+    const dy = Math.round((placed.cy - cy) * 10) / 10;
+    const boxAttr = `${Math.round(placed.box.x0 * 10) / 10},${Math.round(placed.box.y0 * 10) / 10},${Math.round(placed.box.x1 * 10) / 10},${Math.round(placed.box.y1 * 10) / 10}`;
+    current = `<g class="current-location" transform="translate(${cx} ${cy})" aria-label="${currentLabel}"><g class="callout-body"><line class="callout-stem" x1="0" y1="0" x2="${dx}" y2="${dy}"/><circle class="current-halo" r="9"/><circle class="current-dot" r="4.3"/><g class="current-pill" data-callout-kind="current" data-callout-box="${boxAttr}" transform="translate(${dx} ${dy})"><rect x="${-pillW / 2}" y="${-pillH / 2}" width="${pillW}" height="${pillH}" rx="${pillH / 2}"/><text x="0" y="3.5" text-anchor="middle">${shortCurrent}</text></g></g></g>`;
+  }
+
+  const destination = navigation.destinationNode?.floor === floor
+    ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})" aria-label="次の作品"></g>`
+    : '';
   const passedTransitions = (navigation.passedTransitions ?? [])
     .flatMap(transition => [transition.from, transition.to]
       .filter(node => node.floor === floor)
       .map(node => `<g class="passed-floor-transition" transform="translate(${node.x} ${node.y})"><circle r="9"/><path d="M-3 0h6"/></g>`))
     .join('');
-  return `<g class="route-lines">${passed}${activeCasing}${active}</g>${passedTransitions}${transitions}${current}${destination}`;
+
+  return {
+    passedMarkup: `<g class="route-lines">${passed}</g>${passedTransitions}`,
+    activeMarkup: `<g class="route-lines-active">${activeCasing}${active}${dirArrows}</g>`,
+    calloutsMarkup: `${transitions}${current}${destination}`,
+    avoidBoxes: [...placedCalloutBoxes, ...activeRouteBoxes]
+  };
 }
 
 function wrapHudText(text, maxChars = 14) {
@@ -676,7 +863,8 @@ export function floorMapMarkup({
       .join('');
   }
 
-  const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet, roomLabelBoxes);
+  const routeLayer = routeLayerMarkup(floor, navigation, roomLabelBoxes);
+  const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet, roomLabelBoxes, routeLayer.avoidBoxes);
 
   const alerts = roomNotices.filter(notice => notice.floor === floor).map(notice => {
     const anchor = plan.roomAnchors?.[String(notice.room)];
@@ -684,7 +872,6 @@ export function floorMapMarkup({
     return `<g class="room-alert" transform="translate(${anchor.x + 12} ${anchor.y - 26})" aria-label="${escapeHtml(notice.label)}"><path d="M0 14L8 0l8 14Z"/><text x="8" y="11" text-anchor="middle">!</text></g>`;
   }).join('');
 
-  const routeLayer = routeLayerMarkup(floor, navigation);
   const continuationFloors = (navigation?.routeFloors ?? []).filter(routeFloor => routeFloor !== floor);
   const facilityTypes = [...new Set(plan.facilities.map(f => f.type))];
   const hud = mapHudMarkup({
@@ -712,7 +899,7 @@ export function floorMapMarkup({
       <line x1="0" y1="0" x2="0" y2="7" stroke="#dfb22a" stroke-width="2.6"/>
     </pattern>`;
 
-  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" data-map-floor="${escapeHtml(String(floor))}" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">ルーブル宮殿の展示室、廊下、壁、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g>${hud.markup}</svg>`;
+  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" data-map-floor="${escapeHtml(String(floor))}" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">ルーブル宮殿の展示室、廊下、壁、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer.passedMarkup}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g><g class="map-layer layer-route-active" data-layer="route-active">${routeLayer.activeMarkup}</g><g class="map-layer layer-route-callouts" data-layer="route-callouts">${routeLayer.calloutsMarkup}</g>${hud.markup}</svg>`;
 }
 
 function clampView(view) {
@@ -738,7 +925,10 @@ export function wireFloorMap({onWorkSelect}) {
   const applyView = () => {
     clampView(view);
     svg.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
-    if (status) status.textContent = `${Math.round(BASE_VIEW.width / view.width * 100)}%`;
+    const zoom = BASE_VIEW.width / view.width;
+    const calloutScale = Math.round(Math.max(0.36, 1 / Math.pow(zoom, 0.72)) * 1000) / 1000;
+    svg.style.setProperty('--callout-scale', String(calloutScale));
+    if (status) status.textContent = `${Math.round(zoom * 100)}%`;
     savedViews.set(floorKey, {...view});
   };
   const zoomAt = (factor, clientX, clientY) => {

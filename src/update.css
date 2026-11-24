@@ -789,7 +789,7 @@
   padding-top: 8px;
 }
 .map-floor-tabs-below {
-  margin-top: 10px;
+  margin-top: 14px;
   margin-bottom: 8px;
 }
 .map-toolbar-below {
@@ -917,6 +917,45 @@
 .floor-tabs button.has-route { border-width: 2px; border-color: var(--color-route); }
 .floor-tabs button.has-route i { position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--color-route); }
 .floor-tabs button.active i { background: var(--color-on-accent); }
+.floor-tabs button.has-destination {
+  border: 2px solid #c5283d;
+  background: #fff3f5;
+  color: #8b1e2d;
+  box-shadow: 0 2px 8px rgb(197 40 61 / 20%);
+}
+.floor-tabs button.active.has-destination {
+  background: var(--color-primary);
+  border-color: #c5283d;
+  color: var(--color-on-accent);
+  box-shadow: inset 0 -3px 0 var(--color-inset-shadow), 0 0 0 1.5px rgb(197 40 61 / 35%);
+}
+.floor-next-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #c5283d;
+  color: #fff;
+  border: 1.5px solid #fff;
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgb(197 40 61 / 35%);
+  pointer-events: none;
+  z-index: 2;
+}
+.floor-tabs button.has-destination:not(.active) .floor-next-badge {
+  animation: next-floor-pulse 2.2s ease-in-out infinite;
+}
+@keyframes next-floor-pulse {
+  0%, 100% { box-shadow: 0 1px 4px rgb(197 40 61 / 35%), 0 0 0 0 rgb(197 40 61 / 40%); }
+  50% { box-shadow: 0 1px 4px rgb(197 40 61 / 35%), 0 0 0 4px rgb(197 40 61 / 0%); }
+}
 
 .map-frame {
   height: clamp(360px, calc(100dvh - 280px), 590px);
@@ -1047,6 +1086,9 @@
 .is-custom-floor-plan .room-node.is-selected polygon { fill: var(--color-destination-soft); stroke: var(--color-destination); stroke-width: 2.6; }
 .route-active-casing { fill: none; stroke: rgb(255 253 250 / 85%); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .artwork-marker { cursor: pointer; filter: url(#pin-shadow); }
+.artwork-marker.is-route-yielding { opacity: .26; transition: opacity .15s ease; }
+.artwork-marker.is-route-yielding:hover,
+.artwork-marker.is-route-yielding:focus-visible { opacity: .95; }
 .artwork-marker .artwork-hit { fill: transparent; stroke: none; }
 .artwork-marker .pin-drop { stroke: #fff; stroke-width: 2; stroke-linejoin: round; }
 .artwork-marker .pin-dest { fill: #c5283d; stroke-width: 2.3; }
@@ -1107,27 +1149,30 @@
 .layer-labels .wing-range { font-size: 9px; }
 .layer-labels .room-number { fill: #1f272a; font-weight: 700; }
 .map-label { fill: var(--color-muted); font-size: 9px; }
-.layer-route { pointer-events: none; }
+.layer-route, .layer-route-active, .layer-route-callouts { pointer-events: none; }
 .route-active, .route-planned, .route-passed { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .route-active { stroke: var(--color-route); stroke-width: 2.9; }
+.route-dir-arrow { fill: var(--color-route); stroke: #fffdf9; stroke-width: 1.4; stroke-linejoin: round; paint-order: stroke; }
+.callout-body { transform-box: view-box; transform-origin: 0 0; transform: scale(var(--callout-scale, 1)); }
+.callout-stem { stroke: var(--color-route); stroke-width: 1.5; stroke-linecap: round; opacity: .75; }
 .route-planned { stroke: var(--color-route); stroke-width: 3; opacity: .38; }
 .route-passed { stroke: var(--color-passed); stroke-width: 4; stroke-dasharray: 3 8; }
 .planned-floor-transition circle { fill: var(--color-surface); stroke: var(--color-route); stroke-width: 2; opacity: .55; }
 .planned-floor-transition path { stroke: var(--color-route); stroke-width: 1.5; stroke-linecap: round; opacity: .55; }
 .passed-floor-transition circle { fill: var(--color-surface); stroke: var(--color-passed); stroke-width: 3; stroke-dasharray: 3 3; }
 .passed-floor-transition path { stroke: var(--color-passed); stroke-width: 2; stroke-linecap: round; }
-.current-halo { fill: var(--color-on-accent); stroke: var(--color-route); stroke-width: 4; }
+.current-halo { fill: var(--color-on-accent); stroke: var(--color-route); stroke-width: 3; }
 .current-dot { fill: var(--color-route); }
-.current-location rect { fill: var(--color-surface); stroke: var(--color-route); stroke-width: 1.5; }
-.current-location text { fill: var(--color-ink); font: 700 10px 'Noto Sans JP', sans-serif; }
+.current-location rect { fill: var(--color-surface); stroke: var(--color-route); stroke-width: 1.5; filter: url(#pin-shadow); }
+.current-location text { fill: var(--color-ink); font: 700 9.5px 'Noto Sans JP', sans-serif; }
 .destination-halo { fill: var(--color-on-accent); stroke: var(--color-destination); stroke-width: 5; stroke-dasharray: 5 3; }
 .destination-dot { fill: var(--color-destination); }
 .route-destination rect { fill: var(--color-surface); stroke: var(--color-destination); stroke-width: 1.5; }
 .route-destination text { fill: var(--color-destination); font: 700 10px 'Noto Sans JP', sans-serif; }
-.floor-transition > circle { fill: var(--color-route); stroke: var(--color-on-accent); stroke-width: 4; }
-.floor-transition .transition-arrow { fill: var(--color-on-accent); font: 700 18px 'Noto Sans JP', sans-serif; }
-.floor-transition > rect { fill: var(--color-surface); stroke: var(--color-route); stroke-width: 2; }
-.floor-transition .transition-label { fill: var(--color-ink); font: 700 11px 'Noto Sans JP', sans-serif; }
+.floor-transition > circle { fill: var(--color-route); stroke: var(--color-on-accent); stroke-width: 2.8; }
+.floor-transition .transition-arrow { fill: var(--color-on-accent); font: 700 14px 'Noto Sans JP', sans-serif; }
+.transition-pill rect { fill: var(--color-surface); stroke: var(--color-route); stroke-width: 1.7; filter: url(#pin-shadow); }
+.transition-pill .transition-label { fill: var(--color-ink); font: 800 10px 'Noto Sans JP', sans-serif; }
 .room-alert path { fill: var(--color-gold); stroke: var(--color-ink); stroke-width: 1.5; }
 .room-alert text { fill: var(--color-ink); font: 800 11px 'Noto Sans JP', sans-serif; }
 
@@ -1932,7 +1977,7 @@
   .work-hero-copy h2 { font-size: 19px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gallery-arches, .splash h1, .splash p { animation: none; }
+  .gallery-arches, .splash h1, .splash p, .floor-tabs button.has-destination:not(.active) .floor-next-badge { animation: none; }
 }
 
 /* Grouped artwork pins ("N件"): rooms whose pins would overlap; tap to fan the pins out around it. */

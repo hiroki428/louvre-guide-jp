@@ -294,3 +294,52 @@ console.log('floor map contract: passed');
     }
   }
 }
+
+// Short route leg (e.g. 711 Mona Lisa -> adjacent Denon center elevator to Floor 0):
+// Keep artwork pins anchored at their own rooms (no sideways jump/leader clutter); instead, draw active route
+// + direction arrow + route callouts above artworks/labels, soften overlapping non-destination pins, and keep
+// callouts non-overlapping and zoom-scaled via .callout-body.
+{
+  const shortNav = buildNavigationView(navigationIndex, {
+    journeyStartNodeId: 'entrance:pyramid:fm2',
+    currentNodeId: 'work:mona',
+    destinationNodeId: 'work:venus',
+    routeWorkIds: ['victory', 'liberty', 'mona', 'venus'],
+    passedNodeGroups: [['entrance:pyramid:fm2', 'work:mona']],
+    lastConfirmedMethod: 'audio'
+  }, {preferElevator: true});
+  const shortMarkup = floorMapMarkup({
+    floor: 1,
+    floorLabel: '1階',
+    works,
+    selectedId: 'venus',
+    navigation: shortNav,
+    routeWorkIds: ['victory', 'liberty', 'mona', 'venus']
+  });
+  assert.ok(
+    shortMarkup.indexOf('layer-route-active') > shortMarkup.indexOf('layer-artworks')
+      && shortMarkup.indexOf('layer-route-callouts') > shortMarkup.indexOf('layer-route-active')
+      && shortMarkup.indexOf('layer-route-callouts') > shortMarkup.indexOf('layer-labels'),
+    'active route and route callouts must render above artworks and room labels'
+  );
+  assert.match(shortMarkup, /class="route-dir-arrow callout-body"/, 'active route segment must render a zoom-scaled direction arrow');
+  assert.match(shortMarkup, /<g class="callout-body">/, 'route callouts must wrap contents in .callout-body for zoom scaling');
+  assert.doesNotMatch(shortMarkup, /class="pin-leader"/, 'pins must stay at their room without sideways leader lines');
+  const parseBox = str => {
+    const [x0, y0, x1, y1] = str.split(',').map(Number);
+    return {x0, y0, x1, y1};
+  };
+  const overlap = (a, b) => !(a.x1 <= b.x0 || a.x0 >= b.x1 || a.y1 <= b.y0 || a.y0 >= b.y1);
+  const currentBoxMatch = shortMarkup.match(/data-callout-kind="current" data-callout-box="([^"]+)"/);
+  const transBoxMatch = shortMarkup.match(/data-callout-kind="transition" data-callout-box="([^"]+)"/);
+  assert.ok(currentBoxMatch && transBoxMatch, 'both current and transition callout boxes must be rendered');
+  const currentBox = parseBox(currentBoxMatch[1]);
+  const transBox = parseBox(transBoxMatch[1]);
+  assert.equal(overlap(currentBox, transBox), false, `現在地 pill and EV transition pill must not overlap: ${currentBoxMatch[1]} vs ${transBoxMatch[1]}`);
+  const monaMarker = shortMarkup.match(/<g class="([^"]*)"[^>]*data-pin-pos="([0-9.-]+),([0-9.-]+)" data-map-work="mona"/);
+  assert.ok(monaMarker, '711 pin must be rendered');
+  const monaClasses = monaMarker[1];
+  const mx = Number(monaMarker[2]);
+  assert.ok(Math.abs(mx - 557.5) <= 20, `711 pin must stay near room 711 (x=557.5), got x=${mx}`);
+  assert.match(monaClasses, /\bis-route-yielding\b/, 'non-destination pin overlapping active route/callouts must visually yield');
+}
