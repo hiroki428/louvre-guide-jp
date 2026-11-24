@@ -1,4 +1,5 @@
 import {floorGeoData} from './floor-map-geo.js';
+import {getFloorName, getLang, localizeMapText, localizeWork, t} from './i18n.js';
 
 const BASE_VIEW = Object.freeze({...floorGeoData.meta.viewBox});
 const MIN_VIEW_WIDTH = 280;
@@ -11,7 +12,7 @@ const CLUSTER_DISTANCE = 22;
 const savedViews = new Map();
 // Builds the fanned-out pins of a group of the last rendered map (index = data-cluster).
 let spiderBuilders = [];
-const floorName = floor => ({2:'2階', 1:'1階', 0:'0階', '-1':'−1階', '-2':'−2階'}[floor] ?? `${floor}階`);
+const floorName = (floor, lang = getLang()) => getFloorName(floor, lang);
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 
 function pickPrimaryWork(roomWorks, selectedId, routeWorkIds) {
@@ -130,16 +131,16 @@ function clusterPinItems(items, threshold) {
   return groups;
 }
 
-function clusterMarkup(group, index, x, y, yielding = false) {
+function clusterMarkup(group, index, x, y, lang = getLang(), yielding = false) {
   const groupWorks = group.items.flatMap(item => item.roomWorks);
   const count = groupWorks.length;
   const hasRoute = group.items.some(item => item.kind === 'route' || item.kind === 'viewed');
   const allViewed = group.items.every(item => item.kind === 'viewed');
   const tone = allViewed ? 'is-cluster-viewed' : hasRoute ? 'is-cluster-route' : 'is-cluster-catalog';
-  const rooms = group.items.map(item => item.roomNum).join('・');
-  const label = `${count}件`;
-  const width = 12 + label.length * 7.5;
-  return `<g class="artwork-marker artwork-cluster ${tone}${yielding ? ' is-route-yielding' : ''}" transform="translate(${x} ${y})" data-pin-kind="cluster" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(group.items[0].primary.id)}" data-room-works="${escapeHtml(groupWorks.map(work => work.id).join(','))}" data-cluster="${index}" tabindex="0" role="button" aria-expanded="false" aria-label="${escapeHtml(`${rooms}室の${count}作品。タップで広げる`)}"><rect class="artwork-hit" x="-18" y="-14" width="36" height="28" rx="14"/><rect class="cluster-halo" x="${-width / 2 - 3}" y="-13" width="${width + 6}" height="26" rx="13"/><rect class="cluster-bubble" x="${-width / 2}" y="-10" width="${width}" height="20" rx="10"/><text class="cluster-count" x="0" y="3.8" text-anchor="middle">${label}</text></g>`;
+  const rooms = group.items.map(item => item.roomNum).join(t('svg.roomJoin', null, lang));
+  const label = t('svg.clusterCount', {count}, lang);
+  const width = Math.max(24, 12 + label.length * 7.5);
+  return `<g class="artwork-marker artwork-cluster ${tone}${yielding ? ' is-route-yielding' : ''}" transform="translate(${x} ${y})" data-pin-kind="cluster" data-pin-pos="${x},${y}" data-map-work="${escapeHtml(group.items[0].primary.id)}" data-room-works="${escapeHtml(groupWorks.map(work => work.id).join(','))}" data-cluster="${index}" tabindex="0" role="button" aria-expanded="false" aria-label="${escapeHtml(t('svg.clusterAria', {rooms, count}, lang))}"><rect class="artwork-hit" x="-18" y="-14" width="36" height="28" rx="14"/><rect class="cluster-halo" x="${-width / 2 - 3}" y="-13" width="${width + 6}" height="26" rx="13"/><rect class="cluster-bubble" x="${-width / 2}" y="-10" width="${width}" height="20" rx="10"/><text class="cluster-count" x="0" y="3.8" text-anchor="middle">${escapeHtml(label)}</text></g>`;
 }
 
 // The fanned-out pins of a group: each room's pin on a circle around the group, with a dotted line to the
@@ -169,7 +170,7 @@ export function clusterSpiderMarkup(index) {
   return spiderBuilders[index]?.() ?? '';
 }
 
-function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet, labelBoxes = [], avoidBoxes = []) {
+function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet, labelBoxes = [], lang = getLang(), avoidBoxes = []) {
   const routeOrder = new Map();
   if (Array.isArray(routeWorkIds)) {
     routeWorkIds.forEach((id, idx) => routeOrder.set(id, idx + 1));
@@ -202,9 +203,15 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
     const {roomWorks, primary, destination, onRoute, allViewed, orderNum, kind} = item;
     const count = roomWorks.length;
     const idsAttr = roomWorks.map(work => work.id).join(',');
-    const extraLabel = count > 1 ? `ほか${count - 1}作品` : '';
-    const statusLabel = destination ? '次の目的地、' : allViewed ? '鑑賞済み、' : '';
-    const ariaLabel = `${statusLabel}${primary.title}${extraLabel ? `（${extraLabel}）` : ''}、${primary.room}室`;
+    const extraLabel = count > 1 ? t('svg.pinExtra', {count: count - 1}, lang) : '';
+    const statusLabel = destination
+      ? t('svg.pinDestPrefix', null, lang)
+      : allViewed
+        ? t('svg.pinViewedPrefix', null, lang)
+        : '';
+    const extraFormatted = extraLabel ? (lang === 'ja' ? `（${extraLabel}）` : ` (${extraLabel})`) : '';
+    const primaryTitle = localizeWork(primary, lang).title;
+    const ariaLabel = t('svg.pinAria', {status: statusLabel, title: primaryTitle, extra: extraFormatted, room: primary.room}, lang);
 
     let shapeMarkup = '';
     let badgeX = 9;
@@ -275,7 +282,7 @@ function artworkMarkup(anchors, worksByRoom, selectedId, routeWorkIds, viewedSet
       const index = spiderBuilders.length;
       spiderBuilders.push(() => spiderMarkup(group, pos.x, pos.y, pinOf));
       const zOrder = group.items.some(item => item.kind === 'route' || item.kind === 'viewed') ? 2 : 1;
-      placedMarkers.push({zOrder, markup: clusterMarkup(group, index, pos.x, pos.y, overlapsRoute(pos.box))});
+      placedMarkers.push({zOrder, markup: clusterMarkup(group, index, pos.x, pos.y, lang, overlapsRoute(pos.box))});
       continue;
     }
     const item = group.items[0];
@@ -334,7 +341,7 @@ function facilityBadgeGraphic(type) {
   }
 }
 
-function facilityIconMarkup(item, facilityFilter) {
+function facilityIconMarkup(item, facilityFilter, lang = getLang()) {
   const isPicked = (facilityFilter === 'wc' && item.type === 'wc') || (facilityFilter === 'cafe' && item.type === 'cafe');
   const isAlwaysVisible = ALWAYS_VISIBLE_FACILITY_TYPES.has(item.type);
   const isDimmed = facilityFilter && facilityFilter !== 'none' && !isPicked && !isAlwaysVisible;
@@ -342,19 +349,19 @@ function facilityIconMarkup(item, facilityFilter) {
   const common = `transform="translate(${item.x} ${item.y}) scale(${scale})"`;
   const pickRing = isPicked ? `<circle class="facility-pick-bg pick-${escapeHtml(item.type)}" r="8.6"/>` : '';
   const labels = {
-    wc: 'トイレ',
-    elevator: 'エレベーター',
-    stairs: '同階階段',
-    'stairs-down': '下り階段',
-    'stairs-up': '上り階段',
-    'stairs-both': '上下階段',
-    escalator: 'エスカレーター',
-    information: '案内所',
-    ticket: 'チケット売り場',
-    shop: 'ショップ',
-    metro: 'メトロ',
-    parking: 'パーキング',
-    cafe: item.label || 'カフェ'
+    wc: t('svg.fac.wc', null, lang),
+    elevator: t('svg.fac.elevator', null, lang),
+    stairs: t('svg.fac.stairs', null, lang),
+    'stairs-down': t('svg.fac.stairs-down', null, lang),
+    'stairs-up': t('svg.fac.stairs-up', null, lang),
+    'stairs-both': t('svg.fac.stairs-both', null, lang),
+    escalator: t('svg.fac.escalator', null, lang),
+    information: t('svg.fac.information', null, lang),
+    ticket: t('svg.fac.ticketAria', null, lang),
+    shop: t('svg.fac.shop', null, lang),
+    metro: t('svg.fac.metro', null, lang),
+    parking: t('svg.fac.parking', null, lang),
+    cafe: (lang === 'ja' ? item.label : null) || t('svg.fac.cafe', null, lang)
   };
   const ariaLabel = labels[item.type] || item.label || item.type;
   const linkAttr = item.linkId ? ` data-vertical-link="${escapeHtml(item.linkId)}"` : '';
@@ -376,9 +383,9 @@ function sampleActiveRouteBoxes(segments, floor) {
       const len = Math.hypot(x2 - x1, y2 - y1);
       const steps = Math.max(1, Math.ceil(len / 10));
       for (let s = 0; s <= steps; s += 1) {
-        const t = s / steps;
-        const x = x1 + (x2 - x1) * t;
-        const y = y1 + (y2 - y1) * t;
+        const tVal = s / steps;
+        const x = x1 + (x2 - x1) * tVal;
+        const y = y1 + (y2 - y1) * tVal;
         boxes.push({x0: x - 5, y0: y - 5, x1: x + 5, y1: y + 5});
       }
     }
@@ -444,7 +451,7 @@ function resolveCalloutPillPos(candidates, width, height, obstacles) {
   return best;
 }
 
-function routeLayerMarkup(floor, navigation, roomLabelBoxes = []) {
+function routeLayerMarkup(floor, navigation, roomLabelBoxes = [], lang = getLang()) {
   if (!navigation) return {passedMarkup: '', activeMarkup: '', calloutsMarkup: '', avoidBoxes: []};
   const activeSegments = (navigation.remainingSegments ?? []).filter(segment => segment.floor === floor);
   const passed = polylineMarkup(navigation.passedSegments ?? [], floor, 'route-passed');
@@ -476,15 +483,15 @@ function routeLayerMarkup(floor, navigation, roomLabelBoxes = []) {
     const leaving = transition.from.floor === floor;
     const node = leaving ? transition.from : transition.to;
     const direction = transition.to.floor > transition.from.floor ? '↑' : '↓';
-    const fullLabel = leaving ? transition.message : `${transition.facilityName}から到着・経路続行`;
-    const shortTarget = floorName(transition.to.floor);
+    const fullLabel = leaving ? transition.message : t('svg.arrivedVia', {facility: transition.facilityName}, lang);
+    const shortTarget = floorName(transition.to.floor, lang);
     const kindPrefix = transition.kind === 'elevator' ? 'EV ' : '';
     const dotBox = {x0: node.x - 11.5, y0: node.y - 11.5, x1: node.x + 11.5, y1: node.y + 11.5};
     placedCalloutBoxes.push(dotBox);
 
     let pillMarkup = '';
     if (leaving) {
-      const labelText = `${direction}${kindPrefix}${shortTarget}へ`;
+      const labelText = t('svg.toFloorPill', {dir: direction, prefix: kindPrefix, floor: shortTarget}, lang);
       const pillW = estimatePillWidth(labelText, 64);
       const pillH = 20;
       const obstacles = [
@@ -513,11 +520,13 @@ function routeLayerMarkup(floor, navigation, roomLabelBoxes = []) {
   }).join('');
 
   const currentLabel = navigation.locationMethod === 'selection'
-    ? '区間の開始地点'
+    ? t('svg.locSelection', null, lang)
     : ['audio', 'manual'].includes(navigation.locationMethod)
-      ? '推定現在地'
-      : '最後に確認した地点';
-  const shortCurrent = navigation.locationMethod === 'selection' ? '開始' : '現在地';
+      ? t('svg.locEstimated', null, lang)
+      : t('svg.locLastConfirmed', null, lang);
+  const shortCurrent = navigation.locationMethod === 'selection'
+    ? t('svg.shortStart', null, lang)
+    : t('svg.shortHere', null, lang);
   let current = '';
   if (hasCurrent) {
     const cx = navigation.currentNode.x;
@@ -541,7 +550,7 @@ function routeLayerMarkup(floor, navigation, roomLabelBoxes = []) {
       }
     }
 
-    const pillW = shortCurrent.length <= 2 ? 38 : 48;
+    const pillW = estimatePillWidth(shortCurrent, 38);
     const pillH = 17;
     const rawDirs = [
       [0, 22, 0],
@@ -568,11 +577,11 @@ function routeLayerMarkup(floor, navigation, roomLabelBoxes = []) {
     const dx = Math.round((placed.cx - cx) * 10) / 10;
     const dy = Math.round((placed.cy - cy) * 10) / 10;
     const boxAttr = `${Math.round(placed.box.x0 * 10) / 10},${Math.round(placed.box.y0 * 10) / 10},${Math.round(placed.box.x1 * 10) / 10},${Math.round(placed.box.y1 * 10) / 10}`;
-    current = `<g class="current-location" transform="translate(${cx} ${cy})" aria-label="${currentLabel}"><g class="callout-body"><line class="callout-stem" x1="0" y1="0" x2="${dx}" y2="${dy}"/><circle class="current-halo" r="9"/><circle class="current-dot" r="4.3"/><g class="current-pill" data-callout-kind="current" data-callout-box="${boxAttr}" transform="translate(${dx} ${dy})"><rect x="${-pillW / 2}" y="${-pillH / 2}" width="${pillW}" height="${pillH}" rx="${pillH / 2}"/><text x="0" y="3.5" text-anchor="middle">${shortCurrent}</text></g></g></g>`;
+    current = `<g class="current-location" transform="translate(${cx} ${cy})" aria-label="${escapeHtml(currentLabel)}"><g class="callout-body"><line class="callout-stem" x1="0" y1="0" x2="${dx}" y2="${dy}"/><circle class="current-halo" r="9"/><circle class="current-dot" r="4.3"/><g class="current-pill" data-callout-kind="current" data-callout-box="${boxAttr}" transform="translate(${dx} ${dy})"><rect x="${-pillW / 2}" y="${-pillH / 2}" width="${pillW}" height="${pillH}" rx="${pillH / 2}"/><text x="0" y="3.5" text-anchor="middle">${escapeHtml(shortCurrent)}</text></g></g></g>`;
   }
 
   const destination = navigation.destinationNode?.floor === floor
-    ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})" aria-label="次の作品"></g>`
+    ? `<g class="route-destination" transform="translate(${navigation.destinationNode.x} ${navigation.destinationNode.y})" aria-label="${escapeHtml(t('svg.nextWorkAria', null, lang))}"></g>`
     : '';
   const passedTransitions = (navigation.passedTransitions ?? [])
     .flatMap(transition => [transition.from, transition.to]
@@ -610,13 +619,15 @@ function wrapHudText(text, maxChars = 14) {
   return lines;
 }
 
-function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, hasRestArea = false, hasExhibition = false, facilityTypes = []}) {
+function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, hasRestArea = false, hasExhibition = false, facilityTypes = [], lang = getLang()}) {
   const x = 12;
   const y = 12;
   const width = 188;
   const padX = x + 11;
-  const contText = continuationFloors.length ? `続き：${continuationFloors.map(floorName).join('・')}` : '';
-  const contLines = contText ? wrapHudText(contText, 14) : [];
+  const contText = continuationFloors.length
+    ? t('svg.continuation', {floors: continuationFloors.map(f => floorName(f, lang)).join(t('svg.roomJoin', null, lang))}, lang)
+    : '';
+  const contLines = contText ? wrapHudText(contText, lang === 'ja' ? 14 : 22) : [];
 
   let cursorY = y + 36;
   const parts = [];
@@ -637,31 +648,31 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
   const col1 = padX;
   const col2 = x + 98;
   const extraItems = [];
-  if (hasConstruction) extraItems.push({cls: 'hud-swatch-construction', label: '工事中'});
-  if (hasRestArea) extraItems.push({cls: 'hud-swatch-rest', label: '休憩'});
-  if (hasExhibition) extraItems.push({cls: 'hud-swatch-exhibition', label: '企画展'});
+  if (hasConstruction) extraItems.push({cls: 'hud-swatch-construction', label: t('svg.hudConstruction', null, lang)});
+  if (hasRestArea) extraItems.push({cls: 'hud-swatch-rest', label: t('svg.hudRest', null, lang)});
+  if (hasExhibition) extraItems.push({cls: 'hud-swatch-exhibition', label: t('svg.hudExhibition', null, lang)});
   const extraRight = extraItems[0]
-    ? `<rect class="${extraItems[0].cls}" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">${extraItems[0].label}</text>`
+    ? `<rect class="${extraItems[0].cls}" x="${col2}" y="${cursorY + 29}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 38}">${escapeHtml(extraItems[0].label)}</text>`
     : '';
   const extraRow = extraItems[1]
-    ? `<rect class="${extraItems[1].cls}" x="${col1}" y="${cursorY + 48}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col1 + 22}" y="${cursorY + 57}">${extraItems[1].label}</text>`
+    ? `<rect class="${extraItems[1].cls}" x="${col1}" y="${cursorY + 48}" width="16" height="10" rx="2.5"/><text class="hud-legend-text" x="${col1 + 22}" y="${cursorY + 57}">${escapeHtml(extraItems[1].label)}</text>`
     : '';
   let bottomY = cursorY + (extraItems.length > 1 ? 57 : 38);
 
   const facLegendSpecs = [
-    {type: 'elevator', label: 'エレベーター'},
-    {type: 'escalator', label: 'エスカレーター'},
-    {type: 'stairs-up', label: '上り階段'},
-    {type: 'stairs-down', label: '下り階段'},
-    {type: 'stairs-both', label: '上下階段'},
-    {type: 'stairs', label: '同階階段'},
-    {type: 'wc', label: 'トイレ'},
-    {type: 'information', label: '案内所'},
-    {type: 'ticket', label: 'チケット'},
-    {type: 'shop', label: 'ショップ'},
-    {type: 'metro', label: 'メトロ'},
-    {type: 'parking', label: 'パーキング'},
-    {type: 'cafe', label: 'カフェ'}
+    {type: 'elevator', label: t('svg.fac.elevator', null, lang)},
+    {type: 'escalator', label: t('svg.fac.escalator', null, lang)},
+    {type: 'stairs-up', label: t('svg.fac.stairs-up', null, lang)},
+    {type: 'stairs-down', label: t('svg.fac.stairs-down', null, lang)},
+    {type: 'stairs-both', label: t('svg.fac.stairs-both', null, lang)},
+    {type: 'stairs', label: t('svg.fac.stairs', null, lang)},
+    {type: 'wc', label: t('svg.fac.wc', null, lang)},
+    {type: 'information', label: t('svg.fac.information', null, lang)},
+    {type: 'ticket', label: t('svg.fac.ticket', null, lang)},
+    {type: 'shop', label: t('svg.fac.shop', null, lang)},
+    {type: 'metro', label: t('svg.fac.metro', null, lang)},
+    {type: 'parking', label: t('svg.fac.parking', null, lang)},
+    {type: 'cafe', label: t('svg.fac.cafe', null, lang)}
   ].filter(spec => facilityTypes.includes(spec.type));
 
   let facRow = '';
@@ -673,7 +684,7 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
       const c = idx % 2;
       const fx = cols[c];
       const ry = divY + 16 + r * 18;
-      return `<g class="facility-badge hud-fac-badge facility-${escapeHtml(spec.type)}" transform="translate(${fx + 5.5} ${ry - 3.5}) scale(0.76)">${facilityBadgeGraphic(spec.type)}</g><text class="hud-legend-text hud-fac-label" x="${fx + 13.5}" y="${ry}">${spec.label}</text>`;
+      return `<g class="facility-badge hud-fac-badge facility-${escapeHtml(spec.type)}" transform="translate(${fx + 5.5} ${ry - 3.5}) scale(0.76)">${facilityBadgeGraphic(spec.type)}</g><text class="hud-legend-text hud-fac-label" x="${fx + 13.5}" y="${ry}">${escapeHtml(spec.label)}</text>`;
     }).join('');
     const numRows = Math.ceil(facLegendSpecs.length / 2);
     facRow = `<line class="hud-divider" x1="${padX}" y1="${divY}" x2="${x + width - 11}" y2="${divY}"/>${itemsSvg}`;
@@ -681,19 +692,19 @@ function mapHudMarkup({floorLabel, continuationFloors, hasConstruction = false, 
   }
 
   parts.push(`
-    <g class="hud-legend" aria-label="地図の凡例">
+    <g class="hud-legend" aria-label="${escapeHtml(t('svg.legendAria', null, lang))}">
       <circle class="hud-dot hud-dot-dest" cx="${col1 + 5}" cy="${cursorY - 3.5}" r="4.8"/>
-      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY}">目的地</text>
+      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY}">${escapeHtml(t('svg.hudDest', null, lang))}</text>
       <line class="hud-line-active" x1="${col2}" y1="${cursorY - 3.5}" x2="${col2 + 16}" y2="${cursorY - 3.5}"/>
-      <text class="hud-legend-text" x="${col2 + 22}" y="${cursorY}">次まで</text>
+      <text class="hud-legend-text" x="${col2 + 22}" y="${cursorY}">${escapeHtml(t('svg.hudNext', null, lang))}</text>
 
       <circle class="hud-dot hud-dot-route" cx="${col1 + 5}" cy="${cursorY + 15.5}" r="4.8"/>
-      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 19}">予定</text>
+      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 19}">${escapeHtml(t('svg.hudPlanned', null, lang))}</text>
       <line class="hud-line-passed" x1="${col2}" y1="${cursorY + 15.5}" x2="${col2 + 16}" y2="${cursorY + 15.5}"/>
-      <text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 19}">通過済</text>
+      <text class="hud-legend-text" x="${col2 + 22}" y="${cursorY + 19}">${escapeHtml(t('svg.hudPassed', null, lang))}</text>
 
       <circle class="hud-dot hud-dot-viewed" cx="${col1 + 5}" cy="${cursorY + 34.5}" r="4.8"/>
-      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 38}">済</text>
+      <text class="hud-legend-text" x="${col1 + 15}" y="${cursorY + 38}">${escapeHtml(t('svg.hudViewed', null, lang))}</text>
       ${extraRight}
       ${extraRow}
       ${facRow}
@@ -715,7 +726,8 @@ export function floorMapMarkup({
   roomNotices = [],
   routeWorkIds = null,
   viewedIds = null,
-  facilityFilter = 'none'
+  facilityFilter = 'none',
+  lang = getLang()
 }) {
   const plan = floorGeoData.floors[String(floor)];
   if (!plan) throw new Error(`Unknown floor plan: ${floor}`);
@@ -763,7 +775,11 @@ export function floorMapMarkup({
       ? `<g class="custom-service-shells" aria-hidden="true">${cp.serviceHalls.map(h => `<polygon class="custom-service-shell" points="${h.points}"/>`).join('')}</g><g class="custom-service-fills">${cp.serviceHalls.map(h => `<polygon class="custom-service-fill" points="${h.points}"/>`).join('')}</g>`
       : cp.serviceHalls.map(h => `<polygon class="custom-service-hall" points="${h.points}"/>`).join('');
     const restAreas = (cp.restAreas || [])
-      .map(r => `<g class="custom-rest-area" aria-label="${escapeHtml(`${r.label}（${r.sublabel}）`)}"><polygon class="rest-area-poly" points="${r.points}"/><text class="rest-area-label" x="${r.labelX}" y="${r.labelY - 3}" text-anchor="middle">${escapeHtml(r.label)}</text><text class="rest-area-sub" x="${r.labelX}" y="${r.labelY + 8}" text-anchor="middle">${escapeHtml(r.sublabel)}</text></g>`)
+      .map(r => {
+        const lbl = localizeMapText(r.label, lang);
+        const sub = localizeMapText(r.sublabel, lang);
+        return `<g class="custom-rest-area" aria-label="${escapeHtml(`${lbl} (${sub})`)}"><polygon class="rest-area-poly" points="${r.points}"/><text class="rest-area-label" x="${r.labelX}" y="${r.labelY - 3}" text-anchor="middle">${escapeHtml(lbl)}</text><text class="rest-area-sub" x="${r.labelX}" y="${r.labelY + 8}" text-anchor="middle">${escapeHtml(sub)}</text></g>`;
+      })
       .join('');
     // Unified outer architectural wall shell behind rooms + passages so wings read as one cohesive space
     const wingShell = [
@@ -782,13 +798,20 @@ export function floorMapMarkup({
       .map(d => `<line class="custom-room-divider" x1="${d.x1}" y1="${d.y1}" x2="${d.x2}" y2="${d.y2}"/>`)
       .join('');
     const constructionNotices = (cp.constructionNotices || [])
-      .map(n => `<g class="construction-badge" transform="translate(${n.x} ${n.y})" aria-label="${escapeHtml(n.text)}"><rect x="-38" y="-9.5" width="76" height="19" rx="9.5"/><text x="0" y="3.5" text-anchor="middle">${escapeHtml(n.text)}</text></g>`)
+      .map(n => {
+        const txt = localizeMapText(n.text, lang);
+        return `<g class="construction-badge" transform="translate(${n.x} ${n.y})" aria-label="${escapeHtml(txt)}"><rect x="-38" y="-9.5" width="76" height="19" rx="9.5"/><text x="0" y="3.5" text-anchor="middle">${escapeHtml(txt)}</text></g>`;
+      })
       .join('');
     const exhibitionLabels = (cp.exhibitionLabels || [])
-      .map(e => `<g class="exhibition-label-group" aria-label="${escapeHtml(e.label)}"><text class="exhibition-label" x="${e.x}" y="${e.y - 2}" text-anchor="middle">${escapeHtml(e.label)}</text>${e.sublabel ? `<text class="exhibition-sub" x="${e.x}" y="${e.y + 9}" text-anchor="middle">${escapeHtml(e.sublabel)}</text>` : ''}</g>`)
+      .map(e => {
+        const lbl = localizeMapText(e.label, lang);
+        const sub = e.sublabel ? localizeMapText(e.sublabel, lang) : '';
+        return `<g class="exhibition-label-group" aria-label="${escapeHtml(lbl)}"><text class="exhibition-label" x="${e.x}" y="${e.y - 2}" text-anchor="middle">${escapeHtml(lbl)}</text>${sub ? `<text class="exhibition-sub" x="${e.x}" y="${e.y + 9}" text-anchor="middle">${escapeHtml(sub)}</text>` : ''}</g>`;
+      })
       .join('');
     const hallLabels = (cp.hallLabels || [])
-      .map(h => `<text class="hall-landmark-label" x="${h.x}" y="${h.y + 3}" text-anchor="middle">${escapeHtml(h.text)}</text>`)
+      .map(h => `<text class="hall-landmark-label" x="${h.x}" y="${h.y + 3}" text-anchor="middle">${escapeHtml(localizeMapText(h.text, lang))}</text>`)
       .join('');
     footprint = `
       <path class="palace-footprint custom-palace-base" d="${cp.footprintPath}" fill-rule="evenodd"/>
@@ -811,7 +834,7 @@ export function floorMapMarkup({
     const bPick = (facilityFilter === 'wc' && b.type === 'wc') || (facilityFilter === 'cafe' && b.type === 'cafe') ? 1 : 0;
     return aPick - bPick;
   });
-  const facilities = sortedFacilities.map(item => facilityIconMarkup(item, facilityFilter)).join('');
+  const facilities = sortedFacilities.map(item => facilityIconMarkup(item, facilityFilter, lang)).join('');
 
   // Place ONLY the wing names that actually exist on this floor, strictly outside the palace geometry
   const outerWings = plan.isCustomFloorPlan && plan.customPlan?.wingHeaders
@@ -828,7 +851,7 @@ export function floorMapMarkup({
             {label: 'シュリー翼', x: 740, y: 34},
             {label: 'ドゥノン翼', x: 320, y: 576}
           ];
-  const wingLabels = outerWings.map(w => `<text class="wing-label" x="${w.x}" y="${w.y}" text-anchor="${plan.isCustomFloorPlan ? 'middle' : 'start'}">${escapeHtml(w.label)}</text>`).join('');
+  const wingLabels = outerWings.map(w => `<text class="wing-label" x="${w.x}" y="${w.y}" text-anchor="${plan.isCustomFloorPlan ? 'middle' : 'start'}">${escapeHtml(localizeMapText(w.label, lang))}</text>`).join('');
 
   // Room numbers FIRST (room numbers have highest priority; artwork pins automatically avoid them!)
   let roomLabels = '';
@@ -863,8 +886,8 @@ export function floorMapMarkup({
       .join('');
   }
 
-  const routeLayer = routeLayerMarkup(floor, navigation, roomLabelBoxes);
-  const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet, roomLabelBoxes, routeLayer.avoidBoxes);
+  const routeLayer = routeLayerMarkup(floor, navigation, roomLabelBoxes, lang);
+  const artworks = artworkMarkup(plan.roomAnchors || {}, worksByRoom, selectedId, routeWorkIds, viewedSet, roomLabelBoxes, lang, routeLayer.avoidBoxes);
 
   const alerts = roomNotices.filter(notice => notice.floor === floor).map(notice => {
     const anchor = plan.roomAnchors?.[String(notice.room)];
@@ -880,7 +903,8 @@ export function floorMapMarkup({
     hasConstruction: Boolean(plan.hasConstruction),
     hasRestArea: Boolean(plan.hasRestArea),
     hasExhibition: Boolean(plan.hasExhibition),
-    facilityTypes
+    facilityTypes,
+    lang
   });
   const isFacilityPickMode = facilityFilter === 'wc' || facilityFilter === 'cafe';
 
@@ -899,7 +923,7 @@ export function floorMapMarkup({
       <line x1="0" y1="0" x2="0" y2="7" stroke="#dfb22a" stroke-width="2.6"/>
     </pattern>`;
 
-  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" data-map-floor="${escapeHtml(String(floor))}" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(floorLabel)}の2Dフロアマップ</title><desc id="map-description">ルーブル宮殿の展示室、廊下、壁、階段、エレベーター、トイレ、カフェ、作品位置および経路を階別に表示。</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="入口から最終作品までのルート">${routeLayer.passedMarkup}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g><g class="map-layer layer-route-active" data-layer="route-active">${routeLayer.activeMarkup}</g><g class="map-layer layer-route-callouts" data-layer="route-callouts">${routeLayer.calloutsMarkup}</g>${hud.markup}</svg>`;
+  return `<svg id="floor-map" class="${isFacilityPickMode ? 'facility-pick-mode' : ''} ${plan.isCustomFloorPlan ? 'is-custom-floor-plan' : ''}" viewBox="0 0 960 600" data-map-floor="${escapeHtml(String(floor))}" role="img" aria-labelledby="map-title map-description"><title id="map-title">${escapeHtml(t('svg.title', {floor: floorLabel}, lang))}</title><desc id="map-description">${escapeHtml(t('svg.desc', null, lang))}</desc><defs>${svgDefs}</defs><rect class="map-background" width="960" height="600"/><g class="map-layer layer-wings" data-layer="wings">${footprint}</g><g class="map-layer layer-rooms" data-layer="rooms">${rooms}</g><g class="map-layer layer-corridors" data-layer="corridors">${corridors}</g><g class="map-layer layer-connections" data-layer="connections">${walls}</g><g class="map-layer layer-doors" data-layer="doors">${doors}</g><g class="map-layer layer-alerts" data-layer="alerts">${alerts}</g><g class="map-layer layer-route" data-layer="route" aria-label="${escapeHtml(t('svg.routeLayerAria', null, lang))}">${routeLayer.passedMarkup}</g><g class="map-layer layer-facilities" data-layer="facilities">${facilities}</g><g class="map-layer layer-artworks ${isFacilityPickMode ? 'is-subdued' : ''}" data-layer="artworks">${artworks}</g><g class="map-layer layer-labels" data-layer="labels">${wingLabels}${roomLabels}</g><g class="map-layer layer-route-active" data-layer="route-active">${routeLayer.activeMarkup}</g><g class="map-layer layer-route-callouts" data-layer="route-callouts">${routeLayer.calloutsMarkup}</g>${hud.markup}</svg>`;
 }
 
 function clampView(view) {

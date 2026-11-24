@@ -2,27 +2,30 @@ import {navigationStateForSelection, navigationStateFromRoute} from '../navigati
 import {advanceOnRouteAudio, destinationWorkId} from '../route-progress.js';
 import {correctLocation, findRoomCandidates} from '../location-support.js';
 import {buildTimedRouteWorks, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
+import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {runWithRouteLoader} from './route-loader.js';
 
 export function createPlanActions(ctx) {
+  const tr = (key, params) => t(key, params, ctx.state.lang);
+
   function setPreferElevator(prefer) {
     const next = Boolean(prefer);
     if (ctx.state.preferElevator === next) return;
     const apply = () => {
       ctx.state.preferElevator = next;
       ctx.persistState();
-      ctx.setNotice(ctx.state.preferElevator ? 'エレベーター優先ルートに切り替えました' : '移動距離が最短のルートに切り替えました', false, 3200);
+      ctx.setNotice(tr(ctx.state.preferElevator ? 'notice.evOn' : 'notice.evOff'), false, 3200);
       ctx.render();
     };
     if (ctx.state.appPhase === 'main' && ctx.routableIds().length > 0) {
       runWithRouteLoader({
-        title: next ? 'エレベーター優先ルートを計算中' : '最短距離ルートを再計算中',
+        title: tr(next ? 'loader.evTitle' : 'loader.shortestTitle'),
         subtitle: ctx.currentPlan().label,
-        modeBadge: next ? 'EV優先' : '最短距離',
+        modeBadge: tr(next ? 'course.elevatorShort' : 'course.shortest'),
         steps: [
-          '館内フロアと階段・エレベーター接続を確認しています',
-          next ? 'エレベーターを優先する階移動経路を探索しています' : '展示室間の最短経路を算出しています',
-          '各作品の目安経過時間を更新しています'
+          tr('loader.evStep1'),
+          tr(next ? 'loader.evStep2' : 'loader.shortestStep2'),
+          tr('loader.evStep3')
         ],
         durationMs: 1650
       }, apply);
@@ -35,7 +38,7 @@ export function createPlanActions(ctx) {
     const target = typeof routeIdOrMinutes === 'string'
       ? ctx.routes.find(item => item.id === routeIdOrMinutes)
       : ctx.routes.find(item => item.kind !== 'theme' && item.minutes === routeIdOrMinutes);
-    const chosen = target || ctx.routes[0];
+    const chosen = localizeRoute(target || ctx.routes[0], ctx.state.lang);
     const apply = () => {
       ctx.clearProgressNotice();
       ctx.state.planMode = 'preset';
@@ -61,13 +64,13 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: `${chosen.label}を編成中`,
-      subtitle: `${chosen.ids.length}作品 · ${chosen.subtitle || '館内最短動線'}`,
-      modeBadge: ctx.state.preferElevator ? 'エレベーター優先' : '最短一筆書き',
+      title: tr('loader.presetTitle', {label: chosen.label}),
+      subtitle: tr('loader.presetSubtitle', {count: chosen.ids.length, subtitle: chosen.subtitle || tr('loader.presetDefaultSub')}),
+      modeBadge: tr(ctx.state.preferElevator ? 'course.elevator' : 'loader.modeShortest'),
       steps: [
-        '展示室とフロア構造を照合しています',
-        ctx.state.preferElevator ? 'エレベーター優先の移動ルートを設計しています' : '上下往復のない最短動線を計算しています',
-        '音声ガイドと目安経過時間を準備しています'
+        tr('loader.presetStep1'),
+        tr(ctx.state.preferElevator ? 'loader.presetStep2Ev' : 'loader.presetStep2Short'),
+        tr('loader.presetStep3')
       ],
       durationMs: 2250
     }, apply);
@@ -76,7 +79,7 @@ export function createPlanActions(ctx) {
   function chooseTimedCourse(minutes, count, {goMap = true, animate = true} = {}) {
     const bounds = timeCourseBounds(minutes, ctx.maxRoutableCount);
     const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
-    const pace = paceSummaryFor(bounds.minutes, safeCount, bounds);
+    const pace = paceSummaryFor(bounds.minutes, safeCount, bounds, ctx.state.lang);
     const apply = () => {
       ctx.clearProgressNotice();
       const built = buildTimedRouteWorks(ctx.works, ctx.navigationIndex, {
@@ -109,13 +112,13 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: `${bounds.minutes}分 · ${safeCount}作品ルートを編成中`,
-      subtitle: `${pace.label}（推奨 ${bounds.recommended}作品 / 限界目安 ${bounds.max}作品）`,
-      modeBadge: ctx.state.preferElevator ? 'エレベーター優先' : '最短一筆書き',
+      title: tr('loader.timedTitle', {minutes: bounds.minutes, count: safeCount}),
+      subtitle: tr('loader.timedSubtitle', {pace: pace.label, rec: bounds.recommended, max: bounds.max}),
+      modeBadge: tr(ctx.state.preferElevator ? 'course.elevator' : 'loader.modeShortest'),
       steps: [
-        `超有名作品から優先して ${safeCount}作品を選出しています`,
-        ctx.state.preferElevator ? 'エレベーター優先の移動ルートを設計しています' : '上下往復のない最短一筆書きを探索しています',
-        '各作品の目安経過時間と音声ガイドを準備しています'
+        tr('loader.timedStep1', {count: safeCount}),
+        tr(ctx.state.preferElevator ? 'loader.presetStep2Ev' : 'loader.timedStep2Short'),
+        tr('loader.timedStep3')
       ],
       durationMs: 2250
     }, apply);
@@ -143,13 +146,13 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: 'マイプランのルートを作成中',
-      subtitle: `${ctx.state.myPlanIds.length}作品のお気に入りリスト`,
-      modeBadge: ctx.state.preferElevator ? 'エレベーター優先' : 'カスタムルート',
+      title: tr('loader.myPlanTitle'),
+      subtitle: tr('loader.myPlanSubtitle', {count: ctx.state.myPlanIds.length}),
+      modeBadge: tr(ctx.state.preferElevator ? 'course.elevator' : 'loader.modeCustom'),
       steps: [
-        '選択された作品の展示室を確認しています',
-        ctx.state.preferElevator ? 'エレベーター優先で館内経路を接続しています' : '入口からの館内移動ルートを計算しています',
-        'プラン一覧と目安時間を仕上げています'
+        tr('loader.myPlanStep1'),
+        tr(ctx.state.preferElevator ? 'loader.myPlanStep2Ev' : 'loader.myPlanStep2Short'),
+        tr('loader.myPlanStep3')
       ],
       durationMs: 2050
     }, apply);
@@ -159,18 +162,18 @@ export function createPlanActions(ctx) {
     if (ctx.state.planMode !== 'myplan') return;
     const routableCount = ctx.routableIds().length;
     if (routableCount < 2) {
-      ctx.setNotice('最短順に並び替えるには、展示室対応の作品が2件以上必要です', false, 3400);
+      ctx.setNotice(tr('notice.optNeedTwo'), false, 3400);
       ctx.render();
       return;
     }
     runWithRouteLoader({
-      title: 'マイプランを最短順に最適化中',
-      subtitle: `対象 ${routableCount}作品 · ピラミッド入口から一筆書き探索`,
-      modeBadge: ctx.state.preferElevator ? 'EV優先最適化' : '最短巡回探索',
+      title: tr('loader.optTitle'),
+      subtitle: tr('loader.optSubtitle', {count: routableCount}),
+      modeBadge: tr(ctx.state.preferElevator ? 'loader.modeOptEv' : 'loader.modeOptShort'),
       steps: [
-        '全展示室間の移動距離行列を算出しています',
-        '同じ展示室の作品をまとめて最短巡回順を探索しています',
-        '最適化ルートと目安経過時間を反映しています'
+        tr('loader.optStep1'),
+        tr('loader.optStep2'),
+        tr('loader.optStep3')
       ],
       durationMs: 2150
     }, () => {
@@ -185,9 +188,9 @@ export function createPlanActions(ctx) {
       ctx.persistState();
       const message = result.changed
         ? (result.savedPercent > 0
-          ? `最短順に並び替えました（移動距離 約${result.savedPercent}%短縮）`
-          : '展示室がまとまる最短順に並び替えました')
-        : 'すでに最短の順番になっています';
+          ? tr('notice.optSaved', {pct: result.savedPercent})
+          : tr('notice.optGrouped'))
+        : tr('notice.optAlready');
       ctx.setNotice(message, false, 4500);
       ctx.render();
     });
@@ -227,8 +230,8 @@ export function createPlanActions(ctx) {
     ctx.state.myPlanIds = result.ids;
     syncMyPlanNavigation();
     ctx.persistState();
-    const title = ctx.byId[workId]?.title ?? '作品';
-    ctx.setNotice(result.added ? `「${title}」をマイプランに追加しました` : `「${title}」をマイプランから外しました`, false, 3000);
+    const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
+    ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3000);
     ctx.render();
   }
 
@@ -264,8 +267,10 @@ export function createPlanActions(ctx) {
     ctx.state.selected = result.nextWorkId ?? workId;
     ctx.state.viewed.add(workId);
     ctx.persistState();
-    const roomText = ctx.byId[workId]?.room ? `${ctx.byId[workId].room}室` : (ctx.byId[workId]?.title ?? '現在地');
-    ctx.setNotice(`推定現在地を${roomText}として更新しました`, true, 6500);
+    const roomText = ctx.byId[workId]?.room
+      ? tr('location.room', {room: ctx.byId[workId].room})
+      : (localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.currentLocFallback'));
+    ctx.setNotice(tr('notice.arrivalUpdated', {room: roomText}), true, 6500);
     ctx.render();
     return true;
   }
@@ -280,15 +285,15 @@ export function createPlanActions(ctx) {
     ctx.state.selected = snapshot.selected;
     ctx.state.undo = null;
     ctx.persistState();
-    ctx.setNotice('推定現在地と経路を元に戻しました', false, 3200);
+    ctx.setNotice(tr('notice.arrivalUndone'), false, 3200);
     ctx.render();
   }
 
   function lookupRoom(room) {
     ctx.state.support.room = room;
-    ctx.state.support.candidates = findRoomCandidates(ctx.navigationIndex, ctx.works, room);
+    ctx.state.support.candidates = findRoomCandidates(ctx.navigationIndex, ctx.works, room, ctx.state.lang);
     ctx.state.support.selectedCandidateId = ctx.state.support.candidates.length === 1 ? ctx.state.support.candidates[0].nodeId : null;
-    ctx.state.support.error = ctx.state.support.candidates.length ? '' : '部屋番号を確認してください';
+    ctx.state.support.error = ctx.state.support.candidates.length ? '' : tr('map.errCheckRoom');
     ctx.state.support.open = true;
     ctx.state.support.editing = true;
     ctx.render();
@@ -297,7 +302,7 @@ export function createPlanActions(ctx) {
   function confirmLocationCorrection() {
     const candidateId = ctx.state.support.selectedCandidateId;
     if (!candidateId) {
-      ctx.state.support.error = ctx.state.support.candidates.length > 1 ? '翼と階を確認して候補を選択してください' : '部屋番号を確認してください';
+      ctx.state.support.error = ctx.state.support.candidates.length > 1 ? tr('map.errSelectCandidate') : tr('map.errCheckRoom');
       ctx.render();
       return;
     }
@@ -312,7 +317,7 @@ export function createPlanActions(ctx) {
     ctx.state.navigation = result.navigation;
     ctx.state.support = {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''};
     ctx.persistState();
-    ctx.setNotice(`推定現在地を${candidate?.label ?? '入力した部屋'}として更新しました`, false, 4200);
+    ctx.setNotice(tr('notice.arrivalUpdated', {room: candidate?.label ?? tr('notice.enteredRoomFallback')}), false, 4200);
     ctx.render();
   }
 

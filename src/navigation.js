@@ -1,4 +1,6 @@
-const floorLabel = floor => ({2:'2階', 1:'1階', 0:'地上階', '-1':'地下1階'}[floor] ?? `${floor}階`);
+import {getFloorNavName, getLang, t} from './i18n.js';
+
+const floorLabel = (floor, lang = getLang()) => getFloorNavName(floor, lang);
 
 export function indexNavigationGraph(graph) {
   const nodes = new Map(graph.nodes.map(node => [node.id, node]));
@@ -174,7 +176,7 @@ function plannedPaths(index, routeWorkIds, destinationNode, options) {
   return paths;
 }
 
-function transitionSteps(index, path) {
+function transitionSteps(index, path, lang = getLang()) {
   if (!path) return [];
   const transitions = [];
   for (let edgeIndex = 0; edgeIndex < path.edges.length; edgeIndex += 1) {
@@ -184,30 +186,40 @@ function transitionSteps(index, path) {
     if (!from || !to || from.floor === to.floor) continue;
     const delta = to.floor - from.floor;
     const count = Math.abs(delta);
-    const direction = delta > 0 ? '上' : '下';
-    const facilityName = from.label || to.label || (edge.kind === 'elevator' ? 'エレベーター' : edge.kind === 'escalator' ? 'エスカレーター' : '階段');
-    const message = `${facilityName}で${count}階${direction}へ（${floorLabel(to.floor)}）`;
+    const direction = delta > 0 ? t('nav.dirUp', null, lang) : t('nav.dirDown', null, lang);
+    const defaultKindLabel = edge.kind === 'elevator'
+      ? t('svg.fac.elevator', null, lang)
+      : edge.kind === 'escalator'
+        ? t('svg.fac.escalator', null, lang)
+        : t('svg.fac.stairs', null, lang);
+    const facilityName = lang === 'ja'
+      ? (from.label || to.label || defaultKindLabel)
+      : defaultKindLabel;
+    const message = t('nav.transitionMsg', {facility: facilityName, count, dir: direction, floor: floorLabel(to.floor, lang)}, lang);
     transitions.push({kind:edge.kind, facilityName, from, to, message});
   }
   return transitions;
 }
 
-function nextAction(index, path, destination) {
-  if (!path || path.nodeIds.length < 2) return destination ? `${destination.label}に到着しました` : '経路を確認できません';
+function nextAction(index, path, destination, lang = getLang()) {
+  if (!path || path.nodeIds.length < 2) return destination ? t('nav.arrived', {label: destination.label}, lang) : t('nav.cannotCheck', null, lang);
   const current = index.nodes.get(path.nodeIds[0]);
   const next = index.nodes.get(path.nodeIds[1]);
   if (current.floor !== next.floor) {
-    const transition = transitionSteps(index, path)[0];
-    return transition?.message ?? `${floorLabel(next.floor)}へ移動します`;
+    const transition = transitionSteps(index, path, lang)[0];
+    return transition?.message ?? t('nav.moveToFloor', {floor: floorLabel(next.floor, lang)}, lang);
   }
   const dx = next.x - current.x;
   const dy = next.y - current.y;
-  const direction = Math.abs(dx) >= Math.abs(dy) ? (dx >= 0 ? '右' : '左') : (dy >= 0 ? '下方向' : '上方向');
-  const room = destination?.room ? `${destination.room}室` : destination?.label;
-  return `青い実線に沿って${direction}へ進み、${room}を目指してください`;
+  const direction = Math.abs(dx) >= Math.abs(dy)
+    ? (dx >= 0 ? t('nav.right', null, lang) : t('nav.left', null, lang))
+    : (dy >= 0 ? t('nav.downDir', null, lang) : t('nav.upDir', null, lang));
+  const room = destination?.room ? t('location.room', {room: destination.room}, lang) : destination?.label;
+  return t('nav.followBlue', {dir: direction, room}, lang);
 }
 
 export function buildNavigationView(graphOrIndex, input, options = {}) {
+  const lang = options?.lang ?? getLang();
   const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
   const {journeyStartNodeId, currentNodeId, destinationNodeId} = input ?? {};
   const currentNode = index.nodes.get(currentNodeId) ?? null;
@@ -218,27 +230,27 @@ export function buildNavigationView(graphOrIndex, input, options = {}) {
   const passedPaths = storedPassedPaths.length ? storedPassedPaths : (fallbackPassedPath ? [fallbackPassedPath] : []);
   const passedPath = passedPaths[0] ?? null;
   const passedSegments = passedPaths.flatMap(path => floorSegments(index, path));
-  const passedTransitions = passedPaths.flatMap(path => transitionSteps(index, path));
+  const passedTransitions = passedPaths.flatMap(path => transitionSteps(index, path, lang));
   if (currentNode && input?.routeComplete) {
     const floors = new Set([currentNode.floor]);
     passedSegments.forEach(segment => floors.add(segment.floor));
     passedTransitions.forEach(transition => { floors.add(transition.from.floor); floors.add(transition.to.floor); });
-    return {available:true, complete:true, currentNode, destinationNode:null, locationMethod:input?.lastConfirmedMethod, passedPath, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[...floors], nextAction:'このルートは完了しました', totalCost:0};
+    return {available:true, complete:true, currentNode, destinationNode:null, locationMethod:input?.lastConfirmedMethod, passedPath, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[...floors], nextAction:t('nav.routeComplete', null, lang), totalCost:0};
   }
   if (!currentNode || !destinationNode) {
-    return {available:false, reason:'現在地または目的地の接続データがありません', passedSegments:[], remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[]};
+    return {available:false, reason:t('nav.noNodes', null, lang), passedSegments:[], remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[]};
   }
 
   const remainingPath = shortestPath(index, currentNodeId, destinationNodeId, options);
   if (!remainingPath) {
-    return {available:false, reason:'この地点間を結ぶ確認済み経路がありません', currentNode, destinationNode, locationMethod:input?.lastConfirmedMethod, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[currentNode.floor]};
+    return {available:false, reason:t('nav.noPath', null, lang), currentNode, destinationNode, locationMethod:input?.lastConfirmedMethod, passedSegments, passedTransitions, remainingSegments:[], plannedSegments:[], transitions:[], plannedTransitions:[], routeFloors:[currentNode.floor]};
   }
 
   const remainingSegments = floorSegments(index, remainingPath);
-  const transitions = transitionSteps(index, remainingPath);
+  const transitions = transitionSteps(index, remainingPath, lang);
   const futurePaths = plannedPaths(index, input?.routeWorkIds, destinationNode, options);
   const plannedSegments = futurePaths.flatMap(path => floorSegments(index, path));
-  const plannedTransitions = futurePaths.flatMap(path => transitionSteps(index, path));
+  const plannedTransitions = futurePaths.flatMap(path => transitionSteps(index, path, lang));
   const floors = new Set([currentNode.floor, destinationNode.floor]);
   passedSegments.forEach(segment => floors.add(segment.floor));
   passedTransitions.forEach(transition => { floors.add(transition.from.floor); floors.add(transition.to.floor); });
@@ -260,7 +272,7 @@ export function buildNavigationView(graphOrIndex, input, options = {}) {
     transitions,
     plannedTransitions,
     routeFloors:[...floors],
-    nextAction:nextAction(index, remainingPath, destinationNode),
+    nextAction:nextAction(index, remainingPath, destinationNode, lang),
     totalCost:remainingPath.totalCost
   };
 }

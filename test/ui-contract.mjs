@@ -5,13 +5,20 @@ import {mapTabView} from '../src/views/map-tab.js';
 async function loadSplitUiSources() {
   const appFiles = (await readdir(new URL('../src/app/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
   const viewFiles = (await readdir(new URL('../src/views/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
-  const parts = [await readFile(new URL('../src/main.js', import.meta.url), 'utf8')];
+  const localeFiles = (await readdir(new URL('../src/locales/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
+  const parts = [
+    await readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
+    await readFile(new URL('../src/i18n.js', import.meta.url), 'utf8')
+  ];
   for (const f of appFiles) parts.push(await readFile(new URL(`../src/app/${f}`, import.meta.url), 'utf8'));
   for (const f of viewFiles) parts.push(await readFile(new URL(`../src/views/${f}`, import.meta.url), 'utf8'));
+  for (const f of localeFiles) parts.push(await readFile(new URL(`../src/locales/${f}`, import.meta.url), 'utf8'));
   return {
     combined: parts.join('\n'),
     mapTabFile: await readFile(new URL('../src/views/map-tab.js', import.meta.url), 'utf8'),
     splitPaths: [
+      './src/i18n.js',
+      ...localeFiles.map(f => `./src/locales/${f}`),
       ...appFiles.map(f => `./src/app/${f}`),
       ...viewFiles.map(f => `./src/views/${f}`)
     ]
@@ -62,8 +69,10 @@ assert.match(main, /<details class="movement-support"/, 'movement support must b
 assert.match(main, /現在地を修正する/);
 assert.match(main, /道に迷ったとき/);
 assert.match(main, /部屋番号を確認してください/);
-assert.match(support, /この地点から経路を作成できません。別の部屋番号を入力してください/);
-assert.match(main, /情報更新日：\$\{esc\(sources\.checkedAt\)\}/);
+assert.match(main, /この地点から経路を作成できません。別の部屋番号を入力してください/);
+assert.match(support, /map\.errRouteFromHere/);
+assert.match(main, /情報更新日：\{date\}/);
+assert.match(main, /sources\.checkedAt/);
 assert.match(main, /ご利用前の確認・情報について/);
 assert.match(main, /sources\.officialMap/);
 assert.match(main, /sources\.availability/);
@@ -71,14 +80,18 @@ assert.match(main, /公認サービスではありません/);
 assert.doesNotMatch(main, /map-caution|route-data-note|GPS現在地|GPS不使用/);
 assert.doesNotMatch(main, /単独再生/, 'audio rows must show tier badges instead of 単独再生');
 assert.doesNotMatch(main, /作品タップで解説を読みながら再生できます/, 'verbose audio catalog intro paragraph must stay removed');
-assert.match(main, /label: 'マップ'/);
-assert.match(main, /label: 'プラン一覧'/);
-assert.match(main, /label: '音声一覧'/);
-assert.match(main, /label: '案内・設定'/);
+assert.match(main, /'tabs\.map': 'マップ'/);
+assert.match(main, /'tabs\.plan': 'プラン一覧'/);
+assert.match(main, /'tabs\.audio': '音声一覧'/);
+assert.match(main, /'tabs\.settings': '案内・設定'/);
+assert.match(main, /data-set-lang/, 'language switcher controls must exist');
+assert.match(main, /data-splash-lang/, 'splash screen must offer language selection pills');
+assert.match(main, /data-splash-start/, 'splash screen must offer start button for initial language confirmation');
+assert.match(main, /hasChosenLang/, 'initial splash must wait until user explicitly confirms language');
 assert.match(main, /data-change-course/);
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(mapTabSection, /has-destination/, 'floor tab must highlight the floor containing the next artwork');
-assert.match(mapTabSection, /class="floor-next-badge">次の作品<\/em>/, 'floor tab must display a clear 次の作品 badge on the destination floor');
+assert.match(mapTabSection, /class="floor-next-badge"/, 'floor tab must display a clear next-artwork badge on the destination floor');
 assert.match(css, /\.floor-tabs button\.has-destination/, 'destination floor tab highlight style must exist');
 assert.match(css, /\.floor-next-badge/, 'destination floor badge style must exist');
 assert.match(main, /data-mini-prev/, 'Spotify-style player must provide ⏮ previous control');
@@ -106,7 +119,7 @@ assert.match(css, /\.bottom-tabs \{[^}]*position:\s*fixed;[^}]*bottom:\s*0/s, 'b
   const works = JSON.parse(await readFile(new URL('../src/works.json', import.meta.url), 'utf8'));
   const byId = Object.fromEntries(works.map(w => [w.id, w]));
   const baseCtx = (nav) => ({
-    state: {floor: 1, facilityFilter: 'none', preferElevator: false, viewed: new Set(), support: {open: false, editing: false, room: '', error: '', candidates: [], selectedCandidateId: null}},
+    state: {lang: 'ja', floor: 1, facilityFilter: 'none', preferElevator: false, viewed: new Set(), support: {open: false, editing: false, room: '', error: '', candidates: [], selectedCandidateId: null}},
     works,
     byId,
     navigationGraph: {roomNotices: []},

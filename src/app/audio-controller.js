@@ -2,6 +2,7 @@ import {APP_NAME} from '../app-config.js';
 import {navigationStateForSelection} from '../navigation.js';
 import {advanceOnRouteAudio, playbackModeFor} from '../route-progress.js';
 import {audioLengthsFor} from '../catalog.js';
+import {localizeWork, t} from '../i18n.js';
 import {clampRate} from './state.js';
 import {creatorMeta, formatClock, formatRate} from './ui-helpers.js';
 
@@ -9,6 +10,7 @@ import {creatorMeta, formatClock, formatRate} from './ui-helpers.js';
 const AUDIO_CACHE = 'louvre-audio-v2';
 
 export function createAudioController(ctx) {
+  const tr = (key, params) => t(key, params, ctx.state.lang);
   const player = new Audio();
   player.preload = 'none';
   player.playbackRate = ctx.state.playbackRate;
@@ -87,14 +89,15 @@ export function createAudioController(ctx) {
     }
   }
 
-  function updateMediaSession(work) {
-    if (!('mediaSession' in navigator) || !work) return;
+  function updateMediaSession(rawWork) {
+    if (!('mediaSession' in navigator) || !rawWork) return;
+    const work = localizeWork(rawWork, ctx.state.lang);
     try {
       const image = ctx.artworkImages[work.id];
       const artwork = image?.src ? [{src: new URL(image.src, ctx.appBase).href, sizes: '512x512', type: 'image/jpeg'}] : [];
       navigator.mediaSession.metadata = new MediaMetadata({
         title: work.title,
-        artist: creatorMeta(work),
+        artist: creatorMeta(work, ctx.state.lang),
         album: APP_NAME,
         artwork
       });
@@ -144,7 +147,7 @@ export function createAudioController(ctx) {
             player.currentTime = 0;
             ctx.state.player = {workId: mini.nextId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.nextId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
             player.src = ctx.audioPath(mini.nextId, ctx.preferredLengthFor(ctx.byId[mini.nextId]));
-            ctx.setNotice(`「${currentWork.title}」を完了し、次を「${ctx.byId[mini.nextId].title}」に設定しました`, false, 3600);
+            ctx.setNotice(tr('audio.completedNextNotice', {current: localizeWork(currentWork, ctx.state.lang).title, next: localizeWork(ctx.byId[mini.nextId], ctx.state.lang).title}), false, 3600);
             ctx.render();
           }
         } else {
@@ -156,7 +159,7 @@ export function createAudioController(ctx) {
           player.pause();
           ctx.state.playing = null;
           ctx.persistState();
-          ctx.setNotice(`「${currentWork.title}」を完了しました。コース完走おつかれさまでした！`, false, 4500);
+          ctx.setNotice(tr('audio.completedAllNotice', {current: localizeWork(currentWork, ctx.state.lang).title}), false, 4500);
           ctx.render();
         }
         return;
@@ -202,7 +205,7 @@ export function createAudioController(ctx) {
       player.currentTime = 0;
       ctx.state.player = {workId: mini.prevId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.prevId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
       player.src = ctx.audioPath(mini.prevId, ctx.preferredLengthFor(prevWork));
-      ctx.setNotice(`ターゲットを「${prevWork.title}」に戻しました`, false, 3200);
+      ctx.setNotice(tr('audio.backTargetNotice', {title: localizeWork(prevWork, ctx.state.lang).title}), false, 3200);
       ctx.render();
     }
   }
@@ -244,7 +247,7 @@ export function createAudioController(ctx) {
         ctx.render();
         syncSeekBars();
       } catch {
-        ctx.state.audioError = '音声を再開できません。通信状態または音声ファイルを確認してください。';
+        ctx.state.audioError = tr('audio.errorResume');
         ctx.render();
       }
       return;
@@ -295,7 +298,7 @@ export function createAudioController(ctx) {
       if (ctx.state.player.sessionId !== sessionId) return;
       ctx.state.playing = null;
       ctx.state.player.hasStarted = false;
-      ctx.state.audioError = '音声を再生できません。通信状態または音声ファイルを確認してください。';
+      ctx.state.audioError = tr('audio.errorPlay');
       ctx.render();
     }
   }
@@ -314,13 +317,13 @@ export function createAudioController(ctx) {
 
   async function saveAudioButton(button, id, length) {
     button.disabled = true;
-    button.textContent = '保存中…';
+    button.textContent = tr('audio.saving');
     try {
       await saveSingleAudio(id, length);
-      ctx.setNotice(`「${ctx.byId[id]?.title ?? ''}」の音声を端末に保存しました`, false, 3000);
+      ctx.setNotice(tr('audio.savedSingleNotice', {title: localizeWork(ctx.byId[id], ctx.state.lang)?.title ?? ''}), false, 3000);
       ctx.render();
     } catch {
-      button.textContent = '保存できません';
+      button.textContent = tr('audio.saveFailed');
       button.disabled = false;
     }
   }
@@ -348,7 +351,7 @@ export function createAudioController(ctx) {
       ctx.render();
     }
     ctx.state.bulkDownload = {active: false, done: 0, total: 0};
-    ctx.setNotice(`${success} / ${targets.length}作品の音声をオフライン保存しました`, false, 4000);
+    ctx.setNotice(tr('audio.savedBulkNotice', {success, total: targets.length}), false, 4000);
     ctx.render();
   }
 
@@ -358,10 +361,10 @@ export function createAudioController(ctx) {
       await caches.delete(AUDIO_CACHE);
       await caches.delete('louvre-audio-v1'); // 以前の版が誤って使っていた保存先の掃除
       ctx.state.downloaded.clear();
-      ctx.setNotice('保存済みの音声データを削除しました', false, 3500);
+      ctx.setNotice(tr('audio.clearedCacheNotice'), false, 3500);
       ctx.render();
     } catch {
-      ctx.setNotice('音声データの削除に失敗しました', false, 3500);
+      ctx.setNotice(tr('audio.clearCacheErrorNotice'), false, 3500);
       ctx.render();
     }
   }

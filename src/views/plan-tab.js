@@ -1,8 +1,11 @@
 import {destinationWorkId} from '../route-progress.js';
+import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
 export function planTabView(ctx, hasMini) {
   const {state, routes, works, navigationIndex} = ctx;
+  const lang = state.lang;
+  const tr = (key, params) => t(key, params, lang);
   const plan = ctx.currentPlan();
   const items = ctx.planWorks();
   const estimates = ctx.currentEstimates();
@@ -11,47 +14,48 @@ export function planTabView(ctx, hasMini) {
   const pct = items.length ? Math.round((viewedInPlan / items.length) * 100) : 0;
   const allSaved = items.length > 0 && items.every(w => state.downloaded.has(`${w.id}-${ctx.preferredLengthFor(w)}`));
   const saveBtnText = state.bulkDownload.active
-    ? `保存中 (${state.bulkDownload.done}/${state.bulkDownload.total})…`
+    ? tr('plan.savingBulk', {done: state.bulkDownload.done, total: state.bulkDownload.total})
     : allSaved
-      ? 'すべてオフライン保存済み ✓'
-      : `コース音声をまとめて保存 (${items.length}作品)`;
+      ? tr('plan.allSaved')
+      : tr('plan.saveCourseBtn', {count: items.length});
 
   return `<main class="tab-screen plan-screen ${hasMini ? 'has-mini-player' : ''}">
-    <section class="plan-switcher" aria-label="コース選択">
-      ${routes.map(r => {
-        const shortLabel = r.kind === 'theme' ? r.label.replace(/＆.*/, '').replace(/タイムトラベル/, '') : `${r.minutes}分`;
-        return `<button type="button" class="pill-btn ${!plan.isCustom && plan.id === r.id ? 'active' : ''}" data-switch-preset="${esc(r.id)}">${esc(shortLabel)}</button>`;
+    <section class="plan-switcher" aria-label="${esc(tr('plan.switcherAria'))}">
+      ${routes.map(raw => {
+        const r = localizeRoute(raw, lang);
+        return `<button type="button" class="pill-btn ${!plan.isCustom && plan.id === r.id ? 'active' : ''}" data-switch-preset="${esc(r.id)}">${esc(r.shortLabel)}</button>`;
       }).join('')}
-      <button type="button" class="pill-btn ${plan.isCustom ? 'active' : ''}" data-switch-myplan>★ マイプラン (${state.myPlanIds.length})</button>
+      <button type="button" class="pill-btn ${plan.isCustom ? 'active' : ''}" data-switch-myplan>${esc(tr('plan.myPlanPill', {count: state.myPlanIds.length}))}</button>
     </section>
 
     <section class="plan-summary-card">
       <div class="plan-summary-top">
         <div>
-          <span class="eyebrow">${plan.isCustom ? 'CUSTOM PLAN' : plan.kind === 'theme' ? 'THEME COURSE' : 'RECOMMENDED COURSE'}</span>
+          <span class="eyebrow">${esc(plan.isCustom ? tr('plan.eyebrowCustom') : plan.kind === 'theme' ? tr('plan.eyebrowTheme') : tr('plan.eyebrowRec'))}</span>
           <h1>${esc(plan.label)}</h1>
           ${plan.subtitle ? `<p class="plan-subtitle">${esc(plan.subtitle)}</p>` : ''}
         </div>
-        <div class="plan-progress-badge">${viewedInPlan} / ${items.length} 鑑賞済み</div>
+        <div class="plan-progress-badge">${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</div>
       </div>
-      <div class="progress-bar" aria-label="鑑賞の進み具合"><span style="width:${pct}%"></span></div>
-      ${items.length ? `<p class="plan-meta-line">目安 約${plan.estimatedMinutes}分（鑑賞 ${plan.visitMinutes}分 · 移動 ${plan.walkMinutes}分 · 音声 ${plan.audioMinutes}分 · 余裕 ${plan.bufferMinutes}分）</p>` : ''}
+      <div class="progress-bar" aria-label="${esc(tr('plan.progressAria'))}"><span style="width:${pct}%"></span></div>
+      ${items.length ? `<p class="plan-meta-line">${esc(tr('plan.metaLine', {est: plan.estimatedMinutes, visit: plan.visitMinutes, walk: plan.walkMinutes, audio: plan.audioMinutes, buffer: plan.bufferMinutes}))}</p>` : ''}
       ${items.length ? `<div class="plan-summary-actions">
-        ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>✦ 最短順に並び替え</button>` : ''}
-        <button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${saveBtnText}</button>
-        <div class="route-mode-subtoggle" role="group" aria-label="経路優先切替">
-          <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">最短距離</button>
-          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">EV優先</button>
+        ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
+        <button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${esc(saveBtnText)}</button>
+        <div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
+          <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
+          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>
         </div>
       </div>` : ''}
     </section>
 
     ${!items.length ? `<section class="empty-plan-box">
-      <h2>まだマイプランに作品がありません</h2>
-      <p>全${works.length}作品の「音声一覧」やマップ上のピンから <strong>☆</strong> をタップして、見たい作品を自由に追加できます。</p>
-      <button type="button" class="primary" data-go-audio-mapped>作品を選んで追加する</button>
+      <h2>${esc(tr('plan.emptyTitle'))}</h2>
+      <p>${tr('plan.emptyBody', {total: works.length})}</p>
+      <button type="button" class="primary" data-go-audio-mapped>${esc(tr('plan.emptyBtn'))}</button>
     </section>` : `<ol class="plan-list">
-      ${items.map((work, index) => {
+      ${items.map((rawWork, index) => {
+        const work = localizeWork(rawWork, lang);
         const isViewed = state.viewed.has(work.id);
         const isDest = work.id === destId;
         const isPlaying = state.playing === work.id;
@@ -63,32 +67,32 @@ export function planTabView(ctx, hasMini) {
             ${thumbMarkup(ctx, work, 'thumb-md')}
             <div class="plan-card-copy">
               <div class="plan-card-badges">
-                ${priorityBadgeMarkup(work)}
-                ${isDest ? '<span class="status-pill dest">次の目的地</span>' : isViewed ? '<span class="status-pill done">鑑賞済み ✓</span>' : '<span class="status-pill">予定</span>'}
-                ${!hasMap ? '<span class="status-pill warn">経路対象外</span>' : ''}
+                ${priorityBadgeMarkup(work, lang)}
+                ${isDest ? `<span class="status-pill dest">${esc(tr('plan.statusDest'))}</span>` : isViewed ? `<span class="status-pill done">${esc(tr('plan.statusDone'))}</span>` : `<span class="status-pill">${esc(tr('plan.statusPlanned'))}</span>`}
+                ${!hasMap ? `<span class="status-pill warn">${esc(tr('plan.statusUnmapped'))}</span>` : ''}
               </div>
               <strong>${esc(work.title)}</strong>
-              <small>${esc(creatorMeta(work))}</small>
+              <small>${esc(creatorMeta(work, lang))}</small>
               <div class="plan-meta-chips">
-                <small class="plan-loc-line">${esc(workStatus(work))}</small>
+                <small class="plan-loc-line">${esc(workStatus(work, lang))}</small>
                 ${est ? `<span class="elapsed-pill">${esc(est.elapsedLabel)}</span>` : ''}
               </div>
             </div>
           </div>
           <div class="plan-card-actions">
-            <button type="button" class="action-chip play-chip ${isPlaying ? 'active' : ''}" data-quick-play="${esc(work.id)}">${isPlaying ? '⏸ 停止' : '▶ 再生'}</button>
-            ${hasMap ? `<button type="button" class="action-chip" data-show-map="${esc(work.id)}">地図</button>` : ''}
-            <button type="button" class="action-chip ${isViewed ? 'done-chip' : ''}" data-toggle-viewed="${esc(work.id)}">${isViewed ? '✓ 済' : '済にする'}</button>
+            <button type="button" class="action-chip play-chip ${isPlaying ? 'active' : ''}" data-quick-play="${esc(work.id)}">${esc(isPlaying ? tr('plan.stop') : tr('plan.play'))}</button>
+            ${hasMap ? `<button type="button" class="action-chip" data-show-map="${esc(work.id)}">${esc(tr('plan.mapBtn'))}</button>` : ''}
+            <button type="button" class="action-chip ${isViewed ? 'done-chip' : ''}" data-toggle-viewed="${esc(work.id)}">${esc(isViewed ? tr('plan.doneShort') : tr('plan.markDone'))}</button>
             ${plan.isCustom ? `
-              <button type="button" class="icon-chip" data-move-myplan="${esc(work.id)}" data-delta="-1" ${index === 0 ? 'disabled' : ''} aria-label="上へ移動">↑</button>
-              <button type="button" class="icon-chip" data-move-myplan="${esc(work.id)}" data-delta="1" ${index === items.length - 1 ? 'disabled' : ''} aria-label="下へ移動">↓</button>
-              <button type="button" class="icon-chip danger" data-remove-myplan="${esc(work.id)}" aria-label="削除">✕</button>
+              <button type="button" class="icon-chip" data-move-myplan="${esc(work.id)}" data-delta="-1" ${index === 0 ? 'disabled' : ''} aria-label="${esc(tr('plan.moveUpAria'))}">↑</button>
+              <button type="button" class="icon-chip" data-move-myplan="${esc(work.id)}" data-delta="1" ${index === items.length - 1 ? 'disabled' : ''} aria-label="${esc(tr('plan.moveDownAria'))}">↓</button>
+              <button type="button" class="icon-chip danger" data-remove-myplan="${esc(work.id)}" aria-label="${esc(tr('plan.removeAria'))}">✕</button>
             ` : ''}
           </div>
         </li>`;
       }).join('')}
     </ol>`}
-    ${plan.isCustom && items.length ? `<div class="add-more-wrap"><button type="button" class="secondary" data-go-audio-mapped>＋ 音声一覧から作品を追加</button></div>` : ''}
+    ${plan.isCustom && items.length ? `<div class="add-more-wrap"><button type="button" class="secondary" data-go-audio-mapped>${esc(tr('plan.addMoreBtn'))}</button></div>` : ''}
   </main>`;
 }
 

@@ -1,87 +1,93 @@
-import {FLOORS, FLOOR_NAMES} from '../app-config.js';
+import {FLOORS} from '../app-config.js';
 import {floorMapMarkup, wireFloorMap} from '../floor-map.js';
 import {floorGeoData} from '../floor-map-geo.js';
+import {getFloorName, localizeWork, t} from '../i18n.js';
 import {esc, workStatus} from '../app/ui-helpers.js';
 
 export function navigationPanel(ctx, view, plan) {
-  const {works, byId} = ctx;
+  const {works, byId, state} = ctx;
+  const lang = state.lang;
+  const tr = (key, params) => t(key, params, lang);
   if (!plan.routableIds.length) {
     return `<section class="route-guidance route-empty">
-      <div><span class="guidance-label">マイプラン案内</span><strong>マップ対応作品がまだ選ばれていません</strong></div>
-      <p>「音声一覧」から展示室確認済みの作品を ★ 追加すると、入口からの最短ルートが表示されます。</p>
-      <button class="secondary compact-btn" type="button" data-go-audio-mapped>マップ対応作品を見る（${works.filter(w => w.locationPrecision === 'room').length}作品）</button>
+      <div><span class="guidance-label">${esc(tr('map.emptyTitle'))}</span><strong>${esc(tr('map.emptyStrong'))}</strong></div>
+      <p>${esc(tr('map.emptyBody'))}</p>
+      <button class="secondary compact-btn" type="button" data-go-audio-mapped>${esc(tr('map.emptyBtn', {count: works.filter(w => w.locationPrecision === 'room').length}))}</button>
     </section>`;
   }
   if (!view.available) {
     return `<section class="route-guidance route-unavailable" role="status">
-      <div><span class="guidance-label">経路を表示できません</span><strong>${esc(view.reason)}</strong></div>
-      <p>壁を横断する推測線は表示しません。接続データの追加後に再計算できます。</p>
+      <div><span class="guidance-label">${esc(tr('map.routeUnavailable'))}</span><strong>${esc(view.reason)}</strong></div>
+      <p>${esc(tr('map.routeUnavailableBody'))}</p>
     </section>`;
   }
   const locationLabel = view.locationMethod === 'selection'
-    ? '区間の開始地点'
+    ? tr('svg.locSelection')
     : ['audio', 'manual'].includes(view.locationMethod)
-      ? '推定現在地'
-      : '最後に確認した地点';
+      ? tr('svg.locEstimated')
+      : tr('svg.locLastConfirmed');
   if (view.complete) {
-    return `<section class="route-guidance route-complete" aria-label="ルート完了">
+    return `<section class="route-guidance route-complete" aria-label="${esc(tr('map.completeAria'))}">
       <div class="guidance-points">
-        <div><span class="guidance-label">${locationLabel}</span><strong><i class="current-symbol"></i>${esc(view.currentNode.label)}</strong></div>
+        <div><span class="guidance-label">${esc(locationLabel)}</span><strong><i class="current-symbol"></i>${esc(view.currentNode.label)}</strong></div>
         <span class="guidance-arrow" aria-hidden="true">✓</span>
-        <div><span class="guidance-label">進行状況</span><strong class="destination-name">ルート完了！</strong></div>
+        <div><span class="guidance-label">${esc(tr('map.progressLabel'))}</span><strong class="destination-name">${esc(tr('map.completeLead'))}</strong></div>
       </div>
-      <p class="next-action"><span>おつかれさまでした</span>気になる作品があれば、マップ上のピンや音声一覧から自由に鑑賞できます。</p>
+      <p class="next-action"><span>${esc(tr('map.completeThanks'))}</span>${esc(tr('map.completeThanksBody'))}</p>
     </section>`;
   }
-  const destinationWork = byId[view.destinationNode.workId];
+  const rawDestWork = byId[view.destinationNode.workId];
+  const destinationWork = rawDestWork ? localizeWork(rawDestWork, lang) : null;
   const transition = view.transitions[0];
   const estimates = ctx.currentEstimates();
   const destEst = destinationWork ? estimates[destinationWork.id] : null;
-  return `<section class="route-guidance" aria-label="現在地から次の作品まで">
+  return `<section class="route-guidance" aria-label="${esc(tr('map.guidanceAria'))}">
     <div class="guidance-points">
       <div>
-        <span class="guidance-label">${locationLabel}</span>
+        <span class="guidance-label">${esc(locationLabel)}</span>
         <strong><i class="current-symbol"></i>${esc(view.currentNode.label)}</strong>
       </div>
       <span class="guidance-arrow" aria-hidden="true">→</span>
       <button class="guidance-dest-btn" type="button" data-open-detail="${esc(destinationWork?.id || '')}">
-        <span class="guidance-label">次の目的地（タップで詳細）</span>
+        <span class="guidance-label">${esc(tr('map.nextDestLabel'))}</span>
         <strong class="destination-name">${esc(destinationWork?.title ?? view.destinationNode.label)}</strong>
-        <small>${destinationWork ? esc(workStatus(destinationWork)) : ''}${destEst ? ` · ${esc(destEst.elapsedLabel)}` : ''}</small>
+        <small>${destinationWork ? esc(workStatus(destinationWork, lang)) : ''}${destEst ? ` · ${esc(destEst.elapsedLabel)}` : ''}</small>
       </button>
     </div>
-    <p class="next-action"><span>次にすること</span>${esc(view.nextAction)}</p>
+    <p class="next-action"><span>${esc(tr('map.nextActionLabel'))}</span>${esc(view.nextAction)}</p>
     ${transition ? `<p class="transition-summary">${transition.to.floor > transition.from.floor ? '↑' : '↓'} ${esc(transition.message)}</p>` : ''}
   </section>`;
 }
 
 export function movementSupportMarkup(ctx) {
   const support = ctx.state.support;
+  const lang = ctx.state.lang;
+  const tr = (key, params) => t(key, params, lang);
   const candidates = support.candidates.length
     ? `<fieldset class="room-candidates">
-        <legend>${support.candidates.length > 1 ? '翼と階を確認して選択してください' : '入力した部屋を確認してください'}</legend>
-        ${support.candidates.map(candidate => `<label><input type="radio" name="room-candidate" value="${esc(candidate.nodeId)}" ${support.selectedCandidateId === candidate.nodeId ? 'checked' : ''}><span><strong>${esc(candidate.room)}室</strong><small>${esc(candidate.wing)}翼 · ${esc(candidate.floorLabel)}</small></span></label>`).join('')}
+        <legend>${esc(support.candidates.length > 1 ? tr('map.selectCandidateLegend') : tr('map.confirmRoomLegend'))}</legend>
+        ${support.candidates.map(candidate => `<label><input type="radio" name="room-candidate" value="${esc(candidate.nodeId)}" ${support.selectedCandidateId === candidate.nodeId ? 'checked' : ''}><span><strong>${esc(tr('location.room', {room: candidate.room}))}</strong><small>${esc(candidate.wingLabel || candidate.wing)} · ${esc(candidate.floorLabel)}</small></span></label>`).join('')}
       </fieldset>
-      <button class="primary confirm-location" type="button" data-confirm-location>この部屋を推定現在地にする</button>`
+      <button class="primary confirm-location" type="button" data-confirm-location>${esc(tr('map.confirmLocationBtn'))}</button>`
     : '';
   const editor = support.editing
     ? `<form class="room-correction-form" data-room-search novalidate>
-        <label for="room-number">部屋番号</label>
+        <label for="room-number">${esc(tr('map.roomLabel'))}</label>
         <div class="room-input-row">
-          <input id="room-number" name="room" inputmode="numeric" autocomplete="off" value="${esc(support.room)}" placeholder="例：711" aria-describedby="room-help room-error">
-          <button class="secondary" type="submit">候補を確認</button>
+          <input id="room-number" name="room" inputmode="numeric" autocomplete="off" value="${esc(support.room)}" placeholder="${esc(tr('map.roomPlaceholder'))}" aria-describedby="room-help room-error">
+          <button class="secondary" type="submit">${esc(tr('map.checkCandidates'))}</button>
         </div>
-        <small id="room-help">入口付近や壁面に表示された番号を入力してください。</small>
+        <small id="room-help">${esc(tr('map.roomHelp'))}</small>
         ${support.error ? `<p class="room-error" id="room-error" role="alert">${esc(support.error)}</p>` : ''}
         ${candidates}
       </form>`
     : '';
   return `<details class="movement-support" ${support.open ? 'open' : ''}>
-    <summary>移動サポート（道に迷ったとき）</summary>
+    <summary>${esc(tr('map.supportSummary'))}</summary>
     <div class="movement-support-body">
       <button class="location-correction-trigger" type="button" data-edit-location>
-        <span>現在地を修正する</span>
-        <small>近くの展示室番号から最短ルートを再計算します</small>
+        <span>${esc(tr('map.editLocationTitle'))}</span>
+        <small>${esc(tr('map.editLocationSub'))}</small>
       </button>
       ${editor}
     </div>
@@ -90,6 +96,8 @@ export function movementSupportMarkup(ctx) {
 
 export function mapTabView(ctx, hasMini) {
   const {state, works, navigationGraph} = ctx;
+  const lang = state.lang;
+  const tr = (key, params) => t(key, params, lang);
   const plan = ctx.currentPlan();
   const nav = ctx.navigationView();
   const destinationId = nav.destinationNode?.workId ?? null;
@@ -106,13 +114,13 @@ export function mapTabView(ctx, hasMini) {
   const cafeCount = (currentFloorGeo?.facilities || []).filter(item => item.type === 'cafe').length;
   const emptyOrCompleteNote = !plan.routableIds.length
     ? `<section class="route-guidance route-empty">
-        <div><span class="guidance-label">マイプラン案内</span><strong>マップ対応作品がまだ選ばれていません</strong></div>
-        <p>「音声一覧」から展示室確認済みの作品を ★ 追加すると、入口からの最短ルートが表示されます。</p>
-        <button class="secondary compact-btn" type="button" data-go-audio-mapped>マップ対応作品を見る（${works.filter(w => w.locationPrecision === 'room').length}作品）</button>
+        <div><span class="guidance-label">${esc(tr('map.emptyTitle'))}</span><strong>${esc(tr('map.emptyStrong'))}</strong></div>
+        <p>${esc(tr('map.emptyBody'))}</p>
+        <button class="secondary compact-btn" type="button" data-go-audio-mapped>${esc(tr('map.emptyBtn', {count: works.filter(w => w.locationPrecision === 'room').length}))}</button>
       </section>`
     : nav.complete
-      ? `<section class="route-guidance route-complete" aria-label="ルート完了">
-          <p class="next-action"><span>ルート完了！</span>おつかれさまでした。気になる作品があればマップ上のピンや音声一覧から自由に鑑賞できます。</p>
+      ? `<section class="route-guidance route-complete" aria-label="${esc(tr('map.completeAria'))}">
+          <p class="next-action"><span>${esc(tr('map.completeLead'))}</span>${esc(tr('map.completeBody'))}</p>
         </section>`
       : '';
 
@@ -121,63 +129,65 @@ export function mapTabView(ctx, hasMini) {
       <div class="map-scroll">
         ${floorMapMarkup({
           floor: state.floor,
-          floorLabel: FLOOR_NAMES[state.floor],
+          floorLabel: getFloorName(state.floor, lang),
           works,
           selectedId: destinationId,
           navigation: nav,
           roomNotices: navigationGraph.roomNotices,
           routeWorkIds: plan.routableIds,
           viewedIds: state.viewed,
-          facilityFilter: state.facilityFilter
+          facilityFilter: state.facilityFilter,
+          lang
         })}
       </div>
-      <div class="map-controls" aria-label="地図の拡大縮小">
-        <button type="button" data-map-action="in" aria-label="地図を拡大">＋</button>
+      <div class="map-controls" aria-label="${esc(tr('map.controlsAria'))}">
+        <button type="button" data-map-action="in" aria-label="${esc(tr('map.zoomInAria'))}">＋</button>
         <output data-map-status aria-live="polite">100%</output>
-        <button type="button" data-map-action="out" aria-label="地図を縮小">−</button>
-        <button type="button" data-map-action="reset">全体</button>
+        <button type="button" data-map-action="out" aria-label="${esc(tr('map.zoomOutAria'))}">−</button>
+        <button type="button" data-map-action="reset">${esc(tr('map.resetBtn'))}</button>
       </div>
     </div>
 
-    <div class="floor-tabs map-floor-tabs-below" role="tablist" aria-label="表示する階">
+    <div class="floor-tabs map-floor-tabs-below" role="tablist" aria-label="${esc(tr('map.floorTabsAria'))}">
       ${FLOORS.map(floor => {
         const hasRoute = nav.routeFloors?.includes(floor);
         const isDestinationFloor = destinationFloor === floor;
         const count = floorWorkCounts[floor];
+        const floorLabel = getFloorName(floor, lang);
         const ariaLabel = isDestinationFloor
-          ? `${FLOOR_NAMES[floor]}（次の作品あり）`
-          : FLOOR_NAMES[floor];
+          ? tr('map.floorHasNextAria', {floor: floorLabel})
+          : floorLabel;
         return `<button type="button" data-floor="${floor}"${isDestinationFloor ? ' data-destination-floor="true"' : ''} class="${floor === state.floor ? 'active' : ''} ${hasRoute ? 'has-route' : ''} ${isDestinationFloor ? 'has-destination' : ''}" aria-pressed="${floor === state.floor}" aria-label="${esc(ariaLabel)}">
-          ${isDestinationFloor ? '<em class="floor-next-badge">次の作品</em>' : ''}
-          <span>${FLOOR_NAMES[floor]}</span>
-          ${count ? `<small>${count}作</small>` : ''}
+          ${isDestinationFloor ? `<em class="floor-next-badge">${esc(tr('map.nextWorkBadge'))}</em>` : ''}
+          <span>${esc(floorLabel)}</span>
+          ${count ? `<small>${esc(tr('map.floorWorksShort', {count}))}</small>` : ''}
           ${hasRoute && !isDestinationFloor ? '<i aria-hidden="true"></i>' : ''}
         </button>`;
       }).join('')}
     </div>
 
-    <div class="map-subbar" aria-label="施設ピックアップと経路モード">
-      <div class="map-subtabs" role="tablist" aria-label="施設を強調表示">
-        <button type="button" class="${state.facilityFilter === 'none' ? 'active' : ''}" data-facility-filter="none">作品表示</button>
-        <button type="button" class="${state.facilityFilter === 'wc' ? 'active' : ''}" data-facility-filter="wc">トイレ (${wcCount})</button>
-        <button type="button" class="${state.facilityFilter === 'cafe' ? 'active' : ''}" data-facility-filter="cafe">カフェ (${cafeCount})</button>
+    <div class="map-subbar" aria-label="${esc(tr('map.subbarAria'))}">
+      <div class="map-subtabs" role="tablist" aria-label="${esc(tr('map.facilityAria'))}">
+        <button type="button" class="${state.facilityFilter === 'none' ? 'active' : ''}" data-facility-filter="none">${esc(tr('map.showWorks'))}</button>
+        <button type="button" class="${state.facilityFilter === 'wc' ? 'active' : ''}" data-facility-filter="wc">${esc(tr('map.wcFilter', {count: wcCount}))}</button>
+        <button type="button" class="${state.facilityFilter === 'cafe' ? 'active' : ''}" data-facility-filter="cafe">${esc(tr('map.cafeFilter', {count: cafeCount}))}</button>
       </div>
-      <div class="route-mode-subtoggle" role="group" aria-label="経路優先切替">
-        <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">最短距離</button>
-        <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">EV優先</button>
+      <div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
+        <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
+        <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>
       </div>
     </div>
 
     <div class="map-toolbar map-toolbar-below">
       <div class="map-toolbar-meta">
         <strong>${esc(plan.label)}</strong>
-        <span>${viewedInPlan} / ${plan.ids.length}作品 鑑賞済み</span>
+        <span>${esc(tr('map.viewedCount', {viewed: viewedInPlan, total: plan.ids.length}))}</span>
       </div>
-      <button type="button" class="pill-action-btn" data-open-plan>プラン一覧を見る ›</button>
+      <button type="button" class="pill-action-btn" data-open-plan>${esc(tr('map.openPlan'))}</button>
     </div>
 
     ${emptyOrCompleteNote}
-    ${state.facilityFilter === 'wc' && wcCount === 0 ? '<p class="map-tip">この階にトイレ情報はありません。他の階タブでご確認ください。</p>' : state.facilityFilter === 'cafe' && cafeCount === 0 ? '<p class="map-tip">この階にカフェ情報はありません（−2階・−1階・1階にあります）。</p>' : '<p class="map-tip">ピンをタップすると作品の詳細・音声再生が開きます（数字は回る順番、✓は鑑賞済み）。</p>'}
+    ${state.facilityFilter === 'wc' && wcCount === 0 ? `<p class="map-tip">${esc(tr('map.noWcTip'))}</p>` : state.facilityFilter === 'cafe' && cafeCount === 0 ? `<p class="map-tip">${esc(tr('map.noCafeTip'))}</p>` : `<p class="map-tip">${esc(tr('map.pinTip'))}</p>`}
     ${movementSupportMarkup(ctx)}
   </main>`;
 }

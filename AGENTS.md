@@ -46,6 +46,7 @@
 | コース選択・マイプラン操作・到着進捗・現在地修正アクション | `src/app/plan-actions.js` |
 | ルート編成ローディングオーバーレイ | `src/app/route-loader.js` |
 | 共通フォーマッタ・サムネイル・トースト通知・下部タブHTML | `src/app/ui-helpers.js` |
+| 多言語化エンジン・言語辞書・作品翻訳パック（日・英・仏・中・韓・西の6言語） | `src/i18n.js` / `src/locales/*.js` / `src/locales/works.*.json` |
 | 経路探索エンジン / プラン最適化 / 検索ロジック / アプリ定数 | `src/navigation.js` / `src/my-plan.js` / `src/catalog.js` / `src/app-config.js` |
 
 #### フロアマップ・経路グラフ生成（`scripts/map-builder/`）
@@ -204,9 +205,9 @@ npm run build        # dist/ ビルド確認
 
 ## 6. テスト・安全運用
 
-- 変更を加えたら、**コミット前に必ず `npm test`（全7本）と `npm run build` を通す**。
+- 変更を加えたら、**コミット前に必ず `npm test`（全8本）と `npm run build` を通す**。
   - `test/map-contract.mjs`：全5階層の形状・部屋番号・施設数・重なり防止・HUD余白・38系統リンク検証
   - `test/navigation.mjs`：経路探索・EV優先・未確認階段/EVの経路混入禁止・縦戻り禁止
-  - `test/route-progress.mjs` / `test/location-support.mjs` / `test/my-plan.mjs` / `test/ui-contract.mjs` / `test/catalog.mjs`
+  - `test/route-progress.mjs` / `test/location-support.mjs` / `test/my-plan.mjs` / `test/ui-contract.mjs` / `test/catalog.mjs` / `test/i18n.mjs`
 - 既存の音声ファイル（`public/audio/`）・作品画像（`public/images/`）・元Excel（`data/`）を無断で削除・上書きしない。
 - 新しい仕様変更や例外ルールを決めた場合は、コードと同時に **この `AGENTS.md` も更新してGitHubへ共有する**。

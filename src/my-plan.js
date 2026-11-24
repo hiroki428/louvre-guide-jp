@@ -1,5 +1,6 @@
 import {shortestPath} from './navigation.js';
 import {priorityTierFor} from './catalog.js';
+import {getLang, localizeRoute, t} from './i18n.js';
 
 const TIME_COURSE_BOUNDS = Object.freeze({
   90: {min: 3, recommended: 8, max: 14},
@@ -20,19 +21,19 @@ export function timeCourseBounds(minutes, maxRoutable = 100) {
   return {minutes: m, min, recommended, max};
 }
 
-export function paceSummaryFor(minutes, count, bounds = timeCourseBounds(minutes)) {
+export function paceSummaryFor(minutes, count, bounds = timeCourseBounds(minutes), lang = getLang()) {
   const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
   const perWork = Math.round((minutes / safeCount) * 10) / 10;
   if (safeCount <= Math.max(bounds.min, bounds.recommended - 2)) {
-    return {key: 'relaxed', label: 'ゆったり鑑賞', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・じっくり楽しめます`};
+    return {key: 'relaxed', label: t('pace.relaxed.label', null, lang), perWorkMinutes: perWork, detail: t('pace.relaxed.detail', {perWork}, lang)};
   }
   if (safeCount <= bounds.recommended + 1) {
-    return {key: 'recommended', label: '推奨バランス', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・無理のない標準ペース`};
+    return {key: 'recommended', label: t('pace.recommended.label', null, lang), perWorkMinutes: perWork, detail: t('pace.recommended.detail', {perWork}, lang)};
   }
   if (safeCount < bounds.max) {
-    return {key: 'brisk', label: 'テンポ重視', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・やや早足で多く巡ります`};
+    return {key: 'brisk', label: t('pace.brisk.label', null, lang), perWorkMinutes: perWork, detail: t('pace.brisk.detail', {perWork}, lang)};
   }
-  return {key: 'limit', label: 'この時間の限界目安', perWorkMinutes: perWork, detail: `1作品あたり約${perWork}分（移動込み）・上限目安の駆け足ペースです`};
+  return {key: 'limit', label: t('pace.limit.label', null, lang), perWorkMinutes: perWork, detail: t('pace.limit.detail', {perWork}, lang)};
 }
 
 export function buildTimedRouteWorks(works, navigationIndex, {minutes = 90, count, preferElevator = false} = {}) {
@@ -248,12 +249,13 @@ export function optimizeWorkOrder(navigationIndex, workIds, {preferElevator = fa
   };
 }
 
-export function formatMinutesLabel(minutes) {
+export function formatMinutesLabel(minutes, lang = getLang()) {
   const rounded = Math.round(minutes * 2) / 2;
-  return Number.isInteger(rounded) ? `${rounded}分` : `${rounded.toFixed(1)}分`;
+  const value = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  return t('time.minutes', {value}, lang);
 }
 
-export function planStopEstimates(plan, navigationIndex, {preferElevator = false} = {}) {
+export function planStopEstimates(plan, navigationIndex, {preferElevator = false, lang = getLang()} = {}) {
   const ids = plan?.ids || [];
   if (!ids.length) return {};
   const perVisit = plan.ids.length ? (plan.visitMinutes / plan.ids.length) : 6;
@@ -283,13 +285,13 @@ export function planStopEstimates(plan, navigationIndex, {preferElevator = false
       moveMinutes: Math.round(moveMin * 2) / 2,
       viewMinutes: Math.round(viewMin * 2) / 2,
       elapsedMinutes: rounded,
-      elapsedLabel: `ここまで 約${formatMinutesLabel(rounded)}`
+      elapsedLabel: t('time.elapsed', {label: formatMinutesLabel(rounded, lang)}, lang)
     };
   });
   return result;
 }
 
-export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null}) {
+export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null, lang = getLang()}) {
   if (planMode === 'myplan') {
     const ids = Array.isArray(myPlanIds) ? myPlanIds : [];
     const routableIds = routableWorkIds(navigationIndex, ids);
@@ -301,8 +303,8 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
       mode: 'myplan',
       id: 'myplan',
       kind: 'custom',
-      label: 'マイプラン',
-      subtitle: 'お気に入りで組んだ自分だけのルート',
+      label: t('routes.myplan.label', null, lang),
+      subtitle: t('routes.myplan.subtitle', null, lang),
       minutes: null,
       ids,
       routableIds,
@@ -314,14 +316,15 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
       isCustom: true
     };
   }
-  const route = (routeId ? routes.find(item => item.id === routeId) : null)
+  const rawRoute = (routeId ? routes.find(item => item.id === routeId) : null)
     || routes.find(item => item.kind !== 'theme' && item.minutes === minutes)
     || routes.find(item => item.minutes === minutes)
     || routes[0];
+  const route = rawRoute ? localizeRoute(rawRoute, lang) : null;
   if (route?.kind !== 'theme' && Array.isArray(customTimedIds) && customTimedIds.length) {
     const targetMinutes = Number(customTimedMinutes || minutes || route?.minutes || 90);
     const bounds = timeCourseBounds(targetMinutes, 120);
-    const pace = paceSummaryFor(targetMinutes, customTimedIds.length, bounds);
+    const pace = paceSummaryFor(targetMinutes, customTimedIds.length, bounds, lang);
     const audioMinutes = Math.ceil((customTimedIds.length * duration) / 60);
     const bufferMinutes = Math.max(6, Math.round(targetMinutes * 0.08));
     const walkMinutes = Math.min(Math.round(targetMinutes * 0.34), Math.max(14, Math.round(customTimedIds.length * 2.4)));
@@ -330,8 +333,8 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
       mode: 'preset',
       id: `preset-${targetMinutes}`,
       kind: 'time',
-      label: `${targetMinutes}分コース（${customTimedIds.length}作品）`,
-      subtitle: `${pace.label} · 超有名優先・最短一筆書き`,
+      label: t('routes.customTimed.label', {minutes: targetMinutes, count: customTimedIds.length}, lang),
+      subtitle: t('routes.customTimed.subtitle', {pace: pace.label}, lang),
       minutes: targetMinutes,
       ids: customTimedIds,
       routableIds: routableWorkIds(navigationIndex, customTimedIds),
@@ -353,7 +356,7 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
     mode: 'preset',
     id: route?.id ?? `preset-${route?.minutes ?? 90}`,
     kind: route?.kind ?? 'time',
-    label: route?.label ?? `${route?.minutes ?? 90}分コース`,
+    label: route?.label ?? t('routes.fallback.label', {minutes: route?.minutes ?? 90}, lang),
     subtitle: route?.subtitle ?? '',
     minutes: route?.minutes ?? 90,
     ids,

@@ -1,4 +1,5 @@
-import {APP_NAME, APP_TAGLINE} from './app-config.js';
+import {APP_NAME} from './app-config.js';
+import {SUPPORTED_LANGS, detectBrowserLang, ensureWorkLocale, getLangMeta, normalizeLang, setLang, t} from './i18n.js';
 import {indexNavigationGraph} from './navigation.js';
 import {timeCourseBounds} from './my-plan.js';
 import {createAppStore, readPersistedState} from './app/state.js';
@@ -15,6 +16,8 @@ import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wire
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
+const hasConfirmedLang = Boolean(persistedBoot?.hasChosenLang);
+const bootLang = setLang(persistedBoot?.lang ? normalizeLang(persistedBoot.lang) : detectBrowserLang());
 const skipSplashImmediate = typeof window !== 'undefined'
   && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -24,25 +27,117 @@ const appBase = new URL('../', import.meta.url);
 const iconUrl = new URL('icons/icon-192.png', appBase).href;
 const monaUrl = new URL('images/mona.jpg', appBase).href;
 
-if (!skipSplashImmediate) {
-  app.innerHTML = `<div class="splash" data-skip-splash role="button" tabindex="0" aria-label="イントロをスキップ"><div class="gallery-arches" aria-hidden="true"></div><div class="splash-stage"><figure class="splash-mona-frame"><div class="splash-mona-mat"><img class="splash-mona-img" src="${monaUrl}" alt="モナ・リザ"></div><figcaption>La Joconde · Salle 711</figcaption></figure><div class="splash-brand-line"><img class="splash-icon" src="${iconUrl}" alt="${APP_NAME}"><span>LOUVRE SELF-GUIDE</span></div><h1>${APP_NAME}</h1><p>${APP_TAGLINE}</p><span class="splash-hint">タップでスキップ</span></div></div>`;
-} else {
-  app.innerHTML = `<div class="boot-loading"><p>読み込み中…</p></div>`;
+let splashLang = bootLang;
+let splashNeedsConfirm = !hasConfirmedLang;
+let splashReady = false;
+let splashStartRequested = false;
+let splashSkipped = false;
+let finishSplashImpl = null;
+let onSplashLangSelected = null;
+
+function requestSplashFinish() {
+  if (splashSkipped) return;
+  splashStartRequested = true;
+  if (splashReady && finishSplashImpl) {
+    void finishSplashImpl();
+    return;
+  }
+  const startBtn = document.querySelector('[data-splash-start]');
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.textContent = t('app.loading', null, splashLang);
+  }
 }
 
-const [works, routes, sources, navigationGraph, artworkImages, imageCredits] = await Promise.all([
-  'works.json',
-  'routes.json',
-  'provenance.json',
-  'navigation-graph.json',
-  'artwork-images.json',
-  'image-credits.json'
-].map(async name => {
-  const response = await fetch(new URL(name, import.meta.url));
-  if (!response.ok) throw new Error(`${name} を読み込めません`);
-  return response.json();
-})).catch(error => {
-  app.innerHTML = '<main class="error-screen"><h1>読み込みできませんでした</h1><p>通信状態を確認して再読み込みしてください。</p><button class="primary" onclick="location.reload()">再読み込み</button></main>';
+function applySplashLanguage(nextLang) {
+  const applied = setLang(nextLang);
+  splashLang = applied;
+  splashNeedsConfirm = true;
+  void ensureWorkLocale(applied, appBase);
+  onSplashLangSelected?.(applied);
+
+  const splashEl = document.querySelector('[data-skip-splash]');
+  if (splashEl) {
+    splashEl.classList.add('is-confirm-mode');
+    splashEl.removeAttribute('role');
+    splashEl.removeAttribute('tabindex');
+    splashEl.removeAttribute('aria-label');
+  }
+  const subtitleEl = document.querySelector('[data-splash-subtitle]');
+  if (subtitleEl) subtitleEl.textContent = t('app.brandSubtitle', null, applied);
+  const taglineEl = document.querySelector('[data-splash-tagline]');
+  if (taglineEl) taglineEl.textContent = t('app.tagline', null, applied);
+  const langLabelEl = document.querySelector('[data-splash-lang-label]');
+  if (langLabelEl) langLabelEl.textContent = t('app.splashLangLabel', null, applied);
+  const langGroupEl = document.querySelector('[data-splash-lang-group]');
+  if (langGroupEl) langGroupEl.setAttribute('aria-label', t('app.splashLangLabel', null, applied));
+  const startBtn = document.querySelector('[data-splash-start]');
+  if (startBtn) {
+    startBtn.hidden = false;
+    startBtn.textContent = splashStartRequested && !splashReady
+      ? t('app.loading', null, applied)
+      : t('app.splashStart', null, applied);
+  }
+  const hintEl = document.querySelector('[data-splash-hint]');
+  if (hintEl) {
+    hintEl.hidden = true;
+    hintEl.textContent = t('app.splashHint', null, applied);
+  }
+  document.querySelectorAll('[data-splash-lang]').forEach(btn => {
+    const active = btn.dataset.splashLang === applied;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', String(active));
+  });
+}
+
+if (!skipSplashImmediate) {
+  const skipAttrs = splashNeedsConfirm
+    ? ''
+    : `role="button" tabindex="0" aria-label="${esc(t('app.skipSplashAria', null, bootLang))}"`;
+  app.innerHTML = `<div class="splash ${splashNeedsConfirm ? 'is-confirm-mode' : ''}" data-skip-splash ${skipAttrs}><div class="gallery-arches" aria-hidden="true"></div><div class="splash-stage"><figure class="splash-mona-frame"><div class="splash-mona-mat"><img class="splash-mona-img" src="${monaUrl}" alt="Mona Lisa"></div><figcaption>La Joconde · Salle 711</figcaption></figure><div class="splash-brand-line"><img class="splash-icon" src="${iconUrl}" alt="${APP_NAME}"><span data-splash-subtitle>${esc(t('app.brandSubtitle', null, bootLang))}</span></div><h1>${APP_NAME}</h1><p data-splash-tagline>${esc(t('app.tagline', null, bootLang))}</p><div class="splash-lang-wrap" data-splash-controls><span class="splash-lang-label" data-splash-lang-label>${esc(t('app.splashLangLabel', null, bootLang))}</span><div class="splash-lang-pills" role="group" aria-label="${esc(t('app.splashLangLabel', null, bootLang))}" data-splash-lang-group>${SUPPORTED_LANGS.map(item => `<button type="button" class="splash-lang-pill ${bootLang === item.code ? 'active' : ''}" data-splash-lang="${item.code}" aria-pressed="${bootLang === item.code}">${esc(item.label)}</button>`).join('')}</div></div><div class="splash-action-slot" data-splash-controls><button type="button" class="splash-start-btn" data-splash-start ${splashNeedsConfirm ? '' : 'hidden'}>${esc(t('app.splashStart', null, bootLang))}</button><span class="splash-hint" data-splash-hint ${splashNeedsConfirm ? 'hidden' : ''}>${esc(t('app.splashHint', null, bootLang))}</span></div></div></div>`;
+
+  const skipEl = document.querySelector('[data-skip-splash]');
+  document.querySelectorAll('[data-splash-lang]').forEach(btn => {
+    btn.addEventListener('click', event => {
+      event.stopPropagation();
+      const next = btn.dataset.splashLang;
+      if (next) applySplashLanguage(next);
+    });
+  });
+  document.querySelector('[data-splash-start]')?.addEventListener('click', event => {
+    event.stopPropagation();
+    requestSplashFinish();
+  });
+  skipEl?.addEventListener('click', event => {
+    if (event.target.closest('[data-splash-controls]')) return;
+    if (splashNeedsConfirm) return;
+    requestSplashFinish();
+  });
+  skipEl?.addEventListener('keydown', event => {
+    if (event.target.closest('[data-splash-controls]')) return;
+    if (splashNeedsConfirm) return;
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); requestSplashFinish(); }
+  });
+} else {
+  app.innerHTML = `<div class="boot-loading"><p>${esc(t('app.loading', null, bootLang))}</p></div>`;
+}
+
+const [[works, routes, sources, navigationGraph, artworkImages, imageCredits]] = await Promise.all([
+  Promise.all([
+    'works.json',
+    'routes.json',
+    'provenance.json',
+    'navigation-graph.json',
+    'artwork-images.json',
+    'image-credits.json'
+  ].map(async name => {
+    const response = await fetch(new URL(name, import.meta.url));
+    if (!response.ok) throw new Error(`Failed to load ${name}`);
+    return response.json();
+  })),
+  ensureWorkLocale(bootLang, appBase)
+]).catch(error => {
+  app.innerHTML = `<main class="error-screen"><h1>${esc(t('app.errorTitle', null, bootLang))}</h1><p>${esc(t('app.errorBody', null, bootLang))}</p><button class="primary" onclick="location.reload()">${esc(t('app.reload', null, bootLang))}</button></main>`;
   throw error;
 });
 
@@ -57,7 +152,6 @@ for (const work of works) {
 }
 
 const navigationIndex = indexNavigationGraph(navigationGraph);
-let splashSkipped = false;
 
 const store = createAppStore({
   works,
@@ -184,6 +278,18 @@ function wireShell() {
   document.querySelectorAll('[data-undo-arrival]').forEach(btn => {
     btn.onclick = planActions.undoArrival;
   });
+
+  document.querySelectorAll('[data-set-lang]').forEach(btn => {
+    btn.onclick = async () => {
+      const next = btn.dataset.setLang;
+      if (!next || next === state.lang) return;
+      const applied = ctx.setAppLang(next);
+      const meta = getLangMeta(applied);
+      ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+      render();
+      if (await ensureWorkLocale(applied, appBase)) render();
+    };
+  });
 }
 
 function wireMain() {
@@ -199,10 +305,22 @@ function wireMain() {
 
 function render() {
   const {state} = ctx;
+  const lang = state.lang;
   if (state.appPhase === 'splash') return;
   if (state.appPhase === 'select_time') {
     app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
+    document.querySelectorAll('[data-set-lang]').forEach(btn => {
+      btn.onclick = async () => {
+        const next = btn.dataset.setLang;
+        if (!next || next === state.lang) return;
+        const applied = ctx.setAppLang(next);
+        const meta = getLangMeta(applied);
+        ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+        render();
+        if (await ensureWorkLocale(applied, appBase)) render();
+      };
+    });
     return;
   }
   const plan = ctx.currentPlan();
@@ -221,11 +339,11 @@ function render() {
         <img class="header-app-icon" src="${iconUrl}" alt="">
         <b>${esc(APP_NAME)}</b>
         <span class="header-course-tag">${esc(plan.label)}</span>
-        ${state.offline ? '<span class="offline-pill" role="status">オフライン</span>' : ''}
+        ${state.offline ? `<span class="offline-pill" role="status">${esc(t('app.offline', null, lang))}</span>` : ''}
       </div>
       <div class="header-actions">
-        <button type="button" class="header-course-btn" data-change-course>コース変更</button>
-        <button type="button" class="header-audio-btn" data-open-audio-settings aria-label="オーディオ設定" title="オーディオ設定（速度調整）">⚙</button>
+        <button type="button" class="header-course-btn" data-change-course>${esc(t('app.changeCourse', null, lang))}</button>
+        <button type="button" class="header-audio-btn" data-open-audio-settings aria-label="${esc(t('app.audioSettingsAria', null, lang))}" title="${esc(t('app.audioSettingsTitle', null, lang))}">⚙</button>
       </div>
     </header>
     ${body}
@@ -258,25 +376,38 @@ window.addEventListener('keydown', event => {
 const downloadsPromise = ctx.audio.loadDownloads();
 
 if (!skipSplashImmediate) {
-  const skipEl = document.querySelector('[data-skip-splash]');
-  const finishSplash = () => {
+  onSplashLangSelected = applied => {
+    ctx.setAppLang(applied, {confirm: false});
+  };
+  if (splashLang !== ctx.state.lang) ctx.setAppLang(splashLang, {confirm: false});
+
+  finishSplashImpl = async () => {
     if (splashSkipped) return;
     splashSkipped = true;
+    const startBtn = document.querySelector('[data-splash-start]');
+    if (startBtn) startBtn.disabled = true;
+    if (ctx.state.lang !== splashLang || !ctx.state.hasChosenLang) {
+      ctx.setAppLang(splashLang, {confirm: true});
+    }
+    await ensureWorkLocale(splashLang, appBase);
     document.querySelector('.splash')?.classList.add('leaving');
     setTimeout(() => {
       ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';
       render();
     }, 460);
   };
-  skipEl?.addEventListener('click', finishSplash);
-  skipEl?.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); finishSplash(); }
-  });
-  await Promise.all([
-    downloadsPromise,
-    new Promise(resolve => setTimeout(resolve, Math.max(0, 2700 - (performance.now() - bootStarted))))
-  ]);
-  finishSplash();
+
+  await downloadsPromise;
+  splashReady = true;
+
+  if (splashStartRequested) {
+    await finishSplashImpl();
+  } else if (!splashNeedsConfirm) {
+    await new Promise(resolve => setTimeout(resolve, Math.max(0, 2800 - (performance.now() - bootStarted))));
+    if (!splashNeedsConfirm && !splashSkipped) {
+      await finishSplashImpl();
+    }
+  }
 } else {
   await downloadsPromise;
   ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';
