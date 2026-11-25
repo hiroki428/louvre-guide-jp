@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {indexNavigationGraph, navigationStateFromRoute, buildNavigationView} from '../src/navigation.js';
 import {activePlanMeta, buildTimedRouteWorks, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
+import {createAppStore, STORAGE_KEY} from '../src/app/state.js';
+import {createPlanActions} from '../src/app/plan-actions.js';
+import {planTabView} from '../src/views/plan-tab.js';
 
 const graph = JSON.parse(await readFile(new URL('../src/navigation-graph.json', import.meta.url), 'utf8'));
 const routes = JSON.parse(await readFile(new URL('../src/routes.json', import.meta.url), 'utf8'));
@@ -117,5 +120,47 @@ const timedMeta = activePlanMeta({
 });
 assert.equal(timedMeta.ids.length, 16);
 assert.match(timedMeta.label, /120分コース（16作品）/);
+
+const theme = routes.find(route => route.kind === 'theme');
+const extraWork = works.find(work => index.nodes.has(`work:${work.id}`) && !theme.ids.includes(work.id) && !routes.find(route => route.id === 'preset-90').ids.includes(work.id));
+const saved = new Map();
+globalThis.localStorage = {getItem: key => saved.get(key) ?? null, setItem: (key, value) => saved.set(key, value)};
+const store = createAppStore({
+  works, routes, byId: Object.fromEntries(works.map(work => [work.id, work])),
+  worksByFloorRoom: new Map(), navigationIndex: index,
+  persistedBoot: {routeId: theme.id, planMode: 'preset', hasChosenCourse: true},
+  skipSplashImmediate: true, appBase: new URL('../', import.meta.url)
+});
+const ctx = {...store, works, routes, byId: Object.fromEntries(works.map(work => [work.id, work])), navigationIndex: index, setNotice() {}, render() {}};
+const actions = createPlanActions(ctx);
+assert.equal(actions.addWorkToActivePlan(extraWork.id), true);
+assert.deepEqual(new Set(ctx.currentPlan().ids), new Set([...theme.ids, extraWork.id]), 'adding a work must retain the whole theme plan');
+assert.deepEqual(ctx.currentPlan().ids, optimizeWorkOrder(index, [...theme.ids, extraWork.id]).ids, 'the complete theme plan must be reordered');
+assert.equal(ctx.currentPlan().subtitle, '追加した作品を含むルート', 'edited plans must not retain stale theme descriptions');
+assert.equal(actions.addWorkToActivePlan(extraWork.id), false, 'duplicate additions must be ignored');
+assert.deepEqual(JSON.parse(saved.get(STORAGE_KEY)).routeEdits[theme.id], ctx.currentPlan().ids, 'edited routes must persist');
+store.state.routeId = 'preset-90';
+assert.equal(actions.addWorkToActivePlan(extraWork.id), true);
+assert.equal(store.state.routeEdits[theme.id].length, theme.ids.length + 1, 'switching courses must preserve previous edits');
+assert.deepEqual(ctx.currentPlan().ids, store.state.routeEdits['preset-90'], 'time course edits must appear in the active plan');
+assert.ok(ctx.currentPlan().estimatedMinutes > presetMeta.estimatedMinutes, 'added works must increase the time estimate');
+store.state.routeId = theme.id;
+assert.deepEqual(ctx.currentPlan().ids, store.state.routeEdits[theme.id], 'returning to a course must restore its edited order');
+store.state.planAddOpen = true;
+ctx.artworkImages = {};
+ctx.appBase = new URL('../', import.meta.url);
+const picker = planTabView(ctx, false);
+assert.match(picker, /data-add-route-work=/, 'the plan must show selectable mapped works');
+assert.ok(!picker.includes(`data-add-route-work="${extraWork.id}"`), 'works already in the plan must be hidden');
+assert.ok(!picker.includes('data-add-route-work="catalog-0010"'), 'unmapped works must not be offered');
+store.state.planAddOpen = false;
+assert.match(planTabView(ctx, false), /data-open-plan-add/, 'edited theme plans must keep an add-work control');
+const restoredStore = createAppStore({
+  works, routes, byId: ctx.byId, worksByFloorRoom: new Map(), navigationIndex: index,
+  persistedBoot: JSON.parse(saved.get(STORAGE_KEY)), skipSplashImmediate: true,
+  appBase: new URL('../', import.meta.url)
+});
+restoredStore.state.routeId = theme.id;
+assert.deepEqual(restoredStore.currentPlan().ids, store.state.routeEdits[theme.id], 'edited routes must survive app reload');
 
 console.log('my-plan and custom routing: passed');

@@ -1,7 +1,7 @@
 import {navigationStateForSelection, navigationStateFromRoute} from '../navigation.js';
 import {advanceOnRouteAudio, destinationWorkId} from '../route-progress.js';
 import {correctLocation, findRoomCandidates} from '../location-support.js';
-import {buildTimedRouteWorks, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
+import {buildTimedRouteWorks, moveMyPlanItem, optimizeWorkOrder, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
 import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {runWithRouteLoader} from './route-loader.js';
 
@@ -19,14 +19,7 @@ export function createPlanActions(ctx) {
     };
     if (ctx.state.appPhase === 'main' && ctx.routableIds().length > 0) {
       runWithRouteLoader({
-        title: tr(next ? 'loader.evTitle' : 'loader.shortestTitle'),
-        subtitle: ctx.currentPlan().label,
-        modeBadge: tr(next ? 'course.elevatorShort' : 'course.shortest'),
-        steps: [
-          tr('loader.evStep1'),
-          tr(next ? 'loader.evStep2' : 'loader.shortestStep2'),
-          tr('loader.evStep3')
-        ],
+        title: tr('loader.simpleTitle'),
         durationMs: 1650
       }, apply);
     } else {
@@ -64,14 +57,7 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: tr('loader.presetTitle', {label: chosen.label}),
-      subtitle: tr('loader.presetSubtitle', {count: chosen.ids.length, subtitle: chosen.subtitle || tr('loader.presetDefaultSub')}),
-      modeBadge: tr(ctx.state.preferElevator ? 'course.elevator' : 'loader.modeShortest'),
-      steps: [
-        tr('loader.presetStep1'),
-        tr(ctx.state.preferElevator ? 'loader.presetStep2Ev' : 'loader.presetStep2Short'),
-        tr('loader.presetStep3')
-      ],
+      title: tr('loader.simpleTitle'),
       durationMs: 2250
     }, apply);
   }
@@ -79,7 +65,6 @@ export function createPlanActions(ctx) {
   function chooseTimedCourse(minutes, count, {goMap = true, animate = true} = {}) {
     const bounds = timeCourseBounds(minutes, ctx.maxRoutableCount);
     const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
-    const pace = paceSummaryFor(bounds.minutes, safeCount, bounds, ctx.state.lang);
     const apply = () => {
       ctx.clearProgressNotice();
       const built = buildTimedRouteWorks(ctx.works, ctx.navigationIndex, {
@@ -92,6 +77,7 @@ export function createPlanActions(ctx) {
       ctx.state.minutes = built.minutes;
       ctx.state.customTimedIds = built.ids;
       ctx.state.customTimedMinutes = built.minutes;
+      delete ctx.state.routeEdits[`preset-${built.minutes}`];
       ctx.state.draftMinutes = built.minutes;
       ctx.state.draftCount = built.count;
       ctx.state.hasChosenCourse = true;
@@ -112,14 +98,7 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: tr('loader.timedTitle', {minutes: bounds.minutes, count: safeCount}),
-      subtitle: tr('loader.timedSubtitle', {pace: pace.label, rec: bounds.recommended, max: bounds.max}),
-      modeBadge: tr(ctx.state.preferElevator ? 'course.elevator' : 'loader.modeShortest'),
-      steps: [
-        tr('loader.timedStep1', {count: safeCount}),
-        tr(ctx.state.preferElevator ? 'loader.presetStep2Ev' : 'loader.timedStep2Short'),
-        tr('loader.timedStep3')
-      ],
+      title: tr('loader.simpleTitle'),
       durationMs: 2250
     }, apply);
   }
@@ -146,14 +125,7 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: tr('loader.myPlanTitle'),
-      subtitle: tr('loader.myPlanSubtitle', {count: ctx.state.myPlanIds.length}),
-      modeBadge: tr(ctx.state.preferElevator ? 'course.elevator' : 'loader.modeCustom'),
-      steps: [
-        tr('loader.myPlanStep1'),
-        tr(ctx.state.preferElevator ? 'loader.myPlanStep2Ev' : 'loader.myPlanStep2Short'),
-        tr('loader.myPlanStep3')
-      ],
+      title: tr('loader.simpleTitle'),
       durationMs: 2050
     }, apply);
   }
@@ -167,14 +139,7 @@ export function createPlanActions(ctx) {
       return;
     }
     runWithRouteLoader({
-      title: tr('loader.optTitle'),
-      subtitle: tr('loader.optSubtitle', {count: routableCount}),
-      modeBadge: tr(ctx.state.preferElevator ? 'loader.modeOptEv' : 'loader.modeOptShort'),
-      steps: [
-        tr('loader.optStep1'),
-        tr('loader.optStep2'),
-        tr('loader.optStep3')
-      ],
+      title: tr('loader.simpleTitle'),
       durationMs: 2150
     }, () => {
       const result = optimizeWorkOrder(ctx.navigationIndex, ctx.state.myPlanIds, ctx.navOptions());
@@ -194,6 +159,33 @@ export function createPlanActions(ctx) {
       ctx.setNotice(message, false, 4500);
       ctx.render();
     });
+  }
+
+  function addWorkToActivePlan(workId) {
+    const plan = ctx.currentPlan();
+    if (plan.isCustom || !ctx.byId[workId] || !ctx.navigationIndex.nodes.has(`work:${workId}`) || plan.ids.includes(workId)) return false;
+    const result = optimizeWorkOrder(ctx.navigationIndex, [...plan.ids, workId], ctx.navOptions());
+    ctx.state.routeEdits[ctx.state.routeId] = result.ids;
+    const previous = ctx.state.navigation;
+    const nextId = result.ids.find(id => !ctx.state.viewed.has(id)) || result.ids[0];
+    const base = navigationStateFromRoute(ctx.navigationIndex, result.ids);
+    ctx.state.navigation = {
+      ...base,
+      currentNodeId: previous?.currentNodeId && ctx.navigationIndex.nodes.has(previous.currentNodeId) ? previous.currentNodeId : base.currentNodeId,
+      destinationNodeId: `work:${nextId}`,
+      passedNodeIds: previous?.passedNodeIds || base.passedNodeIds,
+      passedNodeGroups: previous?.passedNodeGroups || base.passedNodeGroups,
+      lastConfirmedWorkId: previous?.lastConfirmedWorkId || null,
+      lastConfirmedMethod: previous?.lastConfirmedMethod || 'route-start'
+    };
+    ctx.state.selected = nextId;
+    ctx.state.undo = null;
+    ctx.state.planAddOpen = false;
+    ctx.state.planAddQuery = '';
+    ctx.persistState();
+    ctx.setNotice(tr('notice.routeWorkAdded'), false, 3200);
+    ctx.render();
+    return true;
   }
 
   function syncMyPlanNavigation() {
@@ -327,6 +319,7 @@ export function createPlanActions(ctx) {
     chooseTimedCourse,
     chooseMyPlan,
     handleOptimizeMyPlan,
+    addWorkToActivePlan,
     syncMyPlanNavigation,
     selectRouteWork,
     handleToggleMyPlan,

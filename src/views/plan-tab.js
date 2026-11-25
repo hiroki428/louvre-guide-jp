@@ -1,11 +1,37 @@
 import {destinationWorkId} from '../route-progress.js';
+import {catalogWorks} from '../catalog.js';
 import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
+
+function planAddResultsMarkup(ctx) {
+  const {state, works, navigationIndex} = ctx;
+  const tr = key => t(key, null, state.lang);
+  const included = new Set(ctx.currentPlan().ids);
+  const candidates = catalogWorks(works, {query: state.planAddQuery, sort: 'rank-asc', filter: 'mapped', lang: state.lang})
+    .filter(work => navigationIndex.nodes.has(`work:${work.id}`) && !included.has(work.id));
+  if (!candidates.length) return `<p class="plan-add-empty">${esc(tr('catalog.emptyMsg'))}</p>`;
+  return candidates.map(rawWork => {
+    const work = localizeWork(rawWork, state.lang);
+    return `<div class="plan-add-item">
+      ${thumbMarkup(ctx, work, 'thumb-sm')}
+      <div class="plan-add-copy"><strong>${esc(work.title)}</strong><small>${esc(workStatus(work, state.lang))}</small></div>
+      <button type="button" class="secondary compact-btn" data-add-route-work="${esc(work.id)}">${esc(tr('plan.addWorkAction'))}</button>
+    </div>`;
+  }).join('');
+}
 
 export function planTabView(ctx, hasMini) {
   const {state, routes, works, navigationIndex} = ctx;
   const lang = state.lang;
   const tr = (key, params) => t(key, params, lang);
+  if (state.planAddOpen && state.planMode !== 'myplan') {
+    return `<main class="tab-screen plan-add-screen ${hasMini ? 'has-mini-player' : ''}">
+      <button type="button" class="text-back-btn" data-plan-add-back>← ${esc(tr('app.close'))}</button>
+      <h1>${esc(tr('plan.addWorkTitle'))}</h1>
+      <input type="search" class="plan-add-search" data-plan-add-search value="${esc(state.planAddQuery)}" placeholder="${esc(tr('catalog.searchPlaceholder'))}" aria-label="${esc(tr('catalog.searchAria'))}">
+      <div class="plan-add-results" data-plan-add-results>${planAddResultsMarkup(ctx)}</div>
+    </main>`;
+  }
   const plan = ctx.currentPlan();
   const items = ctx.planWorks();
   const estimates = ctx.currentEstimates();
@@ -41,6 +67,7 @@ export function planTabView(ctx, hasMini) {
       ${items.length ? `<p class="plan-meta-line">${esc(tr('plan.metaLine', {est: plan.estimatedMinutes, visit: plan.visitMinutes, walk: plan.walkMinutes, audio: plan.audioMinutes, buffer: plan.bufferMinutes}))}</p>` : ''}
       ${items.length ? `<div class="plan-summary-actions">
         ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
+        ${!plan.isCustom ? `<button type="button" class="secondary compact-btn" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>` : ''}
         <button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${esc(saveBtnText)}</button>
         <div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
           <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
@@ -97,7 +124,29 @@ export function planTabView(ctx, hasMini) {
 }
 
 export function wirePlanTab(ctx) {
-  const {byId, planActions, audio} = ctx;
+  const {byId, planActions, audio, state} = ctx;
+
+  document.querySelector('[data-open-plan-add]')?.addEventListener('click', () => {
+    state.planAddOpen = true;
+    state.planAddQuery = '';
+    ctx.render();
+    window.scrollTo({top: 0});
+  });
+  document.querySelector('[data-plan-add-back]')?.addEventListener('click', () => {
+    state.planAddOpen = false;
+    state.planAddQuery = '';
+    ctx.render();
+  });
+  const results = document.querySelector('[data-plan-add-results]');
+  const wireAddResults = () => results?.querySelectorAll('[data-add-route-work]').forEach(btn => {
+    btn.onclick = () => planActions.addWorkToActivePlan(btn.dataset.addRouteWork);
+  });
+  wireAddResults();
+  document.querySelector('[data-plan-add-search]')?.addEventListener('input', event => {
+    state.planAddQuery = event.target.value;
+    results.innerHTML = planAddResultsMarkup(ctx);
+    wireAddResults();
+  });
 
   document.querySelectorAll('[data-switch-preset]').forEach(btn => {
     btn.onclick = () => planActions.choosePresetCourse(btn.dataset.switchPreset, {goMap: false});

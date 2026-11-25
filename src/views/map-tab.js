@@ -187,7 +187,7 @@ export function mapTabView(ctx, hasMini) {
     </div>
 
     ${emptyOrCompleteNote}
-    ${state.facilityFilter === 'wc' && wcCount === 0 ? `<p class="map-tip">${esc(tr('map.noWcTip'))}</p>` : state.facilityFilter === 'cafe' && cafeCount === 0 ? `<p class="map-tip">${esc(tr('map.noCafeTip'))}</p>` : `<p class="map-tip">${esc(tr('map.pinTip'))}</p>`}
+    ${state.facilityFilter === 'wc' && wcCount === 0 ? `<p class="map-tip">${esc(tr('map.noWcTip'))}</p>` : state.facilityFilter === 'cafe' && cafeCount === 0 ? `<p class="map-tip">${esc(tr('map.noCafeTip'))}</p>` : ''}
     ${movementSupportMarkup(ctx)}
   </main>`;
 }

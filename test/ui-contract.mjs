@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readdir, readFile} from 'node:fs/promises';
 import {mapTabView} from '../src/views/map-tab.js';
+import {languageSelectView} from '../src/views/course-select.js';
 
 async function loadSplitUiSources() {
   const appFiles = (await readdir(new URL('../src/app/', import.meta.url))).filter(f => f.endsWith('.js')).sort();
@@ -27,6 +28,8 @@ async function loadSplitUiSources() {
 }
 
 const {combined: main, mapTabFile, splitPaths} = await loadSplitUiSources();
+const splashSource = await readFile(new URL('../src/main.js', import.meta.url), 'utf8');
+const courseSource = await readFile(new URL('../src/views/course-select.js', import.meta.url), 'utf8');
 const routes = JSON.parse(await readFile(new URL('../src/routes.json', import.meta.url), 'utf8'));
 const css = await readFile(new URL('../src/update.css', import.meta.url), 'utf8');
 const support = await readFile(new URL('../src/location-support.js', import.meta.url), 'utf8');
@@ -86,9 +89,15 @@ assert.match(main, /'tabs\.plan': 'プラン一覧'/);
 assert.match(main, /'tabs\.audio': '音声一覧'/);
 assert.match(main, /'tabs\.settings': '案内・設定'/);
 assert.match(main, /data-set-lang/, 'language switcher controls must exist');
-assert.match(main, /data-splash-lang/, 'splash screen must offer language selection pills');
-assert.match(main, /data-splash-start/, 'splash screen must offer start button for initial language confirmation');
-assert.match(main, /hasChosenLang/, 'initial splash must wait until user explicitly confirms language');
+assert.doesNotMatch(splashSource, /data-splash-lang|data-splash-start/, 'splash must not ask for language selection');
+const languageMarkup = languageSelectView({state: {lang: 'ja'}});
+assert.match(languageMarkup, /class="home-language-list"/, 'language page must offer a scrollable list');
+assert.ok(languageMarkup.indexOf('data-set-lang="en"') < languageMarkup.indexOf('data-set-lang="fr"')
+  && languageMarkup.indexOf('data-set-lang="fr"') < languageMarkup.indexOf('data-set-lang="ja"'), 'language page must show English, French, Japanese first');
+assert.match(languageMarkup, /data-language-next/, 'language page must have a next button');
+assert.doesNotMatch(courseSource.split('export function courseSelectView')[1].split('export function wireCourseSelect')[0], /home-language-list|data-set-lang/, 'route page must not repeat language selection');
+assert.match(splashSource, /appPhase = 'select_language'/, 'splash must lead to the language page');
+assert.match(css, /\.home-language-list\s*\{[^}]*overflow-y:\s*auto/s, 'language list must scroll vertically');
 assert.match(main, /data-change-course/);
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(mapTabSection, /has-destination/, 'floor tab must highlight the floor containing the next artwork');

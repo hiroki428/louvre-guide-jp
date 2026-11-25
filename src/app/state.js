@@ -40,11 +40,14 @@ export function createAppStore({
   const initialCustomTimedIds = Array.isArray(persistedBoot?.customTimedIds)
     ? persistedBoot.customTimedIds.filter(id => byId[id] && navigationIndex.nodes.has(`work:${id}`))
     : null;
+  const routeEdits = Object.fromEntries(Object.entries(persistedBoot?.routeEdits || {})
+    .filter(([routeId, ids]) => routes.some(route => route.id === routeId) && Array.isArray(ids))
+    .map(([routeId, ids]) => [routeId, [...new Set(ids.filter(id => byId[id] && navigationIndex.nodes.has(`work:${id}`)))]]));
 
   const state = {
     lang: initialLang,
     hasChosenLang: Boolean(persistedBoot?.hasChosenLang),
-    appPhase: skipSplashImmediate ? 'main' : 'splash',
+    appPhase: skipSplashImmediate ? 'select_language' : 'splash',
     hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
     tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
     planMode: persistedBoot?.planMode === 'myplan' ? 'myplan' : 'preset',
@@ -54,6 +57,7 @@ export function createAppStore({
     minutes: initialMinutes,
     customTimedIds: initialCustomTimedIds?.length ? initialCustomTimedIds : null,
     customTimedMinutes: initialCustomTimedIds?.length ? (Number(persistedBoot?.customTimedMinutes) || initialMinutes) : null,
+    routeEdits,
     draftMinutes: initialMinutes,
     draftCount: initialCustomTimedIds?.length
       ? Math.max(initialBounds.min, Math.min(initialBounds.max, initialCustomTimedIds.length))
@@ -69,6 +73,8 @@ export function createAppStore({
     selected: persistedBoot?.selected && byId[persistedBoot.selected] ? persistedBoot.selected : null,
     detailWorkId: null,
     detailRoomWorks: [],
+    planAddOpen: false,
+    planAddQuery: '',
     audioSettingsOpen: false,
     duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 60,
     playbackRate: clampRate(persistedBoot?.playbackRate ?? 1),
@@ -106,6 +112,7 @@ export function createAppStore({
     duration: state.duration,
     customTimedIds: state.customTimedIds,
     customTimedMinutes: state.customTimedMinutes,
+    routeEdits: state.routeEdits,
     lang: state.lang
   });
   const planWorks = () => currentPlan().ids.map(id => byId[id]).filter(Boolean);
@@ -137,7 +144,7 @@ export function createAppStore({
   }
 
   function restoreInitialNavigation() {
-    if (state.planMode === 'myplan' || state.customTimedIds?.length) {
+    if (state.planMode === 'myplan' || state.customTimedIds?.length || state.routeEdits[state.routeId]?.length) {
       const ids = routableIds();
       if (validCustomNavigation(persistedBoot?.navigation, ids)) {
         state.navigation = persistedBoot.navigation;
@@ -176,7 +183,7 @@ export function createAppStore({
 
   function persistState({skipSync = false} = {}) {
     const plan = currentPlan();
-    const sessionProgress = !plan.isCustom ? {
+    const sessionProgress = !plan.isCustom && !state.routeEdits[state.routeId]?.length ? {
       version: 2,
       routeId: plan.id,
       minutes: plan.minutes,
@@ -197,6 +204,7 @@ export function createAppStore({
         minutes: state.minutes,
         customTimedIds: state.customTimedIds,
         customTimedMinutes: state.customTimedMinutes,
+        routeEdits: state.routeEdits,
         preferElevator: state.preferElevator,
         autoPlayNext: state.autoPlayNext,
         largeText: state.largeText,

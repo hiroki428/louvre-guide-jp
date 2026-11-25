@@ -291,7 +291,7 @@ export function planStopEstimates(plan, navigationIndex, {preferElevator = false
   return result;
 }
 
-export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null, lang = getLang()}) {
+export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null, routeEdits = {}, lang = getLang()}) {
   if (planMode === 'myplan') {
     const ids = Array.isArray(myPlanIds) ? myPlanIds : [];
     const routableIds = routableWorkIds(navigationIndex, ids);
@@ -321,23 +321,26 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
     || routes.find(item => item.minutes === minutes)
     || routes[0];
   const route = rawRoute ? localizeRoute(rawRoute, lang) : null;
-  if (route?.kind !== 'theme' && Array.isArray(customTimedIds) && customTimedIds.length) {
+  const editedIds = Array.isArray(routeEdits?.[route?.id]) && routeEdits[route.id].length ? routeEdits[route.id] : null;
+  const timedIds = editedIds || customTimedIds;
+  if (route?.kind !== 'theme' && Array.isArray(timedIds) && timedIds.length) {
     const targetMinutes = Number(customTimedMinutes || minutes || route?.minutes || 90);
     const bounds = timeCourseBounds(targetMinutes, 120);
-    const pace = paceSummaryFor(targetMinutes, customTimedIds.length, bounds, lang);
-    const audioMinutes = Math.ceil((customTimedIds.length * duration) / 60);
+    const pace = paceSummaryFor(targetMinutes, timedIds.length, bounds, lang);
+    const audioMinutes = Math.ceil((timedIds.length * duration) / 60);
     const bufferMinutes = Math.max(6, Math.round(targetMinutes * 0.08));
-    const walkMinutes = Math.min(Math.round(targetMinutes * 0.34), Math.max(14, Math.round(customTimedIds.length * 2.4)));
-    const visitMinutes = Math.max(customTimedIds.length * 2, targetMinutes - walkMinutes - audioMinutes - bufferMinutes);
+    const walkMinutes = Math.min(Math.round(targetMinutes * 0.34), Math.max(14, Math.round(timedIds.length * 2.4)));
+    const addedCount = editedIds ? Math.max(0, editedIds.length - (customTimedIds?.length || route?.ids?.length || 0)) : 0;
+    const visitMinutes = Math.max(timedIds.length * 2, targetMinutes - walkMinutes - audioMinutes - bufferMinutes) + addedCount * 8;
     return {
       mode: 'preset',
       id: `preset-${targetMinutes}`,
       kind: 'time',
-      label: t('routes.customTimed.label', {minutes: targetMinutes, count: customTimedIds.length}, lang),
-      subtitle: t('routes.customTimed.subtitle', {pace: pace.label}, lang),
+      label: t('routes.customTimed.label', {minutes: targetMinutes, count: timedIds.length}, lang),
+      subtitle: editedIds ? t('routes.edited.subtitle', null, lang) : t('routes.customTimed.subtitle', {pace: pace.label}, lang),
       minutes: targetMinutes,
-      ids: customTimedIds,
-      routableIds: routableWorkIds(navigationIndex, customTimedIds),
+      ids: timedIds,
+      routableIds: routableWorkIds(navigationIndex, timedIds),
       visitMinutes,
       walkMinutes,
       audioMinutes,
@@ -346,18 +349,19 @@ export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, n
       isCustom: false
     };
   }
-  const ids = route ? route.ids : [];
+  const ids = editedIds || route?.ids || [];
   const visitPerWork = route?.visit ?? 6;
   const visitMinutes = ids.length * visitPerWork;
-  const walkMinutes = route?.walk ?? 0;
+  const extraWorks = Math.max(0, ids.length - (route?.ids?.length || 0));
+  const walkMinutes = (route?.walk ?? 0) + extraWorks * 3;
   const audioMinutes = Math.ceil((ids.length * duration) / 60);
-  const bufferMinutes = route?.buffer ?? 0;
+  const bufferMinutes = (route?.buffer ?? 0) + extraWorks * 2;
   return {
     mode: 'preset',
     id: route?.id ?? `preset-${route?.minutes ?? 90}`,
     kind: route?.kind ?? 'time',
     label: route?.label ?? t('routes.fallback.label', {minutes: route?.minutes ?? 90}, lang),
-    subtitle: route?.subtitle ?? '',
+    subtitle: editedIds ? t('routes.edited.subtitle', null, lang) : (route?.subtitle ?? ''),
     minutes: route?.minutes ?? 90,
     ids,
     routableIds: routableWorkIds(navigationIndex, ids),
