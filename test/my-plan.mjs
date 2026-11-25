@@ -128,7 +128,7 @@ globalThis.localStorage = {getItem: key => saved.get(key) ?? null, setItem: (key
 const store = createAppStore({
   works, routes, byId: Object.fromEntries(works.map(work => [work.id, work])),
   worksByFloorRoom: new Map(), navigationIndex: index,
-  persistedBoot: {routeId: theme.id, planMode: 'preset', hasChosenCourse: true},
+  persistedBoot: {routeId: theme.id, planMode: 'preset', hasChosenCourse: true, lang: 'ja'},
   skipSplashImmediate: true, appBase: new URL('../', import.meta.url)
 });
 const ctx = {...store, works, routes, byId: Object.fromEntries(works.map(work => [work.id, work])), navigationIndex: index, setNotice() {}, render() {}};
