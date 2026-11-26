@@ -103,6 +103,11 @@ export function courseSelectView(ctx) {
       ${state.myPlanIds.length ? `<small>${esc(tr('course.worksCount', {count: state.myPlanIds.length}))}</small>` : ''}
       <span class="arrow" aria-hidden="true">›</span>
     </button>
+    ${state.sharedPlan?.ids?.length ? `<button class="theme-course-card course-custom-card ${state.planMode === 'shared' ? 'active' : ''}" type="button" data-choose-shared>
+      <strong>${esc(state.sharedPlan.title || tr('share.defaultPlanTitle'))}</strong>
+      <small>${esc(tr('course.worksCount', {count: state.sharedPlan.ids.length}))}</small>
+      <span class="arrow" aria-hidden="true">›</span>
+    </button>` : ''}
   </main>`;
 }
 
@@ -155,6 +160,7 @@ export function wireCourseSelect(ctx) {
     btn.onclick = () => planActions.setPreferElevator(btn.dataset.preferElevator === 'true');
   });
   document.querySelector('[data-choose-myplan]')?.addEventListener('click', () => planActions.chooseMyPlan({goMap: false}));
+  document.querySelector('[data-choose-shared]')?.addEventListener('click', () => planActions.chooseSharedPlan({goMap: false}));
   document.querySelector('[data-cancel-course]')?.addEventListener('click', () => {
     state.appPhase = 'main';
     ctx.render();

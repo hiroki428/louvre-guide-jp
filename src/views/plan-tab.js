@@ -1,6 +1,6 @@
 import {destinationWorkId} from '../route-progress.js';
 import {catalogWorks} from '../catalog.js';
-import {localizeRoute, localizeWork, t} from '../i18n.js';
+import {localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
 function planAddResultsMarkup(ctx) {
@@ -48,7 +48,7 @@ function optionalWorksMarkup(ctx, plan) {
 }
 
 export function planTabView(ctx, hasMini) {
-  const {state, routes, works, navigationIndex} = ctx;
+  const {state, works, navigationIndex} = ctx;
   const lang = state.lang;
   const tr = (key, params) => t(key, params, lang);
   if (state.planAddOpen && !state.planAddMode) {
@@ -97,15 +97,6 @@ export function planTabView(ctx, hasMini) {
       ? tr('plan.allSaved')
       : tr('plan.saveCourseBtn', {count: items.length});
   return `<main class="tab-screen plan-screen ${hasMini ? 'has-mini-player' : ''}">
-    <section class="plan-switcher" aria-label="${esc(tr('plan.switcherAria'))}">
-      ${routes.map(raw => {
-        const r = localizeRoute(raw, lang);
-        return `<button type="button" class="pill-btn ${!plan.isCustom && !plan.isShared && plan.id === r.id ? 'active' : ''}" data-switch-preset="${esc(r.id)}">${esc(r.shortLabel)}</button>`;
-      }).join('')}
-      <button type="button" class="pill-btn ${plan.isCustom ? 'active' : ''}" data-switch-myplan>${esc(tr('plan.myPlanPill', {count: state.myPlanIds.length}))}</button>
-      ${state.sharedPlan?.ids?.length ? `<button type="button" class="pill-btn pill-shared ${plan.isShared ? 'active' : ''}" data-switch-shared>${esc(tr('share.planPill', {count: state.sharedPlan.ids.length}))}</button>` : ''}
-    </section>
-
     <section class="plan-summary-card ${isAllDone ? 'is-complete' : ''}">
       <div class="plan-summary-top">
         <div>
@@ -242,11 +233,6 @@ export function wirePlanTab(ctx) {
     wireAddResults();
   });
 
-  document.querySelectorAll('[data-switch-preset]').forEach(btn => {
-    btn.onclick = () => planActions.choosePresetCourse(btn.dataset.switchPreset, {goMap: false});
-  });
-  document.querySelector('[data-switch-myplan]')?.addEventListener('click', () => planActions.chooseMyPlan({goMap: false}));
-  document.querySelector('[data-switch-shared]')?.addEventListener('click', () => planActions.chooseSharedPlan({goMap: false}));
   document.querySelector('[data-copy-active-shared]')?.addEventListener('click', () => planActions.copySharedToMyPlan());
   document.querySelector('[data-optimize-myplan]')?.addEventListener('click', planActions.handleOptimizeMyPlan);
   document.querySelectorAll('[data-promote-optional]').forEach(btn => {

@@ -1240,29 +1240,6 @@ html[data-guide-transition='layer']::view-transition-new(root) {
 .confirm-location { min-height: 44px; padding: 10px 16px; border: 0; border-radius: var(--radius-sm); font-weight: 700; }
 
 /* ==================== PLAN TAB ==================== */
-.plan-switcher {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  margin-bottom: 10px;
-}
-.pill-btn {
-  flex: none;
-  min-height: 38px;
-  padding: 6px 13px;
-  border: 1px solid var(--color-line);
-  border-radius: 999px;
-  background: var(--color-surface);
-  color: var(--color-muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-.pill-btn.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-on-accent);
-}
 .plan-summary-card {
   padding: 16px;
   border: 1px solid var(--color-line);
@@ -2164,7 +2141,7 @@ html[data-guide-transition='layer']::view-transition-new(root) {
 .map-controls { border-color: #d6c6ac; background: rgb(255 252 246 / 95%); }
 .floor-tabs button { border-color: #ded3c1; background: var(--color-surface); }
 .floor-tabs button.active { box-shadow: inset 0 3px 0 #cba15f, inset 0 -3px 0 var(--color-inset-shadow); }
-.pill-btn, .filter-chip { border-color: #ded3c1; background: #fffcf6; }
+.filter-chip { border-color: #ded3c1; background: #fffcf6; }
 .home-language-list { border-color: #d8c7aa; box-shadow: 0 9px 25px rgb(65 48 26 / 8%); }
 .home-language-option.active { border-left: 3px solid var(--color-gold); background: #f4ead8; }
 .work-sheet, .audio-settings-sheet { border-top: 3px solid #c7a063; }
@@ -2207,20 +2184,20 @@ button:not(:disabled):active {
 }
 
 :is(.header-course-btn, .header-audio-btn, .map-controls button,
-  .floor-tabs button, .pill-btn, .filter-chip, .action-chip, .icon-chip,
+  .floor-tabs button, .filter-chip, .action-chip, .icon-chip,
   .star-btn, .play-btn, .save-btn, .compact-btn, .action-pill,
   .add-more-wrap button, .room-input-row button, .search-clear-btn,
   .mini-ctrl-btn, .mini-close-btn, .confirm-location) {
   border-radius: 14px;
   box-shadow: 0 2px 5px rgb(65 48 26 / 7%), inset 0 1px 0 rgb(255 255 255 / 82%);
 }
-:is(.header-course-btn, .pill-btn, .filter-chip, .action-pill,
+:is(.header-course-btn, .filter-chip, .action-pill,
   .add-more-wrap button, .confirm-location) {
   border-radius: 999px;
 }
 .header-audio-btn, .mini-ctrl-btn, .mini-close-btn { border-radius: 50%; }
 
-:is(.floor-tabs button, .pill-btn, .filter-chip, .action-pill).active,
+:is(.floor-tabs button, .filter-chip, .action-pill).active,
 .floor-tabs button.active.has-destination {
   box-shadow: 0 3px 9px rgb(30 75 68 / 18%), inset 0 1px 0 rgb(255 255 255 / 20%);
 }
@@ -2236,7 +2213,7 @@ button:not(:disabled):active {
     filter: brightness(1.035);
   }
   :is(.header-course-btn, .header-audio-btn, .map-controls button,
-    .floor-tabs button, .pill-btn, .filter-chip, .action-chip, .icon-chip,
+    .floor-tabs button, .filter-chip, .action-chip, .icon-chip,
     .star-btn, .play-btn, .save-btn, .compact-btn, .action-pill,
     .start-timed-route-btn, .optimize-plan-btn, .mini-play-btn,
     .add-more-wrap button):not(:disabled):hover:not(:active) {
@@ -2306,16 +2283,6 @@ button:not(:disabled):active {
   white-space: nowrap;
 }
 .shared-return-btn:hover { background: rgb(255 255 255 / 24%); }
-.pill-btn.pill-shared {
-  border-color: #c89b44;
-  color: #7c560d;
-  background: #fdf6e6;
-}
-.pill-btn.pill-shared.active {
-  background: #b78529;
-  border-color: #b78529;
-  color: #fff;
-}
 
 .share-popup-dialog,
 .share-modal-sheet {
