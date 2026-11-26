@@ -119,7 +119,7 @@ export function optimizeWorkOrder(navigationIndex, workIds, {preferElevator = fa
     const key = `${from}=>${to}`;
     if (distCache.has(key)) return distCache.get(key);
     const path = shortestPath(navigationIndex, from, to, {preferElevator});
-    const cost = path ? path.totalCost : 1e9;
+    const cost = path ? (path.weightedCost ?? path.totalCost) : 1e9;
     distCache.set(key, cost);
     return cost;
   };
@@ -256,6 +256,59 @@ export function optimizeWorkOrder(navigationIndex, workIds, {preferElevator = fa
     beforeCost: Math.round(beforeCost),
     afterCost: Math.round(afterCost),
     savedPercent
+  };
+}
+
+/**
+ * 鑑賞済み作品の順序を保ったまま、未鑑賞（残りの）作品だけを
+ * 現在地（または最後の鑑賞済み作品・ピラミッド入口）から最短一筆書きに自動最適化する。
+ */
+export function optimizeRemainingWorks(
+  navigationIndex,
+  workIds,
+  viewedIds = null,
+  {preferElevator = false, startNodeId = 'entrance:pyramid:fm2'} = {}
+) {
+  const input = Array.isArray(workIds) ? [...workIds] : [];
+  if (input.length <= 1 || !navigationIndex?.nodes) {
+    return {ids: input, changed: false, beforeCost: 0, afterCost: 0, savedPercent: 0};
+  }
+  const viewedSet = viewedIds instanceof Set
+    ? viewedIds
+    : new Set(Array.isArray(viewedIds) ? viewedIds : []);
+  if (!viewedSet.size) {
+    return optimizeWorkOrder(navigationIndex, input, {preferElevator, startNodeId});
+  }
+  const doneIds = [];
+  const remainingIds = [];
+  for (const id of input) {
+    if (viewedSet.has(id)) doneIds.push(id);
+    else remainingIds.push(id);
+  }
+  if (remainingIds.length <= 1) {
+    const finalIds = [...doneIds, ...remainingIds];
+    const changed = finalIds.some((id, idx) => id !== input[idx]);
+    return {ids: finalIds, changed, beforeCost: 0, afterCost: 0, savedPercent: 0};
+  }
+  let anchorNode = startNodeId;
+  if ((!anchorNode || anchorNode === 'entrance:pyramid:fm2') && doneIds.length) {
+    for (let i = doneIds.length - 1; i >= 0; i -= 1) {
+      const candidate = `work:${doneIds[i]}`;
+      if (navigationIndex.nodes.has(candidate)) {
+        anchorNode = candidate;
+        break;
+      }
+    }
+  }
+  const opt = optimizeWorkOrder(navigationIndex, remainingIds, {preferElevator, startNodeId: anchorNode});
+  const finalIds = [...doneIds, ...opt.ids];
+  const changed = finalIds.some((id, idx) => id !== input[idx]);
+  return {
+    ids: finalIds,
+    changed,
+    beforeCost: opt.beforeCost,
+    afterCost: opt.afterCost,
+    savedPercent: opt.savedPercent
   };
 }
 

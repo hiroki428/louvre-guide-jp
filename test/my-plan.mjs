@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {indexNavigationGraph, navigationStateFromRoute, buildNavigationView} from '../src/navigation.js';
-import {activePlanMeta, buildTimedRouteWorks, countPaceZones, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
+import {activePlanMeta, buildTimedRouteWorks, countPaceZones, formatMinutesLabel, moveMyPlanItem, optimizeRemainingWorks, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
 import {createAppStore, STORAGE_KEY} from '../src/app/state.js';
 import {createPlanActions} from '../src/app/plan-actions.js';
 import {planTabView} from '../src/views/plan-tab.js';
@@ -205,5 +205,12 @@ assert.deepEqual(store.state.myPlanIds, optimizeWorkOrder(index, [...myPlanBefor
 assert.ok(!store.state.navigation.routeWorkIds.includes(unmappedWork.id), 'unmapped saved works must not become navigation stops');
 assert.equal(actions.addOptionalWorkToActivePlan(optionalWork.id), true);
 assert.deepEqual(store.state.optionalWorkIds.myplan, [optionalWork.id]);
+// Incremental optimization keeps already-viewed works in place and optimizes remaining stops
+const remOpt = optimizeRemainingWorks(index, ['venus', 'lacemaker', 'mona', 'marly', 'catalog-0003'], new Set(['venus']), {preferElevator: false});
+assert.equal(remOpt.ids[0], 'venus', 'viewed work must stay at front');
+assert.equal(remOpt.ids.length, 5);
+const remMonaPos = remOpt.ids.indexOf('mona');
+const remCanaPos = remOpt.ids.indexOf('catalog-0003');
+assert.equal(Math.abs(remMonaPos - remCanaPos), 1, 'remaining same-room works must stay grouped after optimization');
 
 console.log('my-plan and custom routing: passed');

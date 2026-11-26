@@ -582,5 +582,10 @@ export const ko = Object.freeze({
   'tour.step6Body': '언어·재생 속도 변경, 클라우드 동기화, 이 사용 가이드 다시 보기를 언제든 이용할 수 있습니다.',
   'tour.replayTitle': '사용 가이드 (데모)',
   'tour.replaySub': '지도 화면의 주요 버튼과 사용 방법을 하이라이트로 다시 안내합니다',
-  'tour.replayBtn': '가이드 다시 보기'
+  'tour.replayBtn': '가이드 다시 보기',
+  'notice.evOnOptimized': '엘리베이터 우선으로 전환하고 관람 순서를 재최적화했습니다',
+  'notice.evOffOptimized': '최단 거리로 전환하고 관람 순서를 재최적화했습니다',
+  'notice.myPlanAddedOpt': '“{title}”을 추가하고 최단 경로로 자동 최적화했습니다 (총 {count}작품)',
+  'notice.myPlanRemovedOpt': '“{title}”을 제외하고 남은 경로를 재최적화했습니다',
+  'notice.arrivalOptimized': '현재 위치를 {room}으로 갱신하고 남은 동선을 재최적화했습니다'
 });

@@ -582,5 +582,10 @@ export const es = Object.freeze({
   'tour.step6Body': 'Cambia el idioma, la velocidad de audio, sincroniza tu cuenta o repite esta guía cuando quieras.',
   'tour.replayTitle': 'Guía interactiva (demo)',
   'tour.replaySub': 'Vuelve a resaltar los botones principales y pasos de uso en la pantalla del mapa',
-  'tour.replayBtn': 'Ver guía de nuevo'
+  'tour.replayBtn': 'Ver guía de nuevo',
+  'notice.evOnOptimized': 'Cambiado a Prioridad ascensor y orden de visita reoptimizado',
+  'notice.evOffOptimized': 'Cambiado a Ruta más corta y orden de visita reoptimizado',
+  'notice.myPlanAddedOpt': '«{title}» añadida y ruta optimizada ({count} obras)',
+  'notice.myPlanRemovedOpt': '«{title}» quitada y ruta restante reoptimizada',
+  'notice.arrivalOptimized': 'Ubicación actualizada a {room} y paradas restantes reoptimizadas'
 });
