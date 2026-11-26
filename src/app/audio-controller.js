@@ -12,9 +12,67 @@ const AUDIO_CACHE = 'louvre-audio-v3';
 export function createAudioController(ctx) {
   const tr = (key, params) => t(key, params, ctx.state.lang);
   const player = new Audio();
-  player.preload = 'none';
+  player.preload = 'metadata';
   player.playbackRate = ctx.state.playbackRate;
   let playbackSerial = 0;
+  let lastSavedPersistMs = 0;
+
+  function trackKey(id, length) {
+    return `${id}-${length}`;
+  }
+
+  function getSavedPosition(id, length = null) {
+    if (!id) return null;
+    const work = ctx.byId[id];
+    const len = length ?? (work ? ctx.preferredLengthFor(work) : ctx.state.duration);
+    const entry = ctx.state.audioPositions?.[trackKey(id, len)];
+    if (!entry || !Number.isFinite(entry.time) || entry.time <= 1) return null;
+    if (Number.isFinite(entry.duration) && entry.duration > 0 && entry.time >= entry.duration - 1.5) return null;
+    return {
+      time: entry.time,
+      duration: Number.isFinite(entry.duration) && entry.duration > 0 ? entry.duration : len
+    };
+  }
+
+  function writePosition(id, length, time, duration, {persist = false} = {}) {
+    if (!id || !length) return;
+    if (!ctx.state.audioPositions || typeof ctx.state.audioPositions !== 'object') {
+      ctx.state.audioPositions = {};
+    }
+    const key = trackKey(id, length);
+    const validDur = Number.isFinite(duration) && duration > 0 ? duration : length;
+    if (!Number.isFinite(time) || time <= 1 || time >= validDur - 1.5) {
+      if (key in ctx.state.audioPositions) {
+        delete ctx.state.audioPositions[key];
+        if (persist) ctx.persistState({skipSync: true});
+      }
+      return;
+    }
+    ctx.state.audioPositions[key] = {
+      time: Math.round(time * 10) / 10,
+      duration: Math.round(validDur * 10) / 10
+    };
+    const now = Date.now();
+    if (persist || now - lastSavedPersistMs > 1500) {
+      lastSavedPersistMs = now;
+      ctx.persistState({skipSync: true});
+    }
+  }
+
+  function saveCurrentPosition({persist = false} = {}) {
+    const id = ctx.state.player.workId;
+    const len = Number(player.dataset?.audioLength) || (id && ctx.byId[id] ? ctx.preferredLengthFor(ctx.byId[id]) : 0);
+    if (!id || !len) return;
+    writePosition(id, len, player.currentTime, player.duration, {persist});
+  }
+
+  function clearSavedPosition(id, length) {
+    const key = trackKey(id, length);
+    if (ctx.state.audioPositions && key in ctx.state.audioPositions) {
+      delete ctx.state.audioPositions[key];
+      ctx.persistState({skipSync: true});
+    }
+  }
 
   function miniPlayerContext() {
     const workId = ctx.state.player.workId;
@@ -50,6 +108,9 @@ export function createAudioController(ctx) {
   function syncSeekBars() {
     const duration = Number.isFinite(player.duration) && player.duration > 0 ? player.duration : 0;
     const current = Number.isFinite(player.currentTime) ? player.currentTime : 0;
+    if (ctx.state.player.workId && current > 0 && duration > 0) {
+      saveCurrentPosition({persist: false});
+    }
     const ratio = duration > 0 ? Math.round((current / duration) * 1000) : 0;
     document.querySelectorAll('[data-seek]').forEach(input => {
       const targetId = input.dataset.seekWork;
@@ -68,10 +129,45 @@ export function createAudioController(ctx) {
     });
   }
 
-  function seekBy(deltaSeconds) {
-    if (!ctx.state.player.workId || !Number.isFinite(player.duration)) return;
-    player.currentTime = Math.max(0, Math.min(player.duration, player.currentTime + deltaSeconds));
-    syncSeekBars();
+  function seekBy(deltaSeconds, workId = null) {
+    const targetId = workId || ctx.state.player.workId;
+    if (!targetId || !ctx.byId[targetId]) return;
+    if (ctx.state.audio === player && ctx.state.player.workId === targetId && Number.isFinite(player.duration) && player.duration > 0) {
+      player.currentTime = Math.max(0, Math.min(player.duration - 0.25, player.currentTime + deltaSeconds));
+      saveCurrentPosition({persist: true});
+      syncSeekBars();
+      return;
+    }
+    const length = ctx.preferredLengthFor(ctx.byId[targetId]);
+    const saved = getSavedPosition(targetId, length);
+    const baseTime = saved ? saved.time : 0;
+    if (baseTime <= 0 && deltaSeconds < 0) return;
+    const estDur = saved ? saved.duration : length;
+    const nextTime = Math.max(0, Math.min(estDur - 1, baseTime + deltaSeconds));
+    void toggleAudio(targetId, length, {startAt: nextTime});
+  }
+
+  function seekToRatio(workId, ratio, {autoPlay = true} = {}) {
+    const clamped = Math.max(0, Math.min(0.995, Number(ratio) || 0));
+    const targetId = workId || ctx.state.player.workId;
+    if (!targetId || !ctx.byId[targetId]) return;
+    const length = ctx.preferredLengthFor(ctx.byId[targetId]);
+    const isLoaded = ctx.state.player.workId === targetId
+      && player.dataset?.audioLength === String(length)
+      && Number.isFinite(player.duration)
+      && player.duration > 0;
+    if (isLoaded) {
+      player.currentTime = player.duration * clamped;
+      saveCurrentPosition({persist: true});
+      syncSeekBars();
+      return;
+    }
+    if (autoPlay) {
+      void toggleAudio(targetId, length, {startRatio: clamped});
+    } else {
+      writePosition(targetId, length, length * clamped, length, {persist: true});
+      ctx.render();
+    }
   }
 
   function setPlaybackRate(rate, {rerender = true} = {}) {
@@ -105,7 +201,12 @@ export function createAudioController(ctx) {
         if (ctx.state.player.workId) toggleAudio(ctx.state.player.workId, ctx.preferredLengthFor(ctx.byId[ctx.state.player.workId]));
       });
       navigator.mediaSession.setActionHandler('pause', () => {
-        if (!player.paused) { player.pause(); ctx.state.playing = null; ctx.render(); }
+        if (!player.paused) {
+          player.pause();
+          saveCurrentPosition({persist: true});
+          ctx.state.playing = null;
+          ctx.render();
+        }
       });
       navigator.mediaSession.setActionHandler('previoustrack', () => stepMiniPlayer(-1));
       navigator.mediaSession.setActionHandler('nexttrack', () => stepMiniPlayer(1));
@@ -114,10 +215,27 @@ export function createAudioController(ctx) {
       navigator.mediaSession.setActionHandler('seekto', details => {
         if (Number.isFinite(details?.seekTime) && Number.isFinite(player.duration)) {
           player.currentTime = Math.max(0, Math.min(player.duration, details.seekTime));
+          saveCurrentPosition({persist: true});
           syncSeekBars();
         }
       });
     } catch { /* Media Session API optional */ }
+  }
+
+  function switchPausedMiniTrack(nextId) {
+    saveCurrentPosition({persist: true});
+    player.pause();
+    player.removeAttribute('src');
+    delete player.dataset.audioLength;
+    ctx.state.audio = null;
+    ctx.state.playing = null;
+    ctx.state.player = {
+      workId: nextId,
+      mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, nextId),
+      sessionId: ++playbackSerial,
+      hasStarted: false,
+      arrivalHandled: false
+    };
   }
 
   async function stepMiniPlayer(delta, {forcePlay = false} = {}) {
@@ -143,13 +261,7 @@ export function createAudioController(ctx) {
           if (shouldPlay) {
             await toggleAudio(mini.nextId, ctx.preferredLengthFor(ctx.byId[mini.nextId]), {skipAutoAdvance: true});
           } else {
-            player.pause();
-            player.currentTime = 0;
-            const nextLen = ctx.preferredLengthFor(ctx.byId[mini.nextId]);
-            ctx.state.player = {workId: mini.nextId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.nextId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
-            player.dataset.audioLength = String(nextLen);
-            player.dataset.audioLang = resolveAudioLang(ctx.state.lang);
-            player.src = ctx.audioPath(mini.nextId, nextLen);
+            switchPausedMiniTrack(mini.nextId);
             ctx.setNotice(tr('audio.completedNextNotice', {current: localizeWork(currentWork, ctx.state.lang).title, next: localizeWork(ctx.byId[mini.nextId], ctx.state.lang).title}), false, 3600);
             ctx.render();
           }
@@ -159,6 +271,7 @@ export function createAudioController(ctx) {
             if (advanced.updated) ctx.state.navigation = advanced.navigation;
             else if (ctx.state.navigation) ctx.state.navigation = {...ctx.state.navigation, currentNodeId: `work:${currentWork.id}`, destinationNodeId: null, routeComplete: true};
           }
+          saveCurrentPosition({persist: true});
           player.pause();
           ctx.state.playing = null;
           ctx.persistState();
@@ -178,13 +291,7 @@ export function createAudioController(ctx) {
         if (shouldPlay) {
           await toggleAudio(mini.nextId, ctx.preferredLengthFor(ctx.byId[mini.nextId]), {skipAutoAdvance: true});
         } else {
-          player.pause();
-          player.currentTime = 0;
-          const nextLen = ctx.preferredLengthFor(ctx.byId[mini.nextId]);
-          ctx.state.player = {workId: mini.nextId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.nextId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
-          player.dataset.audioLength = String(nextLen);
-          player.dataset.audioLang = resolveAudioLang(ctx.state.lang);
-          player.src = ctx.audioPath(mini.nextId, nextLen);
+          switchPausedMiniTrack(mini.nextId);
           ctx.render();
         }
       }
@@ -207,19 +314,14 @@ export function createAudioController(ctx) {
     if (shouldPlay) {
       await toggleAudio(mini.prevId, ctx.preferredLengthFor(prevWork), {skipAutoAdvance: true});
     } else {
-      player.pause();
-      player.currentTime = 0;
-      const prevLen = ctx.preferredLengthFor(prevWork);
-      ctx.state.player = {workId: mini.prevId, mode: playbackModeFor(ctx.navigationIndex, ctx.state.navigation, mini.prevId), sessionId: ++playbackSerial, hasStarted: false, arrivalHandled: false};
-      player.dataset.audioLength = String(prevLen);
-      player.dataset.audioLang = resolveAudioLang(ctx.state.lang);
-      player.src = ctx.audioPath(mini.prevId, prevLen);
+      switchPausedMiniTrack(mini.prevId);
       ctx.setNotice(tr('audio.backTargetNotice', {title: localizeWork(prevWork, ctx.state.lang).title}), false, 3200);
       ctx.render();
     }
   }
 
   function closeMiniPlayer() {
+    saveCurrentPosition({persist: true});
     playbackSerial += 1;
     player.pause();
     player.currentTime = 0;
@@ -233,7 +335,39 @@ export function createAudioController(ctx) {
     ctx.render();
   }
 
-  async function toggleAudio(id, length, {skipAutoAdvance = false} = {}) {
+  function applyStartPosition(targetTime, targetRatio, sessionId) {
+    let applied = false;
+    const seekNow = () => {
+      if (applied || ctx.state.player.sessionId !== sessionId) return;
+      const dur = Number.isFinite(player.duration) && player.duration > 0 ? player.duration : 0;
+      if (!dur) return;
+      let dest = null;
+      if (Number.isFinite(targetRatio)) {
+        dest = Math.max(0, Math.min(dur - 0.25, dur * targetRatio));
+      } else if (Number.isFinite(targetTime) && targetTime > 0) {
+        dest = Math.max(0, Math.min(dur - 0.25, targetTime));
+      }
+      if (dest == null) {
+        applied = true;
+        return;
+      }
+      try { player.currentTime = dest; } catch { /* retry on canplay/playing */ }
+      if (Math.abs(player.currentTime - dest) <= 1.2) {
+        applied = true;
+      }
+      syncSeekBars();
+    };
+    if (player.readyState >= 1 && Number.isFinite(player.duration) && player.duration > 0) {
+      seekNow();
+    }
+    if (!applied) {
+      player.addEventListener('loadedmetadata', seekNow, {once: true});
+      player.addEventListener('canplay', seekNow, {once: true});
+      player.addEventListener('playing', seekNow, {once: true});
+    }
+  }
+
+  async function toggleAudio(id, length, {skipAutoAdvance = false, startAt = null, startRatio = null, restart = false} = {}) {
     const work = ctx.byId[id];
     if (!work) return;
     const validLengths = audioLengthsFor(work);
@@ -246,14 +380,35 @@ export function createAudioController(ctx) {
       && ctx.state.player.workId === id
       && player.dataset?.audioLength === String(resolvedLength)
       && player.dataset?.audioLang === targetAudioLang;
-    if (sameTrack && !player.paused) {
+    const hasExplicitSeek = restart || Number.isFinite(startAt) || Number.isFinite(startRatio);
+    if (sameTrack && !hasExplicitSeek && !player.paused) {
       player.pause();
+      saveCurrentPosition({persist: true});
       ctx.state.playing = null;
       ctx.render();
       return;
     }
-    if (sameTrack && ctx.state.player.hasStarted && !player.ended) {
+    if (sameTrack && !hasExplicitSeek && ctx.state.player.hasStarted && !player.ended) {
       try {
+        player.playbackRate = ctx.state.playbackRate;
+        await player.play();
+        ctx.state.playing = id;
+        ctx.render();
+        syncSeekBars();
+      } catch {
+        ctx.state.audioError = tr('audio.errorResume');
+        ctx.render();
+      }
+      return;
+    }
+    if (sameTrack && hasExplicitSeek && ctx.state.player.hasStarted) {
+      try {
+        if (restart) {
+          clearSavedPosition(id, resolvedLength);
+          player.currentTime = 0;
+        } else {
+          applyStartPosition(startAt, startRatio, ctx.state.player.sessionId);
+        }
         player.playbackRate = ctx.state.playbackRate;
         await player.play();
         ctx.state.playing = id;
@@ -267,9 +422,16 @@ export function createAudioController(ctx) {
     }
 
     if (ctx.state.audio === player) {
+      saveCurrentPosition({persist: true});
       player.pause();
       player.currentTime = 0;
     }
+    if (restart) clearSavedPosition(id, resolvedLength);
+    const saved = !restart && !Number.isFinite(startAt) && !Number.isFinite(startRatio)
+      ? getSavedPosition(id, resolvedLength)
+      : null;
+    const resolvedStartAt = Number.isFinite(startAt) ? startAt : (saved ? saved.time : null);
+
     const sessionId = ++playbackSerial;
     const mode = playbackModeFor(ctx.navigationIndex, ctx.state.navigation, id);
     ctx.state.player = {workId: id, mode, sessionId, hasStarted: false, arrivalHandled: false};
@@ -278,8 +440,12 @@ export function createAudioController(ctx) {
     player.dataset.audioLang = targetAudioLang;
     player.src = ctx.audioPath(id, resolvedLength, targetAudioLang);
     player.playbackRate = ctx.state.playbackRate;
+    if (Number.isFinite(resolvedStartAt) || Number.isFinite(startRatio)) {
+      applyStartPosition(resolvedStartAt, startRatio, sessionId);
+    }
     player.onended = () => {
       if (ctx.state.player.sessionId !== sessionId) return;
+      clearSavedPosition(id, resolvedLength);
       ctx.state.playing = null;
       if (ctx.state.autoPlayNext) {
         const mini = miniPlayerContext();
@@ -345,6 +511,10 @@ export function createAudioController(ctx) {
         player.src = ctx.audioPath(ctx.state.player.workId, len, nextAudioLang);
       }
     }
+  }
+
+  function restartAudio(id, length) {
+    return toggleAudio(id, length, {restart: true});
   }
 
   async function saveSingleAudio(id, length) {
@@ -438,14 +608,18 @@ export function createAudioController(ctx) {
   return {
     player,
     miniPlayerContext,
+    getSavedPosition,
+    saveCurrentPosition,
     syncSeekBars,
     seekBy,
+    seekToRatio,
     setPlaybackRate,
     updateMediaSession,
     stepMiniPlayer,
     closeMiniPlayer,
     toggleAudio,
     handleLanguageChange,
+    restartAudio,
     saveSingleAudio,
     saveAudioButton,
     downloadCurrentPlanAudio,

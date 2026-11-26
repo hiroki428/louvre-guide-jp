@@ -595,5 +595,8 @@ export const es = Object.freeze({
   'plan.completeBanner': '🎉 ¡Recorrido completado! Las {total} obras vistas',
   'plan.remainingSummary': '{count} restantes · aprox. {minutes} min',
   'plan.nextStopLabel': 'PRÓXIMA PARADA',
-  'plan.markDoneCta': '✓ Marcar vista'
+  'plan.markDoneCta': '✓ Marcar vista',
+  'detail.resumeFromBtn': '▶ Continuar ({time})',
+  'detail.restartBtn': '↺ Desde el inicio',
+  'detail.seekHint': 'Arrastra o toca la barra para reproducir desde cualquier punto'
 });

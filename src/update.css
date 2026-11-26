@@ -2911,3 +2911,9 @@ button:not(:disabled):active {
   border-color: #237a5d;
   color: #fff;
 }
+
+/* ==================== AUDIO MID-PLAYBACK ==================== */
+.seek-hint-inline {
+  font-size: 10px;
+  color: var(--color-muted);
+}

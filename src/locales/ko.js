@@ -595,5 +595,8 @@ export const ko = Object.freeze({
   'plan.completeBanner': '🎉 코스 완주! 전체 {total}작품을 모두 감상했습니다',
   'plan.remainingSummary': '남은 {count}작품 · 예상 약 {minutes}분',
   'plan.nextStopLabel': '다음 목적지',
-  'plan.markDoneCta': '✓ 완료 체크'
+  'plan.markDoneCta': '✓ 완료 체크',
+  'detail.resumeFromBtn': '▶ 이어서 재생 ({time})',
+  'detail.restartBtn': '↺ 처음부터',
+  'detail.seekHint': '바를 움직이면 원하는 지점부터 바로 재생됩니다'
 });

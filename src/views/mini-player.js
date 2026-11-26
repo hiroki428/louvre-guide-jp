@@ -12,8 +12,12 @@ export function miniPlayerMarkup(ctx) {
   const {work: rawWork, prevId, nextId, isLastInPlan} = mini;
   const work = localizeWork(rawWork, lang);
   const isPlaying = state.playing === work.id;
-  const duration = Number.isFinite(player.duration) && player.duration > 0 ? player.duration : 0;
-  const current = Number.isFinite(player.currentTime) ? player.currentTime : 0;
+  const isLoaded = state.audio === player
+    && state.player.workId === work.id
+    && Number.isFinite(player.duration) && player.duration > 0;
+  const savedPos = !isLoaded ? audio.getSavedPosition(work.id) : null;
+  const duration = isLoaded ? player.duration : (savedPos?.duration || ctx.preferredLengthFor(rawWork));
+  const current = isLoaded && Number.isFinite(player.currentTime) ? player.currentTime : (savedPos?.time || 0);
   const ratio = duration > 0 ? Math.round((current / duration) * 1000) : 0;
   const pct = (ratio / 10).toFixed(1);
   return `<aside class="mini-player spotify-bar" aria-label="${esc(tr('mini.aria'))}">
@@ -104,34 +108,36 @@ export function wireMiniPlayer(ctx) {
   document.querySelector('[data-mini-next]')?.addEventListener('click', () => audio.stepMiniPlayer(1));
   document.querySelector('[data-mini-close]')?.addEventListener('click', audio.closeMiniPlayer);
   document.querySelectorAll('[data-seek-delta]').forEach(btn => {
-    btn.onclick = () => audio.seekBy(Number(btn.dataset.seekDelta));
+    btn.onclick = () => audio.seekBy(Number(btn.dataset.seekDelta), btn.dataset.seekWork || null);
+  });
+  document.querySelectorAll('[data-restart-audio]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.restartAudio;
+      if (id && byId[id]) audio.restartAudio(id, ctx.preferredLengthFor(byId[id]));
+    };
   });
   document.querySelectorAll('[data-seek]').forEach(input => {
-    const seekToInput = () => {
-      const workId = input.dataset.seekWork;
-      if (workId && state.player.workId !== workId) return;
-      if (Number.isFinite(player.duration) && player.duration > 0) {
-        player.currentTime = player.duration * (Number(input.value) / 1000);
-        audio.syncSeekBars();
-      }
+    const updateVisual = val => {
+      const ratio = Number(val) / 1000;
+      input.style.setProperty('--seek-pct', `${(ratio * 100).toFixed(1)}%`);
+      const workId = input.dataset.seekWork || state.player.workId;
+      const length = workId && byId[workId] ? ctx.preferredLengthFor(byId[workId]) : state.duration;
+      const isLoaded = state.audio === player
+        && state.player.workId === workId
+        && player.dataset?.audioLength === String(length)
+        && Number.isFinite(player.duration) && player.duration > 0;
+      const estDur = isLoaded ? player.duration : length;
+      document.querySelectorAll('[data-time-current]').forEach(el => {
+        if (!workId || el.dataset.timeWork === workId) el.textContent = formatClock(estDur * ratio);
+      });
     };
-    input.addEventListener('pointerdown', () => { input.dataset.seekDragging = 'true'; });
-    input.addEventListener('input', () => {
-      input.style.setProperty('--seek-pct', `${(Number(input.value) / 10).toFixed(1)}%`);
-      if (!input.dataset.seekDragging) seekToInput();
+    input.addEventListener('input', event => {
+      updateVisual(event.target.value);
     });
-    input.addEventListener('change', () => {
-      delete input.dataset.seekDragging;
-      seekToInput();
-    });
-    input.addEventListener('pointerup', () => {
-      if (!input.dataset.seekDragging) return;
-      delete input.dataset.seekDragging;
-      seekToInput();
-    });
-    input.addEventListener('pointercancel', () => {
-      delete input.dataset.seekDragging;
-      audio.syncSeekBars();
+    input.addEventListener('change', event => {
+      const workId = input.dataset.seekWork || state.player.workId;
+      const ratio = Number(event.target.value) / 1000;
+      audio.seekToRatio(workId, ratio, {autoPlay: true});
     });
   });
 }

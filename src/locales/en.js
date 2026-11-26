@@ -595,5 +595,8 @@ export const en = Object.freeze({
   'plan.completeBanner': '🎉 Tour complete! All {total} artworks viewed',
   'plan.remainingSummary': '{count} remaining · approx. {minutes} min left',
   'plan.nextStopLabel': 'NEXT STOP',
-  'plan.markDoneCta': '✓ Mark Done'
+  'plan.markDoneCta': '✓ Mark Done',
+  'detail.resumeFromBtn': '▶ Resume ({time})',
+  'detail.restartBtn': '↺ Start Over',
+  'detail.seekHint': 'Drag or tap the bar to play from any point'
 });

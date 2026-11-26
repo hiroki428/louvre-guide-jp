@@ -595,5 +595,8 @@ export const zh = Object.freeze({
   'plan.completeBanner': '🎉 路线完成！全部 {total} 件作品已参观',
   'plan.remainingSummary': '剩余 {count} 件 · 预计还需约 {minutes} 分钟',
   'plan.nextStopLabel': '下一站',
-  'plan.markDoneCta': '✓ 标为已看'
+  'plan.markDoneCta': '✓ 标为已看',
+  'detail.resumeFromBtn': '▶ 从 {time} 继续播放',
+  'detail.restartBtn': '↺ 从头播放',
+  'detail.seekHint': '拖动进度条可从任意位置开始播放'
 });

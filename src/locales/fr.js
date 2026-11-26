@@ -595,5 +595,8 @@ export const fr = Object.freeze({
   'plan.completeBanner': '🎉 Parcours terminé ! Les {total} œuvres ont été vues',
   'plan.remainingSummary': '{count} restantes · env. {minutes} min',
   'plan.nextStopLabel': 'PROCHAINE ÉTAPE',
-  'plan.markDoneCta': '✓ Marquer vue'
+  'plan.markDoneCta': '✓ Marquer vue',
+  'detail.resumeFromBtn': '▶ Reprendre ({time})',
+  'detail.restartBtn': '↺ Depuis le début',
+  'detail.seekHint': 'Déplacez le curseur pour lire à tout moment'
 });

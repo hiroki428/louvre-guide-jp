@@ -595,5 +595,8 @@ export const ja = Object.freeze({
   'plan.completeBanner': '🎉 コース完走！全{total}作品を鑑賞しました',
   'plan.remainingSummary': '残り {count}作品 · 目安 あと約{minutes}分',
   'plan.nextStopLabel': '次の目的地',
-  'plan.markDoneCta': '✓ 済にする'
+  'plan.markDoneCta': '✓ 済にする',
+  'detail.resumeFromBtn': '▶ 続きから再生 ({time})',
+  'detail.restartBtn': '↺ 最初から',
+  'detail.seekHint': 'バーを動かすと途中から再生できます'
 });

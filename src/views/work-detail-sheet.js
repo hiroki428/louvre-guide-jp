@@ -39,11 +39,24 @@ export function workDetailSheetMarkup(ctx) {
   const inMyPlan = state.myPlanIds.includes(work.id);
   const isViewed = state.viewed.has(work.id);
   const isPlaying = state.playing === work.id;
-  const isLoaded = state.player.workId === work.id;
-  const duration = isLoaded && Number.isFinite(player.duration) && player.duration > 0 ? player.duration : 0;
-  const current = isLoaded && Number.isFinite(player.currentTime) ? player.currentTime : 0;
+  const isLoaded = state.audio === player
+    && state.player.workId === work.id
+    && player.dataset?.audioLength === String(length);
+  const savedPos = !isLoaded ? ctx.audio.getSavedPosition(work.id, length) : null;
+  const duration = isLoaded && Number.isFinite(player.duration) && player.duration > 0
+    ? player.duration
+    : (savedPos?.duration || length);
+  const current = isLoaded && Number.isFinite(player.currentTime)
+    ? player.currentTime
+    : (savedPos?.time || 0);
+  const hasMidPosition = current > 1.5 && duration > 0 && current < duration - 1.5;
   const ratio = duration > 0 ? Math.round((current / duration) * 1000) : 0;
   const pct = (ratio / 10).toFixed(1);
+  const playBtnLabel = isPlaying
+    ? tr('detail.pauseBtn')
+    : hasMidPosition
+      ? tr('detail.resumeFromBtn', {time: formatClock(current)})
+      : tr('detail.playBtn');
   const hasMap = navigationIndex.nodes.has(`work:${work.id}`);
   const siblings = state.detailRoomWorks.length > 1
     ? state.detailRoomWorks.map(id => byId[id]).filter(Boolean)
@@ -96,15 +109,17 @@ export function workDetailSheetMarkup(ctx) {
           <input type="range" min="0" max="1000" value="${ratio}" style="--seek-pct:${pct}%" data-seek data-seek-work="${esc(work.id)}" aria-label="${esc(tr('detail.seekAria'))}">
           <div class="sheet-time-row">
             <span data-time-current data-time-work="${esc(work.id)}">${formatClock(current)}</span>
+            <span class="seek-hint-inline">${esc(tr('detail.seekHint'))}</span>
             <span data-time-total data-time-work="${esc(work.id)}">${duration > 0 ? formatClock(duration) : '--:--'}</span>
           </div>
         </div>
         <div class="sheet-player-controls">
-          <button type="button" class="secondary compact-btn" data-seek-delta="-10" ${!isLoaded ? 'disabled' : ''}>${esc(tr('detail.back10'))}</button>
-          <button type="button" class="primary sheet-play-main" data-detail-play="${esc(work.id)}">${esc(isPlaying ? tr('detail.pauseBtn') : tr('detail.playBtn'))}</button>
-          <button type="button" class="secondary compact-btn" data-seek-delta="10" ${!isLoaded ? 'disabled' : ''}>${esc(tr('detail.fwd10'))}</button>
+          <button type="button" class="secondary compact-btn" data-seek-delta="-10" data-seek-work="${esc(work.id)}">${esc(tr('detail.back10'))}</button>
+          <button type="button" class="primary sheet-play-main" data-detail-play="${esc(work.id)}">${esc(playBtnLabel)}</button>
+          <button type="button" class="secondary compact-btn" data-seek-delta="10" data-seek-work="${esc(work.id)}">${esc(tr('detail.fwd10'))}</button>
         </div>
         <div class="sheet-player-sub">
+          ${hasMidPosition ? `<button type="button" class="secondary compact-btn" data-restart-audio="${esc(work.id)}">${esc(tr('detail.restartBtn'))}</button>` : ''}
           <button type="button" class="secondary compact-btn" data-open-audio-settings>${esc(tr('detail.speedBtn', {rate: formatRate(state.playbackRate)}))}</button>
           <button type="button" class="secondary compact-btn" data-detail-download="${esc(work.id)}" ${saved ? 'disabled' : ''}>${esc(saved ? tr('detail.savedOffline') : tr('detail.saveToDevice'))}</button>
           ${planIdx >= 0 ? `
@@ -143,6 +158,9 @@ export function wireWorkDetailSheet(ctx) {
     btn.onclick = () => {
       const workId = btn.dataset.detailWork;
       const length = Number(btn.dataset.detailDuration);
+      if (state.audio === audio.player && state.player.workId === workId) {
+        audio.saveCurrentPosition({persist: true});
+      }
       state.duration = length;
       state.audioDurations[workId] = length;
       ctx.persistState();
