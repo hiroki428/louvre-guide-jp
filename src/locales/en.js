@@ -508,7 +508,7 @@ export const en = Object.freeze({
   'share.activeBadge': 'Shared Plan',
   'share.returnOwnBtn': '← Back to My Plan',
   'share.planPill': '🔗 Shared ({count})',
-  'share.shareBtn': 'Share (QR/URL)',
+  'share.shareBtn': 'Share',
   'share.openFriendBtn': 'Open Friend’s Plan',
   'share.incomingTitle': 'A friend shared a plan with you',
   'share.incomingEyebrow': 'SHARED BY A FRIEND',

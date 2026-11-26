@@ -508,7 +508,7 @@ export const ko = Object.freeze({
   'share.activeBadge': '공유 플랜',
   'share.returnOwnBtn': '← 내 플랜으로 돌아가기',
   'share.planPill': '🔗 공유 ({count})',
-  'share.shareBtn': '공유 (QR/URL)',
+  'share.shareBtn': '공유',
   'share.openFriendBtn': '친구 플랜 열기',
   'share.incomingTitle': '친구가 플랜을 공유했습니다',
   'share.incomingEyebrow': 'SHARED BY A FRIEND',

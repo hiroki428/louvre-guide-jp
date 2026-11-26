@@ -136,8 +136,7 @@ export function planTabView(ctx, hasMini) {
       <div class="plan-summary-actions">
         ${items.length && plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
         <button type="button" class="secondary compact-btn" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>
-        ${items.length ? `<button type="button" class="secondary compact-btn" data-open-share-modal="export">${esc(tr('share.shareBtn'))}</button>` : ''}
-        <button type="button" class="secondary compact-btn" data-open-share-modal="import">${esc(tr('share.openFriendBtn'))}</button>
+        <button type="button" class="secondary compact-btn" data-open-share-modal="${items.length ? 'export' : 'import'}">${esc(tr('share.shareBtn'))}</button>
         ${plan.isShared ? `<button type="button" class="secondary compact-btn" data-copy-active-shared>${esc(tr('share.copyToMyPlanBtn'))}</button>` : ''}
         ${items.length ? `<button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${esc(saveBtnText)}</button>` : ''}
         ${items.length ? `<div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">

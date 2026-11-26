@@ -508,7 +508,7 @@ export const fr = Object.freeze({
   'share.activeBadge': 'Parcours partagé',
   'share.returnOwnBtn': '← Revenir à mon parcours',
   'share.planPill': '🔗 Partagé ({count})',
-  'share.shareBtn': 'Partager (QR/URL)',
+  'share.shareBtn': 'Partager',
   'share.openFriendBtn': 'Ouvrir un parcours reçu',
   'share.incomingTitle': 'Un ami vous a partagé un parcours',
   'share.incomingEyebrow': 'PARTAGÉ PAR UN AMI',

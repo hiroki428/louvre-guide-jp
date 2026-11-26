@@ -508,7 +508,7 @@ export const zh = Object.freeze({
   'share.activeBadge': '分享行程',
   'share.returnOwnBtn': '← 返回我的行程',
   'share.planPill': '🔗 分享 ({count})',
-  'share.shareBtn': '分享 (QR/链接)',
+  'share.shareBtn': '分享',
   'share.openFriendBtn': '打开好友行程',
   'share.incomingTitle': '收到好友分享的行程',
   'share.incomingEyebrow': 'SHARED BY A FRIEND',
