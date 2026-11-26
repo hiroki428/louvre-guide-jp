@@ -43,6 +43,9 @@ export function createAppStore({
   const routeEdits = Object.fromEntries(Object.entries(persistedBoot?.routeEdits || {})
     .filter(([routeId, ids]) => routes.some(route => route.id === routeId) && Array.isArray(ids))
     .map(([routeId, ids]) => [routeId, [...new Set(ids.filter(id => byId[id] && navigationIndex.nodes.has(`work:${id}`)))]]));
+  const optionalWorkIds = Object.fromEntries(Object.entries(persistedBoot?.optionalWorkIds || {})
+    .filter(([planId, ids]) => (planId === 'myplan' || routes.some(route => route.id === planId)) && Array.isArray(ids))
+    .map(([planId, ids]) => [planId, [...new Set(ids.filter(id => byId[id]))]]));
 
   const state = {
     lang: initialLang,
@@ -58,6 +61,7 @@ export function createAppStore({
     customTimedIds: initialCustomTimedIds?.length ? initialCustomTimedIds : null,
     customTimedMinutes: initialCustomTimedIds?.length ? (Number(persistedBoot?.customTimedMinutes) || initialMinutes) : null,
     routeEdits,
+    optionalWorkIds,
     draftMinutes: initialMinutes,
     draftCount: initialCustomTimedIds?.length
       ? Math.max(initialBounds.min, Math.min(initialBounds.max, initialCustomTimedIds.length))
@@ -74,6 +78,7 @@ export function createAppStore({
     detailWorkId: null,
     detailRoomWorks: [],
     planAddOpen: false,
+    planAddMode: null,
     planAddQuery: '',
     audioSettingsOpen: false,
     duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 60,
@@ -205,6 +210,7 @@ export function createAppStore({
         customTimedIds: state.customTimedIds,
         customTimedMinutes: state.customTimedMinutes,
         routeEdits: state.routeEdits,
+        optionalWorkIds: state.optionalWorkIds,
         preferElevator: state.preferElevator,
         autoPlayNext: state.autoPlayNext,
         largeText: state.largeText,

@@ -128,6 +128,8 @@ assert.match(timedMeta.label, /120分コース（16作品）/);
 
 const theme = routes.find(route => route.kind === 'theme');
 const extraWork = works.find(work => index.nodes.has(`work:${work.id}`) && !theme.ids.includes(work.id) && !routes.find(route => route.id === 'preset-90').ids.includes(work.id));
+const optionalWork = works.find(work => index.nodes.has(`work:${work.id}`) && !theme.ids.includes(work.id) && work.id !== extraWork.id);
+const unmappedWork = works.find(work => !index.nodes.has(`work:${work.id}`) && !theme.ids.includes(work.id));
 const saved = new Map();
 globalThis.localStorage = {getItem: key => saved.get(key) ?? null, setItem: (key, value) => saved.set(key, value)};
 const store = createAppStore({
@@ -151,13 +153,39 @@ assert.deepEqual(ctx.currentPlan().ids, store.state.routeEdits['preset-90'], 'ti
 assert.ok(ctx.currentPlan().estimatedMinutes > presetMeta.estimatedMinutes, 'added works must increase the time estimate');
 store.state.routeId = theme.id;
 assert.deepEqual(ctx.currentPlan().ids, store.state.routeEdits[theme.id], 'returning to a course must restore its edited order');
+const routeBeforeOptional = [...ctx.currentPlan().ids];
+const estimateBeforeOptional = ctx.currentPlan().estimatedMinutes;
+assert.equal(actions.addOptionalWorkToActivePlan(optionalWork.id), true);
+assert.equal(actions.addOptionalWorkToActivePlan(optionalWork.id), false, 'duplicate optional works must be ignored');
+assert.deepEqual(ctx.currentPlan().ids, routeBeforeOptional, 'optional work must not change the guided route');
+assert.equal(ctx.currentPlan().estimatedMinutes, estimateBeforeOptional, 'optional work must not change the time estimate');
+assert.deepEqual(store.state.optionalWorkIds[theme.id], [optionalWork.id]);
+assert.match(planTabView({...ctx, artworkImages: {}, appBase: new URL('../', import.meta.url)}, false), /data-promote-optional/, 'optional work must appear below the route');
+store.state.routeId = 'preset-90';
+assert.ok(!planTabView({...ctx, artworkImages: {}, appBase: new URL('../', import.meta.url)}, false).includes('data-promote-optional'), 'optional works must stay with their course');
+store.state.routeId = theme.id;
+assert.equal(actions.addWorkToActivePlan(optionalWork.id), true, 'optional work can be promoted into the route');
+assert.ok(ctx.currentPlan().ids.includes(optionalWork.id));
+assert.deepEqual(store.state.optionalWorkIds[theme.id], []);
+assert.equal(actions.addOptionalWorkToActivePlan(unmappedWork.id), true, 'unmapped works can be saved as optional');
+assert.equal(actions.removeOptionalWorkFromActivePlan(unmappedWork.id), true);
+assert.equal(actions.removeOptionalWorkFromActivePlan(unmappedWork.id), false);
+assert.equal(actions.addOptionalWorkToActivePlan(unmappedWork.id), true);
 store.state.planAddOpen = true;
 ctx.artworkImages = {};
 ctx.appBase = new URL('../', import.meta.url);
+const choice = planTabView(ctx, false);
+assert.match(choice, /data-plan-add-mode="route"/);
+assert.match(choice, /data-plan-add-mode="optional"/);
+store.state.planAddMode = 'route';
 const picker = planTabView(ctx, false);
 assert.match(picker, /data-add-route-work=/, 'the plan must show selectable mapped works');
 assert.ok(!picker.includes(`data-add-route-work="${extraWork.id}"`), 'works already in the plan must be hidden');
-assert.ok(!picker.includes('data-add-route-work="catalog-0010"'), 'unmapped works must not be offered');
+assert.ok(!picker.includes(`data-add-route-work="${unmappedWork.id}"`), 'unmapped works must not be offered for the route');
+store.state.planAddMode = 'optional';
+const optionalPicker = planTabView(ctx, false);
+assert.ok(!optionalPicker.includes(`data-add-optional-work="${unmappedWork.id}"`), 'saved optional works must be hidden');
+assert.match(optionalPicker, /data-add-optional-work=/);
 store.state.planAddOpen = false;
 assert.match(planTabView(ctx, false), /data-open-plan-add/, 'edited theme plans must keep an add-work control');
 const restoredStore = createAppStore({
@@ -167,5 +195,15 @@ const restoredStore = createAppStore({
 });
 restoredStore.state.routeId = theme.id;
 assert.deepEqual(restoredStore.currentPlan().ids, store.state.routeEdits[theme.id], 'edited routes must survive app reload');
+assert.deepEqual(restoredStore.state.optionalWorkIds[theme.id], [unmappedWork.id], 'optional works must survive app reload');
+store.state.planMode = 'myplan';
+store.state.myPlanIds = [unmappedWork.id, 'mona'];
+const myPlanBefore = [...store.state.myPlanIds];
+assert.match(planTabView(ctx, false), /data-open-plan-add/, 'my plan must offer the same add flow');
+assert.equal(actions.addWorkToActivePlan(extraWork.id), true);
+assert.deepEqual(store.state.myPlanIds, optimizeWorkOrder(index, [...myPlanBefore, extraWork.id]).ids, 'my plan additions must be optimized instead of appended');
+assert.ok(!store.state.navigation.routeWorkIds.includes(unmappedWork.id), 'unmapped saved works must not become navigation stops');
+assert.equal(actions.addOptionalWorkToActivePlan(optionalWork.id), true);
+assert.deepEqual(store.state.optionalWorkIds.myplan, [optionalWork.id]);
 
 console.log('my-plan and custom routing: passed');

@@ -85,6 +85,7 @@ export function createPlanActions(ctx) {
       ctx.state.customTimedIds = built.ids;
       ctx.state.customTimedMinutes = built.minutes;
       delete ctx.state.routeEdits[`preset-${built.minutes}`];
+      delete ctx.state.optionalWorkIds[`preset-${built.minutes}`];
       ctx.state.draftMinutes = built.minutes;
       ctx.state.draftCount = built.count;
       ctx.state.hasChosenCourse = true;
@@ -173,12 +174,15 @@ export function createPlanActions(ctx) {
 
   function addWorkToActivePlan(workId) {
     const plan = ctx.currentPlan();
-    if (plan.isCustom || !ctx.byId[workId] || !ctx.navigationIndex.nodes.has(`work:${workId}`) || plan.ids.includes(workId)) return false;
+    if (!ctx.byId[workId] || !ctx.navigationIndex.nodes.has(`work:${workId}`) || plan.ids.includes(workId)) return false;
     const result = optimizeWorkOrder(ctx.navigationIndex, [...plan.ids, workId], ctx.navOptions());
-    ctx.state.routeEdits[ctx.state.routeId] = result.ids;
+    if (plan.isCustom) ctx.state.myPlanIds = result.ids;
+    else ctx.state.routeEdits[ctx.state.routeId] = result.ids;
+    ctx.state.optionalWorkIds[plan.id] = (ctx.state.optionalWorkIds[plan.id] || []).filter(id => id !== workId);
     const previous = ctx.state.navigation;
-    const nextId = result.ids.find(id => !ctx.state.viewed.has(id)) || result.ids[0];
-    const base = navigationStateFromRoute(ctx.navigationIndex, result.ids);
+    const routableIds = result.ids.filter(id => ctx.navigationIndex.nodes.has(`work:${id}`));
+    const nextId = routableIds.find(id => !ctx.state.viewed.has(id)) || routableIds[0];
+    const base = navigationStateFromRoute(ctx.navigationIndex, routableIds);
     ctx.state.navigation = {
       ...base,
       currentNodeId: previous?.currentNodeId && ctx.navigationIndex.nodes.has(previous.currentNodeId) ? previous.currentNodeId : base.currentNodeId,
@@ -191,9 +195,34 @@ export function createPlanActions(ctx) {
     ctx.state.selected = nextId;
     ctx.state.undo = null;
     ctx.state.planAddOpen = false;
+    ctx.state.planAddMode = null;
     ctx.state.planAddQuery = '';
     ctx.persistState();
     ctx.setNotice(tr('notice.routeWorkAdded'), false, 3200);
+    ctx.render();
+    return true;
+  }
+
+  function addOptionalWorkToActivePlan(workId) {
+    const plan = ctx.currentPlan();
+    const optionalIds = ctx.state.optionalWorkIds[plan.id] || [];
+    if (!ctx.byId[workId] || plan.ids.includes(workId) || optionalIds.includes(workId)) return false;
+    ctx.state.optionalWorkIds[plan.id] = [...optionalIds, workId];
+    ctx.state.planAddOpen = false;
+    ctx.state.planAddMode = null;
+    ctx.state.planAddQuery = '';
+    ctx.persistState();
+    ctx.setNotice(tr('notice.optionalWorkAdded'), false, 3200);
+    ctx.render();
+    return true;
+  }
+
+  function removeOptionalWorkFromActivePlan(workId) {
+    const plan = ctx.currentPlan();
+    const optionalIds = ctx.state.optionalWorkIds[plan.id] || [];
+    if (!optionalIds.includes(workId)) return false;
+    ctx.state.optionalWorkIds[plan.id] = optionalIds.filter(id => id !== workId);
+    ctx.persistState();
     ctx.render();
     return true;
   }
@@ -230,6 +259,9 @@ export function createPlanActions(ctx) {
   function handleToggleMyPlan(workId) {
     const result = toggleMyPlan(ctx.state.myPlanIds, workId);
     ctx.state.myPlanIds = result.ids;
+    if (result.added) {
+      ctx.state.optionalWorkIds.myplan = (ctx.state.optionalWorkIds.myplan || []).filter(id => id !== workId);
+    }
     syncMyPlanNavigation();
     ctx.persistState();
     const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
@@ -330,6 +362,8 @@ export function createPlanActions(ctx) {
     chooseMyPlan,
     handleOptimizeMyPlan,
     addWorkToActivePlan,
+    addOptionalWorkToActivePlan,
+    removeOptionalWorkFromActivePlan,
     syncMyPlanNavigation,
     selectRouteWork,
     handleToggleMyPlan,

@@ -6,28 +6,71 @@ import {creatorMeta, esc, priorityBadgeMarkup, thumbMarkup, workStatus} from '..
 function planAddResultsMarkup(ctx) {
   const {state, works, navigationIndex} = ctx;
   const tr = key => t(key, null, state.lang);
-  const included = new Set(ctx.currentPlan().ids);
-  const candidates = catalogWorks(works, {query: state.planAddQuery, sort: 'rank-asc', filter: 'mapped', lang: state.lang})
-    .filter(work => navigationIndex.nodes.has(`work:${work.id}`) && !included.has(work.id));
+  const plan = ctx.currentPlan();
+  const included = new Set([...plan.ids, ...(state.optionalWorkIds[plan.id] || [])]);
+  const routeMode = state.planAddMode === 'route';
+  const candidates = catalogWorks(works, {query: state.planAddQuery, sort: 'rank-asc', filter: routeMode ? 'mapped' : 'all', lang: state.lang})
+    .filter(work => (!routeMode || navigationIndex.nodes.has(`work:${work.id}`)) && !included.has(work.id));
   if (!candidates.length) return `<p class="plan-add-empty">${esc(tr('catalog.emptyMsg'))}</p>`;
   return candidates.map(rawWork => {
     const work = localizeWork(rawWork, state.lang);
     return `<div class="plan-add-item">
       ${thumbMarkup(ctx, work, 'thumb-sm')}
       <div class="plan-add-copy"><strong>${esc(work.title)}</strong><small>${esc(workStatus(work, state.lang))}</small></div>
-      <button type="button" class="secondary compact-btn" data-add-route-work="${esc(work.id)}">${esc(tr('plan.addWorkAction'))}</button>
+      <button type="button" class="secondary compact-btn" ${routeMode ? 'data-add-route-work' : 'data-add-optional-work'}="${esc(work.id)}">${esc(tr(routeMode ? 'plan.addRouteAction' : 'plan.addOptionalAction'))}</button>
     </div>`;
   }).join('');
+}
+
+function optionalWorksMarkup(ctx, plan) {
+  const {state, byId, navigationIndex} = ctx;
+  const tr = (key, params) => t(key, params, state.lang);
+  const optionalIds = (state.optionalWorkIds[plan.id] || []).filter(id => byId[id] && !plan.ids.includes(id));
+  if (!optionalIds.length) return '';
+  return `<section class="plan-optional-section" aria-label="${esc(tr('plan.optionalTitle'))}">
+    <div class="plan-optional-heading"><h2>${esc(tr('plan.optionalTitle'))}</h2><span>${optionalIds.length}</span></div>
+    <p>${esc(tr('plan.optionalNote'))}</p>
+    <ul class="plan-optional-list">${optionalIds.map(id => {
+      const work = localizeWork(byId[id], state.lang);
+      const mapped = navigationIndex.nodes.has(`work:${id}`);
+      return `<li class="plan-optional-item">
+        <div class="plan-optional-main" data-open-detail="${esc(id)}" role="button" tabindex="0">
+          ${thumbMarkup(ctx, work, 'thumb-sm')}
+          <div><strong>${esc(work.title)}</strong><small>${esc(workStatus(work, state.lang))}</small></div>
+        </div>
+        <div class="plan-optional-actions">
+          ${mapped ? `<button type="button" class="action-chip" data-promote-optional="${esc(id)}">${esc(tr('plan.promoteOptional'))}</button>` : ''}
+          <button type="button" class="action-chip" data-remove-optional="${esc(id)}">${esc(tr('plan.removeOptional'))}</button>
+        </div>
+      </li>`;
+    }).join('')}</ul>
+  </section>`;
 }
 
 export function planTabView(ctx, hasMini) {
   const {state, routes, works, navigationIndex} = ctx;
   const lang = state.lang;
   const tr = (key, params) => t(key, params, lang);
-  if (state.planAddOpen && state.planMode !== 'myplan') {
+  if (state.planAddOpen && !state.planAddMode) {
     return `<main class="tab-screen plan-add-screen ${hasMini ? 'has-mini-player' : ''}">
       <button type="button" class="text-back-btn" data-plan-add-back>← ${esc(tr('app.close'))}</button>
-      <h1>${esc(tr('plan.addWorkTitle'))}</h1>
+      <h1>${esc(tr('plan.addMethodTitle'))}</h1>
+      <p class="plan-add-intro">${esc(tr('plan.addMethodIntro'))}</p>
+      <div class="plan-add-choices">
+        <button type="button" class="plan-add-choice" data-plan-add-mode="route">
+          <strong>${esc(tr('plan.addRouteChoice'))}</strong><span>${esc(tr('plan.addRouteDescription'))}</span>
+        </button>
+        <button type="button" class="plan-add-choice" data-plan-add-mode="optional">
+          <strong>${esc(tr('plan.addOptionalChoice'))}</strong><span>${esc(tr('plan.addOptionalDescription'))}</span>
+        </button>
+      </div>
+    </main>`;
+  }
+  if (state.planAddOpen) {
+    return `<main class="tab-screen plan-add-screen ${hasMini ? 'has-mini-player' : ''}">
+      <button type="button" class="text-back-btn" data-plan-add-back>← ${esc(tr('plan.addMethodBack'))}</button>
+      <h1>${esc(tr(state.planAddMode === 'route' ? 'plan.addRouteTitle' : 'plan.addOptionalTitle'))}</h1>
+      <p class="plan-add-intro">${esc(tr(state.planAddMode === 'route' ? 'plan.addRouteDescription' : 'plan.addOptionalDescription'))}</p>
       <input type="search" class="plan-add-search" data-plan-add-search value="${esc(state.planAddQuery)}" placeholder="${esc(tr('catalog.searchPlaceholder'))}" aria-label="${esc(tr('catalog.searchAria'))}">
       <div class="plan-add-results" data-plan-add-results>${planAddResultsMarkup(ctx)}</div>
     </main>`;
@@ -58,7 +101,7 @@ export function planTabView(ctx, hasMini) {
       <div class="progress-bar" aria-label="${esc(tr('plan.progressAria'))}"><span style="width:${pct}%"></span></div>
       ${items.length ? `<div class="plan-summary-actions">
         ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
-        ${!plan.isCustom ? `<button type="button" class="secondary compact-btn" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>` : ''}
+        <button type="button" class="secondary compact-btn" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>
         <div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
           <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
           <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>
@@ -69,7 +112,7 @@ export function planTabView(ctx, hasMini) {
     ${!items.length ? `<section class="empty-plan-box">
       <h2>${esc(tr('plan.emptyTitle'))}</h2>
       <p>${tr('plan.emptyBody', {total: works.length})}</p>
-      <button type="button" class="primary" data-go-audio-mapped>${esc(tr('plan.emptyBtn'))}</button>
+      <button type="button" class="primary" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>
     </section>` : `<ol class="plan-list">
       ${items.map((rawWork, index) => {
         const work = localizeWork(rawWork, lang);
@@ -109,7 +152,7 @@ export function planTabView(ctx, hasMini) {
         </li>`;
       }).join('')}
     </ol>`}
-    ${plan.isCustom && items.length ? `<div class="add-more-wrap"><button type="button" class="secondary" data-go-audio-mapped>${esc(tr('plan.addMoreBtn'))}</button></div>` : ''}
+    ${optionalWorksMarkup(ctx, plan)}
   </main>`;
 }
 
@@ -118,18 +161,29 @@ export function wirePlanTab(ctx) {
 
   document.querySelector('[data-open-plan-add]')?.addEventListener('click', () => {
     state.planAddOpen = true;
+    state.planAddMode = null;
     state.planAddQuery = '';
     ctx.render();
     window.scrollTo({top: 0});
   });
   document.querySelector('[data-plan-add-back]')?.addEventListener('click', () => {
-    state.planAddOpen = false;
+    if (state.planAddMode) state.planAddMode = null;
+    else state.planAddOpen = false;
     state.planAddQuery = '';
     ctx.render();
   });
+  document.querySelectorAll('[data-plan-add-mode]').forEach(btn => {
+    btn.onclick = () => {
+      state.planAddMode = btn.dataset.planAddMode;
+      state.planAddQuery = '';
+      ctx.render();
+    };
+  });
   const results = document.querySelector('[data-plan-add-results]');
-  const wireAddResults = () => results?.querySelectorAll('[data-add-route-work]').forEach(btn => {
-    btn.onclick = () => planActions.addWorkToActivePlan(btn.dataset.addRouteWork);
+  const wireAddResults = () => results?.querySelectorAll('[data-add-route-work], [data-add-optional-work]').forEach(btn => {
+    btn.onclick = () => btn.dataset.addRouteWork
+      ? planActions.addWorkToActivePlan(btn.dataset.addRouteWork)
+      : planActions.addOptionalWorkToActivePlan(btn.dataset.addOptionalWork);
   });
   wireAddResults();
   document.querySelector('[data-plan-add-search]')?.addEventListener('input', event => {
@@ -143,6 +197,12 @@ export function wirePlanTab(ctx) {
   });
   document.querySelector('[data-switch-myplan]')?.addEventListener('click', () => planActions.chooseMyPlan({goMap: false}));
   document.querySelector('[data-optimize-myplan]')?.addEventListener('click', planActions.handleOptimizeMyPlan);
+  document.querySelectorAll('[data-promote-optional]').forEach(btn => {
+    btn.onclick = () => planActions.addWorkToActivePlan(btn.dataset.promoteOptional);
+  });
+  document.querySelectorAll('[data-remove-optional]').forEach(btn => {
+    btn.onclick = () => planActions.removeOptionalWorkFromActivePlan(btn.dataset.removeOptional);
+  });
   document.querySelectorAll('[data-quick-play]').forEach(btn => {
     btn.onclick = event => {
       event.stopPropagation();
