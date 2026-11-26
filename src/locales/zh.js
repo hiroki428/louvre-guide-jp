@@ -582,5 +582,8 @@ export const zh = Object.freeze({
   'tour.step6Body': '可随时在此调整语言、倍速、登录同步，或重新查看本使用引导。',
   'tour.replayTitle': '交互式使用引导',
   'tour.replaySub': '在地图界面重新高亮展示各功能按钮的操作说明',
-  'tour.replayBtn': '重新查看引导'
+  'tour.replayBtn': '重新查看引导',
+  'detail.resumeFromBtn': '▶ 从 {time} 继续播放',
+  'detail.restartBtn': '↺ 从头播放',
+  'detail.seekHint': '拖动进度条可从任意位置开始播放'
 });

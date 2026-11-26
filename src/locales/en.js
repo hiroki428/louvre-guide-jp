@@ -582,5 +582,8 @@ export const en = Object.freeze({
   'tour.step6Body': 'Change language, audio speed, sign in for cloud sync, or replay this guide anytime here.',
   'tour.replayTitle': 'Interactive Quick Guide',
   'tour.replaySub': 'Highlight the main buttons and walkthrough steps on the map screen again',
-  'tour.replayBtn': 'Replay Guide'
+  'tour.replayBtn': 'Replay Guide',
+  'detail.resumeFromBtn': '▶ Resume ({time})',
+  'detail.restartBtn': '↺ Start Over',
+  'detail.seekHint': 'Drag or tap the bar to play from any point'
 });

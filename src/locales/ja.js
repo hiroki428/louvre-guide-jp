@@ -582,5 +582,8 @@ export const ja = Object.freeze({
   'tour.step6Body': '言語切替・再生速度・クラウド同期・この使い方ガイドの再表示はここからいつでも行えます。',
   'tour.replayTitle': '使い方ガイド（デモ）',
   'tour.replaySub': 'マップ画面の各ボタンや操作手順をもう一度ハイライトで案内します',
-  'tour.replayBtn': 'ガイドをもう一度見る'
+  'tour.replayBtn': 'ガイドをもう一度見る',
+  'detail.resumeFromBtn': '▶ 続きから再生 ({time})',
+  'detail.restartBtn': '↺ 最初から',
+  'detail.seekHint': 'バーを動かすと途中から再生できます'
 });

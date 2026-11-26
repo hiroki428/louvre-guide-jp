@@ -582,5 +582,8 @@ export const fr = Object.freeze({
   'tour.step6Body': 'Modifiez la langue, la vitesse audio, synchronisez votre compte ou relancez ce guide ici.',
   'tour.replayTitle': 'Guide interactif',
   'tour.replaySub': 'Revoir les explications guidées sur l’écran de la carte',
-  'tour.replayBtn': 'Revoir le guide'
+  'tour.replayBtn': 'Revoir le guide',
+  'detail.resumeFromBtn': '▶ Reprendre ({time})',
+  'detail.restartBtn': '↺ Depuis le début',
+  'detail.seekHint': 'Déplacez le curseur pour lire à tout moment'
 });

@@ -582,5 +582,8 @@ export const ko = Object.freeze({
   'tour.step6Body': '언어·재생 속도 변경, 클라우드 동기화, 이 사용 가이드 다시 보기를 언제든 이용할 수 있습니다.',
   'tour.replayTitle': '사용 가이드 (데모)',
   'tour.replaySub': '지도 화면의 주요 버튼과 사용 방법을 하이라이트로 다시 안내합니다',
-  'tour.replayBtn': '가이드 다시 보기'
+  'tour.replayBtn': '가이드 다시 보기',
+  'detail.resumeFromBtn': '▶ 이어서 재생 ({time})',
+  'detail.restartBtn': '↺ 처음부터',
+  'detail.seekHint': '바를 움직이면 원하는 지점부터 바로 재생됩니다'
 });

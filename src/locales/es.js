@@ -582,5 +582,8 @@ export const es = Object.freeze({
   'tour.step6Body': 'Cambia el idioma, la velocidad de audio, sincroniza tu cuenta o repite esta guía cuando quieras.',
   'tour.replayTitle': 'Guía interactiva (demo)',
   'tour.replaySub': 'Vuelve a resaltar los botones principales y pasos de uso en la pantalla del mapa',
-  'tour.replayBtn': 'Ver guía de nuevo'
+  'tour.replayBtn': 'Ver guía de nuevo',
+  'detail.resumeFromBtn': '▶ Continuar ({time})',
+  'detail.restartBtn': '↺ Desde el inicio',
+  'detail.seekHint': 'Arrastra o toca la barra para reproducir desde cualquier punto'
 });
