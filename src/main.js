@@ -8,6 +8,7 @@ import {createAudioController} from './app/audio-controller.js';
 import {createPlanActions} from './app/plan-actions.js';
 import {createAuthSyncController} from './app/cloud-sync.js';
 import {parseSharedPlanInput, readPendingSharedPlan, savePendingSharedPlan} from './app/plan-share.js';
+import {authGateView, wireAuthGate} from './views/auth-gate.js';
 import {courseSelectView, languageSelectView, wireCourseSelect} from './views/course-select.js';
 import {mapTabView, wireMapTab} from './views/map-tab.js';
 import {planTabView, wirePlanTab} from './views/plan-tab.js';
@@ -170,6 +171,18 @@ if (hadInvalidSharedParam) {
   ctx.setNotice(t('share.importInvalidError', null, store.state.lang), false, 4200);
 }
 
+function resolvePostLanguagePhase() {
+  const {state} = ctx;
+  if (state.auth.user && !state.hasCompletedAuthGate) {
+    state.hasCompletedAuthGate = true;
+    ctx.persistState({skipSync: true});
+  }
+  if (!state.hasCompletedAuthGate && !state.hasChosenCourse) {
+    return 'auth_gate';
+  }
+  return state.hasChosenCourse ? 'main' : 'select_time';
+}
+
 function wireShell() {
   const {state, maxRoutableCount, planActions, audio} = ctx;
 
@@ -266,6 +279,12 @@ function wireShell() {
   });
 }
 
+function wireLangButtons() {
+  document.querySelectorAll('[data-set-lang]').forEach(btn => {
+    btn.onclick = () => switchAppLanguage(btn.dataset.setLang);
+  });
+}
+
 function wireMain() {
   wireShell();
   wireAudioSettingsModal(ctx);
@@ -312,16 +331,23 @@ function render() {
     document.querySelector('[data-language-next]')?.addEventListener('click', () => {
       ctx.setAppLang(state.lang);
       state.courseEntry = 'language';
-      state.appPhase = 'select_time';
+      state.appPhase = resolvePostLanguagePhase();
       render();
       window.scrollTo({top: 0});
     });
+    return;
+  }
+  if (state.appPhase === 'auth_gate') {
+    app.innerHTML = authGateView(ctx) + noticeMarkup(ctx, false);
+    wireAuthGate(ctx);
+    wireLangButtons();
     return;
   }
   if (state.appPhase === 'select_time') {
     app.innerHTML = courseSelectView(ctx) + incomingSharedPopupMarkup(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
     wireSharedPlanUI(ctx);
+    wireLangButtons();
     return;
   }
   const plan = ctx.currentPlan();

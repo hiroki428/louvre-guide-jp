@@ -29,6 +29,7 @@
 | 編集したい機能・画面 | 担当ファイル |
 |---|---|
 | 初期のコース選択画面（滞在時間・作品数・テーマ別） | `src/views/course-select.js` |
+| 初回ログイン画面（Google・メールMagic Link・ゲスト開始） | `src/views/auth-gate.js` |
 | マップタブ（階タブ・施設フィルタ・道に迷ったときサポート） | `src/views/map-tab.js` |
 | プラン一覧タブ（コース切替・作品カード・並び替え） | `src/views/plan-tab.js` |
 | 友達プラン共有モーダル・受信ポップアップ・共有中バナー（QR/URL） | `src/views/plan-share-modal.js` / `src/app/plan-share.js` |
