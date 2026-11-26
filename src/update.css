@@ -1609,6 +1609,13 @@ html[data-guide-transition='layer']::view-transition-new(root) {
   padding: 12px 18px calc(26px + env(safe-area-inset-bottom));
   box-shadow: 0 -10px 40px rgb(0 0 0 / 24%);
 }
+.work-sheet { overscroll-behavior-y: contain; }
+.work-sheet .sheet-handle-bar { touch-action: none; user-select: none; cursor: grab; }
+.work-sheet.is-dragging .sheet-handle-bar { cursor: grabbing; }
+.work-sheet.is-dragging { user-select: none; }
+.work-sheet.is-dragging, .sheet-backdrop.is-dragging { transition: none; }
+.work-sheet.is-settling { transition: transform .22s cubic-bezier(.22, 1, .36, 1); }
+.sheet-backdrop.is-settling { transition: opacity .22s ease; }
 .audio-settings-sheet {
   z-index: 75;
   width: min(520px, 100%);

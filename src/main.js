@@ -332,7 +332,7 @@ let renderedLayerKey = null;
 let activeViewTransition = null;
 let renderSequence = 0;
 
-function render() {
+function render({skipTransition = false} = {}) {
   const {state} = ctx;
   if (state.appPhase === 'splash') return;
   const pageKey = state.appPhase === 'main'
@@ -347,7 +347,7 @@ function render() {
   renderedLayerKey = layerKey;
   const sequence = ++renderSequence;
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  if (kind && !reduceMotion && document.startViewTransition) {
+  if (kind && !skipTransition && !reduceMotion && document.startViewTransition) {
     activeViewTransition?.skipTransition();
     document.documentElement.dataset.guideTransition = kind;
     const transition = document.startViewTransition(() => {
@@ -366,7 +366,7 @@ function render() {
   }
   activeViewTransition?.skipTransition();
   renderContent();
-  if (kind && !reduceMotion) {
+  if (kind && !skipTransition && !reduceMotion) {
     if (kind === 'tab') app.querySelector('.bottom-tabs button.active')?.classList.add('guide-tab-arrive');
     const target = kind === 'layer'
       ? app.querySelector('.work-sheet, .audio-settings-sheet, .share-modal-sheet, .share-popup-dialog')

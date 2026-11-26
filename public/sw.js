@@ -1,4 +1,4 @@
-const SHELL = 'louvre-shell-v97';
+const SHELL = 'louvre-shell-v98';
 const AUDIO = 'louvre-audio-v3';
 const IMAGES = 'louvre-images-v1';
 

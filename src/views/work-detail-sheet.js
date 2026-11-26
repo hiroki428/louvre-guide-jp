@@ -14,11 +14,11 @@ export function openWorkDetail(ctx, workId, roomWorkIds = null) {
   ctx.render();
 }
 
-export function closeWorkDetail(ctx) {
+export function closeWorkDetail(ctx, {skipTransition = false} = {}) {
   if (!ctx.state.detailWorkId) return;
   ctx.state.detailWorkId = null;
   ctx.state.detailRoomWorks = [];
-  ctx.render();
+  ctx.render({skipTransition});
 }
 
 export function workDetailSheetMarkup(ctx) {
@@ -145,6 +145,85 @@ export function workDetailSheetMarkup(ctx) {
 
 export function wireWorkDetailSheet(ctx) {
   const {state, byId, audio, planActions} = ctx;
+
+  const sheet = document.querySelector('.work-sheet');
+  const backdrop = document.querySelector('.sheet-backdrop[data-close-detail]');
+  if (sheet && backdrop) {
+    let gesture = null;
+    const interactive = target => target instanceof Element
+      && Boolean(target.closest('button, a, input, select, textarea, .room-siblings-list'));
+    const startGesture = (x, y) => {
+      gesture = {x, y, startedAt: Date.now(), dragging: false, distance: 0};
+    };
+    sheet.addEventListener('touchstart', event => {
+      if (event.touches.length !== 1 || interactive(event.target)) return;
+      const touch = event.touches[0];
+      startGesture(touch.clientX, touch.clientY);
+    }, {passive: true});
+    const moveGesture = (x, y, event) => {
+      if (!gesture) return;
+      const dx = x - gesture.x;
+      const dy = y - gesture.y;
+      if (!gesture.dragging) {
+        if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { gesture = null; return; }
+        if (dy < -8 || sheet.scrollTop > 0) { gesture = null; return; }
+        if (dy < 8) return;
+        gesture.dragging = true;
+        sheet.classList.add('is-dragging');
+        backdrop.classList.add('is-dragging');
+      }
+      event.preventDefault();
+      const distance = Math.min(Math.max(dy, 0), sheet.clientHeight);
+      gesture.distance = distance;
+      sheet.style.transform = `translate(-50%, ${distance}px)`;
+      backdrop.style.opacity = String(Math.max(.15, 1 - distance / (sheet.clientHeight * .8)));
+    };
+    sheet.addEventListener('touchmove', event => {
+      if (!gesture || event.touches.length !== 1) return;
+      const touch = event.touches[0];
+      moveGesture(touch.clientX, touch.clientY, event);
+    }, {passive: false});
+    const finishGesture = cancelled => {
+      if (!gesture?.dragging) { gesture = null; return; }
+      const distance = gesture.distance;
+      const elapsed = Math.max(1, Date.now() - gesture.startedAt);
+      const dismiss = !cancelled && (distance > Math.min(120, sheet.clientHeight * .25)
+        || (distance > 45 && distance / elapsed > .55));
+      const workId = state.detailWorkId;
+      gesture = null;
+      sheet.classList.remove('is-dragging');
+      backdrop.classList.remove('is-dragging');
+      if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+        if (dismiss) closeWorkDetail(ctx, {skipTransition: true});
+        else { sheet.style.transform = ''; backdrop.style.opacity = ''; }
+        return;
+      }
+      sheet.classList.add('is-settling');
+      backdrop.classList.add('is-settling');
+      sheet.style.transform = dismiss ? 'translate(-50%, 100%)' : '';
+      backdrop.style.opacity = dismiss ? '0' : '';
+      window.setTimeout(() => {
+        if (dismiss && state.detailWorkId === workId) closeWorkDetail(ctx, {skipTransition: true});
+        else { sheet.classList.remove('is-settling'); backdrop.classList.remove('is-settling'); }
+      }, 220);
+    };
+    sheet.addEventListener('touchend', () => finishGesture(false));
+    sheet.addEventListener('touchcancel', () => finishGesture(true));
+    sheet.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'touch' || event.button !== 0 || interactive(event.target)) return;
+      startGesture(event.clientX, event.clientY);
+      sheet.setPointerCapture(event.pointerId);
+    });
+    sheet.addEventListener('pointermove', event => {
+      if (event.pointerType !== 'touch') moveGesture(event.clientX, event.clientY, event);
+    });
+    sheet.addEventListener('pointerup', event => {
+      if (event.pointerType !== 'touch') finishGesture(false);
+    });
+    sheet.addEventListener('pointercancel', event => {
+      if (event.pointerType !== 'touch') finishGesture(true);
+    });
+  }
 
   document.querySelectorAll('[data-close-detail]').forEach(el => {
     el.onclick = () => closeWorkDetail(ctx);
