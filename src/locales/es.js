@@ -473,5 +473,11 @@ export const es = Object.freeze({
   'auth.invalidEmail': 'Introduce una dirección de correo válida',
   'auth.sendFailed': 'No se pudo enviar el enlace. Revisa tu conexión e inténtalo de nuevo.',
   'auth.signedOutNotice': 'Sesión cerrada (tus datos siguen guardados en este dispositivo)',
-  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube'
+  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube',
+
+  'notice.evOnOptimized': 'Cambiado a Prioridad ascensor y orden de visita reoptimizado',
+  'notice.evOffOptimized': 'Cambiado a Ruta más corta y orden de visita reoptimizado',
+  'notice.myPlanAddedOpt': '«{title}» añadida y ruta optimizada ({count} obras)',
+  'notice.myPlanRemovedOpt': '«{title}» quitada y ruta restante reoptimizada',
+  'notice.arrivalOptimized': 'Ubicación actualizada a {room} y paradas restantes reoptimizadas'
 });

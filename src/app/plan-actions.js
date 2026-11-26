@@ -1,20 +1,94 @@
 import {navigationStateForSelection, navigationStateFromRoute} from '../navigation.js';
 import {advanceOnRouteAudio, destinationWorkId} from '../route-progress.js';
 import {correctLocation, findRoomCandidates} from '../location-support.js';
-import {buildTimedRouteWorks, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
+import {buildTimedRouteWorks, moveMyPlanItem, optimizeRemainingWorks, optimizeWorkOrder, paceSummaryFor, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
 import {localizeRoute, localizeWork, t} from '../i18n.js';
 import {runWithRouteLoader} from './route-loader.js';
 
 export function createPlanActions(ctx) {
   const tr = (key, params) => t(key, params, ctx.state.lang);
 
+  function activeStartNodeId() {
+    const cur = ctx.state.navigation?.currentNodeId;
+    if (cur && ctx.navigationIndex.nodes.has(cur)) return cur;
+    return 'entrance:pyramid:fm2';
+  }
+
+  function autoOptimizeMyPlan({startNodeId = null} = {}) {
+    if (ctx.state.myPlanIds.length < 2) {
+      return {ids: ctx.state.myPlanIds, changed: false, savedPercent: 0};
+    }
+    const anchor = startNodeId || (ctx.state.planMode === 'myplan' ? activeStartNodeId() : 'entrance:pyramid:fm2');
+    const result = optimizeRemainingWorks(ctx.navigationIndex, ctx.state.myPlanIds, ctx.state.viewed, {
+      preferElevator: ctx.state.preferElevator,
+      startNodeId: anchor
+    });
+    ctx.state.myPlanIds = result.ids;
+    return result;
+  }
+
+  function autoOptimizeCustomTimed({startNodeId = null} = {}) {
+    if (!Array.isArray(ctx.state.customTimedIds) || ctx.state.customTimedIds.length < 2) {
+      return {ids: ctx.state.customTimedIds, changed: false, savedPercent: 0};
+    }
+    const anchor = startNodeId || (ctx.state.planMode === 'preset' ? activeStartNodeId() : 'entrance:pyramid:fm2');
+    const result = optimizeRemainingWorks(ctx.navigationIndex, ctx.state.customTimedIds, ctx.state.viewed, {
+      preferElevator: ctx.state.preferElevator,
+      startNodeId: anchor
+    });
+    ctx.state.customTimedIds = result.ids;
+    return result;
+  }
+
+  function rebuildNavigationFromCurrent(ids, startNodeId = null) {
+    if (!ids.length) {
+      ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, []);
+      return;
+    }
+    const nextUnviewed = ids.find(id => !ctx.state.viewed.has(id)) ?? null;
+    if (!nextUnviewed) {
+      const lastId = ids.at(-1);
+      ctx.state.navigation = {
+        ...navigationStateFromRoute(ctx.navigationIndex, ids),
+        currentNodeId: startNodeId || `work:${lastId}`,
+        destinationNodeId: null,
+        routeComplete: true
+      };
+      ctx.state.selected = lastId;
+      return;
+    }
+    if (startNodeId && ctx.navigationIndex.nodes.has(startNodeId) && startNodeId !== 'entrance:pyramid:fm2') {
+      const base = navigationStateForSelection(ctx.navigationIndex, ids, nextUnviewed, ctx.navOptions());
+      ctx.state.navigation = {
+        ...base,
+        currentNodeId: startNodeId,
+        destinationNodeId: `work:${nextUnviewed}`,
+        routeComplete: false
+      };
+    } else {
+      ctx.state.navigation = navigationStateForSelection(ctx.navigationIndex, ids, nextUnviewed, ctx.navOptions());
+    }
+    ctx.state.selected = nextUnviewed;
+  }
+
   function setPreferElevator(prefer) {
     const next = Boolean(prefer);
     if (ctx.state.preferElevator === next) return;
     const apply = () => {
       ctx.state.preferElevator = next;
+      let reordered = false;
+      if (ctx.state.planMode === 'myplan') {
+        reordered = autoOptimizeMyPlan().changed;
+        rebuildNavigationFromCurrent(ctx.routableIds(), activeStartNodeId());
+      } else if (ctx.state.customTimedIds?.length) {
+        reordered = autoOptimizeCustomTimed().changed;
+        rebuildNavigationFromCurrent(ctx.routableIds(), activeStartNodeId());
+      }
       ctx.persistState();
-      ctx.setNotice(tr(ctx.state.preferElevator ? 'notice.evOn' : 'notice.evOff'), false, 3200);
+      const noticeKey = reordered
+        ? (ctx.state.preferElevator ? 'notice.evOnOptimized' : 'notice.evOffOptimized')
+        : (ctx.state.preferElevator ? 'notice.evOn' : 'notice.evOff');
+      ctx.setNotice(tr(noticeKey), false, 3400);
       ctx.render();
     };
     if (ctx.state.appPhase === 'main' && ctx.routableIds().length > 0) {
@@ -125,15 +199,19 @@ export function createPlanActions(ctx) {
   }
 
   function chooseMyPlan({goMap = false, animate = true} = {}) {
+    const alreadyMyPlan = ctx.state.planMode === 'myplan' && ctx.state.hasChosenCourse;
     const apply = () => {
       ctx.clearProgressNotice();
       ctx.state.planMode = 'myplan';
       ctx.state.hasChosenCourse = true;
       const ids = ctx.routableIds();
-      ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
-      ctx.state.selected = ctx.state.myPlanIds[0] ?? null;
-      if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
-        ctx.state.floor = ctx.byId[ids[0]].floor;
+      if (!alreadyMyPlan) {
+        rebuildNavigationFromCurrent(ids);
+        if (ctx.state.selected && ctx.byId[ctx.state.selected]?.floor != null) {
+          ctx.state.floor = ctx.byId[ctx.state.selected].floor;
+        } else if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
+          ctx.state.floor = ctx.byId[ids[0]].floor;
+        }
       }
       ctx.state.appPhase = 'main';
       ctx.state.tab = goMap && ids.length ? 'map' : 'plan';
@@ -141,7 +219,7 @@ export function createPlanActions(ctx) {
       ctx.render();
       window.scrollTo({top: 0});
     };
-    if (!animate || !ctx.state.myPlanIds.length) {
+    if (!animate || alreadyMyPlan || !ctx.state.myPlanIds.length) {
       apply();
       return;
     }
@@ -177,12 +255,13 @@ export function createPlanActions(ctx) {
       ],
       durationMs: 2150
     }, () => {
-      const result = optimizeWorkOrder(ctx.navigationIndex, ctx.state.myPlanIds, ctx.navOptions());
-      ctx.state.myPlanIds = result.ids;
+      const anchor = activeStartNodeId();
+      const result = autoOptimizeMyPlan({startNodeId: anchor});
       const nextRoutable = ctx.routableIds();
-      ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, nextRoutable);
-      ctx.state.selected = result.ids[0] ?? null;
-      if (nextRoutable[0] && ctx.byId[nextRoutable[0]]?.floor != null) {
+      rebuildNavigationFromCurrent(nextRoutable, anchor);
+      if (ctx.state.selected && ctx.byId[ctx.state.selected]?.floor != null) {
+        ctx.state.floor = ctx.byId[ctx.state.selected].floor;
+      } else if (nextRoutable[0] && ctx.byId[nextRoutable[0]]?.floor != null) {
         ctx.state.floor = ctx.byId[nextRoutable[0]].floor;
       }
       ctx.persistState();
@@ -196,15 +275,18 @@ export function createPlanActions(ctx) {
     });
   }
 
-  function syncMyPlanNavigation() {
+  function syncMyPlanNavigation({preserveCurrentDest = false} = {}) {
     if (ctx.state.planMode !== 'myplan') return;
     const ids = ctx.routableIds();
-    const currentDest = destinationWorkId(ctx.navigationIndex, ctx.state.navigation);
-    if (ids.length && currentDest && ids.includes(currentDest)) {
-      ctx.state.navigation = navigationStateForSelection(ctx.navigationIndex, ids, currentDest, ctx.navOptions());
-    } else {
-      ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
+    const anchor = activeStartNodeId();
+    if (preserveCurrentDest) {
+      const currentDest = destinationWorkId(ctx.navigationIndex, ctx.state.navigation);
+      if (ids.length && currentDest && ids.includes(currentDest) && !ctx.state.viewed.has(currentDest)) {
+        ctx.state.navigation = navigationStateForSelection(ctx.navigationIndex, ids, currentDest, ctx.navOptions());
+        return;
+      }
     }
+    rebuildNavigationFromCurrent(ids, anchor);
   }
 
   function selectRouteWork(workId, {focusFloor = false} = {}) {
@@ -228,22 +310,33 @@ export function createPlanActions(ctx) {
   function handleToggleMyPlan(workId) {
     const result = toggleMyPlan(ctx.state.myPlanIds, workId);
     ctx.state.myPlanIds = result.ids;
+    const opt = autoOptimizeMyPlan();
     syncMyPlanNavigation();
     ctx.persistState();
     const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
-    ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3000);
+    const addedIsRoutable = ctx.navigationIndex.nodes.has(`work:${workId}`);
+    const routableCount = ctx.state.myPlanIds.filter(id => ctx.navigationIndex.nodes.has(`work:${id}`)).length;
+    const msg = result.added
+      ? (addedIsRoutable && routableCount >= 2
+        ? tr('notice.myPlanAddedOpt', {title, count: ctx.state.myPlanIds.length})
+        : tr('notice.myPlanAdded', {title}))
+      : (opt.changed
+        ? tr('notice.myPlanRemovedOpt', {title})
+        : tr('notice.myPlanRemoved', {title}));
+    ctx.setNotice(msg, false, 3400);
     ctx.render();
   }
 
   function handleMoveMyPlan(workId, delta) {
     ctx.state.myPlanIds = moveMyPlanItem(ctx.state.myPlanIds, workId, delta);
-    syncMyPlanNavigation();
+    syncMyPlanNavigation({preserveCurrentDest: true});
     ctx.persistState();
     ctx.render();
   }
 
   function handleRemoveMyPlan(workId) {
     ctx.state.myPlanIds = removeMyPlanItem(ctx.state.myPlanIds, workId);
+    autoOptimizeMyPlan();
     syncMyPlanNavigation();
     ctx.persistState();
     ctx.render();
@@ -314,10 +407,24 @@ export function createPlanActions(ctx) {
     }
     const candidate = ctx.state.support.candidates.find(item => item.nodeId === candidateId);
     ctx.clearProgressNotice();
-    ctx.state.navigation = result.navigation;
+    let reordered = false;
+    if (ctx.state.planMode === 'myplan') {
+      reordered = autoOptimizeMyPlan({startNodeId: candidateId}).changed;
+      rebuildNavigationFromCurrent(ctx.routableIds(), candidateId);
+    } else if (ctx.state.customTimedIds?.length) {
+      reordered = autoOptimizeCustomTimed({startNodeId: candidateId}).changed;
+      rebuildNavigationFromCurrent(ctx.routableIds(), candidateId);
+    } else {
+      ctx.state.navigation = result.navigation;
+    }
     ctx.state.support = {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''};
     ctx.persistState();
-    ctx.setNotice(tr('notice.arrivalUpdated', {room: candidate?.label ?? tr('notice.enteredRoomFallback')}), false, 4200);
+    const roomLabel = candidate?.label ?? tr('notice.enteredRoomFallback');
+    ctx.setNotice(
+      tr(reordered ? 'notice.arrivalOptimized' : 'notice.arrivalUpdated', {room: roomLabel}),
+      false,
+      4500
+    );
     ctx.render();
   }
 

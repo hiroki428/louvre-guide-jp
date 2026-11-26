@@ -473,5 +473,11 @@ export const fr = Object.freeze({
   'auth.invalidEmail': 'Veuillez saisir une adresse e-mail valide',
   'auth.sendFailed': 'Impossible d’envoyer le lien. Vérifiez votre connexion et réessayez.',
   'auth.signedOutNotice': 'Déconnecté (vos données restent enregistrées sur cet appareil)',
-  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud'
+  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud',
+
+  'notice.evOnOptimized': 'Mode ascenseur activé et ordre de visite réoptimisé',
+  'notice.evOffOptimized': 'Distance la plus courte activée et ordre de visite réoptimisé',
+  'notice.myPlanAddedOpt': '« {title} » ajouté et itinéraire optimisé ({count} œuvres)',
+  'notice.myPlanRemovedOpt': '« {title} » retiré et itinéraire restant réoptimisé',
+  'notice.arrivalOptimized': 'Position mise à jour ({room}) et étapes restantes réoptimisées'
 });

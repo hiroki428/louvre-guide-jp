@@ -27,7 +27,7 @@ function edgeWeight(edge, options) {
 export function shortestPath(graphOrIndex, startId, goalId, options = {}) {
   const index = graphOrIndex.nodes instanceof Map ? graphOrIndex : indexNavigationGraph(graphOrIndex);
   if (!index.nodes.has(startId) || !index.nodes.has(goalId)) return null;
-  if (startId === goalId) return {nodeIds:[startId], edges:[], totalCost:0};
+  if (startId === goalId) return {nodeIds:[startId], edges:[], totalCost:0, weightedCost:0};
 
   const distance = new Map([...index.nodes.keys()].map(id => [id, Infinity]));
   const previous = new Map();
@@ -64,7 +64,12 @@ export function shortestPath(graphOrIndex, startId, goalId, options = {}) {
     nodeIds.unshift(step.nodeId);
     cursor = step.nodeId;
   }
-  return {nodeIds, edges, totalCost:edges.reduce((sum, e) => sum + e.cost, 0)};
+  return {
+    nodeIds,
+    edges,
+    totalCost: edges.reduce((sum, e) => sum + e.cost, 0),
+    weightedCost: edges.reduce((sum, e) => sum + edgeWeight(e, options), 0)
+  };
 }
 
 export function navigationStateFromRoute(graphOrIndex, workIds) {

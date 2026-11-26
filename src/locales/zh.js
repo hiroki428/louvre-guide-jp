@@ -473,5 +473,11 @@ export const zh = Object.freeze({
   'auth.invalidEmail': '请输入有效的邮箱地址',
   'auth.sendFailed': '发送失败，请检查网络后重试。',
   'auth.signedOutNotice': '已退出登录（本设备上的数据仍会保留）',
-  'auth.syncedNotice': '已与云端同步行程和设置'
+  'auth.syncedNotice': '已与云端同步行程和设置',
+
+  'notice.evOnOptimized': '已切换为电梯优先，并重新优化了参观顺序',
+  'notice.evOffOptimized': '已切换为最短距离，并重新优化了参观顺序',
+  'notice.myPlanAddedOpt': '已添加「{title}」并自动优化最短路线（共 {count} 件）',
+  'notice.myPlanRemovedOpt': '已移除「{title}」并重新优化剩余路线',
+  'notice.arrivalOptimized': '已将当前位置更新至{room}，并重新优化了剩余路线'
 });

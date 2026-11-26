@@ -473,5 +473,11 @@ export const ko = Object.freeze({
   'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
   'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
   'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
-  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다',
+
+  'notice.evOnOptimized': '엘리베이터 우선으로 전환하고 관람 순서를 재최적화했습니다',
+  'notice.evOffOptimized': '최단 거리로 전환하고 관람 순서를 재최적화했습니다',
+  'notice.myPlanAddedOpt': '“{title}”을 추가하고 최단 경로로 자동 최적화했습니다 (총 {count}작품)',
+  'notice.myPlanRemovedOpt': '“{title}”을 제외하고 남은 경로를 재최적화했습니다',
+  'notice.arrivalOptimized': '현재 위치를 {room}으로 갱신하고 남은 동선을 재최적화했습니다'
 });

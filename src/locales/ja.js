@@ -473,5 +473,11 @@ export const ja = Object.freeze({
   'auth.invalidEmail': '有効なメールアドレスを入力してください',
   'auth.sendFailed': '送信できませんでした。通信状態を確認して再度お試しください。',
   'auth.signedOutNotice': 'ログアウトしました（端末内のデータはそのまま残ります）',
-  'auth.syncedNotice': 'クラウドとデータを同期しました'
+  'auth.syncedNotice': 'クラウドとデータを同期しました',
+
+  'notice.evOnOptimized': 'エレベーター優先へ切替え、巡回順も最短に最適化しました',
+  'notice.evOffOptimized': '最短距離へ切替え、巡回順も最短に最適化しました',
+  'notice.myPlanAddedOpt': '「{title}」を追加し、最短ルートへ最適化しました（全{count}作品）',
+  'notice.myPlanRemovedOpt': '「{title}」を外し、残りルートを最短に最適化しました',
+  'notice.arrivalOptimized': '現在地を{room}に更新し、残りルートを最短に再最適化しました'
 });

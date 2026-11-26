@@ -473,5 +473,11 @@ export const en = Object.freeze({
   'auth.invalidEmail': 'Please enter a valid email address',
   'auth.sendFailed': 'Could not send sign-in link. Please check your connection and try again.',
   'auth.signedOutNotice': 'Signed out (your data remains saved on this device)',
-  'auth.syncedNotice': 'Synced your plan and settings with the cloud'
+  'auth.syncedNotice': 'Synced your plan and settings with the cloud',
+
+  'notice.evOnOptimized': 'Switched to Elevator Priority and re-optimized your visit order',
+  'notice.evOffOptimized': 'Switched to Shortest Distance and re-optimized your visit order',
+  'notice.myPlanAddedOpt': 'Added “{title}” and auto-optimized your route ({count} artworks)',
+  'notice.myPlanRemovedOpt': 'Removed “{title}” and re-optimized the remaining route',
+  'notice.arrivalOptimized': 'Updated location to {room} and re-optimized remaining stops'
 });

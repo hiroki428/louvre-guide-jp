@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {indexNavigationGraph, navigationStateFromRoute, buildNavigationView} from '../src/navigation.js';
-import {activePlanMeta, buildTimedRouteWorks, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
+import {activePlanMeta, buildTimedRouteWorks, formatMinutesLabel, moveMyPlanItem, optimizeRemainingWorks, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
 
 const graph = JSON.parse(await readFile(new URL('../src/navigation-graph.json', import.meta.url), 'utf8'));
 const routes = JSON.parse(await readFile(new URL('../src/routes.json', import.meta.url), 'utf8'));
@@ -117,5 +117,13 @@ const timedMeta = activePlanMeta({
 });
 assert.equal(timedMeta.ids.length, 16);
 assert.match(timedMeta.label, /120分コース（16作品）/);
+
+// Incremental optimization keeps already-viewed works in place and optimizes remaining stops
+const remOpt = optimizeRemainingWorks(index, ['venus', 'lacemaker', 'mona', 'marly', 'catalog-0003'], new Set(['venus']), {preferElevator: false});
+assert.equal(remOpt.ids[0], 'venus', 'viewed work must stay at front');
+assert.equal(remOpt.ids.length, 5);
+const remMonaPos = remOpt.ids.indexOf('mona');
+const remCanaPos = remOpt.ids.indexOf('catalog-0003');
+assert.equal(Math.abs(remMonaPos - remCanaPos), 1, 'remaining same-room works must stay grouped after optimization');
 
 console.log('my-plan and custom routing: passed');
