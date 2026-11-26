@@ -1,4 +1,5 @@
 import {audioLengthsFor, catalogWorks, priorityTierFor} from '../catalog.js';
+import {activePlanMeta} from '../my-plan.js';
 import {localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, formatAudioLengthLabel, formatRate, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
@@ -39,7 +40,7 @@ export function audioRowsMarkup(ctx, items) {
     const lengthSelect = lengths.length > 1
       ? `<select data-audio-length="${esc(work.id)}" aria-label="${esc(tr('catalog.lengthAria', {title: work.title}))}">${lengths.map(opt => `<option value="${opt}" ${length === opt ? 'selected' : ''}>${esc(formatAudioLengthLabel(opt, lang))}</option>`).join('')}</select>`
       : '';
-    return `<article class="audio-row ${state.selected === work.id ? 'selected' : ''} ${isPlaying ? 'is-playing' : ''}" id="audio-row-${esc(work.id)}">
+    return `<article class="audio-row ${state.selected === work.id ? 'selected' : ''} ${isPlaying ? 'is-playing' : ''} ${inMyPlan ? 'in-myplan' : ''}" id="audio-row-${esc(work.id)}">
       <div class="audio-row-main" data-open-detail="${esc(work.id)}" role="button" tabindex="0">
         ${thumbMarkup(ctx, work, 'thumb-sm')}
         <div class="audio-row-copy">
@@ -54,7 +55,10 @@ export function audioRowsMarkup(ctx, items) {
       </div>
       <div class="audio-row-controls">
         ${lengthSelect}
-        <button type="button" class="star-btn ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}" aria-label="${esc(tr('catalog.toggleMyPlanAria'))}" aria-pressed="${inMyPlan}">${inMyPlan ? '★' : '☆'}</button>
+        <button type="button" class="myplan-toggle-btn ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}" aria-label="${esc(tr('catalog.toggleMyPlanAria'))}" aria-pressed="${inMyPlan}">
+          <span aria-hidden="true">${inMyPlan ? '★' : '＋'}</span>
+          <span>${esc(inMyPlan ? tr('catalog.inMyPlanShort') : tr('catalog.addMyPlanShort'))}</span>
+        </button>
         <button type="button" class="play-btn ${isPlaying ? 'active' : ''}" data-audio-play="${esc(work.id)}" aria-label="${esc(isPlaying ? tr('catalog.pauseAria') : tr('catalog.playAria'))}">${isPlaying ? '⏸' : '▶'}</button>
         <button type="button" class="save-btn" data-audio-download="${esc(work.id)}" ${saved ? 'disabled' : ''}>${saved ? '✓' : esc(tr('catalog.saveBtn'))}</button>
       </div>
@@ -71,7 +75,19 @@ export function audioTabView(ctx, hasMini) {
   const famousCount = works.filter(w => priorityTierFor(w, lang).key === 'silver').length;
   const masterpieceCount = works.filter(w => priorityTierFor(w, lang).key === 'bronze').length;
   const mappedCount = works.filter(w => w.locationPrecision === 'room').length;
-  return `<main class="tab-screen audio-screen ${hasMini ? 'has-mini-player' : ''}">
+  const myPlanCount = state.myPlanIds.length;
+  const myPlanSummary = myPlanCount > 0
+    ? activePlanMeta({
+        planMode: 'myplan',
+        routes: ctx.routes,
+        myPlanIds: state.myPlanIds,
+        navigationIndex: ctx.navigationIndex,
+        duration: state.duration,
+        lang
+      })
+    : null;
+  const hasDock = myPlanCount > 0;
+  return `<main class="tab-screen audio-screen ${hasMini ? 'has-mini-player' : ''} ${hasDock ? 'has-myplan-dock' : ''}">
     <section class="audio-header">
       <div class="audio-header-top">
         <div>
@@ -112,6 +128,16 @@ export function audioTabView(ctx, hasMini) {
       </div>
       <div class="audio-list">${audioRowsMarkup(ctx, visible)}</div>
     </section>
+    ${hasDock ? `<aside class="myplan-dock ${hasMini ? 'with-mini-player' : ''}" aria-label="${esc(tr('catalog.myPlanDockAria'))}">
+      <div class="myplan-dock-copy">
+        <strong>${esc(tr('catalog.myPlanDockTitle', {count: myPlanCount}))}</strong>
+        <small>${esc(tr('catalog.myPlanDockSub', {minutes: myPlanSummary.estimatedMinutes}))}</small>
+      </div>
+      <div class="myplan-dock-actions">
+        <button type="button" class="secondary compact-btn" data-open-myplan-tab>${esc(tr('catalog.myPlanDockView'))}</button>
+        <button type="button" class="primary compact-btn" data-start-myplan-map ${!myPlanSummary.routableIds.length ? 'disabled' : ''}>${esc(tr('catalog.myPlanDockStart'))}</button>
+      </div>
+    </aside>` : ''}
   </main>`;
 }
 

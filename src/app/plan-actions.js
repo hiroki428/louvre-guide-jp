@@ -173,13 +173,17 @@ export function createPlanActions(ctx) {
     });
   }
 
-  function addWorkToActivePlan(workId) {
+  function addWorksToActivePlan(workIds) {
     const plan = ctx.currentPlan();
-    if (!ctx.byId[workId] || !ctx.navigationIndex.nodes.has(`work:${workId}`) || plan.ids.includes(workId)) return false;
-    const result = optimizeWorkOrder(ctx.navigationIndex, [...plan.ids, workId], ctx.navOptions());
+    if (plan.isShared) return false;
+    const list = (Array.isArray(workIds) ? workIds : [workIds])
+      .filter((id, idx, arr) => id && arr.indexOf(id) === idx && ctx.byId[id] && ctx.navigationIndex.nodes.has(`work:${id}`) && !plan.ids.includes(id));
+    if (!list.length) return false;
+    const result = optimizeWorkOrder(ctx.navigationIndex, [...plan.ids, ...list], ctx.navOptions());
     if (plan.isCustom) ctx.state.myPlanIds = result.ids;
     else ctx.state.routeEdits[ctx.state.routeId] = result.ids;
-    ctx.state.optionalWorkIds[plan.id] = (ctx.state.optionalWorkIds[plan.id] || []).filter(id => id !== workId);
+    const addedSet = new Set(list);
+    ctx.state.optionalWorkIds[plan.id] = (ctx.state.optionalWorkIds[plan.id] || []).filter(id => !addedSet.has(id));
     const previous = ctx.state.navigation;
     const routableIds = result.ids.filter(id => ctx.navigationIndex.nodes.has(`work:${id}`));
     const nextId = routableIds.find(id => !ctx.state.viewed.has(id)) || routableIds[0];
@@ -198,24 +202,49 @@ export function createPlanActions(ctx) {
     ctx.state.planAddOpen = false;
     ctx.state.planAddMode = null;
     ctx.state.planAddQuery = '';
+    ctx.state.planAddSelected = [];
     ctx.persistState();
-    ctx.setNotice(tr('notice.routeWorkAdded'), false, 3200);
+    ctx.setNotice(
+      list.length === 1
+        ? tr('notice.routeWorkAdded')
+        : tr('notice.routeWorksBatchAdded', {count: list.length}),
+      false,
+      3400
+    );
+    ctx.render();
+    return true;
+  }
+
+  function addWorkToActivePlan(workId) {
+    return addWorksToActivePlan([workId]);
+  }
+
+  function addOptionalWorksToActivePlan(workIds) {
+    const plan = ctx.currentPlan();
+    if (plan.isShared) return false;
+    const optionalIds = ctx.state.optionalWorkIds[plan.id] || [];
+    const list = (Array.isArray(workIds) ? workIds : [workIds])
+      .filter((id, idx, arr) => id && arr.indexOf(id) === idx && ctx.byId[id] && !plan.ids.includes(id) && !optionalIds.includes(id));
+    if (!list.length) return false;
+    ctx.state.optionalWorkIds[plan.id] = [...optionalIds, ...list];
+    ctx.state.planAddOpen = false;
+    ctx.state.planAddMode = null;
+    ctx.state.planAddQuery = '';
+    ctx.state.planAddSelected = [];
+    ctx.persistState();
+    ctx.setNotice(
+      list.length === 1
+        ? tr('notice.optionalWorkAdded')
+        : tr('notice.optionalWorksBatchAdded', {count: list.length}),
+      false,
+      3400
+    );
     ctx.render();
     return true;
   }
 
   function addOptionalWorkToActivePlan(workId) {
-    const plan = ctx.currentPlan();
-    const optionalIds = ctx.state.optionalWorkIds[plan.id] || [];
-    if (!ctx.byId[workId] || plan.ids.includes(workId) || optionalIds.includes(workId)) return false;
-    ctx.state.optionalWorkIds[plan.id] = [...optionalIds, workId];
-    ctx.state.planAddOpen = false;
-    ctx.state.planAddMode = null;
-    ctx.state.planAddQuery = '';
-    ctx.persistState();
-    ctx.setNotice(tr('notice.optionalWorkAdded'), false, 3200);
-    ctx.render();
-    return true;
+    return addOptionalWorksToActivePlan([workId]);
   }
 
   function removeOptionalWorkFromActivePlan(workId) {
@@ -266,7 +295,10 @@ export function createPlanActions(ctx) {
     syncMyPlanNavigation();
     ctx.persistState();
     const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
-    ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3000);
+    const action = result.added && ctx.state.tab !== 'plan'
+      ? {id: 'open-myplan', label: tr('notice.openMyPlanAction')}
+      : null;
+    ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3600, action);
     ctx.render();
   }
 
@@ -472,7 +504,9 @@ export function createPlanActions(ctx) {
     copySharedToMyPlan,
     handleOptimizeMyPlan,
     addWorkToActivePlan,
+    addWorksToActivePlan,
     addOptionalWorkToActivePlan,
+    addOptionalWorksToActivePlan,
     removeOptionalWorkFromActivePlan,
     syncMyPlanNavigation,
     selectRouteWork,

@@ -98,6 +98,7 @@ export function createAppStore({
     planAddOpen: false,
     planAddMode: null,
     planAddQuery: '',
+    planAddSelected: [],
     audioSettingsOpen: false,
     duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 60,
     playbackRate: clampRate(persistedBoot?.playbackRate ?? 1),

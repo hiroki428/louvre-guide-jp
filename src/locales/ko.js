@@ -582,5 +582,22 @@ export const ko = Object.freeze({
   'tour.step6Body': '언어·재생 속도 변경, 클라우드 동기화, 이 사용 가이드 다시 보기를 언제든 이용할 수 있습니다.',
   'tour.replayTitle': '사용 가이드 (데모)',
   'tour.replaySub': '지도 화면의 주요 버튼과 사용 방법을 하이라이트로 다시 안내합니다',
-  'tour.replayBtn': '가이드 다시 보기'
+  'tour.replayBtn': '가이드 다시 보기',
+  'notice.openMyPlanAction': '내 플랜 보기',
+  'notice.routeWorksBatchAdded': '{count}작품을 루트에 추가하고 관람 순서를 최적화했습니다',
+  'notice.optionalWorksBatchAdded': '{count}작품을 여유 시 감상 목록에 추가했습니다',
+  'plan.batchSelectBtn': '선택',
+  'plan.batchSelectedBtn': '✓ 선택됨',
+  'plan.batchCount': '{count}작품 선택됨',
+  'plan.batchClearBtn': '해제',
+  'plan.batchConfirmRoute': '{count}작품 루트에 추가',
+  'plan.batchConfirmOptional': '{count}작품 후보에 추가',
+  'detail.inMyPlanOrder': '★ 내 플랜 등록 (#{order})',
+  'catalog.addMyPlanShort': '추가',
+  'catalog.inMyPlanShort': '추가됨',
+  'catalog.myPlanDockAria': '내 플랜 빠른 바',
+  'catalog.myPlanDockTitle': '내 플랜: {count}작품',
+  'catalog.myPlanDockSub': '예상 약 {minutes}분 · 추가 시 자동으로 최단 순서 정렬',
+  'catalog.myPlanDockView': '목록 보기',
+  'catalog.myPlanDockStart': '지도 시작 ›'
 });

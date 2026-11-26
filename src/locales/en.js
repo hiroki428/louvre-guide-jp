@@ -582,5 +582,22 @@ export const en = Object.freeze({
   'tour.step6Body': 'Change language, audio speed, sign in for cloud sync, or replay this guide anytime here.',
   'tour.replayTitle': 'Interactive Quick Guide',
   'tour.replaySub': 'Highlight the main buttons and walkthrough steps on the map screen again',
-  'tour.replayBtn': 'Replay Guide'
+  'tour.replayBtn': 'Replay Guide',
+  'notice.openMyPlanAction': 'View My Plan',
+  'notice.routeWorksBatchAdded': 'Added {count} artworks to the route and optimized the visit order',
+  'notice.optionalWorksBatchAdded': 'Added {count} artworks to your optional list',
+  'plan.batchSelectBtn': 'Select',
+  'plan.batchSelectedBtn': '✓ Selected',
+  'plan.batchCount': '{count} selected',
+  'plan.batchClearBtn': 'Clear',
+  'plan.batchConfirmRoute': 'Add {count} to Route',
+  'plan.batchConfirmOptional': 'Add {count} as Optional',
+  'detail.inMyPlanOrder': '★ In My Plan (#{order})',
+  'catalog.addMyPlanShort': 'Add',
+  'catalog.inMyPlanShort': 'Added',
+  'catalog.myPlanDockAria': 'My Plan quick bar',
+  'catalog.myPlanDockTitle': 'My Plan: {count} artworks',
+  'catalog.myPlanDockSub': 'Approx. {minutes} min · route updates automatically',
+  'catalog.myPlanDockView': 'View List',
+  'catalog.myPlanDockStart': 'Start Map ›'
 });

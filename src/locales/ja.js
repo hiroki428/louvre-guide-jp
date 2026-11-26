@@ -582,5 +582,22 @@ export const ja = Object.freeze({
   'tour.step6Body': '言語切替・再生速度・クラウド同期・この使い方ガイドの再表示はここからいつでも行えます。',
   'tour.replayTitle': '使い方ガイド（デモ）',
   'tour.replaySub': 'マップ画面の各ボタンや操作手順をもう一度ハイライトで案内します',
-  'tour.replayBtn': 'ガイドをもう一度見る'
+  'tour.replayBtn': 'ガイドをもう一度見る',
+  'notice.openMyPlanAction': 'マイプランを見る',
+  'notice.routeWorksBatchAdded': '{count}作品をルートに追加し、巡回順を最適化しました',
+  'notice.optionalWorksBatchAdded': '{count}作品を「時間が余れば見る」に追加しました',
+  'plan.batchSelectBtn': '選択',
+  'plan.batchSelectedBtn': '✓ 選択中',
+  'plan.batchCount': '{count}作品を選択中',
+  'plan.batchClearBtn': 'クリア',
+  'plan.batchConfirmRoute': '{count}作品をルートに追加',
+  'plan.batchConfirmOptional': '{count}作品を候補に追加',
+  'detail.inMyPlanOrder': '★ マイプラン済 (#{order})',
+  'catalog.addMyPlanShort': '追加',
+  'catalog.inMyPlanShort': '追加済',
+  'catalog.myPlanDockAria': 'マイプラン操作バー',
+  'catalog.myPlanDockTitle': 'マイプラン：{count}作品',
+  'catalog.myPlanDockSub': '目安 約{minutes}分 · 追加すると最短順に自動整列',
+  'catalog.myPlanDockView': '一覧を見る',
+  'catalog.myPlanDockStart': '地図で開始 ›'
 });

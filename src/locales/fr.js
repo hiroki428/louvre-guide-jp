@@ -582,5 +582,22 @@ export const fr = Object.freeze({
   'tour.step6Body': 'Modifiez la langue, la vitesse audio, synchronisez votre compte ou relancez ce guide ici.',
   'tour.replayTitle': 'Guide interactif',
   'tour.replaySub': 'Revoir les explications guidées sur l’écran de la carte',
-  'tour.replayBtn': 'Revoir le guide'
+  'tour.replayBtn': 'Revoir le guide',
+  'notice.openMyPlanAction': 'Voir Mon Parcours',
+  'notice.routeWorksBatchAdded': '{count} œuvres ajoutées au parcours et ordre optimisé',
+  'notice.optionalWorksBatchAdded': '{count} œuvres ajoutées aux suggestions',
+  'plan.batchSelectBtn': 'Choisir',
+  'plan.batchSelectedBtn': '✓ Choisi',
+  'plan.batchCount': '{count} sélectionnées',
+  'plan.batchClearBtn': 'Effacer',
+  'plan.batchConfirmRoute': 'Ajouter {count} au parcours',
+  'plan.batchConfirmOptional': 'Ajouter {count} en option',
+  'detail.inMyPlanOrder': '★ Dans Mon Parcours (#{order})',
+  'catalog.addMyPlanShort': 'Ajouter',
+  'catalog.inMyPlanShort': 'Ajouté',
+  'catalog.myPlanDockAria': 'Barre rapide Mon Parcours',
+  'catalog.myPlanDockTitle': 'Mon Parcours : {count} œuvres',
+  'catalog.myPlanDockSub': 'Env. {minutes} min · ordre optimisé automatiquement',
+  'catalog.myPlanDockView': 'Voir la liste',
+  'catalog.myPlanDockStart': 'Carte ›'
 });

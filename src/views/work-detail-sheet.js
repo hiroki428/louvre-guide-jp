@@ -37,6 +37,7 @@ export function workDetailSheetMarkup(ctx) {
   const length = ctx.preferredLengthFor(work);
   const saved = state.downloaded.has(`${work.id}-${length}`);
   const inMyPlan = state.myPlanIds.includes(work.id);
+  const myPlanOrder = inMyPlan ? state.myPlanIds.indexOf(work.id) + 1 : 0;
   const isViewed = state.viewed.has(work.id);
   const isPlaying = state.playing === work.id;
   const isLoaded = state.player.workId === work.id;
@@ -79,7 +80,7 @@ export function workDetailSheetMarkup(ctx) {
       </div>
 
       <div class="detail-quick-actions">
-        <button type="button" class="action-pill ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}">${esc(inMyPlan ? tr('detail.inMyPlan') : tr('detail.addMyPlan'))}</button>
+        <button type="button" class="action-pill action-pill-myplan ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}" aria-pressed="${inMyPlan}">${esc(inMyPlan ? tr('detail.inMyPlanOrder', {order: myPlanOrder}) : tr('detail.addMyPlan'))}</button>
         <button type="button" class="action-pill ${isViewed ? 'done' : ''}" data-toggle-viewed="${esc(work.id)}">${esc(isViewed ? tr('detail.viewed') : tr('detail.markViewed'))}</button>
         ${hasMap ? `<button type="button" class="action-pill" data-show-map="${esc(work.id)}">${esc(tr('detail.showOnMap'))}</button>` : ''}
       </div>

@@ -582,5 +582,22 @@ export const es = Object.freeze({
   'tour.step6Body': 'Cambia el idioma, la velocidad de audio, sincroniza tu cuenta o repite esta guía cuando quieras.',
   'tour.replayTitle': 'Guía interactiva (demo)',
   'tour.replaySub': 'Vuelve a resaltar los botones principales y pasos de uso en la pantalla del mapa',
-  'tour.replayBtn': 'Ver guía de nuevo'
+  'tour.replayBtn': 'Ver guía de nuevo',
+  'notice.openMyPlanAction': 'Ver Mi Plan',
+  'notice.routeWorksBatchAdded': '{count} obras añadidas a la ruta y orden optimizado',
+  'notice.optionalWorksBatchAdded': '{count} obras añadidas a tu lista opcional',
+  'plan.batchSelectBtn': 'Elegir',
+  'plan.batchSelectedBtn': '✓ Elegida',
+  'plan.batchCount': '{count} seleccionadas',
+  'plan.batchClearBtn': 'Limpiar',
+  'plan.batchConfirmRoute': 'Añadir {count} a la ruta',
+  'plan.batchConfirmOptional': 'Añadir {count} como opcional',
+  'detail.inMyPlanOrder': '★ En Mi Plan (#{order})',
+  'catalog.addMyPlanShort': 'Añadir',
+  'catalog.inMyPlanShort': 'Añadida',
+  'catalog.myPlanDockAria': 'Barra rápida de Mi Plan',
+  'catalog.myPlanDockTitle': 'Mi Plan: {count} obras',
+  'catalog.myPlanDockSub': 'Aprox. {minutes} min · se reordena automáticamente',
+  'catalog.myPlanDockView': 'Ver lista',
+  'catalog.myPlanDockStart': 'Abrir mapa ›'
 });

@@ -206,4 +206,18 @@ assert.ok(!store.state.navigation.routeWorkIds.includes(unmappedWork.id), 'unmap
 assert.equal(actions.addOptionalWorkToActivePlan(optionalWork.id), true);
 assert.deepEqual(store.state.optionalWorkIds.myplan, [optionalWork.id]);
 
+// Batch multi-select add and shared-plan protection
+const batchCandidates = works.filter(w => index.nodes.has(`work:${w.id}`) && !store.state.myPlanIds.includes(w.id)).slice(0, 2);
+assert.equal(batchCandidates.length, 2);
+assert.equal(actions.addWorksToActivePlan(batchCandidates.map(w => w.id)), true, 'batch route add must succeed');
+for (const w of batchCandidates) {
+  assert.ok(store.state.myPlanIds.includes(w.id), 'each batch-added work must appear in myPlanIds');
+}
+store.state.sharedPlan = {title: 'Friend', ids: ['mona', 'venus']};
+store.state.planMode = 'shared';
+const routeEditsBeforeShared = JSON.stringify(store.state.routeEdits);
+assert.equal(actions.addWorksToActivePlan([extraWork.id]), false, 'batch add must be rejected while viewing shared plan');
+assert.equal(JSON.stringify(store.state.routeEdits), routeEditsBeforeShared, 'shared plan guard must not corrupt routeEdits');
+assert.ok(!planTabView(ctx, false).includes('data-open-plan-add'), 'shared plan view must hide add-work button');
+
 console.log('my-plan and custom routing: passed');

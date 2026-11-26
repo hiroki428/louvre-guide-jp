@@ -582,5 +582,22 @@ export const zh = Object.freeze({
   'tour.step6Body': '可随时在此调整语言、倍速、登录同步，或重新查看本使用引导。',
   'tour.replayTitle': '交互式使用引导',
   'tour.replaySub': '在地图界面重新高亮展示各功能按钮的操作说明',
-  'tour.replayBtn': '重新查看引导'
+  'tour.replayBtn': '重新查看引导',
+  'notice.openMyPlanAction': '查看我的行程',
+  'notice.routeWorksBatchAdded': '已将 {count} 件作品加入路线并优化参观顺序',
+  'notice.optionalWorksBatchAdded': '已将 {count} 件作品加入备选清单',
+  'plan.batchSelectBtn': '选择',
+  'plan.batchSelectedBtn': '✓ 已选',
+  'plan.batchCount': '已选 {count} 件',
+  'plan.batchClearBtn': '清除',
+  'plan.batchConfirmRoute': '加入路线 ({count})',
+  'plan.batchConfirmOptional': '加入备选 ({count})',
+  'detail.inMyPlanOrder': '★ 已加入行程 (#{order})',
+  'catalog.addMyPlanShort': '添加',
+  'catalog.inMyPlanShort': '已加入',
+  'catalog.myPlanDockAria': '我的行程快捷栏',
+  'catalog.myPlanDockTitle': '我的行程：{count} 件作品',
+  'catalog.myPlanDockSub': '约 {minutes} 分钟 · 添加后自动排成最短顺序',
+  'catalog.myPlanDockView': '查看清单',
+  'catalog.myPlanDockStart': '地图导航 ›'
 });
