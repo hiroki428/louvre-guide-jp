@@ -2167,3 +2167,9 @@
   color: #165c36;
   font-size: 12px;
 }
+
+/* ==================== AUDIO MID-PLAYBACK ==================== */
+.seek-hint-inline {
+  font-size: 10px;
+  color: var(--color-muted);
+}

@@ -473,5 +473,9 @@ export const zh = Object.freeze({
   'auth.invalidEmail': '请输入有效的邮箱地址',
   'auth.sendFailed': '发送失败，请检查网络后重试。',
   'auth.signedOutNotice': '已退出登录（本设备上的数据仍会保留）',
-  'auth.syncedNotice': '已与云端同步行程和设置'
+  'auth.syncedNotice': '已与云端同步行程和设置',
+
+  'detail.resumeFromBtn': '▶ 从 {time} 继续播放',
+  'detail.restartBtn': '↺ 从头播放',
+  'detail.seekHint': '拖动进度条可从任意位置开始播放'
 });

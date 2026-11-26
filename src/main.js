@@ -369,6 +369,25 @@ window.addEventListener('offline', () => { ctx.state.offline = true; render(); }
 
 ctx.audio.player.addEventListener('timeupdate', ctx.audio.syncSeekBars);
 ctx.audio.player.addEventListener('loadedmetadata', ctx.audio.syncSeekBars);
+ctx.audio.player.addEventListener('pause', () => {
+  if (ctx.state.playing && ctx.audio.player.paused) {
+    ctx.audio.saveCurrentPosition({persist: true});
+    ctx.state.playing = null;
+    render();
+  }
+});
+ctx.audio.player.addEventListener('play', () => {
+  if (ctx.state.player.workId && ctx.state.playing !== ctx.state.player.workId) {
+    ctx.state.playing = ctx.state.player.workId;
+    render();
+  }
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') ctx.audio.saveCurrentPosition({persist: true});
+});
+window.addEventListener('pagehide', () => {
+  ctx.audio.saveCurrentPosition({persist: true});
+});
 window.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
     if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }

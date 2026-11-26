@@ -473,5 +473,9 @@ export const fr = Object.freeze({
   'auth.invalidEmail': 'Veuillez saisir une adresse e-mail valide',
   'auth.sendFailed': 'Impossible d’envoyer le lien. Vérifiez votre connexion et réessayez.',
   'auth.signedOutNotice': 'Déconnecté (vos données restent enregistrées sur cet appareil)',
-  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud'
+  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud',
+
+  'detail.resumeFromBtn': '▶ Reprendre ({time})',
+  'detail.restartBtn': '↺ Depuis le début',
+  'detail.seekHint': 'Déplacez le curseur pour lire à tout moment'
 });

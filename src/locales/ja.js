@@ -473,5 +473,9 @@ export const ja = Object.freeze({
   'auth.invalidEmail': '有効なメールアドレスを入力してください',
   'auth.sendFailed': '送信できませんでした。通信状態を確認して再度お試しください。',
   'auth.signedOutNotice': 'ログアウトしました（端末内のデータはそのまま残ります）',
-  'auth.syncedNotice': 'クラウドとデータを同期しました'
+  'auth.syncedNotice': 'クラウドとデータを同期しました',
+
+  'detail.resumeFromBtn': '▶ 続きから再生 ({time})',
+  'detail.restartBtn': '↺ 最初から',
+  'detail.seekHint': 'バーを動かすと途中から再生できます'
 });

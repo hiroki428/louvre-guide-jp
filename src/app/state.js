@@ -73,6 +73,7 @@ export function createAppStore({
     duration: DEFAULT_DURATIONS.includes(persistedBoot?.duration) ? persistedBoot.duration : 60,
     playbackRate: clampRate(persistedBoot?.playbackRate ?? 1),
     audioDurations: {},
+    audioPositions: persistedBoot?.audioPositions && typeof persistedBoot.audioPositions === 'object' ? {...persistedBoot.audioPositions} : {},
     audioQuery: '',
     audioSort: 'rank-asc',
     audioFilter: 'all',
@@ -206,6 +207,7 @@ export function createAppStore({
         selected: state.selected,
         duration: state.duration,
         playbackRate: state.playbackRate,
+        audioPositions: state.audioPositions,
         navigation: state.navigation,
         sessionProgress
       }));

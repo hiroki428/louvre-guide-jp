@@ -473,5 +473,9 @@ export const es = Object.freeze({
   'auth.invalidEmail': 'Introduce una dirección de correo válida',
   'auth.sendFailed': 'No se pudo enviar el enlace. Revisa tu conexión e inténtalo de nuevo.',
   'auth.signedOutNotice': 'Sesión cerrada (tus datos siguen guardados en este dispositivo)',
-  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube'
+  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube',
+
+  'detail.resumeFromBtn': '▶ Continuar ({time})',
+  'detail.restartBtn': '↺ Desde el inicio',
+  'detail.seekHint': 'Arrastra o toca la barra para reproducir desde cualquier punto'
 });

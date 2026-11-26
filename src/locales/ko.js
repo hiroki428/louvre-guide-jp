@@ -473,5 +473,9 @@ export const ko = Object.freeze({
   'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
   'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
   'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
-  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다',
+
+  'detail.resumeFromBtn': '▶ 이어서 재생 ({time})',
+  'detail.restartBtn': '↺ 처음부터',
+  'detail.seekHint': '바를 움직이면 원하는 지점부터 바로 재생됩니다'
 });

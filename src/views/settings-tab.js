@@ -176,6 +176,7 @@ export function wireSettingsTab(ctx) {
     if (!window.confirm(t('settings.resetConfirm', null, state.lang))) return;
     ctx.clearProgressNotice();
     state.viewed.clear();
+    state.audioPositions = {};
     state.navigation = navigationStateFromRoute(navigationIndex, ctx.routableIds());
     state.selected = ctx.currentPlan().ids[0] ?? null;
     ctx.persistState();

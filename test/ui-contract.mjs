@@ -90,6 +90,8 @@ assert.match(main, /data-splash-lang/, 'splash screen must offer language select
 assert.match(main, /data-splash-start/, 'splash screen must offer start button for initial language confirmation');
 assert.match(main, /hasChosenLang/, 'initial splash must wait until user explicitly confirms language');
 assert.match(main, /data-change-course/);
+assert.match(main, /data-restart-audio/, 'work detail must offer restart-from-beginning control for mid-playback resume');
+assert.match(sw, /serveAudioWithRange/, 'Service Worker must support HTTP 206 Range responses for offline audio seeking');
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(mapTabSection, /has-destination/, 'floor tab must highlight the floor containing the next artwork');
 assert.match(mapTabSection, /class="floor-next-badge"/, 'floor tab must display a clear next-artwork badge on the destination floor');

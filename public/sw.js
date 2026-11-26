@@ -1,4 +1,4 @@
-const SHELL = 'louvre-shell-v54';
+const SHELL = 'louvre-shell-v55';
 const AUDIO = 'louvre-audio-v2';
 const IMAGES = 'louvre-images-v1';
 
@@ -68,13 +68,51 @@ self.addEventListener('activate', event => {
   );
 });
 
+async function serveAudioWithRange(request, cachedResponse) {
+  const rangeHeader = request.headers.get('range');
+  if (!rangeHeader) return cachedResponse;
+  const match = /^bytes=(\d*)-(\d*)$/i.exec(rangeHeader.trim());
+  if (!match || (!match[1] && !match[2])) return cachedResponse;
+  const buffer = await cachedResponse.clone().arrayBuffer();
+  const total = buffer.byteLength;
+  if (total === 0) return cachedResponse;
+  let start;
+  let end;
+  if (match[1]) {
+    start = Number(match[1]);
+    end = match[2] ? Math.min(total - 1, Number(match[2])) : total - 1;
+  } else {
+    const suffixLen = Number(match[2]);
+    start = Math.max(0, total - suffixLen);
+    end = total - 1;
+  }
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start > end || start >= total) {
+    return new Response(null, {status: 416, headers: {'Content-Range': `bytes */${total}`}});
+  }
+  const chunk = buffer.slice(start, end + 1);
+  return new Response(chunk, {
+    status: 206,
+    statusText: 'Partial Content',
+    headers: {
+      'Content-Type': cachedResponse.headers.get('Content-Type') || 'audio/mpeg',
+      'Content-Length': String(chunk.byteLength),
+      'Content-Range': `bytes ${start}-${end}/${total}`,
+      'Accept-Ranges': 'bytes'
+    }
+  });
+}
+
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
   if (url.pathname.includes('/audio/')) {
     event.respondWith(
-      caches.open(AUDIO).then(async cache => (await cache.match(event.request)) || fetch(event.request))
+      caches.open(AUDIO).then(async cache => {
+        const cached = await cache.match(event.request.url);
+        if (cached) return serveAudioWithRange(event.request, cached);
+        return fetch(event.request);
+      })
     );
     return;
   }
