@@ -48,6 +48,7 @@
 | ルート編成ローディングオーバーレイ | `src/app/route-loader.js` |
 | 共通フォーマッタ・サムネイル・トースト通知・下部タブHTML | `src/app/ui-helpers.js` |
 | 多言語化エンジン・言語辞書・作品翻訳パック（日・英・仏・中・韓・西の6言語） | `src/i18n.js` / `src/locales/*.js` / `src/locales/works.*.json` |
+| 多言語音声ガイド（日本語直下＋英・仏・中・韓・西サブフォルダ）と生成スクリプト | `public/audio/{en,fr,zh,ko,es}/*.mp3` / `scripts/generate-multilang-audio.py` |
 | 経路探索エンジン / プラン最適化 / 検索ロジック / アプリ定数 | `src/navigation.js` / `src/my-plan.js` / `src/catalog.js` / `src/app-config.js` |
 
 #### フロアマップ・経路グラフ生成（`scripts/map-builder/`）

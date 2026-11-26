@@ -124,6 +124,20 @@ ctx.audio = createAudioController(ctx);
 ctx.planActions = createPlanActions(ctx);
 ctx.cloudSync = createAuthSyncController(ctx);
 
+async function switchAppLanguage(next) {
+  if (!next || next === ctx.state.lang) return;
+  const applied = ctx.setAppLang(next);
+  ctx.audio.handleLanguageChange();
+  const meta = getLangMeta(applied);
+  ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+  render();
+  const [localeLoaded] = await Promise.all([
+    ensureWorkLocale(applied, appBase),
+    ctx.audio.loadDownloads()
+  ]);
+  if (localeLoaded || ctx.state.lang === applied) render();
+}
+
 function wireShell() {
   const {state, maxRoutableCount, planActions, audio} = ctx;
 
@@ -216,15 +230,7 @@ function wireShell() {
   });
 
   document.querySelectorAll('[data-set-lang]').forEach(btn => {
-    btn.onclick = async () => {
-      const next = btn.dataset.setLang;
-      if (!next || next === state.lang) return;
-      const applied = ctx.setAppLang(next);
-      const meta = getLangMeta(applied);
-      ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
-      render();
-      if (await ensureWorkLocale(applied, appBase)) render();
-    };
+    btn.onclick = () => switchAppLanguage(btn.dataset.setLang);
   });
 }
 
@@ -255,11 +261,16 @@ function render() {
           if (list) list.scrollTop = scrollTop;
         };
         const applied = ctx.setAppLang(next);
+        ctx.audio.handleLanguageChange();
         const meta = getLangMeta(applied);
         ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
         render();
         restoreScroll();
-        if (await ensureWorkLocale(applied, appBase)) {
+        const [localeLoaded] = await Promise.all([
+          ensureWorkLocale(applied, appBase),
+          ctx.audio.loadDownloads()
+        ]);
+        if (localeLoaded || state.lang === applied) {
           render();
           restoreScroll();
         }

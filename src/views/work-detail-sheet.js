@@ -1,6 +1,6 @@
 import {audioLengthsFor} from '../catalog.js';
 import {formatMinutesLabel} from '../my-plan.js';
-import {localizeWork, t} from '../i18n.js';
+import {hasNativeAudio, localizeWork, t} from '../i18n.js';
 import {creatorMeta, esc, formatAudioLengthLabel, formatClock, formatRate, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
 
 export function openWorkDetail(ctx, workId, roomWorkIds = null) {
@@ -91,7 +91,7 @@ export function workDetailSheetMarkup(ctx) {
             ? `<div class="durations">${lengths.map(opt => `<button type="button" class="chip ${length === opt ? 'active' : ''}" data-detail-duration="${opt}" data-detail-work="${esc(work.id)}">${esc(formatAudioLengthLabel(opt, lang))}</button>`).join('')}</div>`
             : `<span class="minor">${esc(tr('audio.guideDuration', {label: singleGuideLabel}))}</span>`}
         </div>
-        ${lang !== 'ja' ? `<p class="audio-lang-note">${esc(tr('audio.jpAudioNote'))}</p>` : ''}
+        ${!hasNativeAudio(lang) ? `<p class="audio-lang-note">${esc(tr('audio.jpAudioNote'))}</p>` : ''}
         <div class="sheet-seek-wrap">
           <input type="range" min="0" max="1000" value="${ratio}" style="--seek-pct:${pct}%" data-seek data-seek-work="${esc(work.id)}" aria-label="${esc(tr('detail.seekAria'))}">
           <div class="sheet-time-row">
