@@ -473,5 +473,21 @@ export const es = Object.freeze({
   'auth.invalidEmail': 'Introduce una dirección de correo válida',
   'auth.sendFailed': 'No se pudo enviar el enlace. Revisa tu conexión e inténtalo de nuevo.',
   'auth.signedOutNotice': 'Sesión cerrada (tus datos siguen guardados en este dispositivo)',
-  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube'
+  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube',
+
+  'authGate.eyebrow': 'BIENVENIDO',
+  'authGate.cardAria': 'Opciones iniciales de acceso',
+  'authGate.title': 'Bienvenido a {appName}',
+  'authGate.lead': 'Inicia sesión para sincronizar Mi Plan y tus obras vistas entre ordenador y móvil, o entra ahora mismo como invitado.',
+  'authGate.sharedHint': 'Tienes un plan compartido listo para abrir justo después de iniciar sesión o entrar como invitado.',
+  'authGate.benefit1Title': 'Sincronización entre dispositivos',
+  'authGate.benefit1Sub': 'Organiza tu visita en el ordenador y síguela en tu móvil dentro del museo',
+  'authGate.benefit2Title': 'Seguro y sin contraseñas',
+  'authGate.benefit2Sub': 'Accede fácilmente con Google o enlace mágico por correo',
+  'authGate.benefit3Title': 'Acceso completo como invitado',
+  'authGate.benefit3Sub': 'Si inicias sesión más adelante, tus datos de invitado se combinarán sin perder nada',
+  'authGate.devModeNote': 'Modo de desarrollo (Supabase aún no configurado). Pulsa «Continuar como invitado» abajo para probar todo.',
+  'authGate.orDivider': 'o',
+  'authGate.guestBtn': 'Continuar como invitado',
+  'authGate.guestSub': 'Sin registro · guardado localmente en este dispositivo',
 });

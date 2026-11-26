@@ -473,5 +473,21 @@ export const zh = Object.freeze({
   'auth.invalidEmail': '请输入有效的邮箱地址',
   'auth.sendFailed': '发送失败，请检查网络后重试。',
   'auth.signedOutNotice': '已退出登录（本设备上的数据仍会保留）',
-  'auth.syncedNotice': '已与云端同步行程和设置'
+  'auth.syncedNotice': '已与云端同步行程和设置',
+
+  'authGate.eyebrow': '欢迎使用',
+  'authGate.cardAria': '首次登录选择',
+  'authGate.title': '欢迎来到 {appName}',
+  'authGate.lead': '登录后可在电脑与手机间同步行程与已看记录，也可直接以游客身份立即开始。',
+  'authGate.sharedHint': '检测到好友分享的行程，登录或游客进入后即可查看。',
+  'authGate.benefit1Title': '多设备自动同步',
+  'authGate.benefit1Sub': '出发前在电脑规划路线，到馆后在手机无缝使用',
+  'authGate.benefit2Title': '免密安全登录',
+  'authGate.benefit2Sub': '支持 Google 或邮箱一次性登录链接',
+  'authGate.benefit3Title': '游客可用全部功能',
+  'authGate.benefit3Sub': '之后随时可在设置中登录，游客记录会自动合并保留',
+  'authGate.devModeNote': '当前处于开发模式（尚未配置 Supabase），请点击下方「以游客身份开始」体验全部功能。',
+  'authGate.orDivider': '或',
+  'authGate.guestBtn': '以游客身份开始',
+  'authGate.guestSub': '无需登录 · 数据保存在本设备中',
 });

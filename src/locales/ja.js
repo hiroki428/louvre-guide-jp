@@ -473,5 +473,21 @@ export const ja = Object.freeze({
   'auth.invalidEmail': '有効なメールアドレスを入力してください',
   'auth.sendFailed': '送信できませんでした。通信状態を確認して再度お試しください。',
   'auth.signedOutNotice': 'ログアウトしました（端末内のデータはそのまま残ります）',
-  'auth.syncedNotice': 'クラウドとデータを同期しました'
+  'auth.syncedNotice': 'クラウドとデータを同期しました',
+
+  'authGate.eyebrow': 'WELCOME',
+  'authGate.cardAria': '初回ログイン選択',
+  'authGate.title': '{appName} へようこそ',
+  'authGate.lead': 'ログインすると、PCで作ったマイプランや鑑賞済みチェックをスマホと自動同期できます。ログインせずにすぐ始めることもできます。',
+  'authGate.sharedHint': '友達から共有されたプランがあります。ログインまたはゲスト開始後にすぐ開けます。',
+  'authGate.benefit1Title': 'PCとスマホで自動同期',
+  'authGate.benefit1Sub': '旅行前にPCで組んだルートを現地スマホへそのまま引き継ぎ',
+  'authGate.benefit2Title': 'パスワード不要で安心',
+  'authGate.benefit2Sub': 'Google またはメールのワンタイムリンクで安全にログイン',
+  'authGate.benefit3Title': 'ゲストでも全機能OK',
+  'authGate.benefit3Sub': 'あとから設定画面でログインしても、ゲスト中の記録は消えません',
+  'authGate.devModeNote': '現在は開発モード（Supabase未接続）のため、下の「ゲストとして始める」から全機能をお試しいただけます。',
+  'authGate.orDivider': 'または',
+  'authGate.guestBtn': 'ゲストとして始める',
+  'authGate.guestSub': 'ログイン不要・このまま端末保存で全機能を利用できます',
 });

@@ -473,5 +473,21 @@ export const ko = Object.freeze({
   'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
   'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
   'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
-  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다',
+
+  'authGate.eyebrow': '환영합니다',
+  'authGate.cardAria': '초기 로그인 선택',
+  'authGate.title': '{appName}에 오신 것을 환영합니다',
+  'authGate.lead': '로그인하면 PC와 스마트폰 간에 내 플랜과 감상 기록을 동기화할 수 있으며, 게스트로 바로 시작할 수도 있습니다.',
+  'authGate.sharedHint': '친구가 보낸 공유 플랜이 있습니다. 로그인 또는 게스트 입장 후 바로 열 수 있어요.',
+  'authGate.benefit1Title': '기기 간 자동 동기화',
+  'authGate.benefit1Sub': '여행 전 PC에서 짠 동선을 현지 스마트폰에서 그대로 이용',
+  'authGate.benefit2Title': '비밀번호 없는 안전한 로그인',
+  'authGate.benefit2Sub': 'Google 또는 이메일 일회용 링크로 간편하게 접속',
+  'authGate.benefit3Title': '게스트도 모든 기능 사용',
+  'authGate.benefit3Sub': '나중에 설정에서 로그인해도 게스트 기록이 안전하게 합쳐집니다',
+  'authGate.devModeNote': '현재 개발 모드(Supabase 미연결)입니다. 아래 “게스트로 시작하기”로 모든 기능을 체험해 보세요.',
+  'authGate.orDivider': '또는',
+  'authGate.guestBtn': '게스트로 시작하기',
+  'authGate.guestSub': '로그인 없이 이 기기에 저장하며 모든 기능 이용',
 });

@@ -128,4 +128,12 @@ assert.match(schema, /enable row level security/i, 'RLS must be enabled on all u
 assert.match(schema, /share_token text unique/, 'user_plans must prepare share_token for future companion sharing');
 assert.match(schema, /unique \(owner_id, slot\)/, 'user_plans must define unique (owner_id, slot) for upsert');
 
+// 6. Initial auth gate contract (Google + Email Magic Link + Guest option)
+const mainSrc = await readFile(new URL('../src/main.js', import.meta.url), 'utf8');
+const authGateSrc = await readFile(new URL('../src/views/auth-gate.js', import.meta.url), 'utf8');
+assert.match(mainSrc, /auth_gate/, 'initial auth gate phase must be wired in main.js');
+assert.match(authGateSrc, /data-continue-guest/, 'guest login option must be offered on initial auth gate');
+assert.match(authGateSrc, /data-signin-google/, 'Google sign-in must be offered on initial auth gate');
+assert.match(authGateSrc, /data-signin-email/, 'Email magic-link sign-in must be offered on initial auth gate');
+
 console.log('supabase auth & cloud sync contract: passed');

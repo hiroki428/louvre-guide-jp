@@ -473,5 +473,21 @@ export const en = Object.freeze({
   'auth.invalidEmail': 'Please enter a valid email address',
   'auth.sendFailed': 'Could not send sign-in link. Please check your connection and try again.',
   'auth.signedOutNotice': 'Signed out (your data remains saved on this device)',
-  'auth.syncedNotice': 'Synced your plan and settings with the cloud'
+  'auth.syncedNotice': 'Synced your plan and settings with the cloud',
+
+  'authGate.eyebrow': 'WELCOME',
+  'authGate.cardAria': 'Initial sign-in options',
+  'authGate.title': 'Welcome to {appName}',
+  'authGate.lead': 'Sign in to sync your My Plan and viewed artworks between desktop and mobile, or start right away as a guest.',
+  'authGate.sharedHint': 'A friend’s shared plan is ready to open right after you sign in or continue as a guest.',
+  'authGate.benefit1Title': 'Sync across devices',
+  'authGate.benefit1Sub': 'Plan on your computer before your trip and continue on your phone at the museum',
+  'authGate.benefit2Title': 'Passwordless & secure',
+  'authGate.benefit2Sub': 'Sign in safely with Google or a one-time email link',
+  'authGate.benefit3Title': 'Full guest access',
+  'authGate.benefit3Sub': 'Your guest data is safely merged if you decide to sign in later',
+  'authGate.devModeNote': 'Cloud auth is in dev mode (Supabase not configured yet). Tap “Continue as Guest” below to use all features.',
+  'authGate.orDivider': 'or',
+  'authGate.guestBtn': 'Continue as Guest',
+  'authGate.guestSub': 'No sign-in required · saved locally on this device',
 });

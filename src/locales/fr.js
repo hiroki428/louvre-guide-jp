@@ -473,5 +473,21 @@ export const fr = Object.freeze({
   'auth.invalidEmail': 'Veuillez saisir une adresse e-mail valide',
   'auth.sendFailed': 'Impossible d’envoyer le lien. Vérifiez votre connexion et réessayez.',
   'auth.signedOutNotice': 'Déconnecté (vos données restent enregistrées sur cet appareil)',
-  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud'
+  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud',
+
+  'authGate.eyebrow': 'BIENVENUE',
+  'authGate.cardAria': 'Options de connexion initiale',
+  'authGate.title': 'Bienvenue sur {appName}',
+  'authGate.lead': 'Connectez-vous pour synchroniser votre parcours entre ordinateur et mobile, ou commencez tout de suite en invité.',
+  'authGate.sharedHint': 'Un parcours partagé par un ami est prêt dès votre entrée dans l’application.',
+  'authGate.benefit1Title': 'Synchronisation multi-appareils',
+  'authGate.benefit1Sub': 'Préparez votre visite sur ordinateur et retrouvez-la sur votre téléphone au musée',
+  'authGate.benefit2Title': 'Sans mot de passe',
+  'authGate.benefit2Sub': 'Connexion sécurisée via Google ou lien magique par e-mail',
+  'authGate.benefit3Title': 'Accès complet en invité',
+  'authGate.benefit3Sub': 'Vos données locales seront fusionnées si vous vous connectez plus tard',
+  'authGate.devModeNote': 'Mode développement (Supabase non configuré). Touchez « Continuer en invité » ci-dessous pour tout tester.',
+  'authGate.orDivider': 'ou',
+  'authGate.guestBtn': 'Continuer en invité',
+  'authGate.guestSub': 'Sans connexion · enregistré localement sur cet appareil',
 });

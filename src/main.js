@@ -7,6 +7,7 @@ import {bottomTabsMarkup, createNoticeController, esc, noticeMarkup} from './app
 import {createAudioController} from './app/audio-controller.js';
 import {createPlanActions} from './app/plan-actions.js';
 import {createAuthSyncController} from './app/cloud-sync.js';
+import {authGateView, wireAuthGate} from './views/auth-gate.js';
 import {courseSelectView, wireCourseSelect} from './views/course-select.js';
 import {mapTabView, wireMapTab} from './views/map-tab.js';
 import {planTabView, wirePlanTab} from './views/plan-tab.js';
@@ -194,6 +195,18 @@ ctx.audio = createAudioController(ctx);
 ctx.planActions = createPlanActions(ctx);
 ctx.cloudSync = createAuthSyncController(ctx);
 
+function resolvePostSplashPhase() {
+  const {state} = ctx;
+  if (state.auth.user && !state.hasCompletedAuthGate) {
+    state.hasCompletedAuthGate = true;
+    ctx.persistState({skipSync: true});
+  }
+  if (!state.hasCompletedAuthGate && !state.hasChosenCourse) {
+    return 'auth_gate';
+  }
+  return state.hasChosenCourse ? 'main' : 'select_time';
+}
+
 function wireShell() {
   const {state, maxRoutableCount, planActions, audio} = ctx;
 
@@ -295,6 +308,21 @@ function wireShell() {
   });
 }
 
+function wireLangButtons() {
+  const {state} = ctx;
+  document.querySelectorAll('[data-set-lang]').forEach(btn => {
+    btn.onclick = async () => {
+      const next = btn.dataset.setLang;
+      if (!next || next === state.lang) return;
+      const applied = ctx.setAppLang(next);
+      const meta = getLangMeta(applied);
+      ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
+      render();
+      if (await ensureWorkLocale(applied, appBase)) render();
+    };
+  });
+}
+
 function wireMain() {
   wireShell();
   wireAudioSettingsModal(ctx);
@@ -310,20 +338,16 @@ function render() {
   const {state} = ctx;
   const lang = state.lang;
   if (state.appPhase === 'splash') return;
+  if (state.appPhase === 'auth_gate') {
+    app.innerHTML = authGateView(ctx) + noticeMarkup(ctx, false);
+    wireAuthGate(ctx);
+    wireLangButtons();
+    return;
+  }
   if (state.appPhase === 'select_time') {
     app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
-    document.querySelectorAll('[data-set-lang]').forEach(btn => {
-      btn.onclick = async () => {
-        const next = btn.dataset.setLang;
-        if (!next || next === state.lang) return;
-        const applied = ctx.setAppLang(next);
-        const meta = getLangMeta(applied);
-        ctx.setNotice(t('app.languageSwitched', {label: meta.label}, applied), false, 2800);
-        render();
-        if (await ensureWorkLocale(applied, appBase)) render();
-      };
-    });
+    wireLangButtons();
     return;
   }
   const plan = ctx.currentPlan();
@@ -398,7 +422,7 @@ if (!skipSplashImmediate) {
     await ensureWorkLocale(splashLang, appBase);
     document.querySelector('.splash')?.classList.add('leaving');
     setTimeout(() => {
-      ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';
+      ctx.state.appPhase = resolvePostSplashPhase();
       render();
     }, 460);
   };
@@ -416,6 +440,6 @@ if (!skipSplashImmediate) {
   }
 } else {
   await downloadsPromise;
-  ctx.state.appPhase = ctx.state.hasChosenCourse ? 'main' : 'select_time';
+  ctx.state.appPhase = resolvePostSplashPhase();
   render();
 }
