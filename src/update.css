@@ -2126,6 +2126,21 @@ button:not(:disabled):active {
   box-shadow: inset 0 2px 5px rgb(46 35 22 / 12%);
 }
 
+.tap-feedback {
+  position: fixed;
+  z-index: 10000;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgb(170 124 57 / 48%);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.35);
+  animation: tap-feedback .32s ease-out forwards;
+}
+@keyframes tap-feedback {
+  to { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+}
+
 :is(.header-course-btn, .header-audio-btn, .map-controls button,
   .floor-tabs button, .pill-btn, .filter-chip, .action-chip, .icon-chip,
   .star-btn, .play-btn, .save-btn, .compact-btn, .action-pill,
@@ -2168,6 +2183,7 @@ button:not(:disabled):active {
 @media (prefers-reduced-motion: reduce) {
   button:not(:disabled) { transition: none; }
   button:not(:disabled):is(:active, :hover) { transform: none !important; }
+  .tap-feedback { display: none; animation: none; }
 }
 
 /* ==================== SHARED PLAN BANNER & MODALS ==================== */

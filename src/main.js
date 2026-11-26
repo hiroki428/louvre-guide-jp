@@ -31,6 +31,20 @@ const appBase = new URL('../', import.meta.url);
 const iconUrl = new URL('icons/icon-192.png', appBase).href;
 const monaUrl = new URL('images/mona.jpg', appBase).href;
 
+// Keep tap feedback visible even when an action immediately redraws its button.
+document.addEventListener('pointerdown', event => {
+  if (event.button !== 0 || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const button = event.target instanceof Element ? event.target.closest('button') : null;
+  if (!button || button.disabled || !app.contains(button)) return;
+  const ripple = document.createElement('span');
+  ripple.className = 'tap-feedback';
+  ripple.setAttribute('aria-hidden', 'true');
+  ripple.style.left = `${event.clientX}px`;
+  ripple.style.top = `${event.clientY}px`;
+  document.body.append(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove(), {once: true});
+}, {passive: true});
+
 let splashReady = false;
 let splashStartRequested = false;
 let splashSkipped = false;
