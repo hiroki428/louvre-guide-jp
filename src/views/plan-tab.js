@@ -166,10 +166,6 @@ export function planTabView(ctx, hasMini) {
         <button type="button" class="secondary compact-btn" data-open-share-modal="${items.length ? 'export' : 'import'}">${esc(tr('share.shareBtn'))}</button>
         ${plan.isShared ? `<button type="button" class="secondary compact-btn" data-copy-active-shared>${esc(tr('share.copyToMyPlanBtn'))}</button>` : ''}
         ${items.length ? `<button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${esc(saveBtnText)}</button>` : ''}
-        ${items.length ? `<div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
-          <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
-          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>
-        </div>` : ''}
       </div>
     </section>
 
