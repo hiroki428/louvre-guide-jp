@@ -3,6 +3,7 @@ import {advanceOnRouteAudio, destinationWorkId} from '../route-progress.js';
 import {correctLocation, findRoomCandidates} from '../location-support.js';
 import {buildTimedRouteWorks, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, removeMyPlanItem, timeCourseBounds, toggleMyPlan} from '../my-plan.js';
 import {localizeRoute, localizeWork, t} from '../i18n.js';
+import {savePendingSharedPlan} from './plan-share.js';
 import {runWithRouteLoader} from './route-loader.js';
 
 export function createPlanActions(ctx) {
@@ -321,11 +322,120 @@ export function createPlanActions(ctx) {
     ctx.render();
   }
 
+  function captureReturnSnapshot() {
+    if (ctx.state.planMode === 'shared') return;
+    ctx.state.returnPlanSnapshot = {
+      planMode: ctx.state.planMode,
+      routeId: ctx.state.routeId,
+      minutes: ctx.state.minutes,
+      customTimedIds: ctx.state.customTimedIds ? [...ctx.state.customTimedIds] : null,
+      customTimedMinutes: ctx.state.customTimedMinutes,
+      selected: ctx.state.selected,
+      floor: ctx.state.floor
+    };
+  }
+
+  function activateSharedPlan(shared) {
+    if (!shared || !Array.isArray(shared.ids) || !shared.ids.length) return;
+    const validIds = shared.ids.filter(id => ctx.byId[id]);
+    if (!validIds.length) return;
+    ctx.clearProgressNotice();
+    captureReturnSnapshot();
+    ctx.state.sharedPlan = {title: shared.title || '', ids: validIds};
+    ctx.state.planMode = 'shared';
+    ctx.state.hasChosenCourse = true;
+    ctx.state.incomingSharedPlan = null;
+    savePendingSharedPlan(null);
+    const ids = ctx.routableIds();
+    ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
+    ctx.state.selected = validIds[0] ?? null;
+    if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
+      ctx.state.floor = ctx.byId[ids[0]].floor;
+    }
+    ctx.state.appPhase = 'main';
+    ctx.state.tab = ids.length ? 'map' : 'plan';
+    ctx.persistState();
+    const label = ctx.state.sharedPlan.title || tr('share.defaultPlanTitle');
+    ctx.setNotice(tr('share.openedNotice', {title: label}), false, 3600);
+    ctx.render();
+    window.scrollTo({top: 0});
+  }
+
+  function chooseSharedPlan({goMap = false} = {}) {
+    if (!ctx.state.sharedPlan?.ids?.length) return;
+    ctx.clearProgressNotice();
+    captureReturnSnapshot();
+    ctx.state.planMode = 'shared';
+    ctx.state.hasChosenCourse = true;
+    const ids = ctx.routableIds();
+    ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
+    ctx.state.selected = ctx.state.sharedPlan.ids[0] ?? null;
+    if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
+      ctx.state.floor = ctx.byId[ids[0]].floor;
+    }
+    ctx.state.appPhase = 'main';
+    if (goMap && ids.length) ctx.state.tab = 'map';
+    ctx.persistState();
+    ctx.render();
+    window.scrollTo({top: 0});
+  }
+
+  function returnToOwnPlan() {
+    ctx.clearProgressNotice();
+    const snap = ctx.state.returnPlanSnapshot;
+    if (snap && (snap.planMode === 'myplan' || snap.planMode === 'preset')) {
+      ctx.state.planMode = snap.planMode;
+      if (snap.routeId) ctx.state.routeId = snap.routeId;
+      if (snap.minutes) ctx.state.minutes = snap.minutes;
+      ctx.state.customTimedIds = Array.isArray(snap.customTimedIds) && snap.customTimedIds.length ? [...snap.customTimedIds] : null;
+      ctx.state.customTimedMinutes = ctx.state.customTimedIds ? (snap.customTimedMinutes || snap.minutes) : null;
+    } else {
+      ctx.state.planMode = ctx.state.myPlanIds.length ? 'myplan' : 'preset';
+    }
+    const ids = ctx.routableIds();
+    ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
+    ctx.state.selected = (snap?.selected && ctx.byId[snap.selected]) ? snap.selected : (ids[0] ?? null);
+    if (Number.isFinite(snap?.floor)) {
+      ctx.state.floor = snap.floor;
+    } else if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
+      ctx.state.floor = ctx.byId[ids[0]].floor;
+    }
+    ctx.persistState();
+    ctx.setNotice(tr('share.returnedOwnNotice', {label: ctx.currentPlan().label}), false, 3200);
+    ctx.render();
+    window.scrollTo({top: 0});
+  }
+
+  function copySharedToMyPlan(shared) {
+    const source = shared || ctx.state.sharedPlan;
+    if (!source?.ids?.length) return;
+    const validIds = source.ids.filter(id => ctx.byId[id]);
+    const merged = [...new Set([...ctx.state.myPlanIds, ...validIds])];
+    const addedCount = merged.length - ctx.state.myPlanIds.length;
+    ctx.state.myPlanIds = merged;
+    ctx.state.incomingSharedPlan = null;
+    savePendingSharedPlan(null);
+    syncMyPlanNavigation();
+    ctx.persistState();
+    ctx.setNotice(
+      addedCount > 0
+        ? tr('share.copiedToMyPlanNotice', {added: addedCount, total: merged.length})
+        : tr('share.alreadyInMyPlanNotice'),
+      false,
+      3600
+    );
+    ctx.render();
+  }
+
   return {
     setPreferElevator,
     choosePresetCourse,
     chooseTimedCourse,
     chooseMyPlan,
+    activateSharedPlan,
+    chooseSharedPlan,
+    returnToOwnPlan,
+    copySharedToMyPlan,
     handleOptimizeMyPlan,
     syncMyPlanNavigation,
     selectRouteWork,

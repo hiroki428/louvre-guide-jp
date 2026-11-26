@@ -31,6 +31,7 @@
 | 初期のコース選択画面（滞在時間・作品数・テーマ別） | `src/views/course-select.js` |
 | マップタブ（階タブ・施設フィルタ・道に迷ったときサポート） | `src/views/map-tab.js` |
 | プラン一覧タブ（コース切替・作品カード・並び替え） | `src/views/plan-tab.js` |
+| 友達プラン共有モーダル・受信ポップアップ・共有中バナー（QR/URL） | `src/views/plan-share-modal.js` / `src/app/plan-share.js` |
 | 音声一覧タブ（検索・絞り込み・ソート・作品行） | `src/views/audio-tab.js` |
 | 案内・設定タブ（オフライン保存・文字サイズ・クレジット等） | `src/views/settings-tab.js` |
 | 作品詳細ボトムシート（背景・見どころ・個別音声再生） | `src/views/work-detail-sheet.js` |
@@ -206,9 +207,9 @@ npm run build        # dist/ ビルド確認
 
 ## 6. テスト・安全運用
 
-- 変更を加えたら、**コミット前に必ず `npm test`（全9本）と `npm run build` を通す**。
+- 変更を加えたら、**コミット前に必ず `npm test`（全10本）と `npm run build` を通す**。
   - `test/map-contract.mjs`：全5階層の形状・部屋番号・施設数・重なり防止・HUD余白・38系統リンク検証
   - `test/navigation.mjs`：経路探索・EV優先・未確認階段/EVの経路混入禁止・縦戻り禁止
-  - `test/route-progress.mjs` / `test/location-support.mjs` / `test/my-plan.mjs` / `test/ui-contract.mjs` / `test/catalog.mjs` / `test/i18n.mjs` / `test/cloud-sync.mjs`
+  - `test/route-progress.mjs` / `test/location-support.mjs` / `test/my-plan.mjs` / `test/ui-contract.mjs` / `test/catalog.mjs` / `test/i18n.mjs` / `test/cloud-sync.mjs` / `test/plan-share.mjs`
 - 既存の音声ファイル（`public/audio/`）・作品画像（`public/images/`）・元Excel（`data/`）を無断で削除・上書きしない。
 - 新しい仕様変更や例外ルールを決めた場合は、コードと同時に **この `AGENTS.md` も更新してGitHubへ共有する**。
