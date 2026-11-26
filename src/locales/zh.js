@@ -473,5 +473,14 @@ export const zh = Object.freeze({
   'auth.invalidEmail': '请输入有效的邮箱地址',
   'auth.sendFailed': '发送失败，请检查网络后重试。',
   'auth.signedOutNotice': '已退出登录（本设备上的数据仍会保留）',
-  'auth.syncedNotice': '已与云端同步行程和设置'
+  'auth.syncedNotice': '已与云端同步行程和设置',
+
+  'notice.viewedRemoved': '已取消「{title}」的已看标记',
+  'notice.viewedAdvanced': '已将「{title}」标为已看 → 下一站：「{next}」',
+  'notice.viewedComplete': '已完成「{title}」！全部作品参观完成 🎉',
+  'notice.viewedMarked': '已将「{title}」标为已看',
+  'plan.completeBanner': '🎉 路线完成！全部 {total} 件作品已参观',
+  'plan.remainingSummary': '剩余 {count} 件 · 预计还需约 {minutes} 分钟',
+  'plan.nextStopLabel': '下一站',
+  'plan.markDoneCta': '✓ 标为已看'
 });

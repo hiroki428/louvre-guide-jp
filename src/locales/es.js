@@ -473,5 +473,14 @@ export const es = Object.freeze({
   'auth.invalidEmail': 'Introduce una dirección de correo válida',
   'auth.sendFailed': 'No se pudo enviar el enlace. Revisa tu conexión e inténtalo de nuevo.',
   'auth.signedOutNotice': 'Sesión cerrada (tus datos siguen guardados en este dispositivo)',
-  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube'
+  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube',
+
+  'notice.viewedRemoved': 'Se quitó la marca de vista de «{title}»',
+  'notice.viewedAdvanced': '«{title}» marcada como vista → Siguiente: «{next}»',
+  'notice.viewedComplete': '¡«{title}» completada! Terminaste todo el recorrido 🎉',
+  'notice.viewedMarked': '«{title}» marcada como vista',
+  'plan.completeBanner': '🎉 ¡Recorrido completado! Las {total} obras vistas',
+  'plan.remainingSummary': '{count} restantes · aprox. {minutes} min',
+  'plan.nextStopLabel': 'PRÓXIMA PARADA',
+  'plan.markDoneCta': '✓ Marcar vista'
 });

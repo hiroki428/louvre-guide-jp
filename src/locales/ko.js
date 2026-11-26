@@ -473,5 +473,14 @@ export const ko = Object.freeze({
   'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
   'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
   'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
-  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다',
+
+  'notice.viewedRemoved': '“{title}”의 감상 완료를 해제했습니다',
+  'notice.viewedAdvanced': '“{title}” 감상 완료 → 다음: “{next}”',
+  'notice.viewedComplete': '“{title}” 완료! 코스 전체 작품을 완주했습니다 🎉',
+  'notice.viewedMarked': '“{title}”을 감상 완료로 표시했습니다',
+  'plan.completeBanner': '🎉 코스 완주! 전체 {total}작품을 모두 감상했습니다',
+  'plan.remainingSummary': '남은 {count}작품 · 예상 약 {minutes}분',
+  'plan.nextStopLabel': '다음 목적지',
+  'plan.markDoneCta': '✓ 완료 체크'
 });

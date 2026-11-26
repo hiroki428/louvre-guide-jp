@@ -80,7 +80,7 @@ export function workDetailSheetMarkup(ctx) {
 
       <div class="detail-quick-actions">
         <button type="button" class="action-pill ${inMyPlan ? 'active' : ''}" data-toggle-myplan="${esc(work.id)}">${esc(inMyPlan ? tr('detail.inMyPlan') : tr('detail.addMyPlan'))}</button>
-        <button type="button" class="action-pill ${isViewed ? 'done' : ''}" data-toggle-viewed="${esc(work.id)}">${esc(isViewed ? tr('detail.viewed') : tr('detail.markViewed'))}</button>
+        <button type="button" class="action-pill action-pill-done ${isViewed ? 'done' : ''}" data-toggle-viewed="${esc(work.id)}" aria-pressed="${isViewed}">${esc(isViewed ? tr('detail.viewed') : tr('detail.markViewed'))}</button>
         ${hasMap ? `<button type="button" class="action-pill" data-show-map="${esc(work.id)}">${esc(tr('detail.showOnMap'))}</button>` : ''}
       </div>
 

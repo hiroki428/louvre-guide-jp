@@ -473,5 +473,14 @@ export const fr = Object.freeze({
   'auth.invalidEmail': 'Veuillez saisir une adresse e-mail valide',
   'auth.sendFailed': 'Impossible d’envoyer le lien. Vérifiez votre connexion et réessayez.',
   'auth.signedOutNotice': 'Déconnecté (vos données restent enregistrées sur cet appareil)',
-  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud'
+  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud',
+
+  'notice.viewedRemoved': 'Marquage vu retiré pour « {title} »',
+  'notice.viewedAdvanced': '« {title} » marquée vue → Suivante : « {next} »',
+  'notice.viewedComplete': '« {title} » terminée ! Parcours complet accompli 🎉',
+  'notice.viewedMarked': '« {title} » marquée comme vue',
+  'plan.completeBanner': '🎉 Parcours terminé ! Les {total} œuvres ont été vues',
+  'plan.remainingSummary': '{count} restantes · env. {minutes} min',
+  'plan.nextStopLabel': 'PROCHAINE ÉTAPE',
+  'plan.markDoneCta': '✓ Marquer vue'
 });

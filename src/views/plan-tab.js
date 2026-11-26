@@ -11,7 +11,16 @@ export function planTabView(ctx, hasMini) {
   const estimates = ctx.currentEstimates();
   const destId = destinationWorkId(navigationIndex, state.navigation);
   const viewedInPlan = items.filter(w => state.viewed.has(w.id)).length;
+  const remainingCount = Math.max(0, items.length - viewedInPlan);
   const pct = items.length ? Math.round((viewedInPlan / items.length) * 100) : 0;
+  const estRemainingMinutes = items.length > 0 && remainingCount > 0
+    ? Math.max(5, Math.round((plan.estimatedMinutes * remainingCount) / items.length))
+    : 0;
+  const nextRawWork = (destId && !state.viewed.has(destId) ? items.find(w => w.id === destId) : null)
+    || items.find(w => !state.viewed.has(w.id))
+    || null;
+  const nextWork = nextRawWork ? localizeWork(nextRawWork, lang) : null;
+  const isAllDone = items.length > 0 && viewedInPlan === items.length;
   const allSaved = items.length > 0 && items.every(w => state.downloaded.has(`${w.id}-${ctx.preferredLengthFor(w)}`));
   const saveBtnText = state.bulkDownload.active
     ? tr('plan.savingBulk', {done: state.bulkDownload.done, total: state.bulkDownload.total})
@@ -28,16 +37,47 @@ export function planTabView(ctx, hasMini) {
       <button type="button" class="pill-btn ${plan.isCustom ? 'active' : ''}" data-switch-myplan>${esc(tr('plan.myPlanPill', {count: state.myPlanIds.length}))}</button>
     </section>
 
-    <section class="plan-summary-card">
+    <section class="plan-summary-card ${isAllDone ? 'is-complete' : ''}">
       <div class="plan-summary-top">
         <div>
           <span class="eyebrow">${esc(plan.isCustom ? tr('plan.eyebrowCustom') : plan.kind === 'theme' ? tr('plan.eyebrowTheme') : tr('plan.eyebrowRec'))}</span>
           <h1>${esc(plan.label)}</h1>
           ${plan.subtitle ? `<p class="plan-subtitle">${esc(plan.subtitle)}</p>` : ''}
         </div>
-        <div class="plan-progress-badge">${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</div>
+        ${items.length ? `<div class="plan-progress-ring ${isAllDone ? 'is-complete' : ''}">
+          <strong>${pct}%</strong>
+          <span>${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</span>
+        </div>` : `<div class="plan-progress-badge">${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</div>`}
       </div>
-      <div class="progress-bar" aria-label="${esc(tr('plan.progressAria'))}"><span style="width:${pct}%"></span></div>
+
+      ${items.length ? `<div class="plan-progress-panel">
+        <div class="progress-bar progress-bar-lg ${isAllDone ? 'is-complete' : ''}" aria-label="${esc(tr('plan.progressAria'))}">
+          <span style="width:${pct}%"></span>
+        </div>
+        ${items.length <= 20 ? `<div class="progress-steps-track" aria-hidden="true">
+          ${items.map(w => `<i class="${state.viewed.has(w.id) ? 'is-done' : w.id === destId ? 'is-next' : ''}"></i>`).join('')}
+        </div>` : ''}
+        <div class="plan-progress-foot">
+          ${isAllDone
+            ? `<span class="progress-complete-banner">${esc(tr('plan.completeBanner', {total: items.length}))}</span>`
+            : `<span class="progress-remaining-text">${esc(tr('plan.remainingSummary', {count: remainingCount, minutes: estRemainingMinutes}))}</span>`}
+        </div>
+        ${!isAllDone && nextWork ? `<div class="progress-next-strip">
+          <button type="button" class="progress-next-info" data-open-detail="${esc(nextWork.id)}">
+            ${thumbMarkup(ctx, nextWork, 'thumb-xs')}
+            <span>
+              <small>${esc(tr('plan.nextStopLabel'))}</small>
+              <strong>${esc(nextWork.title)}</strong>
+              <em>${esc(workStatus(nextWork, lang))}</em>
+            </span>
+          </button>
+          <div class="progress-next-actions">
+            <button type="button" class="done-quick-cta" data-toggle-viewed="${esc(nextWork.id)}">${esc(tr('plan.markDoneCta'))}</button>
+            ${navigationIndex.nodes.has(`work:${nextWork.id}`) ? `<button type="button" class="action-chip" data-show-map="${esc(nextWork.id)}">${esc(tr('plan.mapBtn'))}</button>` : ''}
+          </div>
+        </div>` : ''}
+      </div>` : ''}
+
       ${items.length ? `<p class="plan-meta-line">${esc(tr('plan.metaLine', {est: plan.estimatedMinutes, visit: plan.visitMinutes, walk: plan.walkMinutes, audio: plan.audioMinutes, buffer: plan.bufferMinutes}))}</p>` : ''}
       ${items.length ? `<div class="plan-summary-actions">
         ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
@@ -63,7 +103,7 @@ export function planTabView(ctx, hasMini) {
         const est = estimates[work.id];
         return `<li class="plan-card ${isDest ? 'is-destination' : ''} ${isViewed ? 'is-viewed' : ''}">
           <div class="plan-card-main" data-open-detail="${esc(work.id)}" role="button" tabindex="0">
-            <span class="plan-order">${index + 1}</span>
+            <span class="plan-order ${isViewed ? 'is-done' : ''}">${isViewed ? '✓' : index + 1}</span>
             ${thumbMarkup(ctx, work, 'thumb-md')}
             <div class="plan-card-copy">
               <div class="plan-card-badges">
@@ -80,9 +120,12 @@ export function planTabView(ctx, hasMini) {
             </div>
           </div>
           <div class="plan-card-actions">
+            <button type="button" class="action-chip done-toggle-btn ${isViewed ? 'is-done' : isDest ? 'is-next-cta' : ''}" data-toggle-viewed="${esc(work.id)}" aria-pressed="${isViewed}">
+              <span class="done-check-dot" aria-hidden="true">${isViewed ? '✓' : ''}</span>
+              <span>${esc(isViewed ? tr('plan.doneShort') : isDest ? tr('plan.markDoneCta') : tr('plan.markDone'))}</span>
+            </button>
             <button type="button" class="action-chip play-chip ${isPlaying ? 'active' : ''}" data-quick-play="${esc(work.id)}">${esc(isPlaying ? tr('plan.stop') : tr('plan.play'))}</button>
             ${hasMap ? `<button type="button" class="action-chip" data-show-map="${esc(work.id)}">${esc(tr('plan.mapBtn'))}</button>` : ''}
-            <button type="button" class="action-chip ${isViewed ? 'done-chip' : ''}" data-toggle-viewed="${esc(work.id)}">${esc(isViewed ? tr('plan.doneShort') : tr('plan.markDone'))}</button>
             ${plan.isCustom ? `
               <button type="button" class="icon-chip" data-move-myplan="${esc(work.id)}" data-delta="-1" ${index === 0 ? 'disabled' : ''} aria-label="${esc(tr('plan.moveUpAria'))}">↑</button>
               <button type="button" class="icon-chip" data-move-myplan="${esc(work.id)}" data-delta="1" ${index === items.length - 1 ? 'disabled' : ''} aria-label="${esc(tr('plan.moveDownAria'))}">↓</button>

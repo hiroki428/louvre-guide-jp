@@ -473,5 +473,14 @@ export const en = Object.freeze({
   'auth.invalidEmail': 'Please enter a valid email address',
   'auth.sendFailed': 'Could not send sign-in link. Please check your connection and try again.',
   'auth.signedOutNotice': 'Signed out (your data remains saved on this device)',
-  'auth.syncedNotice': 'Synced your plan and settings with the cloud'
+  'auth.syncedNotice': 'Synced your plan and settings with the cloud',
+
+  'notice.viewedRemoved': 'Removed viewed mark from “{title}”',
+  'notice.viewedAdvanced': 'Marked “{title}” as viewed → Next: “{next}”',
+  'notice.viewedComplete': 'Completed “{title}”! You finished the entire tour 🎉',
+  'notice.viewedMarked': 'Marked “{title}” as viewed',
+  'plan.completeBanner': '🎉 Tour complete! All {total} artworks viewed',
+  'plan.remainingSummary': '{count} remaining · approx. {minutes} min left',
+  'plan.nextStopLabel': 'NEXT STOP',
+  'plan.markDoneCta': '✓ Mark Done'
 });

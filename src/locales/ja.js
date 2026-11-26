@@ -473,5 +473,14 @@ export const ja = Object.freeze({
   'auth.invalidEmail': '有効なメールアドレスを入力してください',
   'auth.sendFailed': '送信できませんでした。通信状態を確認して再度お試しください。',
   'auth.signedOutNotice': 'ログアウトしました（端末内のデータはそのまま残ります）',
-  'auth.syncedNotice': 'クラウドとデータを同期しました'
+  'auth.syncedNotice': 'クラウドとデータを同期しました',
+
+  'notice.viewedRemoved': '「{title}」の鑑賞済みを解除しました',
+  'notice.viewedAdvanced': '「{title}」を鑑賞済みにしました → 次は「{next}」',
+  'notice.viewedComplete': '「{title}」を完了しました！コース全作品を完走 🎉',
+  'notice.viewedMarked': '「{title}」を鑑賞済みにしました',
+  'plan.completeBanner': '🎉 コース完走！全{total}作品を鑑賞しました',
+  'plan.remainingSummary': '残り {count}作品 · 目安 あと約{minutes}分',
+  'plan.nextStopLabel': '次の目的地',
+  'plan.markDoneCta': '✓ 済にする'
 });
