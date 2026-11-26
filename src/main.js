@@ -351,7 +351,9 @@ function render() {
     activeViewTransition?.skipTransition();
     document.documentElement.dataset.guideTransition = kind;
     const transition = document.startViewTransition(() => {
-      if (sequence === renderSequence) renderContent();
+      if (sequence === renderSequence) {
+        renderContent();
+      }
     });
     activeViewTransition = transition;
     transition.finished.then(() => {
@@ -365,6 +367,7 @@ function render() {
   activeViewTransition?.skipTransition();
   renderContent();
   if (kind && !reduceMotion) {
+    if (kind === 'tab') app.querySelector('.bottom-tabs button.active')?.classList.add('guide-tab-arrive');
     const target = kind === 'layer'
       ? app.querySelector('.work-sheet, .audio-settings-sheet, .share-modal-sheet, .share-popup-dialog')
       : kind === 'tab' ? app.querySelector('.tab-screen') : app.firstElementChild;

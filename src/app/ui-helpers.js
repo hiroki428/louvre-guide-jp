@@ -91,6 +91,6 @@ export function bottomTabsMarkup(ctx) {
     {id: 'settings', label: t('tabs.settings', null, lang), icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4-3a7.4 7.4 0 0 0-.1-1l2-1.5-2-3.5-2.4 1a7.4 7.4 0 0 0-1.7-1l-.4-2.5h-4l-.4 2.5a7.4 7.4 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7.4 7.4 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7.4 7.4 0 0 0 1.7 1l.4 2.5h4l.4-2.5a7.4 7.4 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5c.1-.3.1-.7.1-1Z"/></svg>'}
   ];
   return `<nav class="bottom-tabs" aria-label="${esc(t('app.mainMenuAria', null, lang))}">
-    ${tabs.map(tab => `<button type="button" data-tab="${tab.id}" class="${ctx.state.tab === tab.id ? 'active' : ''}" aria-current="${ctx.state.tab === tab.id ? 'page' : 'false'}">${tab.icon}<span>${esc(tab.label)}</span></button>`).join('')}
+    ${tabs.map(tab => `<button type="button" data-tab="${tab.id}" class="${ctx.state.tab === tab.id ? 'active' : ''}" aria-current="${ctx.state.tab === tab.id ? 'page' : 'false'}">${ctx.state.tab === tab.id ? '<i class="bottom-tabs-marker" aria-hidden="true"></i>' : ''}${tab.icon}<span>${esc(tab.label)}</span></button>`).join('')}
   </nav>`;
 }
