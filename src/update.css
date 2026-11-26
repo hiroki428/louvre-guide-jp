@@ -2659,3 +2659,194 @@ button:not(:disabled):active {
   justify-content: space-between;
   gap: 8px;
 }
+
+/* ==================== PROGRESS BAR & DONE BUTTONS (GALLERY HARMONIZED) ==================== */
+.plan-summary-card.is-complete {
+  border-color: #c6b69b;
+  background: var(--color-surface);
+}
+.plan-progress-panel {
+  margin: 10px 0 12px;
+}
+.progress-bar-lg {
+  height: 8px;
+  margin: 0 0 8px;
+  background: #e6dfd5;
+}
+.progress-bar-lg span {
+  background: var(--color-primary);
+  transition: width .3s ease;
+}
+.progress-bar-lg.is-complete span {
+  background: var(--color-gold);
+}
+.plan-progress-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.progress-remaining-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+.progress-complete-banner {
+  display: inline-block;
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  border: 1px solid #c5d9d2;
+  color: var(--color-primary-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+.progress-next-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid #e4dacb;
+  background: #fbf7f0;
+}
+.progress-next-info {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+  color: var(--color-ink);
+  appearance: none;
+}
+.progress-next-info > span:last-child {
+  min-width: 0;
+  flex: 1;
+}
+.progress-next-info small {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--color-destination);
+}
+.progress-next-info strong {
+  display: block;
+  margin-top: 1px;
+  font: 600 13.5px/1.35 'Shippori Mincho', serif;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.progress-next-info em {
+  display: block;
+  margin-top: 2px;
+  font-style: normal;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.progress-next-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.done-quick-cta {
+  min-height: 36px;
+  padding: 6px 13px;
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-on-accent);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.done-quick-cta:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
+
+.plan-order.is-done {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-accent);
+}
+.done-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 5px 11px;
+}
+.done-check-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-stone-dark);
+  display: inline-grid;
+  place-items: center;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1;
+}
+.done-toggle-btn.is-next-cta {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-accent);
+}
+.done-toggle-btn.is-next-cta .done-check-dot {
+  border-color: rgb(255 255 255 / 78%);
+}
+.done-toggle-btn.is-done {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+.done-toggle-btn.is-done .done-check-dot {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-accent);
+}
+
+.map-toolbar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.map-toolbar-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+.map-mini-progress {
+  margin-top: 5px;
+  height: 5px;
+  border-radius: 99px;
+  background: #e6dfd5;
+  overflow: hidden;
+}
+.map-mini-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--color-primary);
+  transition: width .25s ease;
+}
+.map-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.map-done-cta {
+  min-height: 34px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+}

@@ -101,6 +101,7 @@ assert.match(css, /\.home-language-list\s*\{[^}]*overflow-y:\s*auto/s, 'language
 assert.match(main, /data-change-course/);
 assert.match(main, /data-replay-onboarding/, 'settings tab must offer replay trigger for onboarding tour');
 assert.match(main, /data-tour-overlay/, 'coach-mark onboarding overlay must exist');
+assert.match(main, /progress-next-strip/, 'plan tab progress area must surface next-stop quick action strip');
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(mapTabSection, /has-destination/, 'floor tab must highlight the floor containing the next artwork');
 assert.match(mapTabSection, /class="floor-next-badge"/, 'floor tab must display a clear next-artwork badge on the destination floor');

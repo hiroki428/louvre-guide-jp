@@ -109,6 +109,9 @@ export function mapTabView(ctx, hasMini) {
     return [f, works.filter(w => w.floor === f && w.locationPrecision === 'room' && Boolean(anchors[String(w.room)])).length];
   }));
   const viewedInPlan = ctx.planWorks().filter(w => state.viewed.has(w.id)).length;
+  const planTotal = plan.ids.length;
+  const planPct = planTotal ? Math.round((viewedInPlan / planTotal) * 100) : 0;
+  const destWork = destinationId && ctx.byId?.[destinationId] ? localizeWork(ctx.byId[destinationId], lang) : null;
   const currentFloorGeo = floorGeoData.floors[String(state.floor)];
   const wcCount = (currentFloorGeo?.facilities || []).filter(item => item.type === 'wc').length;
   const cafeCount = (currentFloorGeo?.facilities || []).filter(item => item.type === 'cafe').length;
@@ -180,10 +183,16 @@ export function mapTabView(ctx, hasMini) {
 
     <div class="map-toolbar map-toolbar-below">
       <div class="map-toolbar-meta">
-        <strong>${esc(plan.label)}</strong>
-        <span>${esc(tr('map.viewedCount', {viewed: viewedInPlan, total: plan.ids.length}))}</span>
+        <div class="map-toolbar-head">
+          <strong>${esc(plan.label)}</strong>
+          <span class="map-toolbar-pct">${esc(tr('map.viewedCount', {viewed: viewedInPlan, total: planTotal}))}${planTotal ? ` (${planPct}%)` : ''}</span>
+        </div>
+        ${planTotal ? `<div class="map-mini-progress" aria-hidden="true"><span style="width:${planPct}%"></span></div>` : ''}
       </div>
-      <button type="button" class="pill-action-btn" data-open-plan>${esc(tr('map.openPlan'))}</button>
+      <div class="map-toolbar-actions">
+        ${destWork && !state.viewed.has(destWork.id) ? `<button type="button" class="done-quick-cta map-done-cta" data-toggle-viewed="${esc(destWork.id)}" title="${esc(destWork.title)}">${esc(tr('plan.markDoneCta'))}</button>` : ''}
+        <button type="button" class="pill-action-btn" data-open-plan>${esc(tr('map.openPlan'))}</button>
+      </div>
     </div>
 
     ${emptyOrCompleteNote}

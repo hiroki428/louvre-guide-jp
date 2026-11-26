@@ -582,5 +582,13 @@ export const es = Object.freeze({
   'tour.step6Body': 'Cambia el idioma, la velocidad de audio, sincroniza tu cuenta o repite esta guía cuando quieras.',
   'tour.replayTitle': 'Guía interactiva (demo)',
   'tour.replaySub': 'Vuelve a resaltar los botones principales y pasos de uso en la pantalla del mapa',
-  'tour.replayBtn': 'Ver guía de nuevo'
+  'tour.replayBtn': 'Ver guía de nuevo',
+  'notice.viewedRemoved': 'Se quitó la marca de vista de «{title}»',
+  'notice.viewedAdvanced': '«{title}» marcada como vista → Siguiente: «{next}»',
+  'notice.viewedComplete': '«{title}» completada. Has visto todas las obras del recorrido',
+  'notice.viewedMarked': '«{title}» marcada como vista',
+  'plan.completeBanner': 'Todas las {total} obras del recorrido han sido vistas',
+  'plan.remainingSummary': '{count} restantes · aprox. {minutes} min',
+  'plan.nextStopLabel': 'PRÓXIMA PARADA',
+  'plan.markDoneCta': 'Marcar vista'
 });

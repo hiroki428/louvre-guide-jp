@@ -582,5 +582,13 @@ export const ko = Object.freeze({
   'tour.step6Body': '언어·재생 속도 변경, 클라우드 동기화, 이 사용 가이드 다시 보기를 언제든 이용할 수 있습니다.',
   'tour.replayTitle': '사용 가이드 (데모)',
   'tour.replaySub': '지도 화면의 주요 버튼과 사용 방법을 하이라이트로 다시 안내합니다',
-  'tour.replayBtn': '가이드 다시 보기'
+  'tour.replayBtn': '가이드 다시 보기',
+  'notice.viewedRemoved': '“{title}”의 감상 완료를 해제했습니다',
+  'notice.viewedAdvanced': '“{title}” 감상 완료 → 다음: “{next}”',
+  'notice.viewedComplete': '“{title}”을 완료했습니다. 코스의 모든 작품을 감상했습니다',
+  'notice.viewedMarked': '“{title}”을 감상 완료로 표시했습니다',
+  'plan.completeBanner': '전체 {total}작품 감상을 완료했습니다',
+  'plan.remainingSummary': '남은 {count}작품 · 예상 약 {minutes}분',
+  'plan.nextStopLabel': '다음 목적지',
+  'plan.markDoneCta': '완료 체크'
 });

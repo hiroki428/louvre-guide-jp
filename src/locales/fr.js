@@ -582,5 +582,13 @@ export const fr = Object.freeze({
   'tour.step6Body': 'Modifiez la langue, la vitesse audio, synchronisez votre compte ou relancez ce guide ici.',
   'tour.replayTitle': 'Guide interactif',
   'tour.replaySub': 'Revoir les explications guidées sur l’écran de la carte',
-  'tour.replayBtn': 'Revoir le guide'
+  'tour.replayBtn': 'Revoir le guide',
+  'notice.viewedRemoved': 'Marquage vu retiré pour « {title} »',
+  'notice.viewedAdvanced': '« {title} » marquée vue → Suivante : « {next} »',
+  'notice.viewedComplete': '« {title} » terminée. Toutes les œuvres du parcours ont été vues',
+  'notice.viewedMarked': '« {title} » marquée comme vue',
+  'plan.completeBanner': 'Les {total} œuvres du parcours ont été vues',
+  'plan.remainingSummary': '{count} restantes · env. {minutes} min',
+  'plan.nextStopLabel': 'PROCHAINE ÉTAPE',
+  'plan.markDoneCta': 'Marquer vue'
 });

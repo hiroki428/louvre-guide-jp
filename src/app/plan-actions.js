@@ -285,9 +285,68 @@ export function createPlanActions(ctx) {
   }
 
   function toggleViewed(workId) {
-    if (ctx.state.viewed.has(workId)) ctx.state.viewed.delete(workId);
-    else ctx.state.viewed.add(workId);
+    const wasViewed = ctx.state.viewed.has(workId);
+    const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
+    const rIds = ctx.routableIds();
+
+    if (wasViewed) {
+      ctx.state.viewed.delete(workId);
+      if (ctx.state.navigation?.routeComplete && rIds.includes(workId)) {
+        ctx.state.navigation = navigationStateForSelection(ctx.navigationIndex, rIds, workId, ctx.navOptions());
+        ctx.state.selected = workId;
+      }
+      ctx.persistState();
+      ctx.setNotice(tr('notice.viewedRemoved', {title}), false, 2800);
+      ctx.render();
+      return;
+    }
+
+    ctx.state.undo = {
+      planMode: ctx.state.planMode,
+      routeId: ctx.state.routeId,
+      minutes: ctx.state.minutes,
+      navigation: ctx.state.navigation,
+      selected: ctx.state.selected,
+      floor: ctx.state.floor,
+      viewedWorkId: workId
+    };
+    ctx.state.viewed.add(workId);
+
+    const workIdx = rIds.indexOf(workId);
+    if (workIdx >= 0) {
+      const nextAfter = rIds.slice(workIdx + 1).find(id => !ctx.state.viewed.has(id));
+      const nextBefore = rIds.slice(0, workIdx).find(id => !ctx.state.viewed.has(id));
+      const nextId = nextAfter || nextBefore || null;
+      if (nextId) {
+        const base = navigationStateForSelection(ctx.navigationIndex, rIds, nextId, ctx.navOptions());
+        ctx.state.navigation = {
+          ...base,
+          currentNodeId: `work:${workId}`,
+          destinationNodeId: `work:${nextId}`,
+          routeComplete: false
+        };
+        ctx.state.selected = nextId;
+        const nextTitle = localizeWork(ctx.byId[nextId], ctx.state.lang)?.title ?? tr('notice.workFallback');
+        ctx.persistState();
+        ctx.setNotice(tr('notice.viewedAdvanced', {title, next: nextTitle}), true, 5200);
+        ctx.render();
+        return;
+      }
+      ctx.state.navigation = {
+        ...(ctx.state.navigation || navigationStateFromRoute(ctx.navigationIndex, rIds)),
+        currentNodeId: `work:${workId}`,
+        destinationNodeId: null,
+        routeComplete: true
+      };
+      ctx.state.selected = workId;
+      ctx.persistState();
+      ctx.setNotice(tr('notice.viewedComplete', {title}), true, 5800);
+      ctx.render();
+      return;
+    }
+
     ctx.persistState();
+    ctx.setNotice(tr('notice.viewedMarked', {title}), true, 4200);
     ctx.render();
   }
 
@@ -297,7 +356,7 @@ export function createPlanActions(ctx) {
     const ids = ctx.routableIds();
     const result = advanceOnRouteAudio(ctx.navigationIndex, ctx.state.navigation, ids, workId, ctx.navOptions());
     if (!result.updated) return false;
-    ctx.state.undo = {planMode: ctx.state.planMode, routeId: ctx.state.routeId, minutes: ctx.state.minutes, navigation: result.previous, selected: ctx.state.selected};
+    ctx.state.undo = {planMode: ctx.state.planMode, routeId: ctx.state.routeId, minutes: ctx.state.minutes, navigation: result.previous, selected: ctx.state.selected, floor: ctx.state.floor};
     ctx.state.navigation = result.navigation;
     ctx.state.selected = result.nextWorkId ?? workId;
     ctx.state.viewed.add(workId);
@@ -318,6 +377,8 @@ export function createPlanActions(ctx) {
     ctx.state.minutes = snapshot.minutes;
     ctx.state.navigation = snapshot.navigation;
     ctx.state.selected = snapshot.selected;
+    if (Number.isFinite(snapshot.floor)) ctx.state.floor = snapshot.floor;
+    if (snapshot.viewedWorkId) ctx.state.viewed.delete(snapshot.viewedWorkId);
     ctx.state.undo = null;
     ctx.persistState();
     ctx.setNotice(tr('notice.arrivalUndone'), false, 3200);

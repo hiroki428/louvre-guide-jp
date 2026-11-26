@@ -582,5 +582,13 @@ export const en = Object.freeze({
   'tour.step6Body': 'Change language, audio speed, sign in for cloud sync, or replay this guide anytime here.',
   'tour.replayTitle': 'Interactive Quick Guide',
   'tour.replaySub': 'Highlight the main buttons and walkthrough steps on the map screen again',
-  'tour.replayBtn': 'Replay Guide'
+  'tour.replayBtn': 'Replay Guide',
+  'notice.viewedRemoved': 'Removed viewed mark from “{title}”',
+  'notice.viewedAdvanced': 'Marked “{title}” as viewed → Next: “{next}”',
+  'notice.viewedComplete': 'Completed “{title}”. All artworks in this route are viewed',
+  'notice.viewedMarked': 'Marked “{title}” as viewed',
+  'plan.completeBanner': 'All {total} artworks in this route have been viewed',
+  'plan.remainingSummary': '{count} remaining · approx. {minutes} min left',
+  'plan.nextStopLabel': 'NEXT STOP',
+  'plan.markDoneCta': 'Mark Done'
 });

@@ -582,5 +582,13 @@ export const ja = Object.freeze({
   'tour.step6Body': '言語切替・再生速度・クラウド同期・この使い方ガイドの再表示はここからいつでも行えます。',
   'tour.replayTitle': '使い方ガイド（デモ）',
   'tour.replaySub': 'マップ画面の各ボタンや操作手順をもう一度ハイライトで案内します',
-  'tour.replayBtn': 'ガイドをもう一度見る'
+  'tour.replayBtn': 'ガイドをもう一度見る',
+  'notice.viewedRemoved': '「{title}」の鑑賞済みを解除しました',
+  'notice.viewedAdvanced': '「{title}」を鑑賞済みにしました → 次は「{next}」',
+  'notice.viewedComplete': '「{title}」を完了しました。すべての作品を鑑賞しました',
+  'notice.viewedMarked': '「{title}」を鑑賞済みにしました',
+  'plan.completeBanner': '全{total}作品の鑑賞が完了しました',
+  'plan.remainingSummary': '残り {count}作品 · 目安 あと約{minutes}分',
+  'plan.nextStopLabel': '次の目的地',
+  'plan.markDoneCta': '済にする'
 });
