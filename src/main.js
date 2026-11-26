@@ -327,7 +327,52 @@ function wireMain() {
   wireOnboardingTour(ctx);
 }
 
+let renderedPageKey = null;
+let renderedLayerKey = null;
+let activeViewTransition = null;
+let renderSequence = 0;
+
 function render() {
+  const {state} = ctx;
+  if (state.appPhase === 'splash') return;
+  const pageKey = state.appPhase === 'main'
+    ? `main:${state.tab}:${state.planAddOpen ? 'add' : 'list'}`
+    : state.appPhase;
+  const layerKey = [state.detailWorkId, state.audioSettingsOpen, state.shareModal?.open,
+    Boolean(state.incomingSharedPlan)].join(':');
+  const kind = renderedPageKey && renderedPageKey !== pageKey
+    ? (renderedPageKey.startsWith('main:') && pageKey.startsWith('main:') ? 'tab' : 'page')
+    : renderedLayerKey !== null && renderedLayerKey !== layerKey ? 'layer' : null;
+  renderedPageKey = pageKey;
+  renderedLayerKey = layerKey;
+  const sequence = ++renderSequence;
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (kind && !reduceMotion && document.startViewTransition) {
+    activeViewTransition?.skipTransition();
+    document.documentElement.dataset.guideTransition = kind;
+    const transition = document.startViewTransition(() => {
+      if (sequence === renderSequence) renderContent();
+    });
+    activeViewTransition = transition;
+    transition.finished.then(() => {
+      if (activeViewTransition === transition) {
+        activeViewTransition = null;
+        delete document.documentElement.dataset.guideTransition;
+      }
+    }, () => {});
+    return;
+  }
+  activeViewTransition?.skipTransition();
+  renderContent();
+  if (kind && !reduceMotion) {
+    const target = kind === 'layer'
+      ? app.querySelector('.work-sheet, .audio-settings-sheet, .share-modal-sheet, .share-popup-dialog')
+      : kind === 'tab' ? app.querySelector('.tab-screen') : app.firstElementChild;
+    target?.classList.add(kind === 'layer' ? 'guide-layer-enter' : 'guide-screen-enter');
+  }
+}
+
+function renderContent() {
   const {state} = ctx;
   const lang = state.lang;
   if (state.appPhase === 'splash') return;

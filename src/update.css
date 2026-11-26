@@ -92,6 +92,47 @@
   padding-bottom: calc(168px + env(safe-area-inset-bottom));
 }
 
+/* Change scenes only when the visible page changes; keep ordinary updates still. */
+.tab-screen { view-transition-name: guide-page; }
+@keyframes guide-page-out {
+  to { opacity: 0; transform: translateY(-6px) scale(.995); }
+}
+@keyframes guide-page-in {
+  from { opacity: 0; transform: translateY(10px) scale(.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes guide-layer-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+html[data-guide-transition='tab']::view-transition-old(root),
+html[data-guide-transition='tab']::view-transition-new(root) { animation: none; }
+html[data-guide-transition='tab']::view-transition-old(guide-page) {
+  animation: guide-page-out .16s ease-in both;
+}
+html[data-guide-transition='tab']::view-transition-new(guide-page) {
+  animation: guide-page-in .28s cubic-bezier(.22, 1, .36, 1) both;
+}
+html[data-guide-transition='page']::view-transition-old(root),
+html[data-guide-transition='layer']::view-transition-old(root) {
+  animation: guide-page-out .16s ease-in both;
+}
+html[data-guide-transition='page']::view-transition-new(root) {
+  animation: guide-page-in .28s cubic-bezier(.22, 1, .36, 1) both;
+}
+html[data-guide-transition='layer']::view-transition-new(root) {
+  animation: guide-layer-in .24s cubic-bezier(.22, 1, .36, 1) both;
+}
+.guide-screen-enter { animation: guide-page-in .28s cubic-bezier(.22, 1, .36, 1) both; }
+.guide-layer-enter { animation: guide-sheet-in .24s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes guide-sheet-in {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-screen-enter, .guide-layer-enter { animation: none; }
+}
+
 /* ==================== BOTTOM FIXED NAVIGATION ==================== */
 .bottom-tabs {
   position: fixed;
