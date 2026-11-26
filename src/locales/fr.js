@@ -473,5 +473,27 @@ export const fr = Object.freeze({
   'auth.invalidEmail': 'Veuillez saisir une adresse e-mail valide',
   'auth.sendFailed': 'Impossible d’envoyer le lien. Vérifiez votre connexion et réessayez.',
   'auth.signedOutNotice': 'Déconnecté (vos données restent enregistrées sur cet appareil)',
-  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud'
+  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud',
+
+  'tour.dialogAria': 'Guide interactif de l’application',
+  'tour.stepCounter': 'Guide {current} / {total}',
+  'tour.skipBtn': 'Passer',
+  'tour.prevBtn': 'Précédent',
+  'tour.nextBtn': 'Suivant',
+  'tour.doneBtn': 'Commencer',
+  'tour.step1Title': 'Carte interactive et itinéraire',
+  'tour.step1Body': 'Suivez la ligne bleue jusqu’au repère rouge. Touchez un repère pour voir les détails et écouter l’audioguide.',
+  'tour.step2Title': 'Étages et badge Prochaine œuvre',
+  'tour.step2Body': 'Changez d’étage en un geste. Un badge rouge signale l’étage où se trouve votre prochaine étape.',
+  'tour.step3Title': 'Toilettes, cafés et mode ascenseur',
+  'tour.step3Body': 'Affichez les toilettes ou cafés sur le plan, ou activez la priorité ascenseur pour éviter les escaliers.',
+  'tour.step4Title': 'Liste du parcours et partage',
+  'tour.step4Body': 'Consultez l’ordre des œuvres, optimisez Mon Parcours et partagez-le par QR code ou URL.',
+  'tour.step5Title': 'Catalogue des 200 audioguides',
+  'tour.step5Body': 'Recherchez par titre, artiste ou salle pour ajouter des favoris et enregistrer l’audio hors ligne.',
+  'tour.step6Title': 'Réglages et synchronisation',
+  'tour.step6Body': 'Modifiez la langue, la vitesse audio, synchronisez votre compte ou relancez ce guide ici.',
+  'tour.replayTitle': 'Guide interactif',
+  'tour.replaySub': 'Revoir les explications guidées sur l’écran de la carte',
+  'tour.replayBtn': 'Revoir le guide'
 });

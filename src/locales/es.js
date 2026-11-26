@@ -473,5 +473,27 @@ export const es = Object.freeze({
   'auth.invalidEmail': 'Introduce una dirección de correo válida',
   'auth.sendFailed': 'No se pudo enviar el enlace. Revisa tu conexión e inténtalo de nuevo.',
   'auth.signedOutNotice': 'Sesión cerrada (tus datos siguen guardados en este dispositivo)',
-  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube'
+  'auth.syncedNotice': 'Plan y ajustes sincronizados con la nube',
+
+  'tour.dialogAria': 'Guía interactiva de la aplicación',
+  'tour.stepCounter': 'Guía rápida {current} / {total}',
+  'tour.skipBtn': 'Omitir',
+  'tour.prevBtn': 'Atrás',
+  'tour.nextBtn': 'Siguiente',
+  'tour.doneBtn': 'Empezar',
+  'tour.step1Title': 'Mapa y ruta más corta',
+  'tour.step1Body': 'Sigue la línea azul hasta el marcador rojo. Toca cualquier marcador para ver detalles y reproducir la audioguía.',
+  'tour.step2Title': 'Plantas y aviso de próxima obra',
+  'tour.step2Body': 'Cambia entre las 5 plantas con un toque. La planta de tu siguiente destino destaca con una insignia roja.',
+  'tour.step3Title': 'Baños, cafés y modo ascensor',
+  'tour.step3Body': 'Resalta baños o cafeterías en el mapa, o activa Prioridad ascensor para evitar escaleras.',
+  'tour.step4Title': 'Lista del plan y compartir',
+  'tour.step4Body': 'Revisa el orden de visita, optimiza Mi Plan y compártelo con amigos mediante código QR o URL.',
+  'tour.step5Title': 'Catálogo de 200 audioguías',
+  'tour.step5Body': 'Busca por título, artista o sala para añadir favoritos a Mi Plan y descargar el audio sin conexión.',
+  'tour.step6Title': 'Ajustes y sincronización',
+  'tour.step6Body': 'Cambia el idioma, la velocidad de audio, sincroniza tu cuenta o repite esta guía cuando quieras.',
+  'tour.replayTitle': 'Guía interactiva (demo)',
+  'tour.replaySub': 'Vuelve a resaltar los botones principales y pasos de uso en la pantalla del mapa',
+  'tour.replayBtn': 'Ver guía de nuevo'
 });

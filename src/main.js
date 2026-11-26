@@ -14,6 +14,7 @@ import {audioTabView, visibleAudioWorks, wireAudioTab} from './views/audio-tab.j
 import {settingsTabView, wireSettingsTab} from './views/settings-tab.js';
 import {closeWorkDetail, openWorkDetail, workDetailSheetMarkup, wireWorkDetailSheet} from './views/work-detail-sheet.js';
 import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wireMiniPlayer} from './views/mini-player.js';
+import {cleanupOnboardingPositioning, finishOnboardingTour, onboardingTourMarkup, wireOnboardingTour} from './views/onboarding-tour.js';
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
@@ -304,6 +305,7 @@ function wireMain() {
   wireMiniPlayer(ctx);
   wireAudioTab(ctx);
   wireSettingsTab(ctx);
+  wireOnboardingTour(ctx);
 }
 
 function render() {
@@ -311,6 +313,7 @@ function render() {
   const lang = state.lang;
   if (state.appPhase === 'splash') return;
   if (state.appPhase === 'select_time') {
+    cleanupOnboardingPositioning();
     app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
     document.querySelectorAll('[data-set-lang]').forEach(btn => {
@@ -326,6 +329,11 @@ function render() {
     });
     return;
   }
+
+  if (state.tab === 'map' && state.planMode !== 'shared' && !state.hasSeenOnboarding && !state.onboarding.active && !state.incomingSharedPlan && !state.shareModal?.open) {
+    state.onboarding = {active: true, step: 0};
+  }
+
   const plan = ctx.currentPlan();
   const hasMini = Boolean(ctx.audio.miniPlayerContext());
   const body = state.tab === 'plan'
@@ -354,6 +362,7 @@ function render() {
     ${bottomTabsMarkup(ctx)}
     ${workDetailSheetMarkup(ctx)}
     ${audioSettingsModalMarkup(ctx)}
+    ${onboardingTourMarkup(ctx)}
     ${noticeMarkup(ctx, hasMini)}
   `;
   wireMain();
@@ -371,7 +380,8 @@ ctx.audio.player.addEventListener('timeupdate', ctx.audio.syncSeekBars);
 ctx.audio.player.addEventListener('loadedmetadata', ctx.audio.syncSeekBars);
 window.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
-    if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }
+    if (ctx.state.onboarding?.active) { finishOnboardingTour(ctx); }
+    else if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }
     else if (ctx.state.detailWorkId) closeWorkDetail(ctx);
   }
 });

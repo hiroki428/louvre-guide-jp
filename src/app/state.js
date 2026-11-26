@@ -44,6 +44,7 @@ export function createAppStore({
   const state = {
     lang: initialLang,
     hasChosenLang: Boolean(persistedBoot?.hasChosenLang),
+    hasSeenOnboarding: Boolean(persistedBoot?.hasSeenOnboarding),
     appPhase: skipSplashImmediate ? 'main' : 'splash',
     hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
     tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
@@ -87,6 +88,7 @@ export function createAppStore({
     undo: null,
     processedArrivalEvents: new Set(),
     support: {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''},
+    onboarding: {active: false, step: 0},
     auth: {configured: false, user: null, status: 'idle', emailDraft: '', pending: false, lastSyncedAt: null, message: '', error: ''}
   };
 
@@ -190,6 +192,7 @@ export function createAppStore({
         version: 3,
         lang: state.lang,
         hasChosenLang: state.hasChosenLang,
+        hasSeenOnboarding: state.hasSeenOnboarding,
         hasChosenCourse: state.hasChosenCourse,
         tab: state.tab,
         planMode: state.planMode,

@@ -33,6 +33,7 @@
 | プラン一覧タブ（コース切替・作品カード・並び替え） | `src/views/plan-tab.js` |
 | 音声一覧タブ（検索・絞り込み・ソート・作品行） | `src/views/audio-tab.js` |
 | 案内・設定タブ（オフライン保存・文字サイズ・クレジット等） | `src/views/settings-tab.js` |
+| 初回コーチマーク式使い方ガイド（スポットライト案内） | `src/views/onboarding-tour.js` |
 | 作品詳細ボトムシート（背景・見どころ・個別音声再生） | `src/views/work-detail-sheet.js` |
 | 常駐ミニプレイヤー・オーディオ設定モーダル | `src/views/mini-player.js` |
 | 地図SVG描画・ピン配置・ズーム操作 | `src/floor-map.js` |

@@ -473,5 +473,27 @@ export const ko = Object.freeze({
   'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
   'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
   'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
-  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다',
+
+  'tour.dialogAria': '앱 사용 가이드',
+  'tour.stepCounter': '사용 가이드 {current} / {total}',
+  'tour.skipBtn': '건너뛰기',
+  'tour.prevBtn': '이전',
+  'tour.nextBtn': '다음',
+  'tour.doneBtn': '완료하고 시작',
+  'tour.step1Title': '지도와 최단 경로 안내',
+  'tour.step1Body': '파란 선이 최단 경로, 빨간 핀이 다음 목적지입니다. 핀을 탭하면 작품 해설과 오디오가 열립니다.',
+  'tour.step2Title': '층 탭과 다음 작품 배지',
+  'tour.step2Body': '2층~−2층을 한 번에 전환할 수 있으며, 다음 작품이 있는 층에는 빨간 배지가 표시됩니다.',
+  'tour.step3Title': '화장실·카페 및 엘리베이터 우선',
+  'tour.step3Body': '화장실이나 카페만 강조 표시하거나, 계단을 피하는 엘리베이터 우선 모드로 바꿀 수 있습니다.',
+  'tour.step4Title': '플랜 목록과 친구 공유',
+  'tour.step4Body': '관람 순서를 확인하고 최단 순서로 정렬하거나, QR 코드·URL로 친구와 플랜을 공유할 수 있습니다.',
+  'tour.step5Title': '전체 200작품 오디오 목록',
+  'tour.step5Body': '작품명·작가·전시실 번호로 검색해 ★ 내 플랜에 추가하고 오프라인 오디오를 저장할 수 있습니다.',
+  'tour.step6Title': '안내·설정 및 동기화',
+  'tour.step6Body': '언어·재생 속도 변경, 클라우드 동기화, 이 사용 가이드 다시 보기를 언제든 이용할 수 있습니다.',
+  'tour.replayTitle': '사용 가이드 (데모)',
+  'tour.replaySub': '지도 화면의 주요 버튼과 사용 방법을 하이라이트로 다시 안내합니다',
+  'tour.replayBtn': '가이드 다시 보기'
 });

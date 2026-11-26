@@ -473,5 +473,27 @@ export const en = Object.freeze({
   'auth.invalidEmail': 'Please enter a valid email address',
   'auth.sendFailed': 'Could not send sign-in link. Please check your connection and try again.',
   'auth.signedOutNotice': 'Signed out (your data remains saved on this device)',
-  'auth.syncedNotice': 'Synced your plan and settings with the cloud'
+  'auth.syncedNotice': 'Synced your plan and settings with the cloud',
+
+  'tour.dialogAria': 'Interactive app walkthrough',
+  'tour.stepCounter': 'Quick Guide {current} / {total}',
+  'tour.skipBtn': 'Skip',
+  'tour.prevBtn': 'Back',
+  'tour.nextBtn': 'Next',
+  'tour.doneBtn': 'Get Started',
+  'tour.step1Title': 'Navigate with the Floor Map',
+  'tour.step1Body': 'Follow the blue route line to the red destination pin. Tap any pin to read highlights and play the audio guide.',
+  'tour.step2Title': 'Floor Tabs & Next Artwork Badge',
+  'tour.step2Body': 'Switch across all 5 levels with one tap. The floor with your next stop is highlighted with a red badge.',
+  'tour.step3Title': 'Restrooms, Cafés & Elevator Mode',
+  'tour.step3Body': 'Highlight restrooms or cafés on the map, or switch to Elevator Priority to avoid stairs.',
+  'tour.step4Title': 'Plan List & Friend Sharing',
+  'tour.step4Body': 'Review your stop order, optimize My Plan for the shortest route, and share plans via QR code or URL.',
+  'tour.step5Title': 'All 200 Audio Guides',
+  'tour.step5Body': 'Search by title, artist, or room number to star artworks into My Plan and save audio offline.',
+  'tour.step6Title': 'Settings & Cloud Sync',
+  'tour.step6Body': 'Change language, audio speed, sign in for cloud sync, or replay this guide anytime here.',
+  'tour.replayTitle': 'Interactive Quick Guide',
+  'tour.replaySub': 'Highlight the main buttons and walkthrough steps on the map screen again',
+  'tour.replayBtn': 'Replay Guide'
 });
