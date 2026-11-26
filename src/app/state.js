@@ -111,6 +111,8 @@ export function createAppStore({
     audioError: '',
     downloaded: new Set(),
     bulkDownload: {active: false, done: 0, total: 0},
+    bulkSaveOpen: false,
+    bulkSaveSelectedIds: new Set(),
     navigation: null,
     player: {workId: null, mode: 'standalone', sessionId: 0, hasStarted: false, arrivalHandled: false},
     notice: null,

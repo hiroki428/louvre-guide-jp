@@ -545,9 +545,10 @@ export function createAudioController(ctx) {
     }
   }
 
-  async function downloadCurrentPlanAudio() {
+  async function downloadCurrentPlanAudio(selectedIds = null) {
     if (ctx.state.bulkDownload.active) return;
-    const targets = ctx.planWorks();
+    const selected = Array.isArray(selectedIds) ? new Set(selectedIds) : null;
+    const targets = ctx.planWorks().filter(work => !selected || selected.has(work.id));
     if (!targets.length) return;
     ctx.state.bulkDownload = {active: true, done: 0, total: targets.length};
     ctx.render();
@@ -561,8 +562,7 @@ export function createAudioController(ctx) {
         continue;
       }
       try {
-        await saveSingleAudio(work.id, length);
-        success += 1;
+        if (await saveSingleAudio(work.id, length)) success += 1;
       } catch { /* continue remaining */ }
       ctx.state.bulkDownload.done += 1;
       ctx.render();

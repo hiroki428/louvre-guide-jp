@@ -1,7 +1,34 @@
 import {destinationWorkId} from '../route-progress.js';
 import {catalogWorks} from '../catalog.js';
 import {localizeWork, t} from '../i18n.js';
-import {creatorMeta, esc, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
+import {creatorMeta, esc, formatAudioLengthLabel, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
+
+function bulkSaveSheetMarkup(ctx, items) {
+  if (!ctx.state.bulkSaveOpen) return '';
+  const lang = ctx.state.lang;
+  const tr = (key, params) => t(key, params, lang);
+  return `<div class="sheet-backdrop" data-close-bulk-save></div>
+    <section class="bulk-save-sheet" role="dialog" aria-modal="true" aria-labelledby="bulk-save-title">
+      <div class="bulk-save-head">
+        <h2 id="bulk-save-title">${esc(tr('plan.bulkSaveTitle'))}</h2>
+        <button type="button" class="sheet-close-btn" data-close-bulk-save>${esc(tr('app.closeBtn'))}</button>
+      </div>
+      <p class="bulk-save-help">${esc(tr('plan.bulkSaveHelp'))}</p>
+      <div class="bulk-save-list">
+        ${items.map(rawWork => {
+          const work = localizeWork(rawWork, lang);
+          const length = ctx.preferredLengthFor(rawWork);
+          const saved = ctx.state.downloaded.has(`${work.id}-${length}`);
+          return `<label class="bulk-save-item ${saved ? 'is-saved' : ''}">
+            <input type="checkbox" data-bulk-save-work="${esc(work.id)}" ${saved ? 'disabled' : ''} ${ctx.state.bulkSaveSelectedIds.has(work.id) ? 'checked' : ''}>
+            ${thumbMarkup(ctx, work, 'thumb-xs')}
+            <span><strong>${esc(work.title)}</strong><small>${esc(saved ? tr('plan.bulkSaveSaved') : formatAudioLengthLabel(length, lang))}</small></span>
+          </label>`;
+        }).join('')}
+      </div>
+      <button type="button" class="primary bulk-save-confirm" data-confirm-bulk-save ${ctx.state.bulkSaveSelectedIds.size ? '' : 'disabled'}>${esc(tr('plan.bulkSaveAction', {count: ctx.state.bulkSaveSelectedIds.size}))}</button>
+    </section>`;
+}
 
 function planAddResultsMarkup(ctx) {
   const {state, works, navigationIndex} = ctx;
@@ -95,7 +122,7 @@ export function planTabView(ctx, hasMini) {
     ? tr('plan.savingBulk', {done: state.bulkDownload.done, total: state.bulkDownload.total})
     : allSaved
       ? tr('plan.allSaved')
-      : tr('plan.saveCourseBtn', {count: items.length});
+      : tr('plan.saveCourseBtn');
   return `<main class="tab-screen plan-screen ${hasMini ? 'has-mini-player' : ''}">
     <section class="plan-summary-card ${isAllDone ? 'is-complete' : ''}">
       <div class="plan-summary-top">
@@ -193,11 +220,43 @@ export function planTabView(ctx, hasMini) {
       }).join('')}
     </ol>`}
     ${optionalWorksMarkup(ctx, plan)}
-  </main>`;
+  </main>${bulkSaveSheetMarkup(ctx, items)}`;
 }
 
 export function wirePlanTab(ctx) {
   const {byId, planActions, audio, state} = ctx;
+
+  document.querySelector('[data-bulk-download]')?.addEventListener('click', () => {
+    if (state.bulkDownload.active) return;
+    state.bulkSaveSelectedIds = new Set();
+    state.bulkSaveOpen = true;
+    ctx.render();
+  });
+  document.querySelectorAll('[data-close-bulk-save]').forEach(el => {
+    el.addEventListener('click', () => {
+      state.bulkSaveOpen = false;
+      state.bulkSaveSelectedIds = new Set();
+      ctx.render();
+    });
+  });
+  document.querySelectorAll('[data-bulk-save-work]').forEach(input => {
+    input.addEventListener('change', () => {
+      if (input.checked) state.bulkSaveSelectedIds.add(input.dataset.bulkSaveWork);
+      else state.bulkSaveSelectedIds.delete(input.dataset.bulkSaveWork);
+      const confirm = document.querySelector('[data-confirm-bulk-save]');
+      if (confirm) {
+        confirm.disabled = state.bulkSaveSelectedIds.size === 0;
+        confirm.textContent = t('plan.bulkSaveAction', {count: state.bulkSaveSelectedIds.size}, state.lang);
+      }
+    });
+  });
+  document.querySelector('[data-confirm-bulk-save]')?.addEventListener('click', () => {
+    const ids = [...state.bulkSaveSelectedIds];
+    if (!ids.length) return;
+    state.bulkSaveOpen = false;
+    state.bulkSaveSelectedIds = new Set();
+    void audio.downloadCurrentPlanAudio(ids);
+  });
 
   document.querySelector('[data-open-plan-add]')?.addEventListener('click', () => {
     state.planAddOpen = true;

@@ -199,7 +199,7 @@ function resolvePostLanguagePhase() {
 }
 
 function wireShell() {
-  const {state, maxRoutableCount, planActions, audio} = ctx;
+  const {state, maxRoutableCount, planActions} = ctx;
 
   document.querySelector('[data-change-course]')?.addEventListener('click', () => {
     const plan = ctx.currentPlan();
@@ -211,6 +211,7 @@ function wireShell() {
     state.detailWorkId = null;
     state.audioSettingsOpen = false;
     state.planAddOpen = false;
+    state.bulkSaveOpen = false;
     state.courseEntry = 'main';
     state.appPhase = 'select_time';
     render();
@@ -225,6 +226,7 @@ function wireShell() {
     btn.onclick = () => {
       state.tab = btn.dataset.tab;
       if (state.tab !== 'plan') state.planAddOpen = false;
+      state.bulkSaveOpen = false;
       state.detailWorkId = null;
       state.audioSettingsOpen = false;
       ctx.persistState();
@@ -241,10 +243,6 @@ function wireShell() {
       render();
       window.scrollTo({top: 0, behavior: 'smooth'});
     };
-  });
-
-  document.querySelectorAll('[data-bulk-download]').forEach(btn => {
-    btn.onclick = audio.downloadCurrentPlanAudio;
   });
 
   document.querySelectorAll('[data-show-map]').forEach(btn => {
@@ -338,7 +336,7 @@ function render({skipTransition = false} = {}) {
   const pageKey = state.appPhase === 'main'
     ? `main:${state.tab}:${state.planAddOpen ? 'add' : 'list'}`
     : state.appPhase;
-  const layerKey = [state.detailWorkId, state.audioSettingsOpen, state.shareModal?.open,
+  const layerKey = [state.detailWorkId, state.audioSettingsOpen, state.bulkSaveOpen, state.shareModal?.open,
     Boolean(state.incomingSharedPlan)].join(':');
   const kind = renderedPageKey && renderedPageKey !== pageKey
     ? (renderedPageKey.startsWith('main:') && pageKey.startsWith('main:') ? 'tab' : 'page')
@@ -369,7 +367,7 @@ function render({skipTransition = false} = {}) {
   if (kind && !skipTransition && !reduceMotion) {
     if (kind === 'tab') app.querySelector('.bottom-tabs button.active')?.classList.add('guide-tab-arrive');
     const target = kind === 'layer'
-      ? app.querySelector('.work-sheet, .audio-settings-sheet, .share-modal-sheet, .share-popup-dialog')
+      ? app.querySelector('.work-sheet, .audio-settings-sheet, .bulk-save-sheet, .share-modal-sheet, .share-popup-dialog')
       : kind === 'tab' ? app.querySelector('.tab-screen') : app.firstElementChild;
     target?.classList.add(kind === 'layer' ? 'guide-layer-enter' : 'guide-screen-enter');
   }
@@ -506,6 +504,7 @@ window.addEventListener('keydown', event => {
     else if (ctx.state.shareModal?.open) { stopQrScanner(); ctx.state.shareModal.open = false; ctx.state.shareModal.scanning = false; render(); }
     else if (ctx.state.onboarding?.active) { finishOnboardingTour(ctx); }
     else if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }
+    else if (ctx.state.bulkSaveOpen) { ctx.state.bulkSaveOpen = false; render(); }
     else if (ctx.state.detailWorkId) closeWorkDetail(ctx);
   }
 });
