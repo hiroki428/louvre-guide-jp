@@ -598,5 +598,14 @@ export const fr = Object.freeze({
   'plan.markDoneCta': '✓ Marquer vue',
   'detail.resumeFromBtn': '▶ Reprendre ({time})',
   'detail.restartBtn': '↺ Depuis le début',
-  'detail.seekHint': 'Déplacez le curseur pour lire à tout moment'
+  'detail.seekHint': 'Déplacez le curseur pour lire à tout moment',
+  'notice.openMyPlanAction': 'Voir Mon Parcours',
+  'detail.inMyPlanOrder': '★ Dans Mon Parcours (#{order})',
+  'catalog.addMyPlanShort': 'Ajouter',
+  'catalog.inMyPlanShort': 'Ajouté',
+  'catalog.myPlanDockAria': 'Barre rapide Mon Parcours',
+  'catalog.myPlanDockTitle': '★ Mon Parcours : {count} œuvres (optimisé)',
+  'catalog.myPlanDockSub': 'Env. {minutes} min · ordre optimisé automatiquement',
+  'catalog.myPlanDockView': 'Voir la liste',
+  'catalog.myPlanDockStart': 'Carte ›'
 });

@@ -358,7 +358,10 @@ export function createPlanActions(ctx) {
       : (opt.changed
         ? tr('notice.myPlanRemovedOpt', {title})
         : tr('notice.myPlanRemoved', {title}));
-    ctx.setNotice(msg, false, 3400);
+    const action = result.added && !(ctx.state.tab === 'plan' && ctx.state.planMode === 'myplan')
+      ? {id: 'open-myplan', label: tr('notice.openMyPlanAction')}
+      : null;
+    ctx.setNotice(msg, false, 3800, action);
     ctx.render();
   }
 

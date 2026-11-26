@@ -598,5 +598,14 @@ export const ko = Object.freeze({
   'plan.markDoneCta': '✓ 완료 체크',
   'detail.resumeFromBtn': '▶ 이어서 재생 ({time})',
   'detail.restartBtn': '↺ 처음부터',
-  'detail.seekHint': '바를 움직이면 원하는 지점부터 바로 재생됩니다'
+  'detail.seekHint': '바를 움직이면 원하는 지점부터 바로 재생됩니다',
+  'notice.openMyPlanAction': '내 플랜 보기',
+  'detail.inMyPlanOrder': '★ 내 플랜 등록 (#{order})',
+  'catalog.addMyPlanShort': '플랜 추가',
+  'catalog.inMyPlanShort': '추가됨',
+  'catalog.myPlanDockAria': '내 플랜 빠른 바',
+  'catalog.myPlanDockTitle': '★ 내 플랜: {count}작품 (최단 경로 최적화됨)',
+  'catalog.myPlanDockSub': '예상 약 {minutes}분 · 추가할 때마다 자동으로 최단 순서 정렬',
+  'catalog.myPlanDockView': '목록 보기',
+  'catalog.myPlanDockStart': '지도 시작 ›'
 });

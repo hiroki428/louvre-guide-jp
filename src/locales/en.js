@@ -598,5 +598,14 @@ export const en = Object.freeze({
   'plan.markDoneCta': '✓ Mark Done',
   'detail.resumeFromBtn': '▶ Resume ({time})',
   'detail.restartBtn': '↺ Start Over',
-  'detail.seekHint': 'Drag or tap the bar to play from any point'
+  'detail.seekHint': 'Drag or tap the bar to play from any point',
+  'notice.openMyPlanAction': 'View My Plan',
+  'detail.inMyPlanOrder': '★ In My Plan (#{order})',
+  'catalog.addMyPlanShort': 'Add Plan',
+  'catalog.inMyPlanShort': 'Added',
+  'catalog.myPlanDockAria': 'My Plan quick bar',
+  'catalog.myPlanDockTitle': '★ My Plan: {count} artworks (auto-optimized)',
+  'catalog.myPlanDockSub': 'Approx. {minutes} min · route updates automatically as you add',
+  'catalog.myPlanDockView': 'View List',
+  'catalog.myPlanDockStart': 'Start Map ›'
 });

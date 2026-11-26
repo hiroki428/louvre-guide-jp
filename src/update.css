@@ -2917,3 +2917,110 @@ button:not(:disabled):active {
   font-size: 10px;
   color: var(--color-muted);
 }
+
+/* ==================== MYPLAN ADD UI & FLOATING DOCK ==================== */
+.action-pill-myplan {
+  border-color: #d6aa4e;
+  background: #fffcf4;
+  color: #7c560d;
+}
+.action-pill-myplan.active {
+  background: linear-gradient(135deg, #f3d778, #cfa032);
+  border-color: #b5841a;
+  color: #362200;
+}
+.audio-row.in-myplan {
+  border-left: 3.5px solid #cfa032;
+  background: #fffdf8;
+}
+.myplan-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1.5px solid #d5b470;
+  border-radius: 999px;
+  background: #fffcf3;
+  color: #7a5410;
+  font-size: 11.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: background-color .15s ease, transform .12s ease;
+}
+.myplan-toggle-btn:hover { background: #fbf1d6; }
+.myplan-toggle-btn.active {
+  background: linear-gradient(135deg, #f3d778, #cfa032);
+  border-color: #b5841a;
+  color: #362200;
+}
+.audio-screen.has-myplan-dock {
+  padding-bottom: calc(154px + env(safe-area-inset-bottom));
+}
+.audio-screen.has-mini-player.has-myplan-dock {
+  padding-bottom: calc(226px + env(safe-area-inset-bottom));
+}
+.myplan-dock {
+  position: fixed;
+  left: 50%;
+  bottom: calc(68px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 44;
+  width: min(680px, calc(100% - 20px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 15px;
+  border: 1px solid #d6aa4e;
+  background: linear-gradient(135deg, #1b3f46, #143036);
+  color: #fff;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 26%);
+}
+.myplan-dock.with-mini-player {
+  bottom: calc(144px + env(safe-area-inset-bottom));
+}
+.arrival-toast.with-myplan-dock {
+  bottom: calc(140px + env(safe-area-inset-bottom));
+}
+.arrival-toast.with-mini-player.with-myplan-dock {
+  bottom: calc(216px + env(safe-area-inset-bottom));
+}
+.myplan-dock-copy { min-width: 0; }
+.myplan-dock-copy strong {
+  display: block;
+  font-size: 13px;
+  color: #f6e09e;
+}
+.myplan-dock-copy small {
+  display: block;
+  font-size: 11px;
+  color: rgb(255 255 255 / 80%);
+  margin-top: 1px;
+}
+.myplan-dock-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.myplan-dock .secondary.compact-btn {
+  background: rgb(255 255 255 / 12%);
+  border-color: rgb(255 255 255 / 45%);
+  color: #fff;
+}
+.myplan-dock .primary.compact-btn {
+  background: linear-gradient(135deg, #e7c67b, #c59638);
+  border-color: #f2d998;
+  color: #261802;
+}
+@media (max-width: 640px) {
+  .myplan-dock {
+    padding: 9px 11px;
+    gap: 8px;
+  }
+  .myplan-dock-copy strong { font-size: 12px; }
+  .myplan-dock-copy small { font-size: 10px; }
+  .myplan-dock .compact-btn { padding: 6px 10px; font-size: 11px; }
+}

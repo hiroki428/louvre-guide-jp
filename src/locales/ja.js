@@ -598,5 +598,14 @@ export const ja = Object.freeze({
   'plan.markDoneCta': '✓ 済にする',
   'detail.resumeFromBtn': '▶ 続きから再生 ({time})',
   'detail.restartBtn': '↺ 最初から',
-  'detail.seekHint': 'バーを動かすと途中から再生できます'
+  'detail.seekHint': 'バーを動かすと途中から再生できます',
+  'notice.openMyPlanAction': 'マイプランを見る',
+  'detail.inMyPlanOrder': '★ マイプラン済 (#{order})',
+  'catalog.addMyPlanShort': 'プラン追加',
+  'catalog.inMyPlanShort': '追加済',
+  'catalog.myPlanDockAria': 'マイプラン操作バー',
+  'catalog.myPlanDockTitle': '★ マイプラン：{count}作品（最短ルート最適化済）',
+  'catalog.myPlanDockSub': '目安 約{minutes}分 · 追加するたび自動で最短順に並び替えます',
+  'catalog.myPlanDockView': '一覧を見る',
+  'catalog.myPlanDockStart': '地図で開始 ›'
 });

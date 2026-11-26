@@ -598,5 +598,14 @@ export const zh = Object.freeze({
   'plan.markDoneCta': '✓ 标为已看',
   'detail.resumeFromBtn': '▶ 从 {time} 继续播放',
   'detail.restartBtn': '↺ 从头播放',
-  'detail.seekHint': '拖动进度条可从任意位置开始播放'
+  'detail.seekHint': '拖动进度条可从任意位置开始播放',
+  'notice.openMyPlanAction': '查看我的行程',
+  'detail.inMyPlanOrder': '★ 已加入行程 (#{order})',
+  'catalog.addMyPlanShort': '加入行程',
+  'catalog.inMyPlanShort': '已加入',
+  'catalog.myPlanDockAria': '我的行程快捷栏',
+  'catalog.myPlanDockTitle': '★ 我的行程：{count} 件作品（已自动优化）',
+  'catalog.myPlanDockSub': '约 {minutes} 分钟 · 每次增删都会自动排成最短顺序',
+  'catalog.myPlanDockView': '查看清单',
+  'catalog.myPlanDockStart': '地图导航 ›'
 });

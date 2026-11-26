@@ -598,5 +598,14 @@ export const es = Object.freeze({
   'plan.markDoneCta': '✓ Marcar vista',
   'detail.resumeFromBtn': '▶ Continuar ({time})',
   'detail.restartBtn': '↺ Desde el inicio',
-  'detail.seekHint': 'Arrastra o toca la barra para reproducir desde cualquier punto'
+  'detail.seekHint': 'Arrastra o toca la barra para reproducir desde cualquier punto',
+  'notice.openMyPlanAction': 'Ver Mi Plan',
+  'detail.inMyPlanOrder': '★ En Mi Plan (#{order})',
+  'catalog.addMyPlanShort': 'Añadir',
+  'catalog.inMyPlanShort': 'Añadida',
+  'catalog.myPlanDockAria': 'Barra rápida de Mi Plan',
+  'catalog.myPlanDockTitle': '★ Mi Plan: {count} obras (ruta optimizada)',
+  'catalog.myPlanDockSub': 'Aprox. {minutes} min · se reordena automáticamente al añadir',
+  'catalog.myPlanDockView': 'Ver lista',
+  'catalog.myPlanDockStart': 'Abrir mapa ›'
 });
