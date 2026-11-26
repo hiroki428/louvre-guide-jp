@@ -582,5 +582,10 @@ export const zh = Object.freeze({
   'tour.step6Body': '可随时在此调整语言、倍速、登录同步，或重新查看本使用引导。',
   'tour.replayTitle': '交互式使用引导',
   'tour.replaySub': '在地图界面重新高亮展示各功能按钮的操作说明',
-  'tour.replayBtn': '重新查看引导'
+  'tour.replayBtn': '重新查看引导',
+  'notice.evOnOptimized': '已切换为电梯优先，并重新优化了参观顺序',
+  'notice.evOffOptimized': '已切换为最短距离，并重新优化了参观顺序',
+  'notice.myPlanAddedOpt': '已添加「{title}」并自动优化最短路线（共 {count} 件）',
+  'notice.myPlanRemovedOpt': '已移除「{title}」并重新优化剩余路线',
+  'notice.arrivalOptimized': '已将当前位置更新至{room}，并重新优化了剩余路线'
 });

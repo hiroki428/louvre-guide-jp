@@ -582,5 +582,10 @@ export const fr = Object.freeze({
   'tour.step6Body': 'Modifiez la langue, la vitesse audio, synchronisez votre compte ou relancez ce guide ici.',
   'tour.replayTitle': 'Guide interactif',
   'tour.replaySub': 'Revoir les explications guidées sur l’écran de la carte',
-  'tour.replayBtn': 'Revoir le guide'
+  'tour.replayBtn': 'Revoir le guide',
+  'notice.evOnOptimized': 'Mode ascenseur activé et ordre de visite réoptimisé',
+  'notice.evOffOptimized': 'Distance la plus courte activée et ordre de visite réoptimisé',
+  'notice.myPlanAddedOpt': '« {title} » ajouté et itinéraire optimisé ({count} œuvres)',
+  'notice.myPlanRemovedOpt': '« {title} » retiré et itinéraire restant réoptimisé',
+  'notice.arrivalOptimized': 'Position mise à jour ({room}) et étapes restantes réoptimisées'
 });

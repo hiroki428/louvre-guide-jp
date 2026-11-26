@@ -582,5 +582,10 @@ export const ja = Object.freeze({
   'tour.step6Body': '言語切替・再生速度・クラウド同期・この使い方ガイドの再表示はここからいつでも行えます。',
   'tour.replayTitle': '使い方ガイド（デモ）',
   'tour.replaySub': 'マップ画面の各ボタンや操作手順をもう一度ハイライトで案内します',
-  'tour.replayBtn': 'ガイドをもう一度見る'
+  'tour.replayBtn': 'ガイドをもう一度見る',
+  'notice.evOnOptimized': 'エレベーター優先へ切替え、巡回順も最短に最適化しました',
+  'notice.evOffOptimized': '最短距離へ切替え、巡回順も最短に最適化しました',
+  'notice.myPlanAddedOpt': '「{title}」を追加し、最短ルートへ最適化しました（全{count}作品）',
+  'notice.myPlanRemovedOpt': '「{title}」を外し、残りルートを最短に最適化しました',
+  'notice.arrivalOptimized': '現在地を{room}に更新し、残りルートを最短に再最適化しました'
 });

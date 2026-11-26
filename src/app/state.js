@@ -91,7 +91,7 @@ export function createAppStore({
     incomingSharedPlan: null,
     shareModal: {open: false, mode: 'export', titleDraft: '', importDraft: '', error: '', scanning: false},
     viewed: new Set(Array.isArray(persistedBoot?.viewed) ? persistedBoot.viewed.filter(id => byId[id]) : []),
-    floor: Number.isFinite(persistedBoot?.floor) ? persistedBoot.floor : 1,
+    floor: Number.isFinite(persistedBoot?.floor) ? persistedBoot.floor : -2,
     selected: persistedBoot?.selected && byId[persistedBoot.selected] ? persistedBoot.selected : null,
     detailWorkId: null,
     detailRoomWorks: [],

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {indexNavigationGraph, navigationStateFromRoute, buildNavigationView} from '../src/navigation.js';
-import {activePlanMeta, buildTimedRouteWorks, countPaceZones, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
+import {activePlanMeta, buildTimedRouteWorks, countPaceZones, formatMinutesLabel, moveMyPlanItem, optimizeRemainingWorks, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
 import {createAppStore, STORAGE_KEY} from '../src/app/state.js';
 import {createPlanActions} from '../src/app/plan-actions.js';
 import {planTabView} from '../src/views/plan-tab.js';
@@ -138,7 +138,7 @@ const store = createAppStore({
   persistedBoot: {routeId: theme.id, planMode: 'preset', hasChosenCourse: true, lang: 'ja'},
   skipSplashImmediate: true, appBase: new URL('../', import.meta.url)
 });
-const ctx = {...store, works, routes, byId: Object.fromEntries(works.map(work => [work.id, work])), navigationIndex: index, setNotice() {}, render() {}};
+const ctx = {...store, works, routes, byId: Object.fromEntries(works.map(work => [work.id, work])), navigationIndex: index, clearProgressNotice() {}, setNotice() {}, render() {}};
 const actions = createPlanActions(ctx);
 assert.equal(actions.addWorkToActivePlan(extraWork.id), true);
 assert.deepEqual(new Set(ctx.currentPlan().ids), new Set([...theme.ids, extraWork.id]), 'adding a work must retain the whole theme plan');
@@ -205,5 +205,27 @@ assert.deepEqual(store.state.myPlanIds, optimizeWorkOrder(index, [...myPlanBefor
 assert.ok(!store.state.navigation.routeWorkIds.includes(unmappedWork.id), 'unmapped saved works must not become navigation stops');
 assert.equal(actions.addOptionalWorkToActivePlan(optionalWork.id), true);
 assert.deepEqual(store.state.optionalWorkIds.myplan, [optionalWork.id]);
+
+// Incremental optimization keeps already-viewed works in place and optimizes remaining stops
+const remOpt = optimizeRemainingWorks(index, ['venus', 'lacemaker', 'mona', 'marly', 'catalog-0003'], new Set(['venus']), {preferElevator: false});
+assert.equal(remOpt.ids[0], 'venus', 'viewed work must stay at front');
+assert.equal(remOpt.ids.length, 5);
+const remMonaPos = remOpt.ids.indexOf('mona');
+const remCanaPos = remOpt.ids.indexOf('catalog-0003');
+assert.equal(Math.abs(remMonaPos - remCanaPos), 1, 'remaining same-room works must stay grouped after optimization');
+
+// Guard: shared plan must never mutate routeEdits when addWorkToActivePlan is called
+store.state.sharedPlan = {title: 'Friend', ids: ['mona', 'venus']};
+store.state.planMode = 'shared';
+const routeEditsBeforeShared = JSON.stringify(store.state.routeEdits);
+assert.equal(actions.addWorkToActivePlan(extraWork.id), false, 'adding a work while viewing a shared plan must be rejected');
+assert.equal(JSON.stringify(store.state.routeEdits), routeEditsBeforeShared, 'shared plan guard must not corrupt routeEdits');
+
+// Starting a course must default the map to entrance floor (-2)
+globalThis.window = {scrollTo() {}};
+actions.choosePresetCourse('preset-90', {goMap: true, animate: false});
+assert.equal(store.state.floor, -2, 'starting a preset course must open the map at entrance floor (-2)');
+actions.chooseTimedCourse(120, 12, {goMap: true, animate: false});
+assert.equal(store.state.floor, -2, 'starting a timed course must open the map at entrance floor (-2)');
 
 console.log('my-plan and custom routing: passed');

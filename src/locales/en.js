@@ -582,5 +582,10 @@ export const en = Object.freeze({
   'tour.step6Body': 'Change language, audio speed, sign in for cloud sync, or replay this guide anytime here.',
   'tour.replayTitle': 'Interactive Quick Guide',
   'tour.replaySub': 'Highlight the main buttons and walkthrough steps on the map screen again',
-  'tour.replayBtn': 'Replay Guide'
+  'tour.replayBtn': 'Replay Guide',
+  'notice.evOnOptimized': 'Switched to Elevator Priority and re-optimized your visit order',
+  'notice.evOffOptimized': 'Switched to Shortest Distance and re-optimized your visit order',
+  'notice.myPlanAddedOpt': 'Added “{title}” and auto-optimized your route ({count} artworks)',
+  'notice.myPlanRemovedOpt': 'Removed “{title}” and re-optimized the remaining route',
+  'notice.arrivalOptimized': 'Updated location to {room} and re-optimized remaining stops'
 });
