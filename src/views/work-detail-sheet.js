@@ -1,7 +1,6 @@
 import {audioLengthsFor} from '../catalog.js';
-import {formatMinutesLabel} from '../my-plan.js';
 import {hasNativeAudio, localizeWork, t} from '../i18n.js';
-import {creatorMeta, esc, formatAudioLengthLabel, formatClock, formatRate, priorityBadgeMarkup, thumbMarkup, workStatus} from '../app/ui-helpers.js';
+import {creatorMeta, esc, formatAudioLengthLabel, formatClock, priorityBadgeMarkup, thumbMarkup} from '../app/ui-helpers.js';
 
 export function openWorkDetail(ctx, workId, roomWorkIds = null) {
   const work = ctx.byId[workId];
@@ -31,11 +30,8 @@ export function workDetailSheetMarkup(ctx) {
   const work = localizeWork(rawWork, lang);
   const plan = ctx.currentPlan();
   const planIdx = plan.ids.indexOf(work.id);
-  const estimates = ctx.currentEstimates();
-  const est = estimates[work.id];
   const lengths = audioLengthsFor(work);
   const length = ctx.preferredLengthFor(work);
-  const saved = state.downloaded.has(`${work.id}-${length}`);
   const inMyPlan = state.myPlanIds.includes(work.id);
   const myPlanOrder = inMyPlan ? state.myPlanIds.indexOf(work.id) + 1 : 0;
   const isViewed = state.viewed.has(work.id);
@@ -82,8 +78,6 @@ export function workDetailSheetMarkup(ctx) {
       <div class="work-hero">
         ${thumbMarkup(ctx, work, 'thumb-hero')}
         <div class="work-hero-copy">
-          <div class="eyebrow">${planIdx >= 0 ? esc(tr('detail.visitOrder', {order: planIdx + 1, total: plan.ids.length})) : ''}${esc(workStatus(work, lang))}</div>
-          ${est ? `<div class="detail-elapsed-line">${esc(tr('detail.elapsedLine', {elapsed: formatMinutesLabel(est.elapsedMinutes, lang), totalPart: plan.minutes ? tr('detail.elapsedTotalPart', {minutes: plan.minutes}) : ''}))}</div>` : ''}
           <h2>${esc(work.title)}</h2>
           <p class="artist">${esc(creatorMeta(work, lang))}</p>
           <div class="hero-badges">
@@ -110,24 +104,14 @@ export function workDetailSheetMarkup(ctx) {
           <input type="range" min="0" max="1000" value="${ratio}" style="--seek-pct:${pct}%" data-seek data-seek-work="${esc(work.id)}" aria-label="${esc(tr('detail.seekAria'))}">
           <div class="sheet-time-row">
             <span data-time-current data-time-work="${esc(work.id)}">${formatClock(current)}</span>
-            <span class="seek-hint-inline">${esc(tr('detail.seekHint'))}</span>
             <span data-time-total data-time-work="${esc(work.id)}">${duration > 0 ? formatClock(duration) : '--:--'}</span>
           </div>
         </div>
-        <div class="sheet-player-controls">
-          <button type="button" class="secondary compact-btn" data-seek-delta="-10" data-seek-work="${esc(work.id)}">${esc(tr('detail.back10'))}</button>
-          <button type="button" class="primary sheet-play-main" data-detail-play="${esc(work.id)}">${esc(playBtnLabel)}</button>
-          <button type="button" class="secondary compact-btn" data-seek-delta="10" data-seek-work="${esc(work.id)}">${esc(tr('detail.fwd10'))}</button>
-        </div>
-        <div class="sheet-player-sub">
-          ${hasMidPosition ? `<button type="button" class="secondary compact-btn" data-restart-audio="${esc(work.id)}">${esc(tr('detail.restartBtn'))}</button>` : ''}
-          <button type="button" class="secondary compact-btn" data-open-audio-settings>${esc(tr('detail.speedBtn', {rate: formatRate(state.playbackRate)}))}</button>
-          <button type="button" class="secondary compact-btn" data-detail-download="${esc(work.id)}" ${saved ? 'disabled' : ''}>${esc(saved ? tr('detail.savedOffline') : tr('detail.saveToDevice'))}</button>
-          ${planIdx >= 0 ? `
+        <button type="button" class="primary sheet-play-main" data-detail-play="${esc(work.id)}">${esc(playBtnLabel)}</button>
+        ${planIdx >= 0 ? `<div class="sheet-player-sub">
             <button type="button" class="secondary compact-btn" data-plan-step="${planIdx - 1}" ${planIdx <= 0 ? 'disabled' : ''}>${esc(tr('detail.prevWork'))}</button>
             <button type="button" class="secondary compact-btn" data-plan-step="${planIdx + 1}" ${planIdx >= plan.ids.length - 1 ? 'disabled' : ''}>${esc(tr('detail.nextWork'))}</button>
-          ` : ''}
-        </div>
+          </div>` : ''}
         ${state.audioError ? `<p class="audio-error" role="alert">${esc(state.audioError)}</p>` : ''}
       </div>
 
@@ -252,12 +236,6 @@ export function wireWorkDetailSheet(ctx) {
     btn.onclick = () => {
       const id = btn.dataset.detailPlay;
       audio.toggleAudio(id, ctx.preferredLengthFor(byId[id]));
-    };
-  });
-  document.querySelectorAll('[data-detail-download]').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.dataset.detailDownload;
-      audio.saveAudioButton(btn, id, ctx.preferredLengthFor(byId[id]));
     };
   });
   document.querySelectorAll('[data-plan-step]').forEach(btn => {

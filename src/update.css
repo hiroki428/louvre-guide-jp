@@ -1337,12 +1337,6 @@ html[data-guide-transition='layer']::view-transition-new(root) {
   font-size: 10px;
   font-weight: 700;
 }
-.detail-elapsed-line {
-  margin-top: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-primary-dark);
-}
 .plan-card-badges { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
 .status-pill { padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; background: var(--color-canvas); color: var(--color-muted); }
 .status-pill.dest { background: var(--color-destination); color: #fff; }
@@ -1750,8 +1744,7 @@ html[data-guide-transition='layer']::view-transition-new(root) {
   background: linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) var(--seek-pct, 0%), #dbd3c7 var(--seek-pct, 0%), #dbd3c7 100%);
 }
 .sheet-time-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-muted); margin-top: 4px; }
-.sheet-player-controls { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
-.sheet-play-main { min-height: 44px; border: 0; border-radius: 10px; font-size: 14px; font-weight: 700; }
+.sheet-play-main { display: block; width: 100%; min-height: 44px; border: 0; border-radius: 10px; font-size: 14px; font-weight: 700; }
 .sheet-player-sub { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
 .audio-error { margin: 8px 0 0; color: var(--color-destination); font-size: 12px; font-weight: 700; }
 
@@ -2985,12 +2978,6 @@ button:not(:disabled):active {
   background: #237a5d;
   border-color: #237a5d;
   color: #fff;
-}
-
-/* ==================== AUDIO MID-PLAYBACK ==================== */
-.seek-hint-inline {
-  font-size: 10px;
-  color: var(--color-muted);
 }
 
 /* ==================== MYPLAN ADD UI & FLOATING DOCK ==================== */

@@ -102,7 +102,6 @@ assert.match(main, /data-change-course/);
 assert.match(main, /data-replay-onboarding/, 'settings tab must offer replay trigger for onboarding tour');
 assert.match(main, /data-tour-overlay/, 'coach-mark onboarding overlay must exist');
 assert.match(main, /progress-next-strip/, 'plan tab progress area must surface next-stop quick action strip');
-assert.match(main, /data-restart-audio/, 'work detail must offer restart-from-beginning control for mid-playback resume');
 assert.match(sw, /serveAudioWithRange/, 'Service Worker must support HTTP 206 Range responses for offline audio seeking');
 assert.match(main, /myplan-dock/, 'audio catalog must render floating My Plan summary dock when items are added');
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');

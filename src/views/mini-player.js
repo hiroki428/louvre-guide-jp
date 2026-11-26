@@ -107,15 +107,6 @@ export function wireMiniPlayer(ctx) {
   document.querySelector('[data-mini-prev]')?.addEventListener('click', () => audio.stepMiniPlayer(-1));
   document.querySelector('[data-mini-next]')?.addEventListener('click', () => audio.stepMiniPlayer(1));
   document.querySelector('[data-mini-close]')?.addEventListener('click', audio.closeMiniPlayer);
-  document.querySelectorAll('[data-seek-delta]').forEach(btn => {
-    btn.onclick = () => audio.seekBy(Number(btn.dataset.seekDelta), btn.dataset.seekWork || null);
-  });
-  document.querySelectorAll('[data-restart-audio]').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.dataset.restartAudio;
-      if (id && byId[id]) audio.restartAudio(id, ctx.preferredLengthFor(byId[id]));
-    };
-  });
   document.querySelectorAll('[data-seek]').forEach(input => {
     const updateVisual = val => {
       const ratio = Number(val) / 1000;
