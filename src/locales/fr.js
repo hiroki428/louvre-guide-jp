@@ -587,5 +587,13 @@ export const fr = Object.freeze({
   'notice.evOffOptimized': 'Distance la plus courte activée et ordre de visite réoptimisé',
   'notice.myPlanAddedOpt': '« {title} » ajouté et itinéraire optimisé ({count} œuvres)',
   'notice.myPlanRemovedOpt': '« {title} » retiré et itinéraire restant réoptimisé',
-  'notice.arrivalOptimized': 'Position mise à jour ({room}) et étapes restantes réoptimisées'
+  'notice.arrivalOptimized': 'Position mise à jour ({room}) et étapes restantes réoptimisées',
+  'notice.viewedRemoved': 'Marquage vu retiré pour « {title} »',
+  'notice.viewedAdvanced': '« {title} » marquée vue → Suivante : « {next} »',
+  'notice.viewedComplete': '« {title} » terminée ! Parcours complet accompli 🎉',
+  'notice.viewedMarked': '« {title} » marquée comme vue',
+  'plan.completeBanner': '🎉 Parcours terminé ! Les {total} œuvres ont été vues',
+  'plan.remainingSummary': '{count} restantes · env. {minutes} min',
+  'plan.nextStopLabel': 'PROCHAINE ÉTAPE',
+  'plan.markDoneCta': '✓ Marquer vue'
 });

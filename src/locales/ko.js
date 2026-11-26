@@ -587,5 +587,13 @@ export const ko = Object.freeze({
   'notice.evOffOptimized': '최단 거리로 전환하고 관람 순서를 재최적화했습니다',
   'notice.myPlanAddedOpt': '“{title}”을 추가하고 최단 경로로 자동 최적화했습니다 (총 {count}작품)',
   'notice.myPlanRemovedOpt': '“{title}”을 제외하고 남은 경로를 재최적화했습니다',
-  'notice.arrivalOptimized': '현재 위치를 {room}으로 갱신하고 남은 동선을 재최적화했습니다'
+  'notice.arrivalOptimized': '현재 위치를 {room}으로 갱신하고 남은 동선을 재최적화했습니다',
+  'notice.viewedRemoved': '“{title}”의 감상 완료를 해제했습니다',
+  'notice.viewedAdvanced': '“{title}” 감상 완료 → 다음: “{next}”',
+  'notice.viewedComplete': '“{title}” 완료! 코스 전체 작품을 완주했습니다 🎉',
+  'notice.viewedMarked': '“{title}”을 감상 완료로 표시했습니다',
+  'plan.completeBanner': '🎉 코스 완주! 전체 {total}작품을 모두 감상했습니다',
+  'plan.remainingSummary': '남은 {count}작품 · 예상 약 {minutes}분',
+  'plan.nextStopLabel': '다음 목적지',
+  'plan.markDoneCta': '✓ 완료 체크'
 });

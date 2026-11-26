@@ -587,5 +587,13 @@ export const ja = Object.freeze({
   'notice.evOffOptimized': '最短距離へ切替え、巡回順も最短に最適化しました',
   'notice.myPlanAddedOpt': '「{title}」を追加し、最短ルートへ最適化しました（全{count}作品）',
   'notice.myPlanRemovedOpt': '「{title}」を外し、残りルートを最短に最適化しました',
-  'notice.arrivalOptimized': '現在地を{room}に更新し、残りルートを最短に再最適化しました'
+  'notice.arrivalOptimized': '現在地を{room}に更新し、残りルートを最短に再最適化しました',
+  'notice.viewedRemoved': '「{title}」の鑑賞済みを解除しました',
+  'notice.viewedAdvanced': '「{title}」を鑑賞済みにしました → 次は「{next}」',
+  'notice.viewedComplete': '「{title}」を完了しました！コース全作品を完走 🎉',
+  'notice.viewedMarked': '「{title}」を鑑賞済みにしました',
+  'plan.completeBanner': '🎉 コース完走！全{total}作品を鑑賞しました',
+  'plan.remainingSummary': '残り {count}作品 · 目安 あと約{minutes}分',
+  'plan.nextStopLabel': '次の目的地',
+  'plan.markDoneCta': '✓ 済にする'
 });

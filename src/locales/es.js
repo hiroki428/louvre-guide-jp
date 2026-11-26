@@ -587,5 +587,13 @@ export const es = Object.freeze({
   'notice.evOffOptimized': 'Cambiado a Ruta más corta y orden de visita reoptimizado',
   'notice.myPlanAddedOpt': '«{title}» añadida y ruta optimizada ({count} obras)',
   'notice.myPlanRemovedOpt': '«{title}» quitada y ruta restante reoptimizada',
-  'notice.arrivalOptimized': 'Ubicación actualizada a {room} y paradas restantes reoptimizadas'
+  'notice.arrivalOptimized': 'Ubicación actualizada a {room} y paradas restantes reoptimizadas',
+  'notice.viewedRemoved': 'Se quitó la marca de vista de «{title}»',
+  'notice.viewedAdvanced': '«{title}» marcada como vista → Siguiente: «{next}»',
+  'notice.viewedComplete': '¡«{title}» completada! Terminaste todo el recorrido 🎉',
+  'notice.viewedMarked': '«{title}» marcada como vista',
+  'plan.completeBanner': '🎉 ¡Recorrido completado! Las {total} obras vistas',
+  'plan.remainingSummary': '{count} restantes · aprox. {minutes} min',
+  'plan.nextStopLabel': 'PRÓXIMA PARADA',
+  'plan.markDoneCta': '✓ Marcar vista'
 });

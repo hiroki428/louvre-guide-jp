@@ -587,5 +587,13 @@ export const zh = Object.freeze({
   'notice.evOffOptimized': '已切换为最短距离，并重新优化了参观顺序',
   'notice.myPlanAddedOpt': '已添加「{title}」并自动优化最短路线（共 {count} 件）',
   'notice.myPlanRemovedOpt': '已移除「{title}」并重新优化剩余路线',
-  'notice.arrivalOptimized': '已将当前位置更新至{room}，并重新优化了剩余路线'
+  'notice.arrivalOptimized': '已将当前位置更新至{room}，并重新优化了剩余路线',
+  'notice.viewedRemoved': '已取消「{title}」的已看标记',
+  'notice.viewedAdvanced': '已将「{title}」标为已看 → 下一站：「{next}」',
+  'notice.viewedComplete': '已完成「{title}」！全部作品参观完成 🎉',
+  'notice.viewedMarked': '已将「{title}」标为已看',
+  'plan.completeBanner': '🎉 路线完成！全部 {total} 件作品已参观',
+  'plan.remainingSummary': '剩余 {count} 件 · 预计还需约 {minutes} 分钟',
+  'plan.nextStopLabel': '下一站',
+  'plan.markDoneCta': '✓ 标为已看'
 });
