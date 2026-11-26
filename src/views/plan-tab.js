@@ -38,13 +38,6 @@ export function planTabView(ctx, hasMini) {
   const destId = destinationWorkId(navigationIndex, state.navigation);
   const viewedInPlan = items.filter(w => state.viewed.has(w.id)).length;
   const pct = items.length ? Math.round((viewedInPlan / items.length) * 100) : 0;
-  const allSaved = items.length > 0 && items.every(w => state.downloaded.has(`${w.id}-${ctx.preferredLengthFor(w)}`));
-  const saveBtnText = state.bulkDownload.active
-    ? tr('plan.savingBulk', {done: state.bulkDownload.done, total: state.bulkDownload.total})
-    : allSaved
-      ? tr('plan.allSaved')
-      : tr('plan.saveCourseBtn', {count: items.length});
-
   return `<main class="tab-screen plan-screen ${hasMini ? 'has-mini-player' : ''}">
     <section class="plan-switcher" aria-label="${esc(tr('plan.switcherAria'))}">
       ${routes.map(raw => {
@@ -59,16 +52,13 @@ export function planTabView(ctx, hasMini) {
         <div>
           <span class="eyebrow">${esc(plan.isCustom ? tr('plan.eyebrowCustom') : plan.kind === 'theme' ? tr('plan.eyebrowTheme') : tr('plan.eyebrowRec'))}</span>
           <h1>${esc(plan.label)}</h1>
-          ${plan.subtitle ? `<p class="plan-subtitle">${esc(plan.subtitle)}</p>` : ''}
         </div>
         <div class="plan-progress-badge">${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</div>
       </div>
       <div class="progress-bar" aria-label="${esc(tr('plan.progressAria'))}"><span style="width:${pct}%"></span></div>
-      ${items.length ? `<p class="plan-meta-line">${esc(tr('plan.metaLine', {est: plan.estimatedMinutes, visit: plan.visitMinutes, walk: plan.walkMinutes, audio: plan.audioMinutes, buffer: plan.bufferMinutes}))}</p>` : ''}
       ${items.length ? `<div class="plan-summary-actions">
         ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
         ${!plan.isCustom ? `<button type="button" class="secondary compact-btn" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>` : ''}
-        <button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${esc(saveBtnText)}</button>
         <div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
           <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
           <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>

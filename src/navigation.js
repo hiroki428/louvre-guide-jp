@@ -20,6 +20,8 @@ function edgeWeight(edge, options) {
   if (options?.preferElevator) {
     if (edge.kind === 'stairs' || edge.kind === 'escalator') return edge.cost + 10000;
     if (edge.kind === 'elevator') return Math.max(1, edge.cost * 0.7);
+  } else if (options?.preferElevator === false) {
+    if (edge.kind === 'elevator' || edge.kind === 'escalator') return edge.cost + 10000;
   }
   return edge.cost;
 }

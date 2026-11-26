@@ -21,6 +21,16 @@ export function timeCourseBounds(minutes, maxRoutable = 100) {
   return {minutes: m, min, recommended, max};
 }
 
+export function countPaceZones(bounds) {
+  const easyMax = Math.min(bounds.max, Math.max(bounds.min, bounds.recommended - 2));
+  const standardMax = Math.min(bounds.max, Math.max(easyMax, bounds.recommended + 1));
+  return [
+    {key: 'easy', min: bounds.min, max: easyMax},
+    {key: 'standard', min: easyMax + 1, max: standardMax},
+    {key: 'hard', min: standardMax + 1, max: bounds.max}
+  ].filter(zone => zone.min <= zone.max);
+}
+
 export function paceSummaryFor(minutes, count, bounds = timeCourseBounds(minutes), lang = getLang()) {
   const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
   const perWork = Math.round((minutes / safeCount) * 10) / 10;

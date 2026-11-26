@@ -7,7 +7,7 @@ import {clampRate} from './state.js';
 import {creatorMeta, formatClock, formatRate} from './ui-helpers.js';
 
 // public/sw.js の AUDIO と同じ名前にすること。違うと保存した音声がオフラインで使われない。
-const AUDIO_CACHE = 'louvre-audio-v2';
+const AUDIO_CACHE = 'louvre-audio-v3';
 
 export function createAudioController(ctx) {
   const tr = (key, params) => t(key, params, ctx.state.lang);
@@ -53,7 +53,7 @@ export function createAudioController(ctx) {
     const ratio = duration > 0 ? Math.round((current / duration) * 1000) : 0;
     document.querySelectorAll('[data-seek]').forEach(input => {
       const targetId = input.dataset.seekWork;
-      if (!targetId || targetId === ctx.state.player.workId) {
+      if ((!targetId || targetId === ctx.state.player.workId) && !input.dataset.seekDragging) {
         input.value = String(ratio);
         input.style.setProperty('--seek-pct', `${(ratio / 10).toFixed(1)}%`);
       }

@@ -1,1 +1,1 @@
-.audio-row.selected{background:var(--color-destination-soft);outline:2px solid var(--color-destination);outline-offset:2px;border-radius:var(--radius-sm);padding-left:10px;padding-right:10px}
+.audio-row.selected{background:#fff7f3;border-color:#dcbec0;box-shadow:inset 3px 0 0 var(--color-destination),0 4px 14px rgb(65 48 26 / 8%);outline:none}

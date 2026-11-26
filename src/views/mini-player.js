@@ -107,13 +107,31 @@ export function wireMiniPlayer(ctx) {
     btn.onclick = () => audio.seekBy(Number(btn.dataset.seekDelta));
   });
   document.querySelectorAll('[data-seek]').forEach(input => {
-    input.addEventListener('input', event => {
+    const seekToInput = () => {
       const workId = input.dataset.seekWork;
       if (workId && state.player.workId !== workId) return;
       if (Number.isFinite(player.duration) && player.duration > 0) {
-        player.currentTime = player.duration * (Number(event.target.value) / 1000);
+        player.currentTime = player.duration * (Number(input.value) / 1000);
         audio.syncSeekBars();
       }
+    };
+    input.addEventListener('pointerdown', () => { input.dataset.seekDragging = 'true'; });
+    input.addEventListener('input', () => {
+      input.style.setProperty('--seek-pct', `${(Number(input.value) / 10).toFixed(1)}%`);
+      if (!input.dataset.seekDragging) seekToInput();
+    });
+    input.addEventListener('change', () => {
+      delete input.dataset.seekDragging;
+      seekToInput();
+    });
+    input.addEventListener('pointerup', () => {
+      if (!input.dataset.seekDragging) return;
+      delete input.dataset.seekDragging;
+      seekToInput();
+    });
+    input.addEventListener('pointercancel', () => {
+      delete input.dataset.seekDragging;
+      audio.syncSeekBars();
     });
   });
 }

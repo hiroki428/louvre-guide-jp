@@ -7,6 +7,11 @@ import {runWithRouteLoader} from './route-loader.js';
 
 export function createPlanActions(ctx) {
   const tr = (key, params) => t(key, params, ctx.state.lang);
+  const previewImagesFor = ids => {
+    if (!ctx.appBase) return [];
+    return [...new Set(ids)].map(id => ctx.artworkImages?.[id]?.src)
+      .filter(Boolean).slice(0, 3).map(src => new URL(src, ctx.appBase).href);
+  };
 
   function setPreferElevator(prefer) {
     const next = Boolean(prefer);
@@ -20,7 +25,8 @@ export function createPlanActions(ctx) {
     if (ctx.state.appPhase === 'main' && ctx.routableIds().length > 0) {
       runWithRouteLoader({
         title: tr('loader.simpleTitle'),
-        durationMs: 1650
+        durationMs: 1650,
+        previewImages: previewImagesFor(ctx.routableIds())
       }, apply);
     } else {
       apply();
@@ -58,20 +64,21 @@ export function createPlanActions(ctx) {
     }
     runWithRouteLoader({
       title: tr('loader.simpleTitle'),
-      durationMs: 2250
+      durationMs: 2250,
+      previewImages: previewImagesFor(ctx.state.routeEdits?.[chosen.id] || chosen.ids)
     }, apply);
   }
 
   function chooseTimedCourse(minutes, count, {goMap = true, animate = true} = {}) {
     const bounds = timeCourseBounds(minutes, ctx.maxRoutableCount);
     const safeCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(Number(count) || bounds.recommended)));
+    const built = buildTimedRouteWorks(ctx.works, ctx.navigationIndex, {
+      minutes: bounds.minutes,
+      count: safeCount,
+      preferElevator: ctx.state.preferElevator
+    });
     const apply = () => {
       ctx.clearProgressNotice();
-      const built = buildTimedRouteWorks(ctx.works, ctx.navigationIndex, {
-        minutes: bounds.minutes,
-        count: safeCount,
-        preferElevator: ctx.state.preferElevator
-      });
       ctx.state.planMode = 'preset';
       ctx.state.routeId = `preset-${built.minutes}`;
       ctx.state.minutes = built.minutes;
@@ -99,7 +106,8 @@ export function createPlanActions(ctx) {
     }
     runWithRouteLoader({
       title: tr('loader.simpleTitle'),
-      durationMs: 2250
+      durationMs: 2250,
+      previewImages: previewImagesFor(built.ids)
     }, apply);
   }
 
@@ -126,7 +134,8 @@ export function createPlanActions(ctx) {
     }
     runWithRouteLoader({
       title: tr('loader.simpleTitle'),
-      durationMs: 2050
+      durationMs: 2050,
+      previewImages: previewImagesFor(ctx.state.myPlanIds)
     }, apply);
   }
 
@@ -140,7 +149,8 @@ export function createPlanActions(ctx) {
     }
     runWithRouteLoader({
       title: tr('loader.simpleTitle'),
-      durationMs: 2150
+      durationMs: 2150,
+      previewImages: previewImagesFor(ctx.state.myPlanIds)
     }, () => {
       const result = optimizeWorkOrder(ctx.navigationIndex, ctx.state.myPlanIds, ctx.navOptions());
       ctx.state.myPlanIds = result.ids;

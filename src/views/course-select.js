@@ -1,4 +1,4 @@
-import {paceSummaryFor, timeCourseBounds} from '../my-plan.js';
+import {countPaceZones, timeCourseBounds} from '../my-plan.js';
 import {SUPPORTED_LANGS, localizeRoute, t} from '../i18n.js';
 import {esc} from '../app/ui-helpers.js';
 
@@ -18,7 +18,7 @@ export function languageSelectView(ctx) {
 }
 
 export function courseSelectView(ctx) {
-  const {routes, state, maxRoutableCount, works} = ctx;
+  const {routes, state, maxRoutableCount} = ctx;
   const lang = state.lang;
   const tr = (key, params) => t(key, params, lang);
   const timeRoutes = routes.filter(item => item.kind !== 'theme');
@@ -30,10 +30,13 @@ export function courseSelectView(ctx) {
   const selectedMinutes = state.draftMinutes || 90;
   const bounds = timeCourseBounds(selectedMinutes, maxRoutableCount);
   const selectedCount = Math.max(bounds.min, Math.min(bounds.max, Math.round(state.draftCount || bounds.recommended)));
-  const pace = paceSummaryFor(bounds.minutes, selectedCount, bounds, lang);
-  const recPct = bounds.max > bounds.min
-    ? Math.round(((bounds.recommended - bounds.min) / (bounds.max - bounds.min)) * 100)
-    : 50;
+  const paceZones = countPaceZones(bounds);
+  const zoneEndPct = key => {
+    const zone = paceZones.find(item => item.key === key);
+    return bounds.max > bounds.min && zone
+      ? Math.min(100, ((zone.max + 0.5 - bounds.min) / (bounds.max - bounds.min)) * 100)
+      : 100;
+  };
 
   return `<main class="course-screen">
     ${returnButton}
@@ -56,11 +59,9 @@ export function courseSelectView(ctx) {
       <div class="count-picker-card">
         <div class="count-controls-row">
           <div class="count-slider-col">
-            <input class="count-slider" type="range" min="${bounds.min}" max="${bounds.max}" step="1" value="${selectedCount}" data-count-slider aria-label="${esc(tr('course.sliderAria'))}">
-            <div class="count-slider-marks" aria-hidden="true">
-              <span>${esc(tr('course.sliderMin', {count: bounds.min}))}</span>
-              <span class="rec-mark" style="left:${recPct}%">${esc(tr('course.sliderRec', {count: bounds.recommended}))}</span>
-              <span>${esc(tr('course.sliderMax', {count: bounds.max}))}</span>
+            <input class="count-slider" type="range" min="${bounds.min}" max="${bounds.max}" step="1" value="${selectedCount}" style="--easy-end:${zoneEndPct('easy')}%;--standard-end:${zoneEndPct('standard')}%" data-count-slider aria-label="${esc(tr('course.sliderAria'))}" aria-describedby="count-pace-legend">
+            <div class="count-pace-legend" id="count-pace-legend">
+              ${paceZones.map(zone => `<span class="count-pace-zone ${zone.key}"><i aria-hidden="true"></i>${esc(tr('course.paceZone.' + zone.key))} <small>${zone.min}–${zone.max}</small></span>`).join('')}
             </div>
           </div>
           <label class="count-number-box">
@@ -68,14 +69,9 @@ export function courseSelectView(ctx) {
             <span>${esc(tr('course.worksUnit'))}</span>
           </label>
         </div>
-        <p class="count-pace-detail" data-pace-detail>${esc(pace.detail)}</p>
-
-        <div class="route-pref-bar route-pref-inline" role="group" aria-label="${esc(tr('course.routePrefAria'))}">
-          <span class="route-pref-label">${esc(tr('course.routePrefLabel'))}</span>
-          <div class="route-pref-toggle">
-            <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
-            <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevator'))}</button>
-          </div>
+        <div class="course-route-switch" role="group" aria-label="${esc(tr('course.routePrefAria'))}">
+          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true" aria-pressed="${state.preferElevator}">${esc(tr('course.elevatorShort'))}</button>
+          <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false" aria-pressed="${!state.preferElevator}">${esc(tr('course.shortest'))}</button>
         </div>
 
         <button type="button" class="primary start-timed-route-btn" data-start-timed-route>
@@ -102,12 +98,9 @@ export function courseSelectView(ctx) {
         }).join('')}
       </div>
     </details>` : ''}
-    <button class="course-custom-card ${state.hasChosenCourse && state.planMode === 'myplan' ? 'active' : ''}" type="button" data-choose-myplan>
-      <div>
-        <span class="eyebrow">${esc(tr('course.customEyebrow'))}</span>
-        <strong>${esc(tr('course.myPlanTitle'))}</strong>
-        <p>${esc(state.myPlanIds.length ? tr('course.myPlanHasItems', {count: state.myPlanIds.length}) : tr('course.myPlanEmpty', {total: works.length}))}</p>
-      </div>
+    <button class="theme-course-card course-custom-card ${state.hasChosenCourse && state.planMode === 'myplan' ? 'active' : ''}" type="button" data-choose-myplan>
+      <strong>${esc(tr('routes.myplan.label'))}</strong>
+      ${state.myPlanIds.length ? `<small>${esc(tr('course.worksCount', {count: state.myPlanIds.length}))}</small>` : ''}
       <span class="arrow" aria-hidden="true">›</span>
     </button>
   </main>`;
@@ -121,14 +114,11 @@ export function wireCourseSelect(ctx) {
     if (!Number.isFinite(parsed)) return;
     const clamped = Math.max(bounds.min, Math.min(bounds.max, parsed));
     state.draftCount = clamped;
-    const pace = paceSummaryFor(bounds.minutes, clamped, bounds, state.lang);
     const slider = document.querySelector('[data-count-slider]');
     const numInput = document.querySelector('[data-count-input]');
-    const detail = document.querySelector('[data-pace-detail]');
     const ctaCount = document.querySelector('[data-cta-count]');
     if (slider && slider.value !== String(clamped)) slider.value = String(clamped);
     if (numInput && document.activeElement !== numInput) numInput.value = String(clamped);
-    if (detail) detail.textContent = pace.detail;
     if (ctaCount) ctaCount.textContent = String(clamped);
   };
 

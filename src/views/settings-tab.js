@@ -89,7 +89,7 @@ export function settingsTabView(ctx, hasMini) {
         </div>
         <div class="route-mode-subtoggle">
           <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
-          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevator'))}</button>
+          <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>
         </div>
       </div>
       <div class="setting-row">

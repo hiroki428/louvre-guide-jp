@@ -7,6 +7,18 @@ const graph = JSON.parse(await readFile(new URL('../src/navigation-graph.json', 
 const routes = JSON.parse(await readFile(new URL('../src/routes.json', import.meta.url), 'utf8'));
 const index = indexNavigationGraph(graph);
 
+const preferenceGraph = indexNavigationGraph({
+  nodes: [{id: 'start'}, {id: 'stairs'}, {id: 'goal'}],
+  edges: [
+    {from: 'start', to: 'goal', kind: 'elevator', cost: 1},
+    {from: 'start', to: 'stairs', kind: 'stairs', cost: 2},
+    {from: 'stairs', to: 'goal', kind: 'corridor', cost: 1}
+  ]
+});
+assert.equal(shortestPath(preferenceGraph, 'start', 'goal').edges[0].kind, 'elevator');
+assert.equal(shortestPath(preferenceGraph, 'start', 'goal', {preferElevator: false}).edges[0].kind, 'stairs');
+assert.equal(shortestPath(preferenceGraph, 'start', 'goal', {preferElevator: true}).edges[0].kind, 'elevator');
+
 const sameFloor = buildNavigationView(index, {
   journeyStartNodeId:'work:victory',
   currentNodeId:'door:f1:703',

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {indexNavigationGraph, navigationStateFromRoute, buildNavigationView} from '../src/navigation.js';
-import {activePlanMeta, buildTimedRouteWorks, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
+import {activePlanMeta, buildTimedRouteWorks, countPaceZones, formatMinutesLabel, moveMyPlanItem, optimizeWorkOrder, paceSummaryFor, planStopEstimates, removeMyPlanItem, routableWorkIds, timeCourseBounds, toggleMyPlan} from '../src/my-plan.js';
 import {createAppStore, STORAGE_KEY} from '../src/app/state.js';
 import {createPlanActions} from '../src/app/plan-actions.js';
 import {planTabView} from '../src/views/plan-tab.js';
@@ -98,6 +98,11 @@ const works = JSON.parse(await readFile(new URL('../src/works.json', import.meta
 const b90 = timeCourseBounds(90, 100);
 assert.equal(b90.recommended, 8);
 assert.equal(b90.max, 14);
+assert.deepEqual(countPaceZones(b90), [
+  {key: 'easy', min: 3, max: 6},
+  {key: 'standard', min: 7, max: 9},
+  {key: 'hard', min: 10, max: 14}
+]);
 const b180 = timeCourseBounds(180, 100);
 assert.equal(b180.recommended, 18);
 assert.equal(b180.max, 32);

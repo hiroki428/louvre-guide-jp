@@ -1,29 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Shippori+Mincho:wght@500;600;700&display=swap');
 
 :root {
-  --color-canvas:#F7F4ED;
-  --color-surface:#FFFDFA;
+  --color-canvas:#F4F0E7;
+  --color-surface:#FFFCF6;
   --color-stone:#DED8CE;
   --color-stone-dark:#B8B0A5;
-  --color-ink:#2C2A28;
-  --color-muted:#68645F;
-  --color-primary:#245C63;
-  --color-primary-dark:#19464C;
-  --color-primary-soft:#F1F7F6;
+  --color-ink:#2D2B27;
+  --color-muted:#615D56;
+  --color-primary:#225B55;
+  --color-primary-dark:#174943;
+  --color-primary-soft:#EAF2ED;
   --color-route:#1769AA;
   --color-passed:#9B9B96;
   --color-destination:#8B3345;
   --color-destination-soft:#FFF4F6;
   --color-on-accent:#FFFFFF;
-  --color-gold:#B58A45;
+  --color-gold:#AA7C39;
   --color-richelieu:#D9D5C8;
   --color-sully:#D3DAD2;
   --color-denon:#D8D2D6;
-  --color-line:#C9C1B6;
-  --color-focus:rgb(23 105 170 / 40%);
-  --color-sticky-surface:rgb(255 253 250 / 96%);
+  --color-line:#D9D0C2;
+  --color-focus:rgb(34 91 85 / 48%);
+  --color-sticky-surface:rgb(255 252 246 / 96%);
   --color-inset-shadow:rgb(0 0 0 / 16%);
-  --shadow-soft:0 8px 24px rgb(44 42 40 / 8%);
+  --shadow-soft:0 8px 24px rgb(65 48 26 / 7%);
   --radius-sm:8px;
   --radius-md:12px;
   --radius-lg:18px;
@@ -35,7 +35,7 @@
 
 * { box-sizing:border-box; }
 html { background:var(--color-canvas); overflow-x:hidden; }
-body { margin:0; min-width:320px; overflow-x:hidden; }
+body { margin:0; min-width:320px; overflow-x:hidden; line-height:1.5; background:radial-gradient(circle at 6% 0, rgb(186 137 65 / 10%), transparent 30%), radial-gradient(circle at 94% 24%, rgb(34 91 85 / 6%), transparent 34%), var(--color-canvas); }
 button, select { font:inherit; }
 button { cursor:pointer; }
 button:focus-visible, a:focus-visible, [role='button']:focus-visible { outline:3px solid var(--color-focus); outline-offset:3px; }
@@ -75,7 +75,7 @@ main { width:min(100%, 1120px); margin:auto; padding:0 24px 80px; }
 .chip.active { background:var(--color-primary); color:var(--color-on-accent); border-color:var(--color-primary); }
 .audio-actions { display:flex; gap:8px; }
 .audio-actions button { padding:10px 15px; border:1px solid var(--color-primary); border-radius:var(--radius-sm); font-size:12px; }
-.primary { background:var(--color-primary); color:var(--color-on-accent); }
+.primary { background:linear-gradient(140deg, #2B6B62, var(--color-primary-dark)); color:var(--color-on-accent); }
 .secondary { background:var(--color-surface); color:var(--color-primary-dark); }
 
 @media (max-width:760px) {
