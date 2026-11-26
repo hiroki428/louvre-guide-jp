@@ -118,9 +118,6 @@ export function planTabView(ctx, hasMini) {
         </div>` : `<div class="plan-progress-badge">${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</div>`}
       </div>
       ${items.length ? `<div class="plan-progress-panel">
-        <div class="progress-bar progress-bar-lg ${isAllDone ? 'is-complete' : ''}" aria-label="${esc(tr('plan.progressAria'))}">
-          <span style="width:${pct}%"></span>
-        </div>
         ${items.length <= 20 ? `<div class="progress-steps-track" aria-hidden="true">
           ${items.map(w => `<i class="${state.viewed.has(w.id) ? 'is-done' : w.id === destId ? 'is-next' : ''}"></i>`).join('')}
         </div>` : ''}
