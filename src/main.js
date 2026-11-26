@@ -7,6 +7,7 @@ import {bottomTabsMarkup, createNoticeController, esc, noticeMarkup} from './app
 import {createAudioController} from './app/audio-controller.js';
 import {createPlanActions} from './app/plan-actions.js';
 import {createAuthSyncController} from './app/cloud-sync.js';
+import {parseSharedPlanInput, readPendingSharedPlan, savePendingSharedPlan} from './app/plan-share.js';
 import {courseSelectView, languageSelectView, wireCourseSelect} from './views/course-select.js';
 import {mapTabView, wireMapTab} from './views/map-tab.js';
 import {planTabView, wirePlanTab} from './views/plan-tab.js';
@@ -14,6 +15,7 @@ import {audioTabView, visibleAudioWorks, wireAudioTab} from './views/audio-tab.j
 import {settingsTabView, wireSettingsTab} from './views/settings-tab.js';
 import {closeWorkDetail, openWorkDetail, workDetailSheetMarkup, wireWorkDetailSheet} from './views/work-detail-sheet.js';
 import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wireMiniPlayer} from './views/mini-player.js';
+import {incomingSharedPopupMarkup, sharePlanModalMarkup, sharedPlanBannerMarkup, stopQrScanner, wireSharedPlanUI} from './views/plan-share-modal.js';
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
@@ -138,6 +140,36 @@ async function switchAppLanguage(next) {
   if (localeLoaded || ctx.state.lang === applied) render();
 }
 
+// Detect friend's shared plan link (?sp=...) without overwriting the user's own plan.
+// Persist in sessionStorage so OAuth / Magic Link redirects preserve it across reloads.
+let hadInvalidSharedParam = false;
+if (typeof location !== 'undefined' && location.search) {
+  const searchParams = new URLSearchParams(location.search);
+  const hadSp = searchParams.has('sp');
+  const incoming = hadSp ? parseSharedPlanInput(location.search, byId) : null;
+  if (incoming) {
+    store.state.incomingSharedPlan = incoming;
+    savePendingSharedPlan(incoming);
+  } else if (hadSp) {
+    hadInvalidSharedParam = true;
+  }
+  if (hadSp) {
+    try {
+      const cleanUrl = new URL(location.href);
+      cleanUrl.searchParams.delete('sp');
+      cleanUrl.searchParams.delete('sn');
+      history.replaceState?.(null, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+    } catch { /* ignore */ }
+  }
+}
+if (!store.state.incomingSharedPlan) {
+  const pending = readPendingSharedPlan(byId);
+  if (pending) store.state.incomingSharedPlan = pending;
+}
+if (hadInvalidSharedParam) {
+  ctx.setNotice(t('share.importInvalidError', null, store.state.lang), false, 4200);
+}
+
 function wireShell() {
   const {state, maxRoutableCount, planActions, audio} = ctx;
 
@@ -243,6 +275,7 @@ function wireMain() {
   wireMiniPlayer(ctx);
   wireAudioTab(ctx);
   wireSettingsTab(ctx);
+  wireSharedPlanUI(ctx);
 }
 
 function render() {
@@ -286,8 +319,9 @@ function render() {
     return;
   }
   if (state.appPhase === 'select_time') {
-    app.innerHTML = courseSelectView(ctx) + noticeMarkup(ctx, false);
+    app.innerHTML = courseSelectView(ctx) + incomingSharedPopupMarkup(ctx) + noticeMarkup(ctx, false);
     wireCourseSelect(ctx);
+    wireSharedPlanUI(ctx);
     return;
   }
   const plan = ctx.currentPlan();
@@ -313,11 +347,14 @@ function render() {
         <button type="button" class="header-audio-btn" data-open-audio-settings aria-label="${esc(t('app.audioSettingsAria', null, lang))}" title="${esc(t('app.audioSettingsTitle', null, lang))}">⚙</button>
       </div>
     </header>
+    ${sharedPlanBannerMarkup(ctx)}
     ${body}
     ${miniPlayerMarkup(ctx)}
     ${bottomTabsMarkup(ctx)}
     ${workDetailSheetMarkup(ctx)}
     ${audioSettingsModalMarkup(ctx)}
+    ${sharePlanModalMarkup(ctx)}
+    ${incomingSharedPopupMarkup(ctx)}
     ${noticeMarkup(ctx, hasMini)}
   `;
   wireMain();
@@ -335,7 +372,9 @@ ctx.audio.player.addEventListener('timeupdate', ctx.audio.syncSeekBars);
 ctx.audio.player.addEventListener('loadedmetadata', ctx.audio.syncSeekBars);
 window.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
-    if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }
+    if (ctx.state.incomingSharedPlan) { ctx.state.incomingSharedPlan = null; savePendingSharedPlan(null); render(); }
+    else if (ctx.state.shareModal?.open) { stopQrScanner(); ctx.state.shareModal.open = false; ctx.state.shareModal.scanning = false; render(); }
+    else if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }
     else if (ctx.state.detailWorkId) closeWorkDetail(ctx);
   }
 });

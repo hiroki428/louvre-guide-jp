@@ -81,32 +81,43 @@ export function planTabView(ctx, hasMini) {
   const destId = destinationWorkId(navigationIndex, state.navigation);
   const viewedInPlan = items.filter(w => state.viewed.has(w.id)).length;
   const pct = items.length ? Math.round((viewedInPlan / items.length) * 100) : 0;
+  const allSaved = items.length > 0 && items.every(w => state.downloaded.has(`${w.id}-${ctx.preferredLengthFor(w)}`));
+  const saveBtnText = state.bulkDownload.active
+    ? tr('plan.savingBulk', {done: state.bulkDownload.done, total: state.bulkDownload.total})
+    : allSaved
+      ? tr('plan.allSaved')
+      : tr('plan.saveCourseBtn', {count: items.length});
   return `<main class="tab-screen plan-screen ${hasMini ? 'has-mini-player' : ''}">
     <section class="plan-switcher" aria-label="${esc(tr('plan.switcherAria'))}">
       ${routes.map(raw => {
         const r = localizeRoute(raw, lang);
-        return `<button type="button" class="pill-btn ${!plan.isCustom && plan.id === r.id ? 'active' : ''}" data-switch-preset="${esc(r.id)}">${esc(r.shortLabel)}</button>`;
+        return `<button type="button" class="pill-btn ${!plan.isCustom && !plan.isShared && plan.id === r.id ? 'active' : ''}" data-switch-preset="${esc(r.id)}">${esc(r.shortLabel)}</button>`;
       }).join('')}
       <button type="button" class="pill-btn ${plan.isCustom ? 'active' : ''}" data-switch-myplan>${esc(tr('plan.myPlanPill', {count: state.myPlanIds.length}))}</button>
+      ${state.sharedPlan?.ids?.length ? `<button type="button" class="pill-btn pill-shared ${plan.isShared ? 'active' : ''}" data-switch-shared>${esc(tr('share.planPill', {count: state.sharedPlan.ids.length}))}</button>` : ''}
     </section>
 
     <section class="plan-summary-card">
       <div class="plan-summary-top">
         <div>
-          <span class="eyebrow">${esc(plan.isCustom ? tr('plan.eyebrowCustom') : plan.kind === 'theme' ? tr('plan.eyebrowTheme') : tr('plan.eyebrowRec'))}</span>
+          <span class="eyebrow">${esc(plan.isShared ? tr('plan.eyebrowShared') : plan.isCustom ? tr('plan.eyebrowCustom') : plan.kind === 'theme' ? tr('plan.eyebrowTheme') : tr('plan.eyebrowRec'))}</span>
           <h1>${esc(plan.label)}</h1>
         </div>
         <div class="plan-progress-badge">${esc(tr('plan.progressBadge', {viewed: viewedInPlan, total: items.length}))}</div>
       </div>
       <div class="progress-bar" aria-label="${esc(tr('plan.progressAria'))}"><span style="width:${pct}%"></span></div>
-      ${items.length ? `<div class="plan-summary-actions">
-        ${plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
+      <div class="plan-summary-actions">
+        ${items.length && plan.isCustom && plan.routableIds.length >= 2 ? `<button type="button" class="optimize-plan-btn" data-optimize-myplan>${esc(tr('plan.optimizeBtn'))}</button>` : ''}
         <button type="button" class="secondary compact-btn" data-open-plan-add>${esc(tr('plan.addWorkBtn'))}</button>
-        <div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
+        ${items.length ? `<button type="button" class="secondary compact-btn" data-open-share-modal="export">${esc(tr('share.shareBtn'))}</button>` : ''}
+        <button type="button" class="secondary compact-btn" data-open-share-modal="import">${esc(tr('share.openFriendBtn'))}</button>
+        ${plan.isShared ? `<button type="button" class="secondary compact-btn" data-copy-active-shared>${esc(tr('share.copyToMyPlanBtn'))}</button>` : ''}
+        ${items.length ? `<button type="button" class="secondary compact-btn" data-bulk-download ${state.bulkDownload.active || allSaved ? 'disabled' : ''}>${esc(saveBtnText)}</button>` : ''}
+        ${items.length ? `<div class="route-mode-subtoggle" role="group" aria-label="${esc(tr('map.routeModeAria'))}">
           <button type="button" class="${!state.preferElevator ? 'active' : ''}" data-prefer-elevator="false">${esc(tr('course.shortest'))}</button>
           <button type="button" class="${state.preferElevator ? 'active' : ''}" data-prefer-elevator="true">${esc(tr('course.elevatorShort'))}</button>
-        </div>
-      </div>` : ''}
+        </div>` : ''}
+      </div>
     </section>
 
     ${!items.length ? `<section class="empty-plan-box">
@@ -196,6 +207,8 @@ export function wirePlanTab(ctx) {
     btn.onclick = () => planActions.choosePresetCourse(btn.dataset.switchPreset, {goMap: false});
   });
   document.querySelector('[data-switch-myplan]')?.addEventListener('click', () => planActions.chooseMyPlan({goMap: false}));
+  document.querySelector('[data-switch-shared]')?.addEventListener('click', () => planActions.chooseSharedPlan({goMap: false}));
+  document.querySelector('[data-copy-active-shared]')?.addEventListener('click', () => planActions.copySharedToMyPlan());
   document.querySelector('[data-optimize-myplan]')?.addEventListener('click', planActions.handleOptimizeMyPlan);
   document.querySelectorAll('[data-promote-optional]').forEach(btn => {
     btn.onclick = () => planActions.addWorkToActivePlan(btn.dataset.promoteOptional);

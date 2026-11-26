@@ -1,4 +1,4 @@
-const SHELL = 'louvre-shell-v84';
+const SHELL = 'louvre-shell-v85';
 const AUDIO = 'louvre-audio-v3';
 const IMAGES = 'louvre-images-v1';
 
@@ -23,6 +23,7 @@ const SHELL_ASSETS = [
   './src/main.js',
   './src/app/state.js',
   './src/app/cloud-sync.js',
+  './src/app/plan-share.js',
   './src/app/ui-helpers.js',
   './src/app/route-loader.js',
   './src/app/audio-controller.js',
@@ -30,6 +31,7 @@ const SHELL_ASSETS = [
   './src/views/course-select.js',
   './src/views/map-tab.js',
   './src/views/plan-tab.js',
+  './src/views/plan-share-modal.js',
   './src/views/audio-tab.js',
   './src/views/settings-tab.js',
   './src/views/work-detail-sheet.js',

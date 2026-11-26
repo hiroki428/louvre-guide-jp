@@ -47,13 +47,25 @@ export function createAppStore({
     .filter(([planId, ids]) => (planId === 'myplan' || routes.some(route => route.id === planId)) && Array.isArray(ids))
     .map(([planId, ids]) => [planId, [...new Set(ids.filter(id => byId[id]))]]));
 
+  const initialSharedIds = Array.isArray(persistedBoot?.sharedPlan?.ids)
+    ? persistedBoot.sharedPlan.ids.filter(id => byId[id])
+    : [];
+  const initialSharedPlan = initialSharedIds.length
+    ? {title: String(persistedBoot.sharedPlan?.title || ''), ids: initialSharedIds}
+    : null;
+  const initialPlanMode = persistedBoot?.planMode === 'shared' && initialSharedPlan
+    ? 'shared'
+    : persistedBoot?.planMode === 'myplan'
+      ? 'myplan'
+      : 'preset';
+
   const state = {
     lang: initialLang,
     hasChosenLang: Boolean(persistedBoot?.hasChosenLang),
     appPhase: skipSplashImmediate ? 'select_language' : 'splash',
     hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
     tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
-    planMode: persistedBoot?.planMode === 'myplan' ? 'myplan' : 'preset',
+    planMode: initialPlanMode,
     routeId: routes.some(r => r.id === persistedBoot?.routeId)
       ? persistedBoot.routeId
       : (routes.find(r => r.kind !== 'theme' && r.minutes === persistedBoot?.minutes)?.id ?? routes[0]?.id ?? 'preset-90'),
@@ -72,6 +84,10 @@ export function createAppStore({
     largeText: Boolean(persistedBoot?.largeText),
     offline: typeof navigator !== 'undefined' && navigator.onLine === false,
     myPlanIds: Array.isArray(persistedBoot?.myPlanIds) ? persistedBoot.myPlanIds.filter(id => byId[id]) : [],
+    sharedPlan: initialSharedPlan,
+    returnPlanSnapshot: persistedBoot?.returnPlanSnapshot || null,
+    incomingSharedPlan: null,
+    shareModal: {open: false, mode: 'export', titleDraft: '', importDraft: '', error: '', scanning: false},
     viewed: new Set(Array.isArray(persistedBoot?.viewed) ? persistedBoot.viewed.filter(id => byId[id]) : []),
     floor: Number.isFinite(persistedBoot?.floor) ? persistedBoot.floor : 1,
     selected: persistedBoot?.selected && byId[persistedBoot.selected] ? persistedBoot.selected : null,
@@ -113,6 +129,7 @@ export function createAppStore({
     minutes: state.minutes,
     routes,
     myPlanIds: state.myPlanIds,
+    sharedPlan: state.sharedPlan,
     navigationIndex,
     duration: state.duration,
     customTimedIds: state.customTimedIds,
@@ -149,7 +166,7 @@ export function createAppStore({
   }
 
   function restoreInitialNavigation() {
-    if (state.planMode === 'myplan' || state.customTimedIds?.length || state.routeEdits[state.routeId]?.length) {
+    if (state.planMode === 'myplan' || state.planMode === 'shared' || state.customTimedIds?.length || state.routeEdits[state.routeId]?.length) {
       const ids = routableIds();
       if (validCustomNavigation(persistedBoot?.navigation, ids)) {
         state.navigation = persistedBoot.navigation;
@@ -188,7 +205,7 @@ export function createAppStore({
 
   function persistState({skipSync = false} = {}) {
     const plan = currentPlan();
-    const sessionProgress = !plan.isCustom && !state.routeEdits[state.routeId]?.length ? {
+    const sessionProgress = !plan.isCustom && !plan.isShared && !state.routeEdits[state.routeId]?.length ? {
       version: 2,
       routeId: plan.id,
       minutes: plan.minutes,
@@ -215,6 +232,8 @@ export function createAppStore({
         autoPlayNext: state.autoPlayNext,
         largeText: state.largeText,
         myPlanIds: state.myPlanIds,
+        sharedPlan: state.sharedPlan,
+        returnPlanSnapshot: state.returnPlanSnapshot,
         viewed: [...state.viewed],
         floor: state.floor,
         selected: state.selected,

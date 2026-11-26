@@ -301,7 +301,32 @@ export function planStopEstimates(plan, navigationIndex, {preferElevator = false
   return result;
 }
 
-export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null, routeEdits = {}, lang = getLang()}) {
+export function activePlanMeta({planMode, routeId, minutes, routes, myPlanIds, sharedPlan = null, navigationIndex, duration = 40, customTimedIds = null, customTimedMinutes = null, routeEdits = {}, lang = getLang()}) {
+  if (planMode === 'shared' && Array.isArray(sharedPlan?.ids) && sharedPlan.ids.length) {
+    const ids = sharedPlan.ids;
+    const routableIds = routableWorkIds(navigationIndex, ids);
+    const visitMinutes = ids.length * 6;
+    const walkMinutes = routableIds.length ? Math.max(8, routableIds.length * 5) : 0;
+    const audioMinutes = Math.ceil((ids.length * duration) / 60);
+    const bufferMinutes = ids.length ? Math.min(15, Math.ceil(ids.length * 1.5)) : 0;
+    return {
+      mode: 'shared',
+      id: 'shared',
+      kind: 'shared',
+      label: sharedPlan.title || t('share.defaultPlanTitle', null, lang),
+      subtitle: t('share.activeSubtitle', null, lang),
+      minutes: null,
+      ids,
+      routableIds,
+      visitMinutes,
+      walkMinutes,
+      audioMinutes,
+      bufferMinutes,
+      estimatedMinutes: visitMinutes + walkMinutes + audioMinutes + bufferMinutes,
+      isCustom: false,
+      isShared: true
+    };
+  }
   if (planMode === 'myplan') {
     const ids = Array.isArray(myPlanIds) ? myPlanIds : [];
     const routableIds = routableWorkIds(navigationIndex, ids);
