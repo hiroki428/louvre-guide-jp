@@ -611,5 +611,13 @@ export const fr = Object.freeze({
   'catalog.myPlanDockTitle': '★ Mon Parcours : {count} œuvres (optimisé)',
   'catalog.myPlanDockSub': 'Env. {minutes} min · ordre optimisé automatiquement',
   'catalog.myPlanDockView': 'Voir la liste',
-  'catalog.myPlanDockStart': 'Carte ›'
+  'catalog.myPlanDockStart': 'Carte ›',
+  'notice.routeWorksBatchAdded': '{count} œuvres ajoutées au parcours et ordre optimisé',
+  'notice.optionalWorksBatchAdded': '{count} œuvres ajoutées aux suggestions',
+  'plan.batchSelectBtn': 'Choisir',
+  'plan.batchSelectedBtn': '✓ Choisi',
+  'plan.batchCount': '{count} sélectionnées',
+  'plan.batchClearBtn': 'Effacer',
+  'plan.batchConfirmRoute': 'Ajouter {count} au parcours',
+  'plan.batchConfirmOptional': 'Ajouter {count} en option'
 });

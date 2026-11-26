@@ -611,5 +611,13 @@ export const en = Object.freeze({
   'catalog.myPlanDockTitle': '★ My Plan: {count} artworks (auto-optimized)',
   'catalog.myPlanDockSub': 'Approx. {minutes} min · route updates automatically as you add',
   'catalog.myPlanDockView': 'View List',
-  'catalog.myPlanDockStart': 'Start Map ›'
+  'catalog.myPlanDockStart': 'Start Map ›',
+  'notice.routeWorksBatchAdded': 'Added {count} artworks to the route and optimized the visit order',
+  'notice.optionalWorksBatchAdded': 'Added {count} artworks to your optional list',
+  'plan.batchSelectBtn': 'Select',
+  'plan.batchSelectedBtn': '✓ Selected',
+  'plan.batchCount': '{count} selected',
+  'plan.batchClearBtn': 'Clear',
+  'plan.batchConfirmRoute': 'Add {count} to Route',
+  'plan.batchConfirmOptional': 'Add {count} as Optional'
 });

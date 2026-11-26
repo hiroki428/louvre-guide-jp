@@ -611,5 +611,13 @@ export const ja = Object.freeze({
   'catalog.myPlanDockTitle': '★ マイプラン：{count}作品（最短ルート最適化済）',
   'catalog.myPlanDockSub': '目安 約{minutes}分 · 追加するたび自動で最短順に並び替えます',
   'catalog.myPlanDockView': '一覧を見る',
-  'catalog.myPlanDockStart': '地図で開始 ›'
+  'catalog.myPlanDockStart': '地図で開始 ›',
+  'notice.routeWorksBatchAdded': '{count}作品をルートに追加し、巡回順を最適化しました',
+  'notice.optionalWorksBatchAdded': '{count}作品を「時間が余れば見る」に追加しました',
+  'plan.batchSelectBtn': '選択',
+  'plan.batchSelectedBtn': '✓ 選択中',
+  'plan.batchCount': '{count}作品を選択中',
+  'plan.batchClearBtn': 'クリア',
+  'plan.batchConfirmRoute': '{count}作品をルートに追加',
+  'plan.batchConfirmOptional': '{count}作品を候補に追加'
 });

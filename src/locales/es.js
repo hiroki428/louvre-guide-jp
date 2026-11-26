@@ -611,5 +611,13 @@ export const es = Object.freeze({
   'catalog.myPlanDockTitle': '★ Mi Plan: {count} obras (ruta optimizada)',
   'catalog.myPlanDockSub': 'Aprox. {minutes} min · se reordena automáticamente al añadir',
   'catalog.myPlanDockView': 'Ver lista',
-  'catalog.myPlanDockStart': 'Abrir mapa ›'
+  'catalog.myPlanDockStart': 'Abrir mapa ›',
+  'notice.routeWorksBatchAdded': '{count} obras añadidas a la ruta y orden optimizado',
+  'notice.optionalWorksBatchAdded': '{count} obras añadidas a tu lista opcional',
+  'plan.batchSelectBtn': 'Elegir',
+  'plan.batchSelectedBtn': '✓ Elegida',
+  'plan.batchCount': '{count} seleccionadas',
+  'plan.batchClearBtn': 'Limpiar',
+  'plan.batchConfirmRoute': 'Añadir {count} a la ruta',
+  'plan.batchConfirmOptional': 'Añadir {count} como opcional'
 });

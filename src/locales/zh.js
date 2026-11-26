@@ -611,5 +611,13 @@ export const zh = Object.freeze({
   'catalog.myPlanDockTitle': '★ 我的行程：{count} 件作品（已自动优化）',
   'catalog.myPlanDockSub': '约 {minutes} 分钟 · 每次增删都会自动排成最短顺序',
   'catalog.myPlanDockView': '查看清单',
-  'catalog.myPlanDockStart': '地图导航 ›'
+  'catalog.myPlanDockStart': '地图导航 ›',
+  'notice.routeWorksBatchAdded': '已将 {count} 件作品加入路线并优化参观顺序',
+  'notice.optionalWorksBatchAdded': '已将 {count} 件作品加入备选清单',
+  'plan.batchSelectBtn': '选择',
+  'plan.batchSelectedBtn': '✓ 已选',
+  'plan.batchCount': '已选 {count} 件',
+  'plan.batchClearBtn': '清除',
+  'plan.batchConfirmRoute': '加入路线 ({count})',
+  'plan.batchConfirmOptional': '加入备选 ({count})'
 });

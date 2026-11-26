@@ -611,5 +611,13 @@ export const ko = Object.freeze({
   'catalog.myPlanDockTitle': '★ 내 플랜: {count}작품 (최단 경로 최적화됨)',
   'catalog.myPlanDockSub': '예상 약 {minutes}분 · 추가할 때마다 자동으로 최단 순서 정렬',
   'catalog.myPlanDockView': '목록 보기',
-  'catalog.myPlanDockStart': '지도 시작 ›'
+  'catalog.myPlanDockStart': '지도 시작 ›',
+  'notice.routeWorksBatchAdded': '{count}작품을 루트에 추가하고 관람 순서를 최적화했습니다',
+  'notice.optionalWorksBatchAdded': '{count}작품을 여유 시 감상 목록에 추가했습니다',
+  'plan.batchSelectBtn': '선택',
+  'plan.batchSelectedBtn': '✓ 선택됨',
+  'plan.batchCount': '{count}작품 선택됨',
+  'plan.batchClearBtn': '해제',
+  'plan.batchConfirmRoute': '{count}작품 루트에 추가',
+  'plan.batchConfirmOptional': '{count}작품 후보에 추가'
 });
