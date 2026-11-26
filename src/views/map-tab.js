@@ -99,6 +99,9 @@ export function mapTabView(ctx, hasMini) {
   const lang = state.lang;
   const tr = (key, params) => t(key, params, lang);
   const plan = ctx.currentPlan();
+  const mapPlanLabel = plan.kind === 'time' && plan.minutes
+    ? tr('routes.fallback.label', {minutes: plan.minutes})
+    : plan.label;
   const nav = ctx.navigationView();
   const destinationId = nav.destinationNode?.workId ?? null;
   const destinationFloor = !nav.complete && Number.isFinite(nav.destinationNode?.floor)
@@ -184,7 +187,7 @@ export function mapTabView(ctx, hasMini) {
     <div class="map-toolbar map-toolbar-below">
       <div class="map-toolbar-meta">
         <div class="map-toolbar-head">
-          <strong>${esc(plan.label)}</strong>
+          <strong>${esc(mapPlanLabel)}</strong>
           <span class="map-toolbar-pct">${esc(tr('map.viewedCount', {viewed: viewedInPlan, total: planTotal}))}${planTotal ? ` (${planPct}%)` : ''}</span>
         </div>
         ${planTotal ? `<div class="map-mini-progress" aria-hidden="true"><span style="width:${planPct}%"></span></div>` : ''}
