@@ -63,6 +63,7 @@ export function createAppStore({
     lang: initialLang,
     hasChosenLang: Boolean(persistedBoot?.hasChosenLang),
     hasCompletedAuthGate: Boolean(persistedBoot?.hasCompletedAuthGate),
+    hasSeenOnboarding: Boolean(persistedBoot?.hasSeenOnboarding),
     appPhase: skipSplashImmediate ? 'select_language' : 'splash',
     hasChosenCourse: Boolean(persistedBoot?.hasChosenCourse),
     tab: ['map', 'plan', 'audio', 'settings'].includes(persistedBoot?.tab) ? persistedBoot.tab : 'map',
@@ -115,6 +116,7 @@ export function createAppStore({
     undo: null,
     processedArrivalEvents: new Set(),
     support: {open: false, editing: false, room: '', candidates: [], selectedCandidateId: null, error: ''},
+    onboarding: {active: false, step: 0},
     auth: {configured: false, user: null, status: 'idle', emailDraft: '', pending: false, lastSyncedAt: null, message: '', error: ''}
   };
 
@@ -221,6 +223,7 @@ export function createAppStore({
         lang: state.lang,
         hasChosenLang: state.hasChosenLang,
         hasCompletedAuthGate: state.hasCompletedAuthGate,
+        hasSeenOnboarding: state.hasSeenOnboarding,
         hasChosenCourse: state.hasChosenCourse,
         tab: state.tab,
         planMode: state.planMode,

@@ -2,6 +2,7 @@ import {DEFAULT_DURATIONS, PLAYBACK_RATES} from '../app-config.js';
 import {navigationStateFromRoute} from '../navigation.js';
 import {SUPPORTED_LANGS, t} from '../i18n.js';
 import {esc, formatAudioLengthLabel, formatRate} from '../app/ui-helpers.js';
+import {startOnboardingTour} from './onboarding-tour.js';
 
 export function settingsTabView(ctx, hasMini) {
   const {state, sources, imageCredits} = ctx;
@@ -129,6 +130,13 @@ export function settingsTabView(ctx, hasMini) {
       </div>
       <div class="setting-row">
         <div>
+          <strong>${esc(tr('tour.replayTitle'))}</strong>
+          <small>${esc(tr('tour.replaySub'))}</small>
+        </div>
+        <button type="button" class="secondary compact-btn" data-replay-onboarding>${esc(tr('tour.replayBtn'))}</button>
+      </div>
+      <div class="setting-row">
+        <div>
           <strong>${esc(tr('settings.resetTitle'))}</strong>
           <small>${esc(tr('settings.resetSub'))}</small>
         </div>
@@ -172,6 +180,7 @@ export function wireSettingsTab(ctx) {
   document.querySelector('[data-sync-now]')?.addEventListener('click', () => cloudSync?.syncNow({silent: false}));
   document.querySelector('[data-sign-out]')?.addEventListener('click', () => cloudSync?.signOut());
   document.querySelector('[data-clear-cache]')?.addEventListener('click', audio.clearAudioCache);
+  document.querySelector('[data-replay-onboarding]')?.addEventListener('click', () => startOnboardingTour(ctx));
   document.querySelector('[data-reset-progress]')?.addEventListener('click', () => {
     if (!window.confirm(t('settings.resetConfirm', null, state.lang))) return;
     ctx.clearProgressNotice();

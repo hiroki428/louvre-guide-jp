@@ -17,6 +17,7 @@ import {settingsTabView, wireSettingsTab} from './views/settings-tab.js';
 import {closeWorkDetail, openWorkDetail, workDetailSheetMarkup, wireWorkDetailSheet} from './views/work-detail-sheet.js';
 import {audioSettingsModalMarkup, miniPlayerMarkup, wireAudioSettingsModal, wireMiniPlayer} from './views/mini-player.js';
 import {incomingSharedPopupMarkup, sharePlanModalMarkup, sharedPlanBannerMarkup, stopQrScanner, wireSharedPlanUI} from './views/plan-share-modal.js';
+import {cleanupOnboardingPositioning, finishOnboardingTour, onboardingTourMarkup, wireOnboardingTour} from './views/onboarding-tour.js';
 
 const bootStarted = performance.now();
 const persistedBoot = readPersistedState();
@@ -295,12 +296,14 @@ function wireMain() {
   wireAudioTab(ctx);
   wireSettingsTab(ctx);
   wireSharedPlanUI(ctx);
+  wireOnboardingTour(ctx);
 }
 
 function render() {
   const {state} = ctx;
   const lang = state.lang;
   if (state.appPhase === 'splash') return;
+  if (state.appPhase !== 'main') cleanupOnboardingPositioning();
   if (state.appPhase === 'select_language') {
     app.innerHTML = languageSelectView(ctx) + noticeMarkup(ctx, false);
     document.querySelectorAll('[data-set-lang]').forEach(btn => {
@@ -350,6 +353,11 @@ function render() {
     wireLangButtons();
     return;
   }
+
+  if (state.tab === 'map' && state.planMode !== 'shared' && !state.hasSeenOnboarding && !state.onboarding.active && !state.incomingSharedPlan && !state.shareModal?.open) {
+    state.onboarding = {active: true, step: 0};
+  }
+
   const plan = ctx.currentPlan();
   const hasMini = Boolean(ctx.audio.miniPlayerContext());
   const body = state.tab === 'plan'
@@ -381,6 +389,7 @@ function render() {
     ${audioSettingsModalMarkup(ctx)}
     ${sharePlanModalMarkup(ctx)}
     ${incomingSharedPopupMarkup(ctx)}
+    ${onboardingTourMarkup(ctx)}
     ${noticeMarkup(ctx, hasMini)}
   `;
   wireMain();
@@ -400,6 +409,7 @@ window.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
     if (ctx.state.incomingSharedPlan) { ctx.state.incomingSharedPlan = null; savePendingSharedPlan(null); render(); }
     else if (ctx.state.shareModal?.open) { stopQrScanner(); ctx.state.shareModal.open = false; ctx.state.shareModal.scanning = false; render(); }
+    else if (ctx.state.onboarding?.active) { finishOnboardingTour(ctx); }
     else if (ctx.state.audioSettingsOpen) { ctx.state.audioSettingsOpen = false; render(); }
     else if (ctx.state.detailWorkId) closeWorkDetail(ctx);
   }
