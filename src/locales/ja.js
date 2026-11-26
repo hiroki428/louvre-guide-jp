@@ -473,5 +473,15 @@ export const ja = Object.freeze({
   'auth.invalidEmail': '有効なメールアドレスを入力してください',
   'auth.sendFailed': '送信できませんでした。通信状態を確認して再度お試しください。',
   'auth.signedOutNotice': 'ログアウトしました（端末内のデータはそのまま残ります）',
-  'auth.syncedNotice': 'クラウドとデータを同期しました'
+  'auth.syncedNotice': 'クラウドとデータを同期しました',
+
+  'notice.openMyPlanAction': 'マイプランを見る',
+  'detail.inMyPlanOrder': '★ マイプラン済 (#{order})',
+  'catalog.addMyPlanShort': 'プラン追加',
+  'catalog.inMyPlanShort': '追加済',
+  'catalog.myPlanDockAria': 'マイプラン操作バー',
+  'catalog.myPlanDockTitle': '★ マイプラン：{count}作品（最短ルート最適化済）',
+  'catalog.myPlanDockSub': '目安 約{minutes}分 · 追加するたび自動で最短順に並び替えます',
+  'catalog.myPlanDockView': '一覧を見る',
+  'catalog.myPlanDockStart': '地図で開始 ›'
 });

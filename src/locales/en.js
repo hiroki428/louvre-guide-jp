@@ -473,5 +473,15 @@ export const en = Object.freeze({
   'auth.invalidEmail': 'Please enter a valid email address',
   'auth.sendFailed': 'Could not send sign-in link. Please check your connection and try again.',
   'auth.signedOutNotice': 'Signed out (your data remains saved on this device)',
-  'auth.syncedNotice': 'Synced your plan and settings with the cloud'
+  'auth.syncedNotice': 'Synced your plan and settings with the cloud',
+
+  'notice.openMyPlanAction': 'View My Plan',
+  'detail.inMyPlanOrder': '★ In My Plan (#{order})',
+  'catalog.addMyPlanShort': 'Add Plan',
+  'catalog.inMyPlanShort': 'Added',
+  'catalog.myPlanDockAria': 'My Plan quick bar',
+  'catalog.myPlanDockTitle': '★ My Plan: {count} artworks (auto-optimized)',
+  'catalog.myPlanDockSub': 'Approx. {minutes} min · route updates automatically as you add',
+  'catalog.myPlanDockView': 'View List',
+  'catalog.myPlanDockStart': 'Start Map ›'
 });

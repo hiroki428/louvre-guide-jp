@@ -90,6 +90,7 @@ assert.match(main, /data-splash-lang/, 'splash screen must offer language select
 assert.match(main, /data-splash-start/, 'splash screen must offer start button for initial language confirmation');
 assert.match(main, /hasChosenLang/, 'initial splash must wait until user explicitly confirms language');
 assert.match(main, /data-change-course/);
+assert.match(main, /myplan-dock/, 'audio catalog must render floating My Plan summary dock when items are added');
 assert.doesNotMatch(mapTabSection, /floor-jump-banner|data-jump-floor/, 'floor jump banner must not be shown on the Map tab per user preference');
 assert.match(mapTabSection, /has-destination/, 'floor tab must highlight the floor containing the next artwork');
 assert.match(mapTabSection, /class="floor-next-badge"/, 'floor tab must display a clear next-artwork badge on the destination floor');

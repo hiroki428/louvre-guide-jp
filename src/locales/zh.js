@@ -473,5 +473,15 @@ export const zh = Object.freeze({
   'auth.invalidEmail': '请输入有效的邮箱地址',
   'auth.sendFailed': '发送失败，请检查网络后重试。',
   'auth.signedOutNotice': '已退出登录（本设备上的数据仍会保留）',
-  'auth.syncedNotice': '已与云端同步行程和设置'
+  'auth.syncedNotice': '已与云端同步行程和设置',
+
+  'notice.openMyPlanAction': '查看我的行程',
+  'detail.inMyPlanOrder': '★ 已加入行程 (#{order})',
+  'catalog.addMyPlanShort': '加入行程',
+  'catalog.inMyPlanShort': '已加入',
+  'catalog.myPlanDockAria': '我的行程快捷栏',
+  'catalog.myPlanDockTitle': '★ 我的行程：{count} 件作品（已自动优化）',
+  'catalog.myPlanDockSub': '约 {minutes} 分钟 · 每次增删都会自动排成最短顺序',
+  'catalog.myPlanDockView': '查看清单',
+  'catalog.myPlanDockStart': '地图导航 ›'
 });

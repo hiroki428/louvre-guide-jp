@@ -125,15 +125,18 @@ export function createPlanActions(ctx) {
   }
 
   function chooseMyPlan({goMap = false, animate = true} = {}) {
+    const alreadyMyPlan = ctx.state.planMode === 'myplan' && ctx.state.hasChosenCourse;
     const apply = () => {
       ctx.clearProgressNotice();
       ctx.state.planMode = 'myplan';
       ctx.state.hasChosenCourse = true;
       const ids = ctx.routableIds();
-      ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
-      ctx.state.selected = ctx.state.myPlanIds[0] ?? null;
-      if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
-        ctx.state.floor = ctx.byId[ids[0]].floor;
+      if (!alreadyMyPlan) {
+        ctx.state.navigation = navigationStateFromRoute(ctx.navigationIndex, ids);
+        ctx.state.selected = ctx.state.myPlanIds[0] ?? null;
+        if (ids[0] && ctx.byId[ids[0]]?.floor != null) {
+          ctx.state.floor = ctx.byId[ids[0]].floor;
+        }
       }
       ctx.state.appPhase = 'main';
       ctx.state.tab = goMap && ids.length ? 'map' : 'plan';
@@ -141,7 +144,7 @@ export function createPlanActions(ctx) {
       ctx.render();
       window.scrollTo({top: 0});
     };
-    if (!animate || !ctx.state.myPlanIds.length) {
+    if (!animate || alreadyMyPlan || !ctx.state.myPlanIds.length) {
       apply();
       return;
     }
@@ -231,7 +234,10 @@ export function createPlanActions(ctx) {
     syncMyPlanNavigation();
     ctx.persistState();
     const title = localizeWork(ctx.byId[workId], ctx.state.lang)?.title ?? tr('notice.workFallback');
-    ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3000);
+    const action = result.added && !(ctx.state.tab === 'plan' && ctx.state.planMode === 'myplan')
+      ? {id: 'open-myplan', label: tr('notice.openMyPlanAction')}
+      : null;
+    ctx.setNotice(tr(result.added ? 'notice.myPlanAdded' : 'notice.myPlanRemoved', {title}), false, 3800, action);
     ctx.render();
   }
 

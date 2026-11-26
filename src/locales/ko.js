@@ -473,5 +473,15 @@ export const ko = Object.freeze({
   'auth.invalidEmail': '올바른 이메일 주소를 입력해 주세요',
   'auth.sendFailed': '로그인 링크를 보내지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.',
   'auth.signedOutNotice': '로그아웃되었습니다 (이 기기의 데이터는 그대로 유지됩니다)',
-  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다'
+  'auth.syncedNotice': '플랜과 설정을 클라우드와 동기화했습니다',
+
+  'notice.openMyPlanAction': '내 플랜 보기',
+  'detail.inMyPlanOrder': '★ 내 플랜 등록 (#{order})',
+  'catalog.addMyPlanShort': '플랜 추가',
+  'catalog.inMyPlanShort': '추가됨',
+  'catalog.myPlanDockAria': '내 플랜 빠른 바',
+  'catalog.myPlanDockTitle': '★ 내 플랜: {count}작품 (최단 경로 최적화됨)',
+  'catalog.myPlanDockSub': '예상 약 {minutes}분 · 추가할 때마다 자동으로 최단 순서 정렬',
+  'catalog.myPlanDockView': '목록 보기',
+  'catalog.myPlanDockStart': '지도 시작 ›'
 });

@@ -282,6 +282,20 @@ function wireShell() {
     btn.onclick = planActions.undoArrival;
   });
 
+  document.querySelectorAll('[data-notice-action="open-myplan"], [data-open-myplan-tab]').forEach(btn => {
+    btn.onclick = () => {
+      state.detailWorkId = null;
+      planActions.chooseMyPlan({goMap: false, animate: false});
+    };
+  });
+
+  document.querySelectorAll('[data-start-myplan-map]').forEach(btn => {
+    btn.onclick = () => {
+      state.detailWorkId = null;
+      planActions.chooseMyPlan({goMap: true, animate: true});
+    };
+  });
+
   document.querySelectorAll('[data-set-lang]').forEach(btn => {
     btn.onclick = async () => {
       const next = btn.dataset.setLang;

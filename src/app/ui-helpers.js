@@ -49,9 +49,9 @@ export function priorityBadgeMarkup(work, lang = getLang()) {
 export function createNoticeController(state) {
   let noticeTimer = null;
 
-  function setNotice(message, canUndo = false, duration = 5200) {
+  function setNotice(message, canUndo = false, duration = 5200, action = null) {
     if (noticeTimer) clearTimeout(noticeTimer);
-    state.notice = {message, canUndo};
+    state.notice = {message, canUndo, action};
     noticeTimer = setTimeout(() => {
       state.notice = null;
       if (canUndo) state.undo = null;
@@ -73,9 +73,12 @@ export function createNoticeController(state) {
 export function noticeMarkup(ctx, hasMini) {
   if (!ctx.state.notice) return '';
   const lang = ctx.state.lang;
-  return `<aside class="arrival-toast ${hasMini ? 'with-mini-player' : ''}" role="status" aria-live="polite">
+  const action = ctx.state.notice.action;
+  const hasDock = ctx.state.tab === 'audio' && ctx.state.myPlanIds?.length > 0;
+  return `<aside class="arrival-toast ${hasMini ? 'with-mini-player' : ''} ${hasDock ? 'with-myplan-dock' : ''}" role="status" aria-live="polite">
     <span>${esc(ctx.state.notice.message)}</span>
     ${ctx.state.notice.canUndo ? `<button type="button" data-undo-arrival>${esc(t('app.undo', null, lang))}</button>` : ''}
+    ${action?.label && action?.id ? `<button type="button" data-notice-action="${esc(action.id)}">${esc(action.label)}</button>` : ''}
   </aside>`;
 }
 

@@ -473,5 +473,15 @@ export const fr = Object.freeze({
   'auth.invalidEmail': 'Veuillez saisir une adresse e-mail valide',
   'auth.sendFailed': 'Impossible d’envoyer le lien. Vérifiez votre connexion et réessayez.',
   'auth.signedOutNotice': 'Déconnecté (vos données restent enregistrées sur cet appareil)',
-  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud'
+  'auth.syncedNotice': 'Parcours et réglages synchronisés avec le cloud',
+
+  'notice.openMyPlanAction': 'Voir Mon Parcours',
+  'detail.inMyPlanOrder': '★ Dans Mon Parcours (#{order})',
+  'catalog.addMyPlanShort': 'Ajouter',
+  'catalog.inMyPlanShort': 'Ajouté',
+  'catalog.myPlanDockAria': 'Barre rapide Mon Parcours',
+  'catalog.myPlanDockTitle': '★ Mon Parcours : {count} œuvres (optimisé)',
+  'catalog.myPlanDockSub': 'Env. {minutes} min · ordre optimisé automatiquement',
+  'catalog.myPlanDockView': 'Voir la liste',
+  'catalog.myPlanDockStart': 'Carte ›'
 });
